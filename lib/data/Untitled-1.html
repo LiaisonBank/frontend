@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+/* CARD */
+.team-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+  overflow: hidden;
+}
+
+/* TEXT */
+.team-content {
+     padding: 0 1.4rem 0 1rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 110px;
+}
+
+.team-content h5 {
+  color: #2aa5c0;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.team-content p {
+  margin: 0;
+  color: #555;
+}
+
+/* IMAGE CONTAINER (SKEWED) */
+.image {
+  position: relative;
+  transform: skew(-15deg);
+  overflow: hidden;
+}
+
+/* IMAGE (STRAIGHT) */
+.image img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  transform: skew(15deg) scale(1.4);
+}
+
+/* ✅ MAROON LINE ALIGNED WITH IMAGE EDGE */
+.team-content::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: 2%;
+    width: 4px;
+    height: 200%;
+    background: maroon;
+    transform: skew(-15deg);
+    z-index: 1;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container mt-5">
+  <div class="row">
+
+    <!-- ITEM -->
+    <div class="col-md-6">
+      <div class="team-card">
+        
+        <div class="team-content text-end">
+          <h5>Mr. Mahadev Biradar</h5>
+          <p>Founder & Managing Director</p>
+        </div>
+
+        <div class="image">
+          <img src="https://liaisonbank.com/wp-content/uploads/2024/10/Mahadev.jpg" alt="team">
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
