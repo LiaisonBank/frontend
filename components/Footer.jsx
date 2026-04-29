@@ -186,8 +186,13 @@ export default function Footer() {
           </a>
         </div>
        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="600">
-        <a href="#" target="_blank" className="whatsapp"  >
-          <i className="fi fi-brands-whatsapp"></i> Whatsapp
+        <a 
+          href="https://wa.me/919324577378" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="whatsapp"
+        >
+          <i className="fi fi-brands-whatsapp"></i> WhatsApp
         </a>
        </div>
        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="800">
