@@ -111,7 +111,7 @@ const ContactForm = () => {
     };
 
     const res = await fetch(
-      "https://liaisonbank-backend.onrender.com/send-email",
+      "https://backend.liaisonbank.com/send-email",
       {
         method: "POST",
         headers: {
