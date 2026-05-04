@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 
 const initialState = {
@@ -13,6 +13,11 @@ const ContactForm = () => {
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  // 👇 ADD THIS HERE
+  useEffect(() => {
+    console.log("API:", process.env.NEXT_PUBLIC_API_URL);
+  }, []);
 
   // ======================================================
   // Handle Input Change
