@@ -85,7 +85,7 @@ export default function ContactusLiaisonbankPage() {
                 <div className="p-3 bg-light card"  data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
                   <p>
                     <strong>Phone</strong> <br/> 
-                    <Link href="tel:+91 91364 43852" >  (+91) 97694 58515</Link> / &nbsp; 
+                    <Link href="tel:+91 91364 43852">  (+91) 97694 58515</Link> / &nbsp; 
                     <Link href="tel:+91 91364 43852" >  (+91) 91371 28401</Link> <br/>
                     <strong>Singapore Phone</strong><br/>
                     <Link href="tel:+65 9856 0609" >   (+65) 9856 0609 </Link>

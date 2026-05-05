@@ -44,9 +44,6 @@ export default function LRPage() {
       </div>
       <section className="container py-5">
         <div className="row justify-content-center text-center">
-          {/* <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
-              <h3>We have evolved <AnimatedCounter endValue={16} /> Years </h3>
-            </div> */}
           <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
             <h5>Annual Maintenance Contract (AMC) services streamline business compliance by managing license renewals, government
               licensing, certifications, and regulatory requirements under one platform. With Liaison Bank U+2019 s AMC solutions,

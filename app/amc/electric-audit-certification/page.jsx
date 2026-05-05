@@ -90,8 +90,8 @@ export default function electricPage() {
           <div  data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
             <p>
               A timely <b>Electrical Audit and Certification</b> process is essential for maintaining safe, efficient, and <b>regulation-compliant 
-              electrical systems</b> in every business or property. With professional support from Liaison Bank, clients can simplify 
-              <b>electrical inspections</b>, safety audits, certification approvals, and compliance requirements while reducing operational risks. 
+              electrical systems</b> in every business or property. With professional support from Liaison Bank, clients can simplify &nbsp; 
+               <b>electrical inspections</b>, safety audits, certification approvals, and compliance requirements while reducing operational risks. 
               Our dependable <b>electrical audit services</b> help businesses ensure safety, efficiency, and long-term continuity.
               </p>
           </div>

@@ -120,8 +120,8 @@ export default function Footer() {
             </h4>
 
             <p className="mb-3"  data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
-              New Apollo CHSL,
-              Beside Blue Tokai Coffee, <br/>14th Road,
+              Plot 466, New Apollo CHSL,<br/>
+              Beside Blue Tokai Coffee, 14th Road,<br/>
               Khar West, Mumbai-400052.
             </p>
 
@@ -181,7 +181,7 @@ export default function Footer() {
       {/* Sticky CTA */}
       <div className="sticky-icon" key={pathname}>
         <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
-          <a href="tel:+919769458515" className="callnow" >
+          <a href="tel:+919769458515" target="_blank" className="callnow" >
             <i className="fi fi-sr-phone-flip" ></i> Call Now
           </a>
         </div>

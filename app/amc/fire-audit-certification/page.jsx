@@ -46,10 +46,10 @@ export default function FIREPage() {
         <div className="row justify-content-center text-center">
           <div>
             <p  data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
-                Creating a safe and regulation-compliant environment starts with a professional Fire Audit and Certification process. 
-                Businesses, commercial spaces, residential buildings, factories, and institutions must regularly assess their fire safety systems 
-                to meet government fire safety regulations and reduce operational risks. At Liaison Bank, we offer trusted fire audit services, 
-                fire safety inspections, fire NOC assistance, and fire certification solutions that help identify hazards, 
+                Creating a safe and regulation-compliant environment starts with a professional <b>Fire Audit and Certification</b> process. 
+                Businesses, commercial spaces, residential buildings, factories, and institutions must regularly assess their <b>fire safety systems</b> 
+                to meet government <b>fire safety regulations</b> and reduce operational risks. At <b>Liaison Bank</b>, we offer trusted fire audit services, 
+                <b>fire safety inspections</b>, <b>fire NOC assistance</b>, and <b>fire certification solutions</b> that help identify hazards, 
                 verify safety equipment, improve emergency preparedness, and ensure complete fire compliance for smooth and secure operations.
             </p>
           </div>
@@ -89,10 +89,10 @@ export default function FIREPage() {
           </div>
           <div  data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
             <p>
-              A timely fire audit and certification process is critical for every property and business to maintain fire safety 
+              A timely <b>fire audit and certification</b> process is critical for every property and business to maintain fire safety 
               compliance and reduce operational risks. With expert support from Liaison Bank, clients can simplify fire inspections, 
-              fire safety audits, certification approvals, and Fire NOC requirements while ensuring safe and regulation-compliant
-               operations. Our reliable fire audit and certification services help businesses protect lives, assets, and long-term 
+              <b>fire safety audits</b>, certification approvals, and <b>Fire NOC</b> requirements while ensuring safe and regulation-compliant
+               operations. Our reliable <b>fire audit and certification</b> services help businesses protect lives, assets, and long-term 
                continuity.
               </p>
           </div>
