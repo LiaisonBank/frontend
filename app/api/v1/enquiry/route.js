@@ -3,7 +3,6 @@
 export async function POST(req) {
   try {
     const body = await req.json();
-
     const response = await fetch(
       "https://liaisonbank.frappe.cloud/api/method/create_enquiry",
       {

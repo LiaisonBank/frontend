@@ -115,7 +115,7 @@ export default function EnquiryForm() {
 
       // console.log("Sending Payload:", payload);
       // return;
-      const response = await fetch("/api/enquiry", {
+      const response = await fetch("/api/v1/enquiry", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
