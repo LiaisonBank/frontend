@@ -7,7 +7,7 @@ import Image from "next/image";
 import ScrollUpList from "@/components/ScrollUpList";
 import { searchPhrases, suggestions } from "@/lib/data/menus";
 import HeroSlider from '@/components/HeroSection/HeroSlider';
-// import rightsideBanner from "@/public/complaince.png"
+import rightsideBanner from "@/public/complaince.png"
 
 export default function HeroSection() {
     const wordsRef = useRef([]);
@@ -172,14 +172,14 @@ export default function HeroSection() {
 
                 {/* RIGHT IMAGE */}
                 <div className="hero-image" data-aos="fade-left">
-                    {/* <Image
+                    <Image
                         src={rightsideBanner}
                         width={600}
                         height={500}
                         alt="Business Services"
                         priority
-                    /> */}
-                    <HeroSlider />
+                    />
+                    {/* <HeroSlider /> */}
                 </div>
             </div>
             <div className={`search-popup ${isActive ? 'active' : 'inActive'}`}>
