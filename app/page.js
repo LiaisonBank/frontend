@@ -7,6 +7,7 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 
 // import smallLogo from "@/assets/images/shape-small-1-1.png"
 import welcomeImg from "@/assets/images/group.jpg"
+import devaImg from "@/assets/images/devaBirader.svg"
 import ServicesSection from "@/components/ServicesSection";
 import ClientScroller from "@/components/ClientScroller"
 import useFancybox from '@/components/useFancybox';
@@ -86,10 +87,11 @@ const Home = () => {
                 <div className='author-meta d-flex flex-wrap align-items-center'>
                   <div className='col-auto author-img' data-aos="zoom-in" data-aos-duration="600" data-aos-delay="600">
                     <Image
-                      src="/teams/Mahadev.webp"
-                      width={60}
-                      height={60}
-                      className='rounded-circle'
+                      // src="/teams/Mahadev.webp"
+                      src={devaImg}
+                      width={65}
+                      height={50}
+                      className='rounded-circle img-fluid'
                       alt=""
                       priority
                     />
@@ -133,10 +135,10 @@ const Home = () => {
           </div>
           <div className='col-3 mx-auto d-none' data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
             <Link href="/" data-aos="flip-in" data-aos-duration="600" data-aos-delay="100" className="themeht-btn primary-btn d-flex justify-content-center align-item-center mr-2">View Details &nbsp;
-                  <svg xmlns="http://www.w3.org" width="22" height="22" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
-                    <path fillRule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
-                  </svg>&nbsp;
-                </Link>
+              <svg xmlns="http://www.w3.org" width="22" height="22" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
+                <path fillRule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+              </svg>&nbsp;
+            </Link>
           </div>
         </div>
       </section>

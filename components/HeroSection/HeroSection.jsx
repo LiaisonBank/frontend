@@ -96,7 +96,14 @@ export default function HeroSection() {
                     </h1>
                     <div className="global-serach-wrapper" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
                         <div className="search-box" onClick={openPopup}>
-                            <div className="search-icon"><Image src="/search-icon.png" width={30} height={30} alt="Office Time" /></div>
+                            <div className="search-icon">
+                                <Image   src="/search-icon.png"
+                                    alt="Search"
+                                    width={24} 
+                                    height={24}
+                                    style={{ width: "24px", height: "auto" }}  
+                                />
+                            </div>
                             <div className="search-input-div">{/* Top Search Input */}
                                 <div className="input-content">
                                     {/* <SearchRotator /> */}
@@ -194,7 +201,7 @@ export default function HeroSection() {
                 </form>
 
                {/* ✅ Suggestions */}
-                <div className="suggestions-box">
+                <div className="suggestions-box d-none">
                 {filteredSuggestions.map((item, index) => (
                     <button
                     key={index}
