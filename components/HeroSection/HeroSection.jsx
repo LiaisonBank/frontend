@@ -62,7 +62,6 @@ export default function HeroSection() {
         }
     };
 
-
     useEffect(() => {
         gsap.fromTo(
         wordsRef.current,
@@ -79,7 +78,7 @@ export default function HeroSection() {
 
     return (
         <section className="hero-section">
-            <div className="hero-grid container px-4">
+            <div className="hero-grid container">
                 {/* LEFT CONTENT */}
                 <div className="hero-content pt-4">
                     <h1 className="hero-title">
@@ -133,41 +132,46 @@ export default function HeroSection() {
                                 </div></a>
                             </li>
                             <li className="hero-card" data-aos="flip-up" data-aos-duration="600" data-aos-delay="600">
+                                <a className="hero-card-link" href="/">
                                 <div className="hero-cards--img"> 
                                     {/* 🪪  */}
                                     🏅
                                 </div>
                                 <div className="hero-cards--label">
                                     <span>Licensing</span>
-                                </div>
+                                </div></a>
                             </li>
                             <li className="hero-card" data-aos="flip-up" data-aos-duration="600" data-aos-delay="600">
+                                <a className="hero-card-link" href="/">
                                 <div className="hero-cards--img"> 
                                     {/* ⚖️   */}
                                     🤝</div>
                                 <div className="hero-cards--label">
                                     <span>Liaisoning</span>
-                                </div>
+                                </div></a>
                             </li>
                             <li className="hero-card" data-aos="flip-down" data-aos-duration="600" data-aos-delay="800">
+                                <a className="hero-card-link" href="/electrical-sitc">
                                 <div className="hero-cards--img"> ⚡ </div>
                                 <div className="hero-cards--label">
-                                    <span>Electrical </span>
-                                </div>
+                                    <span>Electrical</span>
+                                </div></a>
                             </li>
                             <li className="hero-card" data-aos="flip-down" data-aos-duration="600" data-aos-delay="800">
+                                <a className="hero-card-link" href="/electrical-sitc">
                                 <div className="hero-cards--img ml-2"> 
                                     {/* 🛢️  */}
                                     <Image src="/icon/PNG.webp" width={30} height={30} alt="Office Time" /></div>
                                 <div className="hero-cards--label">
                                     <span>PNG (SITC)</span>
-                                </div>
+                                </div></a>
                             </li>
                             <li className="hero-card" data-aos="flip-down" data-aos-duration="600" data-aos-delay="800">
+                                <a className="hero-card-link" href="/electrical-sitc">
                                 <div className="hero-cards--img"> 🧯 </div>
                                 <div className="hero-cards--label">
                                     <span>Fire (SITC)</span>
-                                </div>
+                                </div></a>
                             </li>
                         </ul>
                     </div>

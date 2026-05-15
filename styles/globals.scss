@@ -1545,7 +1545,13 @@ $color-dark: #000;
   }
   @media (min-width: $break-sm) {
    flex-direction: column-reverse;
-        }
+  }
+  @media (width < 512px) {
+    /* Styles for screens 511px and below */
+      font-size: 14px;
+      padding: 0;
+      // background-color: lightblue;
+  }
   /* HERO CONTENT */
   .hero-content {
     text-align: center;
@@ -1582,6 +1588,7 @@ $color-dark: #000;
 
     .global-serach-wrapper {
       margin: 1.2rem 0;
+      cursor:pointer;
 
       .search-box {
         display: flex;
@@ -1635,8 +1642,8 @@ $color-dark: #000;
       gap: 10px;
       padding: 5px;
       display: flex;
-      // justify-content: space-between;
-      justify-content: space-evenly;      
+      justify-content: space-between;
+      // justify-content: space-evenly;      
       .hero-cards--img {
         font-size: 1.5rem;
         width: auto;
@@ -1672,7 +1679,7 @@ $color-dark: #000;
           align-items: center;
           font-weight: 500;
           @media (min-width: $break-sm) {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
           }
         }
     }
@@ -1764,11 +1771,11 @@ $color-dark: #000;
     margin-top: 10px;
 
     .suggestion-chip {
-      padding: 6px 10px;
+      padding:10px;
       font-size: 0.85rem;
       border-radius: 20px;
-      background: $color-light;
-
+      background: $primary-color;
+      cursor: pointer;
       &.active {
         background: $color-dark;
         color: $color-white;
@@ -4154,6 +4161,36 @@ $color-dark: #000;
       to { opacity: 1; }
 }
 .amc, .license-renewal{
+    .lc-renewal, .renewal-process{
+      .card-body{
+        background: var(--cadet-grey);
+        color:white;
+        border-radius: 1rem;
+      }
+    }
+    .renewal-process{
+      .count{
+        position: absolute;
+        right: 0;
+        top: -0.5rem;
+      }
+      h5{
+        font-size:larger;
+        max-width:300px;
+        text-overflow: wrap;
+      }
+
+    }
+    .lc-faqs{
+      .accordion-header {
+        .accordion-button{
+          background: none;
+          border: none;
+          box-shadow: none;
+        }
+      }
+    }
+    
     @keyframes drawLine {
 
       /* Start hidden from left */
@@ -4881,7 +4918,7 @@ $color-dark: #000;
         font-size: 2rem;
         background-color: transparent;
         color: black;
-        text-align: left;
+        text-align: center;
         line-height: auto;
         .theme-color {
           padding: 0 0.5rem;
@@ -5453,14 +5490,22 @@ footer {
     transform: scale(1);
 
     .search-popup-form {
-      transform: translateY(-50%) scaleX(1);
-      display:flex;
-      .mic-action-div img {
-          width: 6rem;
-          padding-right: 1rem;
-          margin: 0;
-          padding-top: 1rem;
-      }
+        display: flex;
+        // transform: translateY(-50%) scaleX(1);
+        border-bottom: 1px solid #6c757d;
+        align-items: center;
+        justify-content: center;
+        .mic-action-div{
+            border-left: 1px solid #b2b5b8;
+            padding-left: 12px;
+            cursor: pointer;
+            height: 30px;
+          img {
+            width: 3rem;
+            padding-right: 1rem;
+            margin: 0;
+          }
+        }
       .search-popup-btn {
         display: none;
         padding: 0 2rem;
@@ -5475,10 +5520,10 @@ footer {
   &.inActive {
     opacity: 0;
     transition-delay: 0.5s;
-    transform: scale(1);
+    // transform: scale(1);
     .search-popup-form {
       transition-delay: 0s;
-      transform: translateY(-50%) scaleX(0);
+      // transform: translateY(-50%) scaleX(0);
     }
   }
 
@@ -5507,8 +5552,8 @@ footer {
   }
 
   &-form {
-    position: absolute;
-    top: 30%;
+    position: relative;
+    top: 20%;
     left: 0;
     right: 0;
     width: 100%;
@@ -5516,7 +5561,7 @@ footer {
     margin: -40px auto 0;
     transition: all 0.5s ease-in-out;
     transition-delay: 0.5s;
-    transform: translateY(-50%) scaleX(0);
+    // transform: translateY(-50%) scaleX(0);
 
     &-btn {
       position: absolute;
@@ -5538,11 +5583,11 @@ footer {
       font-family: var(--font-primary);
       font-weight: 300;
       font-size: 35px;
-      width: 100%;
-      height: 80px;
+      width: 80%;
+      height: 50px;
       padding-left: 40px;
       border: none;
-      border-bottom: 2px solid #e7ebef;
+      // border-bottom: 2px solid #e7ebef;
       background: transparent;
       color: var(--bs-gray);
       transition: all 0.3s ease;
@@ -5675,7 +5720,9 @@ div:where(.swal2-container){
     }
   }
 }
-
+// .callnow {
+//   display: none !important;
+// }
 .whatsapp,
 .enquire,
 .callnow {
@@ -5861,10 +5908,24 @@ div:where(.swal2-container){
     display: none;
   }
   .marquee-branch {
-    display: none;
+    display: flex;
   }
 }
-
+@media only screen and (max-width: 912px) {
+  .scroll-top{
+    bottom: 65px;
+  }
+  .marquee-branch {
+            display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        p{
+          padding:0;
+          text-align: center;
+        }
+  }
+}
 /* Shrinking for mobile */
 @media only screen and (max-width: 768px) {
   .section-title {
