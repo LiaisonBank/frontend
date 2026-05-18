@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 import { importantLinks } from "../lib/data/menus.js";
 import logoScrolled from "@/assets/images/logo.png";
 import Modal from "@/components/ModalDialog/Modal";
-import NewLauncb from "@/components/NewLaunch";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import EnquiryForm from "@/components/EnquiryForm/page.jsx";
 
@@ -162,21 +161,7 @@ export default function Footer() {
       {/* Utilities */}
       <ScrollToTopButton />
 
-      {/* Marquee */}
-      <div className="container-fluid theme-bg">
-        <div className="row theme-bg">
-          <div className="marquee-branch flex items-center bg-white justify-between">
-            <div className="comingsoontitle pl-4 w-1/3">
-              <p>Our new branch is opening soon
-</p>
-              <div className="arrow arrow-right"></div>
-            </div>
-            <div className="location">
-              <NewLauncb />
-            </div>
-          </div>
-        </div>
-      </div>
+     
       
       {/* Sticky CTA */}
       <div className="sticky-icon" key={pathname}>
