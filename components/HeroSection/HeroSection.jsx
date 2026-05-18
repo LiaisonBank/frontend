@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import Image from "next/image";
 import ScrollUpList from "@/components/ScrollUpList";
 import { searchPhrases, suggestions } from "@/lib/data/menus";
-import HeroSlider from '@/components/HeroSection/HeroSlider';
+// import HeroSlider from '@/components/HeroSection/HeroSlider';
 import rightsideBanner from "@/public/complaince.png"
 
 export default function HeroSection() {
@@ -78,7 +78,7 @@ export default function HeroSection() {
 
     return (
         <section className="hero-section">
-            <div className="hero-grid container">
+            <div className="hero-grid container px-2">
                 {/* LEFT CONTENT */}
                 <div className="hero-content pt-4">
                     <h1 className="hero-title">
