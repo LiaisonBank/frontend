@@ -7,7 +7,7 @@ import Image from "next/image";
 import ScrollUpList from "@/components/ScrollUpList";
 import { searchPhrases, suggestions } from "@/lib/data/menus";
 // import HeroSlider from '@/components/HeroSection/HeroSlider';
-import rightsideBanner from "@/public/complaince.png"
+import serviceIcons from "@/public/services.webp"
 
 export default function HeroSection() {
     const wordsRef = useRef([]);
@@ -184,7 +184,7 @@ export default function HeroSection() {
                 {/* RIGHT IMAGE */}
                 <div className="hero-image" data-aos="fade-left">
                     <Image
-                        src={rightsideBanner}
+                        src={serviceIcons}
                         width={600}
                         height={500}
                         alt="Business Services"
