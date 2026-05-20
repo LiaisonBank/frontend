@@ -2,10 +2,14 @@ import LRPage from "./LRPage";
 
 export const metadata = {
   title:
-    "License Renewal Services in Mumbai | Compliance Renewal - Liaisonbank",
+    "License Renewal Services in India | Compliance Renewal - Liaisonbank",
 
   description:
-    "Professional license renewal and compliance services for businesses in Mumbai.",
+    "Professional license renewal services for businesses, factories, and commercial establishments. Get expert compliance and renewal support with Liaisonbank.",
+  
+  alternates: {
+    canonical: "https://liaisonbank.com/license-renewal",
+  },
 
   keywords: [
     "License Renewal",

@@ -6,12 +6,6 @@ import { usePathname } from "next/navigation";
 import useBodyClass from "@/components/useBodyClass";
 import { faqData, licFaqData } from "@/lib/data/faqData";
 
-export const metadata = {
-  title: "License Renewal Services in India | Compliance Renewal - Liaisonbank",
-  description:
-    "Professional license renewal and compliance services for businesses in India.",
-};
-
 export default function LRPage() {
   useBodyClass("license-renewal");
   const pathname = usePathname();
@@ -202,8 +196,7 @@ export default function LRPage() {
                 data-aos-delay="100"
               >
                 <h2 className="fw-bold">
-                  License Renewal Services for Businesses & Commercial
-                  Establishments
+                  License Renewal Services for Businesses & Commercial Establishments
                 </h2>
               </div>
 
@@ -213,9 +206,7 @@ export default function LRPage() {
                 data-aos-duration="600"
                 data-aos-delay="200"
               >
-                Avoid penalties, compliance delays, and operational interruptions
-                with timely renewal of business licenses, registrations, and
-                statutory approvals across multiple departments.
+                Avoid penalties, compliance delays, and operational interruptions with timely renewal of business licenses, registrations, and statutory approvals across multiple departments.
               </h5>
 
               <div

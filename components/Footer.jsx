@@ -186,6 +186,25 @@ export default function Footer() {
         </a>
        </div>
       </div>
+            {/* {Sticky CTA from 1024 to below} */}
+       <div className="sticky-icon-below-1024">
+          <a href="tel:+919769458515" target="_blank" className="callnow" >
+            <i className="fi fi-sr-phone-flip" ></i> Call Now
+          </a>
+        <a 
+          href="https://wa.me/919324577378" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="whatsapp"
+        >
+          <i className="fi fi-brands-whatsapp"></i> WhatsApp
+        </a>
+        <a className="enquire open-form" onClick={() => setOpen(true)}>
+          <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
+        </a>
+      </div>
+
+       {/* Enquiry Modal */}             
       <Modal
         isOpen={open}
         onClose={() => setOpen(false)}
