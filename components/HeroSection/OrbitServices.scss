@@ -1,0 +1,244 @@
+.orbit-services {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 60px 20px;
+
+  .orbit-wrapper {
+    position: relative;
+    width: 700px;
+    height: 700px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    animation: orbitRotate 24s linear infinite;
+  }
+
+  // OUTER CIRCLE
+  .orbit-ring {
+    position: absolute;
+    width: 560px;
+    height: 560px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+  }
+
+  // CENTER AREA
+  .center-wrapper {
+    position: relative;
+    width: 360px;
+    height: 360px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .center-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(4px);
+  }
+
+  // INNER GRADIENT RING
+  .center-gradient-ring {
+    position: relative;
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      padding: 4px;
+
+      background: linear-gradient(
+        135deg,
+        #304ffe 0%,
+        #8e44ad 50%,
+        #ff5a1f 100%
+      );
+
+      -webkit-mask: linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+  }
+
+  // COMMON ORBIT ITEM
+  .orbit-item {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  // KEEP CONTENT STRAIGHT
+  .orbit-item-content {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    animation: counterRotate 24s linear infinite reverse;
+
+    img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+    }
+
+    span {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+    }
+  }
+
+  // POSITIONING
+  .item-1 {
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .item-2 {
+    top: 110px;
+    right: 40px;
+  }
+
+  .item-3 {
+    bottom: 120px;
+    right: 20px;
+  }
+
+  .item-4 {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .item-5 {
+    bottom: 120px;
+    left: 20px;
+  }
+
+  .item-6 {
+    top: 110px;
+    left: 40px;
+  }
+}
+
+// MAIN ROTATION
+@keyframes orbitRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// KEEP CONTENT STRAIGHT
+@keyframes counterRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// RESPONSIVE
+@media (max-width: 768px) {
+  .orbit-services {
+    .orbit-wrapper {
+      width: 420px;
+      height: 420px;
+    }
+
+    .orbit-ring {
+      width: 320px;
+      height: 320px;
+    }
+
+    .center-wrapper {
+      width: 220px;
+      height: 220px;
+    }
+
+    .center-gradient-ring {
+      width: 150px;
+      height: 150px;
+    }
+
+    .orbit-item {
+      width: 85px;
+      height: 85px;
+    }
+
+    .orbit-item-content {
+      img {
+        width: 24px;
+        height: 24px;
+      }
+
+      span {
+        font-size: 12px;
+      }
+    }
+
+    .item-1 {
+      top: 10px;
+    }
+
+    .item-2 {
+      top: 50px;
+      right: 0;
+    }
+
+    .item-3 {
+      bottom: 60px;
+      right: 0;
+    }
+
+    .item-4 {
+      bottom: 0;
+    }
+
+    .item-5 {
+      bottom: 60px;
+      left: 0;
+    }
+
+    .item-6 {
+      top: 50px;
+      left: 0;
+    }
+  }
+}

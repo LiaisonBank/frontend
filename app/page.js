@@ -7,7 +7,7 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 
 // import smallLogo from "@/assets/images/shape-small-1-1.png"
 import welcomeImg from "@/assets/images/group.jpg"
-import devaImg from "@/assets/images/devaBirader.svg"
+import devaImg from "@/assets/images/devaBirader.webp"
 import ServicesSection from "@/components/ServicesSection";
 import ClientScroller from "@/components/ClientScroller"
 import useFancybox from '@/components/useFancybox';
@@ -89,9 +89,9 @@ const Home = () => {
                     <Image
                       // src="/teams/Mahadev.webp"
                       src={devaImg}
-                      width={65}
-                      height={50}
-                      className='rounded-circle img-fluid'
+                      width={80}
+                      height={80}
+                      className='img-fluid'
                       alt=""
                       priority
                     />
@@ -102,7 +102,7 @@ const Home = () => {
                   </div>
                 </div>
                 <div data-aos="zoom-in" data-aos-duration="600" data-aos-delay="900">
-                  <Link href="/" className="themeht-btn primary-btn d-flex align-items-center mr-2 mt-4">
+                  <Link href="/" className="themeht-btn primary-btn d-flex align-items-center mr-2 mt-4 d-none">
                     CEO&apos;s DESK&nbsp;
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

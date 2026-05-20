@@ -4,10 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 import Image from "next/image";
+import serviceIcons from "@/public/complaince.png"
 import ScrollUpList from "@/components/ScrollUpList";
 import { searchPhrases, suggestions } from "@/lib/data/menus";
 // import HeroSlider from '@/components/HeroSection/HeroSlider';
-import serviceIcons from "@/public/services.webp"
 
 export default function HeroSection() {
     const wordsRef = useRef([]);
@@ -183,6 +183,21 @@ export default function HeroSection() {
 
                 {/* RIGHT IMAGE */}
                 <div className="hero-image" data-aos="fade-left">
+                    <div className="services-orbit d-none">
+                        <div className="orbit-ring"></div>
+
+                        <div className="center-wrapper">
+                            <div className="center-glow"></div>
+                            <div className="center-circle"></div>
+                        </div>
+
+                        <div className="node node-top"><span className="node-text">ABC</span></div>
+                        <div className="node node-top-right"></div>
+                        <div className="node node-bottom-right"></div>
+                        <div className="node node-bottom"></div>
+                        <div className="node node-bottom-left"></div>
+                        <div className="node node-top-left"></div>
+                    </div>
                     <Image
                         src={serviceIcons}
                         width={600}
