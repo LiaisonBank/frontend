@@ -6146,10 +6146,17 @@ div:where(.swal2-container){
     justify-content: center;
     bottom: 0;
     a{
-      min-width: 30%;
       margin:0;
       padding: 1rem;
       text-align: center;
+      display:flex;
+      align-items: center;
+      justify-content: center;  
+      flex-direction: column ;
+      color: white !important;
+      i{
+        font-size: 1.5rem;
+      }
     }
   }
   .marquee-branch {

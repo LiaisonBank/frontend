@@ -188,20 +188,30 @@ export default function Footer() {
       </div>
             {/* {Sticky CTA from 1024 to below} */}
        <div className="sticky-icon-below-1024">
-          <a href="tel:+919769458515" target="_blank" className="callnow" >
-            <i className="fi fi-sr-phone-flip" ></i> Call Now
-          </a>
-        <a 
-          href="https://wa.me/919324577378" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="whatsapp"
-        >
-          <i className="fi fi-brands-whatsapp"></i> WhatsApp
-        </a>
-        <a className="enquire open-form" onClick={() => setOpen(true)}>
-          <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
-        </a>
+        <div className="container-fluid mx-auto">
+          <div className="row">
+            <div className="col-4 callnow p-2">
+               <a href="tel:+919769458515" target="_blank">
+                <i className="fi fi-sr-phone-flip" ></i> Call Now
+              </a>
+            </div>
+            <div className="col-4 enquire open-form p-2">
+              <a onClick={() => setOpen(true)}>
+                <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
+              </a>
+            </div>
+            <div className="col-4 whatsapp p-2">
+              <a href="https://wa.me/919324577378" target="_blank" rel="noopener noreferrer">
+                <i className="fi fi-brands-whatsapp"></i> WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+         
+        
+       
+
       </div>
 
        {/* Enquiry Modal */}             
