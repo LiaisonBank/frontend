@@ -601,9 +601,9 @@ body.home {
     background-color: $page-header;
     .inner-header{
       margin: 0 auto;
-      padding: 8rem 0 4rem;
+      padding: 6rem 0 4rem;
       @media (max-width: 1024px) {
-        padding: 8rem 0 2rem;
+        padding: 6rem 0 2rem;
       }
     }
   }
@@ -1304,6 +1304,7 @@ header {
       $primary-orange: #ef7f1a;
       $hover-white: white;
       $mobile-breakpoint: 1280px;
+      list-style: none;
       &.custom-counter-list {
         // counter-reset: service-item;
         li {
@@ -5355,7 +5356,15 @@ $color-dark: #000;
     
   }
 }
-
+.phonographic-performance-licenses{
+  [class^="ppl-"],
+  [class*=" ppl-"] {
+    ul {
+      list-style-type: disc;
+      padding: 0 0 0 2rem;
+    }
+  }
+}
 
 
 .about-us{

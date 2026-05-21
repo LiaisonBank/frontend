@@ -196,7 +196,7 @@ export default function LRPage() {
                 data-aos-delay="100"
               >
                 <h2 className="fw-bold">
-                  License Renewal Services for Businesses & Commercial Establishments
+                  License Extension Services
                 </h2>
               </div>
 
