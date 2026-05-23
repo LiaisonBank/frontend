@@ -42,7 +42,7 @@ export default function Header() {
               </Link>
             </div>
 
-            <div className="xl:flex">
+            <div className="menu xl:flex">
               <ul className="flex space-x-8">
                 {navLinks.map((link, index) => {
                   const hasSubmenu = link.submenu && link.submenu.length > 0;
