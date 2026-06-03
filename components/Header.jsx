@@ -45,35 +45,61 @@ export default function Header() {
             <div className="menu xl:flex">
               <ul className="flex space-x-8">
                 {navLinks.map((link, index) => {
-                  const hasSubmenu = link.submenu && link.submenu.length > 0;
+                  const singleSubmenu = link.projects && link.projects.length > 0;
+                  const hasSubmenu = link.submenu && link.submenu.length > 2;
                   return (
                     <li
                       key={link.name}
-                      className={`${hasSubmenu ? "has-submenu" : ""}`}
+                       className={`
+                        ${hasSubmenu ? "has-submenu" : ""}
+                        ${singleSubmenu ? "has-single-submenu" : ""}
+                      `}
                       // onMouseEnter={() => hasSubmenu && setMenuOpen(true)}
                       // onMouseLeave={() => hasSubmenu && setMenuOpen(false)}
                     >
                       {link.href ? (
-                        <Link href={link.href} 
+                        <Link
+                          href={link.href}
                           data-aos="fade-left"
                           data-aos-delay={index * 100}
                           data-aos-duration="800"
                         >
                           {link.name}
-                          
                         </Link>
                       ) : (
                         <span
-                          className="cursor-pointer"
+                          className="cursor-pointer flex items-center gap-1"
                           data-aos="fade-left"
                           data-aos-delay={index * 100}
                           data-aos-duration="800"
                         >
                           {link.name}
-                          {hasSubmenu &&  <ChevronDown color="black" size={16} />}
+                          {(hasSubmenu || singleSubmenu) && (
+                            <ChevronDown color="black" size={16} />
+                          )}
                         </span>
                       )}
-
+                      {singleSubmenu && (
+                        <div
+                          className={`mega-menu ${menuOpen ? "active" : ""}`}
+                          onWheel={handleMegaScroll}
+                          onTouchMove={(e) => e.stopPropagation()}
+                          onScroll={(e) => e.stopPropagation()}
+                        >
+                          <div className="mega-menu-inner container">
+                            {link.projects?.map((project) => (
+                              <Link
+                                key={project.href}
+                                href={project.href}
+                                title={project.title}
+                                className="mega-menu-item"
+                              >
+                                {project.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       {hasSubmenu && (
                         <div className={`mega-menu ${menuOpen ? "active" : ""}`}
                           onWheel={handleMegaScroll}
@@ -267,7 +293,7 @@ export default function Header() {
         </div>
       </header> 
         {/* Marquee */}
-      <div className="container-fluid theme-bg">
+      <div className="container-fluid theme-bg d-none">
         <div className="row theme-bg">
           <div className="marquee-branch flex items-center bg-white justify-between">
             <div className="comingsoontitle pl-4 w-1/3">

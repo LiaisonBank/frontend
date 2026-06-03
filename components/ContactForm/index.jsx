@@ -115,16 +115,14 @@ const ContactForm = () => {
       message: formData.message?.trim(),
     };
 
-    const res = await fetch(
-      "https://backend.liaisonbank.com/send-email",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      }
-    );
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    const res = await fetch(`${API_URL}/send-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
     const data = await res.json();
 

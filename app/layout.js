@@ -13,6 +13,7 @@ import DisableZoom from "@/components/DisableZoom";
 import LenisScroll from "@/components/LenisScroller/LenisScroll";
 import AOSProvider from "@/components/AOSProvider";
 import ReduxProvider from "@/components/ReduxProvider";
+// import ChatBot from "@/components/ChatBot/page";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@flaticon/flaticon-uicons/css/all/all.css";
@@ -181,12 +182,13 @@ const organizationSchema = {
 // ======================================================
 
 export default function RootLayout({ children }) {
+    const handleChatFormSubmit = () => {};
   return (
     <html lang="en" suppressHydrationWarning>
       {/* ========================================= */}
       {/* GOOGLE TAG MANAGER */}
       {/* ========================================= */}
-
+      
       <GoogleTagManager gtmId="GTM-TT54PJMP" />
 
       {/* ========================================= */}
@@ -252,9 +254,10 @@ export default function RootLayout({ children }) {
             {/* ========================================= */}
 
             <Footer />
-
+            {/* <ChatBot /> */}
           </AOSProvider>
         </ReduxProvider>
+        {/* <script defer src="https://india.kenyt.ai/botapp/ChatbotUI/dist/js/bot-loader.js" type="text/javascript" data-bot="114528775"></script> */}
       </body>
     </html>
   );

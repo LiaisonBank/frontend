@@ -13,9 +13,11 @@ import ClientScroller from "@/components/ClientScroller"
 import useFancybox from '@/components/useFancybox';
 import TestimonialSlider  from '@/components/TestimonialSlider';
 import CertificateScroller from '@/components/CertificateScroller';
-import HeroSection  from "@/components/HeroSection/HeroSection";
 import FAQAccordion from "@/components/Faqs/FAQAccordion";
 import OurServices from "@/components/OurServices/page";
+import HeroSection  from "@/components/HeroSection/HeroSection";
+import HeroSlider from '@/components/HeroSection/HeroSlider';
+import OrbitServices from '@/components/HeroSection/OrbitServices';
 
 const Home = () => {
   useBodyClass('home');
@@ -29,6 +31,8 @@ const Home = () => {
       <div className="hero-section page-header">
         <div className="inner-header">
           <HeroSection />
+          {/* <HeroSlider /> */}
+          {/* <OrbitServices /> */}
         </div>
         {/* <Waves /> */}
         {/* <div className="smallObject">
@@ -127,7 +131,7 @@ const Home = () => {
       <section className="ourservices">
         <div className="container mx-auto py-5">
           <div className="section-title">
-            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Our Services</h3>
+            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Our Licensing</h3>
             <h5 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">We bring our services to multiple sectors and create customised solutions for diverse set of business needs.</h5>
           </div>
           <div className='col-12 mx-auto' data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">

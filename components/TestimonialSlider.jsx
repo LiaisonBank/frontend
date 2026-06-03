@@ -17,7 +17,7 @@ export default function TestimonialSlider() {
       if (window.innerWidth <= 1023) {
         setItemsPerView(1);
       } else {
-        setItemsPerView(1);
+        setItemsPerView(2);
       }
 
       setCurSlide(0);

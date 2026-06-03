@@ -42,15 +42,23 @@ export default function PNGPage() {
           {/* <PageTitleWaveLeft /> */}
         </div>
       </div>
+      <section className="py-5 bg-light"><div className="container"><div className="row justify-content-center text-center"><div className="col-lg-10">
+        <div className="section-title aos-init aos-animate" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+          <h2 className="fw-bold">PNG Audit & Certification Services for Commercial, Industrial & Residential Properties</h2></div>
+          <h5 className="lead mt-4 aos-init aos-animate" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
+            Ensure gas safety compliance, operational efficiency, and uninterrupted PNG system performance with professional PNG audit and certification services.</h5>
+            <div className="d-flex flex-wrap justify-content-center gap-3 mt-4 aos-init aos-animate" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+              <a className="themeht-btn primary-btn btn px-4 py-2" href="/contact">Ask Expert</a><a className="themeht-btn primary-btn btn px-4 py-2" href="/contact">Request Renewal</a></div></div></div></div></section>
       <section className="container py-5">
+
         <div className="row justify-content-center text-center">
           <div>
-            <p  data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
-<strong>PNG Audit and Certification</strong> is a vital service for businesses, commercial properties, residential complexes,
-and industrial units using <strong>Piped Natural Gas (PNG)</strong> systems. At <strong>Liaison Bank</strong>, we provide <strong>PNG audit services, 
-PNG inspection services, gas safety audit, and PNG certification solutions</strong> to help clients meet <strong>government gas compliance 
-standards</strong> and maintain safe operations. Our professional <strong>PNG audits and certifications</strong> help identify gas leaks, pressure issues, 
-installation risks, and compliance gaps while ensuring efficient gas system performance, legal compliance, and uninterrupted operations.
+            <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+              <strong>PNG Audit and Certification</strong> is a vital service for businesses, commercial properties, residential complexes,
+              and industrial units using <strong>Piped Natural Gas (PNG)</strong> systems. At <strong>Liaison Bank</strong>, we provide <strong>PNG audit services,
+                PNG inspection services, gas safety audit, and PNG certification solutions</strong> to help clients meet <strong>government gas compliance
+                  standards</strong> and maintain safe operations. Our professional <strong>PNG audits and certifications</strong> help identify gas leaks, pressure issues,
+              installation risks, and compliance gaps while ensuring efficient gas system performance, legal compliance, and uninterrupted operations.
             </p>
           </div>
           <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
@@ -83,14 +91,14 @@ installation risks, and compliance gaps while ensuring efficient gas system perf
             </table>
           </div>
 
-          <div  data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+          <div data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
             <p>
-              A timely <strong>PNG audit and certification</strong> process is essential for every property and business using <strong>Piped Natural Gas</strong> systems. 
-              With expert support from <strong>Liaison Bank</strong>, clients can simplify <strong>PNG inspections, gas safety audits, 
-              compliance certification, and PNG renewal</strong> requirements while ensuring safe, efficient, and regulation-compliant operations. 
-              Our reliable <strong>PNG audit and certification services</strong> help businesses reduce risks, maintain compliance, 
+              A timely <strong>PNG audit and certification</strong> process is essential for every property and business using <strong>Piped Natural Gas</strong> systems.
+              With expert support from <strong>Liaison Bank</strong>, clients can simplify <strong>PNG inspections, gas safety audits,
+                compliance certification, and PNG renewal</strong> requirements while ensuring safe, efficient, and regulation-compliant operations.
+              Our reliable <strong>PNG audit and certification services</strong> help businesses reduce risks, maintain compliance,
               and achieve long-term operational peace of mind.
-              </p>
+            </p>
           </div>
         </div>
       </section>

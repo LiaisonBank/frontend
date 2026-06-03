@@ -120,14 +120,14 @@ export default function HeroSection() {
                                     autoComplete="off"
                                 /> */}
                             </div>
-                            <div className="mic-action-div"><Image src="/mic.png" width={30} height={30} alt="Office Time" /></div>
+                            <div className="mic-action-div d-none"><Image src="/mic.png" width={30} height={30} alt="Office Time" /></div>
                         </div>
                     </div>
                     <div className="hero-cards" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
                         <ul className="hero-cards--items">
                            
                             <li className="hero-card" data-aos="flip-up" data-aos-duration="600" data-aos-delay="600">
-                                <a className="hero-card-link" href="/">
+                                <a className="hero-card-link" href="">
                                 <div className="hero-cards--img"> 
                                     {/* 🪪  */}
                                     🏅
@@ -137,7 +137,7 @@ export default function HeroSection() {
                                 </div></a>
                             </li>
                             <li className="hero-card" data-aos="flip-up" data-aos-duration="600" data-aos-delay="600">
-                                <a className="hero-card-link" href="/">
+                                <a className="hero-card-link" href="">
                                 <div className="hero-cards--img"> 
                                     {/* ⚖️   */}
                                     🤝</div>
@@ -220,7 +220,7 @@ export default function HeroSection() {
                     onChange={(e) => { setQuery(e.target.value); setActiveIndex(-1);}}
                     onKeyDown={handleKeyDown}
                     autoFocus />
-                    <div className="mic-action-div"><Image src="/mic.png" width={30} height={30} alt="Office Time" /></div>
+                    <div className="mic-action-div d-none"><Image src="/mic.png" width={30} height={30} alt="Office Time" /></div>
                 </form>
 
                {/* ✅ Suggestions */}

@@ -6,66 +6,25 @@ import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { importantLinks } from "../lib/data/menus.js";
 import logoScrolled from "@/assets/images/logo.png";
+import hiring from "@/assets/images/hiring.png";
 import Modal from "@/components/ModalDialog/Modal";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import EnquiryForm from "@/components/EnquiryForm/page.jsx";
+import HiringForm from "@/components/HiringForm/page.jsx";
 
 export default function Footer() {
   const pathname = usePathname();
-   const [isActive, setIsActive] = useState(false);
-    const closePopup = () => setIsActive(false);
-   const [open, setOpen] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const closePopup = () => setIsActive(false);
+  const [open, setOpen] = useState(false); // Enquiry
+  const [hiringOpen, setHiringOpen] = useState(false); // Hiring
 
   const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
-  // useEffect(() => {
-  //   let ticking = false;
-  //   const footer = document.querySelector("footer");
-
-  //   if (!footer) return;
-
-  //   const updateFooter = () => {
-  //     // ❌ Disable footer reveal below 1023px
-  //     if (window.innerWidth < 1024) {
-  //       footer.style.marginBottom = "0px";
-  //       ticking = false;
-  //       return;
-  //     }
-
-  //     const scrolled = window.scrollY;
-  //     footer.style.marginBottom = `-${Math.min(scrolled / 5, 600)}px`;
-  //     ticking = false;
-  //   };
-
-  //   const onScroll = () => {
-  //     if (!ticking) {
-  //       requestAnimationFrame(updateFooter);
-  //       ticking = true;
-  //     }
-  //   };
-
-  //   const onResize = () => {
-  //     if (window.innerWidth < 1024) {
-  //       footer.style.marginBottom = "0px";
-  //     }
-  //   };
-
-  //   // Initial check
-  //   onResize();
-
-  //   window.addEventListener("scroll", onScroll);
-  //   window.addEventListener("resize", onResize);
-
-  //   return () => {
-  //     window.removeEventListener("scroll", onScroll);
-  //     window.removeEventListener("resize", onResize);
-  //   };
-  // }, []);
-
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
   return (
     <>
       <footer className="text-white px-2 py-2 font-sans text-md">
@@ -160,24 +119,17 @@ export default function Footer() {
 
       {/* Utilities */}
       <ScrollToTopButton />
-
-     
-      
+  
       {/* Sticky CTA */}
       <div className="sticky-icon" key={pathname}>
         <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
           <a href="tel:+919769458515" target="_blank" className="callnow" >
-            <i className="fi fi-sr-phone-flip" ></i> Call Now
+            <i className="fi fi-sr-phone-flip" ></i> 97694 58515
           </a>
         </div>
        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="600">
-        <a 
-          href="https://wa.me/919324577378" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="whatsapp"
-        >
-          <i className="fi fi-brands-whatsapp"></i> WhatsApp
+        <a className="hiring open-form" onClick={() => setHiringOpen(true)}>
+          &nbsp;<Image src={hiring} alt="WhatsApp" width={30} height={30} />&nbsp;  &nbsp; We are Hiring
         </a>
        </div>
        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="800">
@@ -222,125 +174,17 @@ export default function Footer() {
         width="600px"
       >
         <EnquiryForm />
-        <form
-          action="forms/propertyenquirenow"
-          method="post"
-          className="email-form d-none"
-        >
-          <div className="row g-3">
+      </Modal>
 
-            {/* Name */}
-            <div className="col-12">
-              <input
-                type="text"
-                name="name"
-                className="form-control"
-                placeholder="Your Name"
-                required
-              />
-            </div>
-
-            {/* Email */}
-            <div className="col-12">
-              <input
-                type="email"
-                name="email"
-                className="form-control"
-                placeholder="Your Email"
-                required
-              />
-            </div>
-
-            {/* Phone */}
-            <div className="col-12">
-              <input
-                type="tel"
-                name="phone"
-                className="form-control"
-                placeholder="Your Phone"
-                maxLength="10"
-                required
-              />
-            </div>
-
-            {/* Required Services Type */}
-            <div className="col-12">
-              <label htmlFor="serviceType" className="mb-1 fw-semibold">
-                Required Services Type
-              </label>
-              <select
-                name="subject"
-                id="serviceType"
-                className="form-control"
-                required
-              >
-                <option value="">Select Service</option>
-                <option value="AMC">AMC</option>
-                <option value="Licensing">Licensing</option>
-                <option value="Liaisoning">Liaisoning</option>
-                <option value="Electrical">Electrical</option>
-                <option value="PNG (SITC)">PNG (SITC)</option>
-                <option value="Fire (SITC)">Fire (SITC)</option>
-              </select>
-            </div>
-
-            {/* Message */}
-            <div className="col-12">
-              <textarea
-                className="form-control"
-                name="message"
-                rows="4"
-                placeholder="Your Message"
-              ></textarea>
-            </div>
-
-            {/* Submit */}
-            <div className="col-12 text-center">
-              <button type="submit" className="btn btn-primary px-4">
-                Submit
-                <span
-                  className="loader ms-2"
-                  style={{
-                    display: "none",
-                    width: "16px",
-                    height: "16px",
-                    border: "2px solid #fff",
-                    borderTop: "2px solid transparent",
-                    borderRadius: "50%",
-                    displayInlineBlock: "inline-block",
-                    animation: "spin 1s linear infinite",
-                  }}
-                ></span>
-              </button>
-
-              <div className="error-message mt-2 text-danger"></div>
-              <div className="sent-message alert alert-success mt-3 d-none">
-                Your message has been sent. Thank you!
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <style jsx>{`
-          @keyframes spin {
-            0% {
-              transform: rotate(0deg);
-            }
-            100% {
-              transform: rotate(360deg);
-            }
-          }
-
-          .form-control {
-            border-radius: 10px;
-            padding: 12px;
-          }
-
-          .btn-primary {
-            border-radius: 10px;
-            padding: 10px 30px;
-          }
-        `}</style>
+      {/* Hiring Modal */}
+      <Modal
+        isOpen={hiringOpen}
+        onClose={() => setHiringOpen(false)}
+        title="We're Hiring"
+        width="600px"
+      >
+        {/* Replace with your Hiring Form component */}
+        <HiringForm />
       </Modal>
     </>
   );
