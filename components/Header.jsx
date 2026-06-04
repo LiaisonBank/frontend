@@ -34,7 +34,7 @@ export default function Header() {
               <Link href="/" onClick={() => setIsOpen(false)}>
                 <Image
                   src={logoScrolled}
-                  width={150}
+                  width={160}
                   title="Liaisonbank"
                   alt="Liaisonbank"
                   priority

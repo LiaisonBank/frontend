@@ -141,22 +141,24 @@ export default function TestimonialSlider() {
         })}
 
         {/* Arrow Buttons */}
+        <div className="testimonial-controls">
+          <button
+            className="slider-btn left"
+            onClick={prevSlide}
+            aria-label="Previous testimonial"
+          >
+            ←
+          </button>
 
-        <button
-          className="slider-btn left"
-          onClick={prevSlide}
-          aria-label="Previous testimonial"
-        >
-          ←
-        </button>
-
-        <button
-          className="slider-btn right"
-          onClick={nextSlide}
-          aria-label="Next testimonial"
-        >
-          →
-        </button>
+          <button
+            className="slider-btn right"
+            onClick={nextSlide}
+            aria-label="Next testimonial"
+          >
+            →
+          </button>
+        </div>
+       
 
         {/* Navigation Dots */}
 

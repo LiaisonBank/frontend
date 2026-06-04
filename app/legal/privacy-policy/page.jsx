@@ -5,8 +5,7 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 // import PageTitleWave from '@/components/PageTitleWave';
 // import PageTitleWaveLeft from '@/components/PageTitleWaveLeft';
 
-
-export default function PrivacyPolicyLiaisonPage() {
+export default function Page() {
   useBodyClass('privacy');
   return (
     <>
@@ -70,5 +69,3 @@ export default function PrivacyPolicyLiaisonPage() {
     </>
   );
 }
-
-// export default AboutUsLiaisonPage;

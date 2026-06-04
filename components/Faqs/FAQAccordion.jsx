@@ -38,14 +38,14 @@ export default function FAQSection() {
   const renderCard = (item, realIndex) => (
     <div
       key={realIndex}
-      className="bg-white rounded-2xl shadow-md border border-gray-200 mb-3 overflow-hidden"
+      className="faq-items bg-white mb-1 overflow-hidden"
       data-aos="fade-up"
       data-aos-delay={realIndex * 100}
       data-aos-duration="800"
     >
       <button
         onClick={() => toggleAccordion(realIndex)}
-        className="w-full text-left px-4 py-2 flex justify-between items-center font-semibold"
+        className="w-full text-left p-3 flex justify-between items-center"
       >
         <span>{item.question}</span>
 
@@ -54,7 +54,9 @@ export default function FAQSection() {
             activeIndex === realIndex ? "rotate-45" : ""
           }`}
         >
-          +
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-plus" viewBox="0 0 16 16">
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+          </svg>
         </span>
       </button>
 

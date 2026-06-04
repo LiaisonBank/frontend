@@ -6,7 +6,7 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 // import PageTitleWaveLeft from '@/components/PageTitleWaveLeft';
 
 
-export default function TermsandConditionLiaisonPage() {
+export default function Page() {
   useBodyClass('termscondition');
   return (
     <>
@@ -72,5 +72,3 @@ export default function TermsandConditionLiaisonPage() {
     </>
   );
 }
-
-// export default AboutUsLiaisonPage;

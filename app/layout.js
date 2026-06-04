@@ -19,6 +19,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "@flaticon/flaticon-uicons/css/all/all.css";
 import "@fontsource/josefin-sans";
 import "@/styles/globals.scss";
+import IntroLoader from "@/components/GlobalLoader/IntroLoader";
+
 
 // ======================================================
 // FONT CONFIGURATION
@@ -188,7 +190,6 @@ export default function RootLayout({ children }) {
       {/* ========================================= */}
       {/* GOOGLE TAG MANAGER */}
       {/* ========================================= */}
-      
       <GoogleTagManager gtmId="GTM-TT54PJMP" />
 
       {/* ========================================= */}
@@ -217,10 +218,10 @@ export default function RootLayout({ children }) {
         {/* ========================================= */}
         {/* PROVIDERS */}
         {/* ========================================= */}
-
+         <IntroLoader />
         <ReduxProvider>
           <AOSProvider>
-
+            
             {/* ========================================= */}
             {/* GLOBAL UTILITIES */}
             {/* ========================================= */}
@@ -255,6 +256,7 @@ export default function RootLayout({ children }) {
 
             <Footer />
             {/* <ChatBot /> */}
+            
           </AOSProvider>
         </ReduxProvider>
         {/* <script defer src="https://india.kenyt.ai/botapp/ChatbotUI/dist/js/bot-loader.js" type="text/javascript" data-bot="114528775"></script> */}

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Swal from "sweetalert2";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 export default function HiringForm() {
   const [loading, setLoading] = useState(false);
@@ -219,14 +221,30 @@ export default function HiringForm() {
         </div>
         <div>
           <label className="block mb-2">Mobile No. <span className="text-red-500">*</span></label>
-          <input
+          <PhoneInput
+            country={"in"}
+            onlyCountries={["in"]}
+            disableDropdown={true}
+            countryCodeEditable={false}
+            enableSearch={false}
+            value={form.phone_number}
+            onChange={(phone) =>
+              setForm({
+                ...form,
+                phone_number: phone,
+              })
+            }
+            inputClass="!w-full !pl-14"
+            containerClass="!w-full"
+          />
+          {/* <input
             type="tel"
             name="phone_number"
             value={form.phone_number}
             onChange={handleChange}
             placeholder="Mobile No. (required)"
             className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
-          />
+          /> */}
         </div>
         <div>
           <label className="block mb-2">Message</label>

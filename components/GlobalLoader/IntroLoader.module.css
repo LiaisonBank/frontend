@@ -1,0 +1,46 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: white;
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* This is the animated group (logo + text together) */
+.wrapper {
+  display: flex;
+  align-items: center;
+  will-change: transform;
+  gap:10px;
+  width: 159px;
+  height: 59px;
+}
+
+/* Logo styling */
+.logo {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+.name {
+  width: 150px;
+  height: 60px;
+  object-fit: contain;
+}
+/* Company name */
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #111;
+  white-space: nowrap;
+}
+
+/* Optional: header final positioning safety */
+@media (max-width: 768px) {
+  .title {
+    font-size: 20px;
+  }
+}

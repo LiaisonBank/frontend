@@ -2740,7 +2740,11 @@ $color-dark: #000;
           bottom: 0;
           width: 90px;
           height: 3px;
-          background: $secodary-bg-color;
+          background: linear-gradient(
+            115deg,
+            var(--themeht-primary-color),
+            var(--themeht-secondary-color)
+          );
           border-radius: 4px;
           transform: translateX(-45%);
           overflow: hidden;
@@ -2755,7 +2759,7 @@ $color-dark: #000;
           width: 14px;
           height: 14px;
           background: #ffffff;
-          border: 3px solid $secodary-bg-color;
+          border: 3px solid $primary-color1;
           border-radius: 50%;
           transform: translateX(-45px); // half of underline width
           animation: dot-flow 3s linear infinite alternate;
@@ -3264,8 +3268,29 @@ $color-dark: #000;
       .testimonial-section {
         padding: 80px 0;
         overflow: hidden;
+     
       }
-
+      .testimonial-controls{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 15%;
+        display: grid;
+        grid-template-columns: auto auto;
+        gap:10px;
+        .slider-btn{
+          top: 0;
+          position: relative;
+          display: inline-block;
+          padding: 0.5rem;
+          @media (max-width:1024px) {
+            display:none;
+          }
+        }
+        @media (max-width:1024px) {
+          display:none;
+        }
+      }
       .testimonial-card {
         background: #fff;
         border-radius: 14px;
@@ -3336,7 +3361,7 @@ $color-dark: #000;
 
       /* Buttons */
       .btn {
-        position: absolute;
+        position: relative;
         top: 50%;
         background: rgba(255, 255, 255, 0.8);
         border: none;
@@ -3511,6 +3536,9 @@ $color-dark: #000;
           z-index: 2;
         }
       }
+    }
+    .faq-items{
+      border-bottom:lightgray solid 1px;
     }
   }
 }
