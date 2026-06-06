@@ -7,6 +7,8 @@ import Image from "next/image";
 import serviceIcons from "@/public/complaince.png"
 import ScrollUpList from "@/components/ScrollUpList";
 import { searchPhrases, suggestions } from "@/lib/data/menus";
+import banner from "../../assets/images/banner1.webp";
+// import banner from "@/public/images/banner1.webp";
 // import HeroSlider from '@/components/HeroSection/HeroSlider';
 
 export default function HeroSection() {
@@ -78,6 +80,13 @@ export default function HeroSection() {
 
     return (
         <section className="hero-section">
+             {/* <Image
+                src={banner}
+                alt="Hero Background"
+                layout="fill"
+                objectFit="cover"
+                priority
+            /> */}
             <div className="hero-grid container px-2">
                 {/* LEFT CONTENT */}
                 <div className="hero-content pt-4">

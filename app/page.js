@@ -6,7 +6,7 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 // import Waves from "@/components/waves";
 
 // import smallLogo from "@/assets/images/shape-small-1-1.png"
-import welcomeImg from "@/assets/images/group.jpg"
+import welcomeImg from "@/assets/images/mahadev_Rupali_Arvind.webp"
 import devaImg from "@/assets/images/devaBirader.webp"
 import ServicesSection from "@/components/ServicesSection";
 import ClientScroller from "@/components/ClientScroller"
@@ -71,7 +71,7 @@ const Home = () => {
             </div>
             <div className=" p-4">
               <div className='section-title'>
-                <h6 data-aos="fade-left" data-aos-duration="600" data-aos-delay="100">Welcome to, Liaison Bank  </h6>
+                {/* <h6 data-aos="fade-left" data-aos-duration="600" data-aos-delay="100">Welcome to, Liaison Bank  </h6> */}
                 <h3 data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">Your Partner in
                   <span className='theme-color'>Licensing</span> and
                   <span className='theme-color'>Liaisoning</span>
@@ -129,9 +129,9 @@ const Home = () => {
         </div>
       </section>
       <section className="ourservices">
-        <div className="container mx-auto py-5">
+        <div className="container mx-auto py-5 service-list">
           <div className="section-title">
-            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Our Licensing</h3>
+            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Licensing and Liaisoning</h3>
             <h5 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">We bring our services to multiple sectors and create customised solutions for diverse set of business needs.</h5>
           </div>
           <div className='col-12 mx-auto' data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
