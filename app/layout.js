@@ -8,12 +8,13 @@ import Script from "next/script";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Cursor from "@/components/Cursor";
+// import Cursor from "@/components/Cursor";
 import DisableZoom from "@/components/DisableZoom";
-import LenisScroll from "@/components/LenisScroller/LenisScroll";
+
 import AOSProvider from "@/components/AOSProvider";
 import ReduxProvider from "@/components/ReduxProvider";
 // import ChatBot from "@/components/ChatBot/page";
+import LenisProvider from "@/components/LenisProvider";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@flaticon/flaticon-uicons/css/all/all.css";
@@ -218,8 +219,9 @@ export default function RootLayout({ children }) {
         {/* ========================================= */}
         {/* PROVIDERS */}
         {/* ========================================= */}
-         <IntroLoader />
+        <LenisProvider />
         <ReduxProvider>
+         <IntroLoader />
           <AOSProvider>
             
             {/* ========================================= */}
@@ -227,8 +229,7 @@ export default function RootLayout({ children }) {
             {/* ========================================= */}
 
             <DisableZoom />
-            <LenisScroll />
-            <Cursor />
+            {/* <Cursor /> */}
 
             {/* ========================================= */}
             {/* SITE HEADER */}

@@ -16,6 +16,7 @@ import CertificateScroller from '@/components/CertificateScroller';
 import FAQAccordion from "@/components/Faqs/FAQAccordion";
 import OurServices from "@/components/OurServices/page";
 import HeroSection  from "@/components/HeroSection/HeroSection";
+import HeroMarquee from "@/components/HeroMarquee/HeroMarquee";
 import HeroSlider from '@/components/HeroSection/HeroSlider';
 import OrbitServices from '@/components/HeroSection/OrbitServices';
 
@@ -30,7 +31,8 @@ const Home = () => {
     <>
       <div className="hero-section page-header">
         <div className="inner-header">
-          <HeroSection />
+          <HeroMarquee />
+          {/* <HeroSection /> */}
           {/* <HeroSlider /> */}
           {/* <OrbitServices /> */}
         </div>
