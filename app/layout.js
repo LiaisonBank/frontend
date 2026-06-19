@@ -247,7 +247,7 @@ export default function RootLayout({ children }) {
             {/* MAIN CONTENT */}
             {/* ========================================= */}
 
-            <main className="flex-grow">
+            <main className="flex-grow"  style={{ minHeight: "calc(100vh - 350px)" }}>
               {children}
             </main>
 

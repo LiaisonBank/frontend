@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import Image from "next/image";
-
 import styles from "./HeroSlider.module.scss";
 import slides from "./slides";
 

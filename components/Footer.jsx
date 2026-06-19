@@ -99,8 +99,8 @@ export default function Footer() {
               sizes="100vw"
               style={{ width: '25px', height: '25px' }} 
             />&nbsp;
-              <a href="mailto:ceo.desk@liaisonbank.com" target="_blank">
-                ceo.desk@liaisonbank.com
+              <a href="mailto:info@liaisonbank.com" target="_blank">
+                info@liaisonbank.com
               </a>
             </div>
 

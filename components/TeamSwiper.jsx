@@ -30,10 +30,10 @@ function TeamCard({ member }) {
 
         {/* Content */}
         <div className="relative mt-4 pb-4">
-          <h5 className="text-lg font-semibold text-gray-900">
+          <h5 className="text-lg font-semibold text-gray-900 member-name">
             {member.name}
           </h5>
-          <p className="text-sm text-center text-gray-500">
+          <p className="text-sm text-center text-gray-500 member-designation">
             {member.designation}
           </p>
         </div>

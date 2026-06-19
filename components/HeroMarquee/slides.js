@@ -1,4 +1,9 @@
 const slides = [
+  // {
+  //   title: "",
+  //   image: "/images/home/allservices.pdf",
+  //   category: "Branding",
+  // },
   {
     title: "Electrical Execution, Compliance & Maintenance Services",
     image: "/images/home/ElectricalCompliance.webp",

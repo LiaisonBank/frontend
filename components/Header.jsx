@@ -9,6 +9,8 @@ import { navLinks } from '@/lib/data/menus';
 import pdfIcon from "@/public/pdf_icon.png";
 import { ChevronDown } from 'react-bootstrap-icons';
 import NewLauncb from "@/components/NewLaunch";
+import NavText from "@/components/NavReusable/NavText";
+
 
 
 export default function Header() {
@@ -58,24 +60,29 @@ export default function Header() {
                       // onMouseLeave={() => hasSubmenu && setMenuOpen(false)}
                     >
                       {link.href ? (
-                        <Link
+                       <Link
                           href={link.href}
+                          className="nav-link"
                           data-aos="fade-left"
                           data-aos-delay={index * 100}
                           data-aos-duration="800"
                         >
-                          {link.name}
+                          <NavText text={link.name} />
                         </Link>
                       ) : (
                         <span
-                          className="cursor-pointer flex items-center gap-1"
+                          className="nav-link cursor-pointer flex items-center gap-1"
                           data-aos="fade-left"
                           data-aos-delay={index * 100}
                           data-aos-duration="800"
                         >
-                          {link.name}
+                          <NavText text={link.name} />
+
                           {(hasSubmenu || singleSubmenu) && (
-                            <ChevronDown color="black" size={16} />
+                            <ChevronDown
+                              size={16}
+                              className="nav-arrow"
+                            />
                           )}
                         </span>
                       )}

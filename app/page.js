@@ -12,7 +12,9 @@ import ServicesSection from "@/components/ServicesSection";
 import ClientScroller from "@/components/ClientScroller"
 import useFancybox from '@/components/useFancybox';
 import TestimonialSlider  from '@/components/TestimonialSlider';
-import CertificateScroller from '@/components/CertificateScroller';
+// import CertificateScroller from '@/components/CertificateScroller';
+
+import CertificateGallery from "@/components/awards/page";
 import FAQAccordion from "@/components/Faqs/FAQAccordion";
 import OurServices from "@/components/OurServices/page";
 import HeroSection  from "@/components/HeroSection/HeroSection";
@@ -48,6 +50,35 @@ const Home = () => {
           />
         </div> */}
       </div>
+      <section className="pt-2 bg-aliceblue ceo-message">
+        <div className="container mx-auto pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className='aling-items-center mx-auto 'data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
+                  <Image
+                      // src="/teams/Mahadev.webp"
+                      src={devaImg}
+                      width={300}
+                      height={80}
+                      className='img-fluid'
+                      alt=""
+                      priority
+                    />
+                </div>
+              <div className='p-4'>
+                <div className='quote'  data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">
+                  <p>
+                    It&apos;s not about waiting for things to fall into place, it&lsquo;s about what you make of yourself.
+                  </p>
+                </div>
+                <div className='col-auto ceo-name'  data-aos="fade-right" data-aos-duration="600" data-aos-delay="300">
+                  <h1 className="author-title" aria-label="Deva Biradar">Deva Biradar</h1>
+                  <p className="author-desc">Chief Executive Officer</p>
+                </div>
+
+              </div>
+          </div>
+        </div>
+      </section>
 
       <section className="welcome" >
         <div className="container mx-auto py-5 bg-white">
@@ -65,16 +96,19 @@ const Home = () => {
             <div className="p-4 d-flex justify-content-end letbanner" data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
               <Image
                 src={welcomeImg}
-                width={500}
-                height={550}
-                alt=""
+                alt="Welcome to Liaison Bank Digital Banking Platform"
+                width={400}
+                height={450}
                 priority
+                placeholder="blur"
+                className="w-full h-auto object-cover"
+                sizes="(max-width: 768px) 100vw, 500px"
               />
             </div>
             <div className=" p-4">
               <div className='section-title'>
                 {/* <h6 data-aos="fade-left" data-aos-duration="600" data-aos-delay="100">Welcome to, Liaison Bank  </h6> */}
-                <h3 data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">Your Partner in
+                <h3 data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">Your Partner in Bank
                   <span className='theme-color'>Licensing</span> and
                   <span className='theme-color'>Liaisoning</span>
                 </h3>
@@ -87,26 +121,8 @@ const Home = () => {
                 {/* <p>We take care of the intricacies and uncertainties, allowing you to redirect your energy towards your core priorities and business objectives. This ensures a smoother and more efficient experience, providing you with the peace of mind to concentrate on what matters most to your success.</p>
                 <p>Our commitment is to deliver a seamless and reliable experience that brings clarity, confidence, and peace of mind. With our expertise supporting your operations, you can move forward with assurance—concentrating on strategic growth and achieving your business objectives while we handle the rest.</p> */}
                 <hr />
-                <h5 className='ceo-slogan'  data-aos="fade-left" data-aos-duration="600" data-aos-delay="500">&quot;It&apos;s not about waiting for things to fall into place, it&apos;s about what you make of yourself.&quot;</h5>
               </div>
               <div className='d-flex flex-wrap justify-content-between align-items-center'>
-                <div className='author-meta d-flex flex-wrap align-items-center'>
-                  <div className='col-auto author-img' data-aos="zoom-in" data-aos-duration="600" data-aos-delay="600">
-                    <Image
-                      // src="/teams/Mahadev.webp"
-                      src={devaImg}
-                      width={80}
-                      height={80}
-                      className='img-fluid'
-                      alt=""
-                      priority
-                    />
-                  </div>
-                  <div className='col-auto'>
-                    <h4 className="author-title" data-aos="fade-left" data-aos-duration="600" data-aos-delay="700">Deva Biradar</h4>
-                    <span className="author-desc" data-aos="fade-left" data-aos-duration="600" data-aos-delay="800">Chief Executive Officer</span>
-                  </div>
-                </div>
                 <div data-aos="zoom-in" data-aos-duration="600" data-aos-delay="900">
                   <Link href="/" className="themeht-btn primary-btn d-flex align-items-center mr-2 mt-4 d-none">
                     CEO&apos;s DESK&nbsp;
@@ -139,13 +155,6 @@ const Home = () => {
           <div className='col-12 mx-auto' data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
             <OurServices/>
           </div>
-          <div className='col-3 mx-auto d-none' data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
-            <Link href="/" data-aos="flip-in" data-aos-duration="600" data-aos-delay="100" className="themeht-btn primary-btn d-flex justify-content-center align-item-center mr-2">View Details &nbsp;
-              <svg xmlns="http://www.w3.org" width="22" height="22" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
-                <path fillRule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
-              </svg>&nbsp;
-            </Link>
-          </div>
         </div>
       </section>
       
@@ -171,7 +180,8 @@ const Home = () => {
 
           <div ref={fancyboxRef} className="row  py-5 d-flex align-items-center">
             {/* <div className="col-lg-2 col-md-2 col-sm-6 col-6"> */}
-            <CertificateScroller />
+            <CertificateGallery />
+            {/* <CertificateScroller /> */}
             {/* </div> */}
           </div>
         </div>
