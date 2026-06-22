@@ -170,7 +170,7 @@ const ContactForm = () => {
           className={errors.name ? "error" : ""}
         />
         <span className={formData.name ? "label-up" : ""}>
-          Your name
+          Your Name
         </span>
       </div>
 
@@ -179,13 +179,13 @@ const ContactForm = () => {
         <input
           type="email"
           name="email"
-          placeholder="Your e-mail"
+          placeholder="Your E-mail"
           value={formData.email}
           onChange={handleChange}
           className={errors.email ? "error" : ""}
         />
         <span className={formData.email ? "label-up" : ""}>
-          Your e-mail
+          Your E-mail
         </span>
       </div>
 
@@ -208,13 +208,13 @@ const ContactForm = () => {
       <div className="form-group">
         <textarea
           name="message"
-          placeholder="Your message"
+          placeholder="Your Message"
           value={formData.message}
           onChange={handleChange}
           className={errors.message ? "error" : ""}
         />
         <span className={formData.message ? "label-up" : ""}>
-          Your message
+          Your Message
         </span>
       </div>
 

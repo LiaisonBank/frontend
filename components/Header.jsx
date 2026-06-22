@@ -4,7 +4,9 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import logoScrolled from "@/assets/images/logo_grey.png"
+// import logoScrolled from "@/assets/images/logo_grey.png"
+import logo from "@/assets/images/company/logo.png";
+import name from "@/assets/images/company/name.png";
 import { navLinks } from '@/lib/data/menus';
 import pdfIcon from "@/public/pdf_icon.png";
 import { ChevronDown } from 'react-bootstrap-icons';
@@ -33,12 +35,28 @@ export default function Header() {
 
             {/* LOGO: Left to Right Animation */}
             <div data-aos="fade-right" data-aos-duration="1000" data-aos-anchor="html">
-              <Link href="/" onClick={() => setIsOpen(false)}>
-                <Image
+              <Link href="/" onClick={() => setIsOpen(false)} className='d-flex align-items-center '>
+                {/* <Image
                   src={logoScrolled}
                   width={160}
                   title="Liaisonbank"
                   alt="Liaisonbank"
+                  priority
+                /> */}
+                 <Image
+                  src={logo}
+                  width={68}
+                  title="Liaisonbank"
+                  alt="Liaisonbank"
+                  className='lg-1 mr-2'
+                  priority
+                />
+                 <Image
+                  src={name}
+                  width={101}
+                  title="Liaisonbank"
+                  alt="Liaisonbank"
+                  className='lg-2'
                   priority
                 />
               </Link>

@@ -1,17 +1,29 @@
-import {
-  MessageCircle,
-} from "lucide-react";
+import { MessageCircle, User,Bot } from "lucide-react";
 
-const chatMessage = ({ chat }) => {
+const ChatMessage = ({ chat }) => {
+  const isBot = chat.role === "model";
 
-    return (   
-        <div className={`message-${chat.role === 'model' ? 'bot' : 'user'}-message`}>
-            {chat.role === 'model' &&  <div className="botIcon"> <MessageCircle size={22} /> </div> }
-            <div className="messageText">
-                {chat.text}
+  return (
+    <>
+        <div
+        className={`chat-message ${isBot ? "bot-message" : "user-message"}`}
+        >
+        {!isBot && (
+            <div className="userIcon">
+            <User size={22} color="black" />
             </div>
+        )}
+
+        <div className="messageText">{chat.text}</div>
+
+        {isBot && (
+            <div className="botIcon">
+            <Bot size={22} color="black" />
+            </div>
+        )}
         </div>
-    )
+    </>
+  );
 };
 
-export default chatMessage;
+export default ChatMessage;

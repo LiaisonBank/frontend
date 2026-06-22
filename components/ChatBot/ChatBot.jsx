@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import ChatIcon from "./ChatIcon"
+import WhatsAppIcon from "./WhatsAppIcon"
 import {
   ChevronDown,
   X,
+  Bot,
   MessageCircle,
 } from "lucide-react";
 
@@ -26,7 +29,10 @@ export default function ChatBot() {
         {open ? (
           <X size={28} />
         ) : (
-          <MessageCircle size={28} />
+          // <MessageCircle size={28} />
+          // <ChatIcon size={40} color="#ffffff" />
+          <WhatsAppIcon size={40} color="#ffffff" />
+          
         )}
       </button>
 
@@ -40,7 +46,7 @@ export default function ChatBot() {
         <div className="chatHeader">
           <div className="headerLeft">
             <div className="botIcon">
-              <MessageCircle size={22} />
+              <Bot size={42} color="white" />
             </div>
 
             <h2>Chatbot</h2>

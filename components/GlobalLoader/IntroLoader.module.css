@@ -14,8 +14,8 @@
   align-items: center;
   will-change: transform;
   gap:10px;
-  width: 159px;
-  height: 59px;
+  width: 170px;
+  height: 60px;
 }
 
 /* Logo styling */
@@ -23,11 +23,15 @@
   width: 100px;
   height: 100px;
   object-fit: contain;
+  margin-top: .4rem;
+  margin-left: 0.2rem;
 }
 .name {
   width: 150px;
   height: 60px;
   object-fit: contain;
+  margin-top: 0.79rem;
+  margin-left: -0.4rem;
 }
 /* Company name */
 .title {

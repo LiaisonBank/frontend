@@ -1341,6 +1341,14 @@ header {
       }
     }
   }
+  .lg-1{ 
+    margin:0;
+    padding:0;
+  }
+  .lg-2{
+    margin-left: 0.2rem;
+    margin-top: 0.3rem;
+  }
  .nav-link {
   display: inline-flex;
   align-items: center;
@@ -2494,8 +2502,9 @@ section.ceo-message{
     .author-desc{
       font-size:1.8rem;
       margin:0;
+      padding-left: 0.1rem;
       padding: 0;
-         color: var(--dark-black);  
+      color: var(--dark-black);  
     }
   }
 
@@ -3654,8 +3663,11 @@ section.ceo-message{
       .testimonial-controls{
         position: absolute;
         bottom: 0;
+        left: 0;
+        margin:0 auto;
         right: 0;
         width: 15%;
+        transform: translateY(3rem);
         display: grid;
         grid-template-columns: auto auto;
         gap:10px;
@@ -3700,16 +3712,16 @@ section.ceo-message{
       }
 
       .slider-btn {
-        color: rgb(255, 255, 255);
+        color: darkorange;
         cursor: pointer;
         z-index: 99;
-        background: rgb(33, 37, 41);
+        // background: rgb(33, 37, 41);
         border: none;
         padding: 20px;
         font-size: 1.5rem;
         position: absolute;
         top: 45%;
-        transform: translateY(-40%);
+        // transform: translateY(-40%);
         @media (max-width:1024px) {
           display:none;
         }
@@ -6328,7 +6340,7 @@ section.ceo-message{
     }
   }
   .contact-form {
- 
+    
 		#contact {
 			display: block;
 			.form-group {
@@ -6443,6 +6455,17 @@ section.ceo-message{
 			padding: 20px 30px;
 		}
 	}
+  .map-container{
+      overflow: hidden;
+    iframe {
+      transform: scale(1.08);
+      transform-origin: center;
+      body .place-details-compact-container{
+        transform: scale(0.9) !important;
+        transform-origin: center;
+      }
+    }
+  }
 }
 
 button[type=submit] {
@@ -6540,11 +6563,19 @@ footer {
   .time {
     margin-left: -0.3rem;
   }
+  .q-uick{
+    .tell{
+      position:relative;
+      a:first-of-type {
+        margin-left: 0.34rem;
+      }
+    }
+  }
 }
 .scroll-top {
   position: fixed;
-  bottom: 45px;
-  right: 65px;
+  bottom: 60px;
+  right: 90px;
   // z-index: 600;
   opacity: 0;
   visibility: hidden;
@@ -6555,9 +6586,10 @@ footer {
     visibility: visible;
     transform: translate3d(0, 0, 0);
     padding: 1rem;
-    background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
-    color: white;
-    font-size: 2rem;
+    // background:black;
+    // background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+    color: darkorange; 
+    font-size: 5rem;
     border-radius: 10%;
     img {
       border-radius: 10px;
@@ -6808,7 +6840,7 @@ $whstapp-color: #25D366;
 .chatToggle {
   position: fixed;
   bottom: 25px;
-  right: 5.5rem;
+  right: 1rem;
   width: 55px;
   height: 55px;
   border-radius: 50%;
@@ -6822,10 +6854,9 @@ $whstapp-color: #25D366;
   z-index: 9999;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
   transition: 0.3s ease;
-
-  &:hover {
-    transform: scale(1.05);
-  }
+  // &:hover {
+  //   transform: scale(1.05);
+  // }
 
   @media (max-width: 768px) {
     bottom: 20px;
@@ -7051,6 +7082,54 @@ $whstapp-color: #25D366;
   cursor: pointer;
 
   flex-shrink: 0;
+}
+
+.chat-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  .messageText {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 16px;
+  }
+
+  .botIcon,
+  .userIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &.bot-message {
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+    .messageText {
+      background: #f3f4f6;
+      color: #333;
+    }
+  }
+
+  &.user-message {
+    justify-content: flex-end;
+
+    .messageText {
+      order: 1;
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .userIcon {
+      order: 2;
+    }
+  }
 }
 /* Show screens smaller than 1024px */
 @media only screen and (max-width: 1024px) {

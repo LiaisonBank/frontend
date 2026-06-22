@@ -13,7 +13,7 @@ import DisableZoom from "@/components/DisableZoom";
 
 import AOSProvider from "@/components/AOSProvider";
 import ReduxProvider from "@/components/ReduxProvider";
-// import ChatBot from "@/components/ChatBot/page";
+import ChatBot from "@/components/ChatBot/page";
 import LenisProvider from "@/components/LenisProvider";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -256,7 +256,7 @@ export default function RootLayout({ children }) {
             {/* ========================================= */}
 
             <Footer />
-            {/* <ChatBot /> */}
+            <ChatBot />
             
           </AOSProvider>
         </ReduxProvider>

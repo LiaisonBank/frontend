@@ -72,25 +72,25 @@ export default function Footer() {
           </div>
 
           {/* Contact Info */}
-          <div className="flex flex-col max-w-xs flex-1 min-w-[200px]">
+          <div className="flex flex-col max-w-xs flex-1 min-w-[200px] q-uick">
             <h4 className="text-yellow-400 font-semibold mb-4 text-base"  data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
               Quick Contacts
             </h4>
 
-            <p className="mb-3"  data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+            <p className="mb-3 address"  data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
               Plot 466, New Apollo CHSL,<br/>
               Beside Blue Tokai Coffee, 14th Road,<br/>
               Khar West, Mumbai-400052.
             </p>
 
-            <div className="mb-3 flex items-center gap-2"  data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+            <div className="mb-3 flex items-center gap-2 tell"  data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
               {/* <Image src="/phone.png" width={25} height={25} alt="Call" /> */}
               <Image src="/phone-call-white-icon.png" width={30} height={30} alt="Call" />
               <Link href="tel:+91 91364 43852" >  97694 58515</Link> / &nbsp; 
               <Link href="tel:+91 91364 43852" >  91371 28401</Link> 
             </div>
 
-            <div className="mb-3 flex items-center gap-2" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+            <div className="mb-3 flex items-center gap-2 email" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
               <Image 
               src="/Gmail_Logo_White_512px.png" 
               alt="Email" 
@@ -124,7 +124,7 @@ export default function Footer() {
       <div className="sticky-icon" key={pathname}>
         <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
           <a href="tel:+919769458515" target="_blank" className="callnow" >
-            <i className="fi fi-sr-phone-flip" ></i> 97694 58515
+            <i className="fi fi-sr-phone-flip" ></i>&nbsp;  &nbsp;  &nbsp;  97694 58515
           </a>
         </div>
        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="600">

@@ -62,6 +62,7 @@ export default function ContactusLiaisonbankPage() {
               </div>
 
               <div className="col-lg-6 col-md-6 col-sm-12 pt-4 map" data-aos="fade-right" data-aos-duration="600" data-aos-delay="500">
+                  <div><MapSection /></div>
                  <div>
                   <p><strong>Khar (HQ)</strong> <br/>
                   Plot 466, New Apollo CHSL,
@@ -81,7 +82,6 @@ export default function ContactusLiaisonbankPage() {
                   </p>
                  </div>
                  {/* <div className="pattern-bg"></div> */}
-                <div><MapSection /></div>
               </div>
               <div className="col-lg-6 col-md-6 col-sm-12 pt-4"  data-aos="fade-left" data-aos-duration="600" data-aos-delay="600">
                 <div className="block-title">
@@ -92,14 +92,14 @@ export default function ContactusLiaisonbankPage() {
                     <ContactForm />
                     <form id="contact" className="d-none"  onSubmit={handleSubmit} noValidate>
                       <div className="form-group">
-                        <label htmlFor="name" className="d-none">Your name</label>
-                        <input type="text" name="name" id="name" required="" placeholder="Your name" title="Your name" />
-                        <span className="label-up">Your name</span>
+                        <label htmlFor="name" className="d-none">Your Name</label>
+                        <input type="text" name="name" id="name" required="" placeholder="Your Name" title="Your Name" />
+                        <span className="label-up">Your Name</span>
                       </div>
                       <div className="form-group">
-                        <label htmlFor="email" className="d-none">Your e-mail</label>
-                        <input type="text" name="email" id="email" required="" placeholder="Your e-mail" title="Your e-mail" />
-                        <span className="label-up">Your e-mail</span>
+                        <label htmlFor="email" className="d-none">Your E-mail</label>
+                        <input type="text" name="email" id="email" required="" placeholder="Your E-mail" title="Your E-mail" />
+                        <span className="label-up">Your E-mail</span>
                       </div>
                       <div className="form-group">
                         <label htmlFor="subject" className="d-none">Subject</label>
@@ -107,9 +107,9 @@ export default function ContactusLiaisonbankPage() {
                         <span className="label-up">Subject</span>
                       </div>
                       <div className="form-group">
-                        <label htmlFor="message" className="d-none">Your message</label>
-                        <textarea name="message" id="message" required="" placeholder="Your message" title="Your message"></textarea>
-                        <span className="label-up">Your message</span>
+                        <label htmlFor="message" className="d-none">Your Message</label>
+                        <textarea name="message" id="message" required="" placeholder="Your Message" title="Your Message"></textarea>
+                        <span className="label-up">Your Message</span>
                       </div>
                       <div className="form-group">
                         <button id="submit" type="submit" name="submit">Submit</button>
