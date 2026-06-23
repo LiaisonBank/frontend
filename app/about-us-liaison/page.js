@@ -54,10 +54,10 @@ export default function AboutUsLiaisonPage() {
       <section className="container py-5">
         <div className="row justify-content-center text-center">
           <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
-            <h3>We help you navigate the complexities of licence acquisitions and <br/>
+            <h3>We help you navigate the complexities of licence acquisitions <br/> and 
             take away the burden of uncertainty and time constraints. </h3>
           </div>
-         <div className="content-text p-4">
+         <div className="content-text">
           <div className="row justify-content-center align-items-center">
             <div className="col-lg-6 col-sm-12">
               <h4 data-aos="fade-right" data-aos-duration="600" data-aos-delay="300">

@@ -1,163 +1,230 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import gsap from "gsap";
 import Image from "next/image";
 import styles from "./HeroSlider.module.scss";
 import slides from "./slides";
 
-const AUTOPLAY_TIME = 7000;
+const TYPING_SPEED = 80;
+const HOLD_AFTER_TYPING = 2000;
 
 export default function HeroSlider() {
   const trackRef = useRef(null);
-  const progressRef = useRef(null);
-  const autoplayRef = useRef(null);
   const contentRefs = useRef([]);
+  const autoplayRef = useRef(null);
+  const typingRef = useRef(null);
   const isAnimating = useRef(false);
 
   const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-
-  const [currentSlide, setCurrentSlide] = useState(0);
 
   const totalSlides = slides.length;
 
-  const animateContent = useCallback((index) => {
-    const content = contentRefs.current[index];
+  const [currentSlide, setCurrentSlide] =
+    useState(0);
 
-    if (!content) return;
+  const [typedTitles, setTypedTitles] =
+    useState(() =>
+      slides.map((slide) => slide.title)
+    );
 
-    gsap.killTweensOf(content);
-
-    gsap.set(content, {
-      opacity: 0,
-      x: -120,
-    });
-
-    gsap.to(content, {
-      opacity: 1,
-      x: 0,
-      duration: 1.2,
-      ease: "expo.out",
-    });
-  }, []);
-
-  const animateProgress = useCallback(() => {
-    if (!progressRef.current) return;
-
-    gsap.killTweensOf(progressRef.current);
-
-    gsap.set(progressRef.current, {
-      scaleX: 0,
-      transformOrigin: "left center",
-    });
-
-    gsap.to(progressRef.current, {
-      scaleX: 1,
-      duration: AUTOPLAY_TIME / 1000,
-      ease: "none",
-    });
-  }, []);
-
-  const goToSlide = useCallback(
-    (index) => {
-      if (!trackRef.current || isAnimating.current) return;
-
-      isAnimating.current = true;
-
-      gsap.to(trackRef.current, {
-        xPercent: -(index * 100),
-        duration: 1.5,
-        ease: "power3.inOut",
-        onComplete: () => {
-          isAnimating.current = false;
-        },
-      });
-
-      setCurrentSlide(index);
-      animateContent(index);
-      animateProgress();
-    },
-    [animateContent, animateProgress]
-  );
-
-  const nextSlide = useCallback(() => {
-    const next =
-      currentSlide >= totalSlides - 1
-        ? 0
-        : currentSlide + 1;
-
-    goToSlide(next);
-  }, [currentSlide, totalSlides, goToSlide]);
-
-  const prevSlide = useCallback(() => {
-    const prev =
-      currentSlide <= 0
-        ? totalSlides - 1
-        : currentSlide - 1;
-
-    goToSlide(prev);
-  }, [currentSlide, totalSlides, goToSlide]);
-
-  const stopAutoplay = useCallback(() => {
+  const stopTimers = useCallback(() => {
     if (autoplayRef.current) {
-      clearInterval(autoplayRef.current);
+      clearTimeout(autoplayRef.current);
       autoplayRef.current = null;
+    }
+
+    if (typingRef.current) {
+      clearTimeout(typingRef.current);
+      typingRef.current = null;
     }
   }, []);
 
-  const startAutoplay = useCallback(() => {
-    stopAutoplay();
+  const animateContent = useCallback(
+    (index) => {
+      const content =
+        contentRefs.current[index];
 
-    autoplayRef.current = setInterval(() => {
-      setCurrentSlide((prev) => {
-        const next =
-          prev >= totalSlides - 1 ? 0 : prev + 1;
+      if (!content) return;
 
-        goToSlide(next);
+      gsap.killTweensOf(content);
+
+      gsap.fromTo(
+        content,
+        {
+          opacity: 0,
+          x: -120,
+        },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 1,
+          ease: "expo.out",
+        }
+      );
+    },
+    []
+  );
+
+  const startTyping = useCallback(
+    (title, slideIndex) => {
+      stopTimers();
+
+      let charIndex = 0;
+
+      setTypedTitles((prev) => {
+        const next = [...prev];
+        next[slideIndex] = "";
         return next;
       });
-    }, AUTOPLAY_TIME);
-  }, [goToSlide, stopAutoplay, totalSlides]);
 
-  const handleTouchStart = (e) => {
-    stopAutoplay();
-    touchStartX.current = e.touches[0].clientX;
-  };
+      const type = () => {
+        charIndex++;
 
-  const handleTouchEnd = (e) => {
-    touchEndX.current = e.changedTouches[0].clientX;
+        setTypedTitles((prev) => {
+          const next = [...prev];
+          next[slideIndex] = title.slice(
+            0,
+            charIndex
+          );
+          return next;
+        });
 
-    const distance =
-      touchStartX.current - touchEndX.current;
+        if (charIndex < title.length) {
+          typingRef.current =
+            setTimeout(
+              type,
+              TYPING_SPEED
+            );
+        } else {
+          typingRef.current = null;
 
-    if (Math.abs(distance) > 50) {
+          autoplayRef.current =
+            setTimeout(() => {
+              setCurrentSlide(
+                (prev) =>
+                  prev >=
+                  totalSlides - 1
+                    ? 0
+                    : prev + 1
+              );
+            }, HOLD_AFTER_TYPING);
+        }
+      };
+
+      typingRef.current = setTimeout(
+        type,
+        TYPING_SPEED
+      );
+    },
+    [stopTimers, totalSlides]
+  );
+
+  const goToSlide = useCallback(
+    (index) => {
+      if (
+        index === currentSlide ||
+        isAnimating.current
+      ) {
+        return;
+      }
+
+      stopTimers();
+      setCurrentSlide(index);
+    },
+    [currentSlide, stopTimers]
+  );
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) =>
+      prev >= totalSlides - 1
+        ? 0
+        : prev + 1
+    );
+  }, [totalSlides]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) =>
+      prev <= 0
+        ? totalSlides - 1
+        : prev - 1
+    );
+  }, [totalSlides]);
+
+  useEffect(() => {
+    if (!trackRef.current) return;
+
+    isAnimating.current = true;
+
+    gsap.to(trackRef.current, {
+      xPercent: -(currentSlide * 100),
+      duration: 1.2,
+      ease: "power3.inOut",
+
+      onComplete: () => {
+        isAnimating.current = false;
+
+        animateContent(currentSlide);
+
+        startTyping(
+          slides[currentSlide].title,
+          currentSlide
+        );
+      },
+    });
+  }, [
+    currentSlide,
+    animateContent,
+    startTyping,
+  ]);
+
+  const handleTouchStart =
+    useCallback((e) => {
+      touchStartX.current =
+        e.touches[0].clientX;
+    }, []);
+
+  const handleTouchEnd = useCallback(
+    (e) => {
+      const touchEnd =
+        e.changedTouches[0].clientX;
+
+      const distance =
+        touchStartX.current -
+        touchEnd;
+
+      if (
+        Math.abs(distance) < 50 ||
+        isAnimating.current
+      ) {
+        return;
+      }
+
       if (distance > 0) {
         nextSlide();
       } else {
         prevSlide();
       }
-    }
-
-    startAutoplay();
-  };
+    },
+    [nextSlide, prevSlide]
+  );
 
   useEffect(() => {
-    animateContent(0);
-    animateProgress();
-    startAutoplay();
-
     const handleKeyDown = (e) => {
+      if (isAnimating.current)
+        return;
+
       if (e.key === "ArrowRight") {
-        stopAutoplay();
         nextSlide();
-        startAutoplay();
       }
 
       if (e.key === "ArrowLeft") {
-        stopAutoplay();
         prevSlide();
-        startAutoplay();
       }
     };
 
@@ -167,91 +234,153 @@ export default function HeroSlider() {
     );
 
     return () => {
-      stopAutoplay();
       window.removeEventListener(
         "keydown",
         handleKeyDown
       );
     };
-  }, []);
+  }, [nextSlide, prevSlide]);
+
+  useEffect(() => {
+    return () => {
+      stopTimers();
+
+      gsap.killTweensOf(
+        trackRef.current
+      );
+
+      contentRefs.current.forEach(
+        (el) => {
+          if (el) {
+            gsap.killTweensOf(el);
+          }
+        }
+      );
+    };
+  }, [stopTimers]);
 
   return (
     <section className={styles.hero}>
-      <div className={styles.progressBar}>
-        <span ref={progressRef} />
-      </div>
-
       <div
         className={styles.viewport}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
         <div
-          className={styles.track}
           ref={trackRef}
+          className={styles.track}
         >
-          {slides.map((slide, index) => (
-            <div
-              className={styles.slide}
-              key={index}
-            >
-              {slide.type === "video" ? (
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className={styles.media}
-                >
-                  <source
-                    src={slide.media}
-                    type="video/mp4"
+          {slides.map(
+            (slide, index) => (
+              <div
+                key={index}
+                className={
+                  styles.slide
+                }
+              >
+                {slide.type ===
+                "video" ? (
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className={
+                      styles.media
+                    }
+                  >
+                    <source
+                      src={
+                        slide.media
+                      }
+                      type="video/mp4"
+                    />
+                  </video>
+                ) : (
+                  <Image
+                    src={slide.image}
+                    alt={slide.title}
+                    fill
+                    priority={
+                      index === 0
+                    }
+                    sizes="100vw"
+                    className={
+                      styles.media
+                    }
                   />
-                </video>
-              ) : (
-                <Image
-                  src={slide.image}
-                  alt={slide.title}
-                  fill
-                  priority={index === 0}
-                  className={styles.media}
-                  sizes="100vw"
-                />
-              )}
+                )}
 
-              <div className={styles.overlay} />
-
-              <div className={styles.contentMask}>
                 <div
-                  className={styles.content}
-                  ref={(el) =>
-                    (contentRefs.current[index] = el)
+                  className={
+                    styles.overlay
+                  }
+                />
+
+                <div
+                  className={
+                    styles.contentMask
                   }
                 >
-                  <h2>{slide.title}</h2>
-                  <p>{slide.subtitle}</p>
+                  <div
+                    className={
+                      styles.content
+                    }
+                    ref={(el) => {
+                      contentRefs.current[
+                        index
+                      ] = el;
+                    }}
+                  >
+                    <h2>
+                      {
+                        typedTitles[
+                          index
+                        ]
+                      }
+
+                      {currentSlide ===
+                        index && (
+                        <span
+                          className={
+                            styles.cursor
+                          }
+                        >
+                          |
+                        </span>
+                      )}
+                    </h2>
+
+                    <p>
+                      {
+                        slide.subtitle
+                      }
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
       </div>
 
-      <div className={styles.pagination}>
+      <div
+        className={
+          styles.pagination
+        }
+      >
         {slides.map((_, index) => (
           <button
             key={index}
             type="button"
+            onClick={() =>
+              goToSlide(index)
+            }
             className={`${styles.dot} ${
               currentSlide === index
                 ? styles.activeDot
                 : ""
             }`}
-            onClick={() => {
-              stopAutoplay();
-              goToSlide(index);
-              startAutoplay();
-            }}
             aria-label={`Go to slide ${
               index + 1
             }`}

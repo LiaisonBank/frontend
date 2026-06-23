@@ -204,7 +204,7 @@ export default function HiringForm() {
               name="contact_person"
               value={form.contact_person}
               onChange={handleChange}
-              placeholder="Your Name (required)"
+              placeholder="Your Name"
               className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
             />
         </div>
@@ -215,7 +215,7 @@ export default function HiringForm() {
             name="email_id"
             value={form.email_id}
             onChange={handleChange}
-            placeholder="Email Id (required)"
+            placeholder="Email Id"
             className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
           />
         </div>
@@ -260,7 +260,7 @@ export default function HiringForm() {
       </div>
       <div className="border-2 border-dashed border-gray-300 p-4">
         <h4 className="text-[#46648a] text-xl mb-3">
-          Upload CV
+          Upload CV <span className="text-red-500">*</span>
         </h4>
 
         <input

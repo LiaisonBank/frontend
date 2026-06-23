@@ -1,46 +1,54 @@
 "use client";
 
-import { useState } from "react";
-import ChatIcon from "./ChatIcon"
+import { useState, useEffect } from "react";
 import WhatsAppIcon from "./WhatsAppIcon"
 import {
   ChevronDown,
   X,
   Bot,
-  MessageCircle,
 } from "lucide-react";
 
 import ChatForm from "./ChatForm";
 import ChatMessage from "./ChatMessage";
 
 export default function ChatBot() {
+  const [isMobile, setIsMobile] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
 
   // Default Closed
   const [open, setOpen] = useState(false);
 
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
       {/* FLOAT BUTTON */}
       <button
-        className="chatToggle"
+        className={isMobile ? "row" : "chatToggle"}
         onClick={() => setOpen(!open)}
       >
         {open ? (
           <X size={28} />
         ) : (
-          // <MessageCircle size={28} />
-          // <ChatIcon size={40} color="#ffffff" />
           <WhatsAppIcon size={40} color="#ffffff" />
-          
+
         )}
       </button>
 
       {/* CHAT CONTAINER */}
       <div
-        className={`chatContainer ${
-          !open ? "hide" : ""
-        }`}
+        className={`chatContainer ${!open ? "hide" : ""
+          }`}
       >
         {/* HEADER */}
         <div className="chatHeader">
@@ -49,7 +57,7 @@ export default function ChatBot() {
               <Bot size={42} color="white" />
             </div>
 
-            <h2>Chatbot</h2>
+            <h2>Let's Chat</h2>
           </div>
 
           <button

@@ -139,6 +139,22 @@ export default function TestimonialSlider() {
             </div>
           );
         })}
+       
+
+        {/* Navigation Dots */}
+
+        <div className="slider-dots">
+          {Array.from({ length: totalSlides }).map((_, i) => (
+            <button
+              key={i}
+              className={`dot ${curSlide === i ? "active" : ""}`}
+              onClick={() => setCurSlide(i)}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+          
 
         {/* Arrow Buttons */}
         <div className="testimonial-controls">
@@ -158,21 +174,6 @@ export default function TestimonialSlider() {
             →
           </button>
         </div>
-       
-
-        {/* Navigation Dots */}
-
-        <div className="slider-dots">
-          {Array.from({ length: totalSlides }).map((_, i) => (
-            <button
-              key={i}
-              className={`dot ${curSlide === i ? "active" : ""}`}
-              onClick={() => setCurSlide(i)}
-              aria-label={`Go to slide ${i + 1}`}
-            />
-          ))}
-        </div>
-      </div>
     </section>
   );
 }

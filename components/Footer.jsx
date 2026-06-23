@@ -11,6 +11,7 @@ import Modal from "@/components/ModalDialog/Modal";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import EnquiryForm from "@/components/EnquiryForm/page.jsx";
 import HiringForm from "@/components/HiringForm/page.jsx";
+import ChatBot from "./ChatBot/ChatBot.jsx";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -112,7 +113,7 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="max-w-7xl mx-auto border-t border-white-100 py-4 text-center text-md mb-5"  data-aos="zoom-in" data-aos-duration="800" data-aos-delay="600">
+        <div className="max-w-7xl mx-auto border-t border-white-100 pt-4 pb-5 text-center text-md mb-5"  data-aos="zoom-in" data-aos-duration="800" data-aos-delay="600">
           © 2026 Liaison Bank | All Rights Reserved
         </div>
       </footer>
@@ -124,7 +125,7 @@ export default function Footer() {
       <div className="sticky-icon" key={pathname}>
         <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
           <a href="tel:+919769458515" target="_blank" className="callnow" >
-            <i className="fi fi-sr-phone-flip" ></i>&nbsp;  &nbsp;  &nbsp;  97694 58515
+            <i className="fi fi-sr-phone-flip" ></i>  +91 97694 58515
           </a>
         </div>
        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="600">
@@ -152,10 +153,13 @@ export default function Footer() {
                 <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
               </a>
             </div>
-            <div className="col-4 whatsapp p-2">
-              <a href="https://wa.me/919324577378" target="_blank" rel="noopener noreferrer">
-                <i className="fi fi-brands-whatsapp"></i> WhatsApp
+            <div className="col-4 whatsapp p-2 d-flex align-items-center justify-content-center">
+              <a>
+                <ChatBot/> Whats App 
               </a>
+              {/* <a href="https://wa.me/919324577378" target="_blank" rel="noopener noreferrer">
+                <i className="fi fi-brands-whatsapp"></i> WhatsApp
+              </a> */}
             </div>
           </div>
         </div>

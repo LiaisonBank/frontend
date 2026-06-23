@@ -7,6 +7,7 @@ import Image from "next/image"
 // import logoScrolled from "@/assets/images/logo_grey.png"
 import logo from "@/assets/images/company/logo.png";
 import name from "@/assets/images/company/name.png";
+import whitename from "@/assets/images/company/whitename.png";
 import { navLinks } from '@/lib/data/menus';
 import pdfIcon from "@/public/pdf_icon.png";
 import { ChevronDown } from 'react-bootstrap-icons';
@@ -52,7 +53,7 @@ export default function Header() {
                   priority
                 />
                  <Image
-                  src={name}
+                  src={isOpen ? whitename : name}
                   width={101}
                   title="Liaisonbank"
                   alt="Liaisonbank"

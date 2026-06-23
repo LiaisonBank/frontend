@@ -74,7 +74,7 @@ export default function AwardP() {
           .slice(0, -4)
           .map((certificate, index) => (
             <div
-              className="col-12 col-sm-6 col-md-4 col-lg-3"
+              className="col-12 col-sm-6 col-md-6 col-lg-3"
               key={certificate.src}
               data-aos="fade-up"
               data-aos-delay={100 * (index + 1)}
@@ -111,7 +111,7 @@ export default function AwardP() {
             </div>
           ))}
         </div>
-        <div className="col-4 mx-auto text-center d-flex align-items-center justify-content-center" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="900">
+        <div className="col-8  mx-auto text-center d-flex align-items-center justify-content-center" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="900">
             <Link href="/awards" className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4">
             View More &nbsp;&nbsp;&nbsp;
             <svg

@@ -4,41 +4,43 @@
   min-height: 90vh;
   min-height: 90dvh;
   background: #000;}
-
 .viewport {
-  width: 100%;
-  height: 100%;
   overflow: hidden;
-  touch-action: pan-y;
 }
 
 .track {
   display: flex;
-  height: 100vh;
-  height: 100dvh;
-
+  width: 100%;
   will-change: transform;
-  transform: translate3d(0, 0, 0);
 }
 
 .slide {
   position: relative;
   flex: 0 0 100%;
-  overflow: hidden;
+  // overflow: hidden;
 }
 
 .media {
   object-fit: cover;
-  object-position: center;
+}
 
-  transform: scale(1.05);
 
-  will-change: transform;
 
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
+.media {
+  object-fit: cover;
+  height: 100dvh !important;
+  // transform: scale(1); // No zoom effect
+}
 
-  animation: heroZoom 10s linear infinite;
+.cursor {
+  display: inline-block;
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 @keyframes heroZoom {
@@ -162,7 +164,7 @@
   align-items: center;
   gap: 12px;
 
-  z-index: 30;
+  z-index: 0;
 }
 
 .dot {

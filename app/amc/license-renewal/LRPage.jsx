@@ -222,7 +222,7 @@ export default function LRPage() {
                   Ask Expert
                 </Link>
 
-                <Link href="/contact" className="themeht-btn primary-btn btn px-4 py-2">
+                <Link href="/contact-us-liaison-bank" className="themeht-btn primary-btn btn px-4 py-2">
                   Request Renewal
                 </Link>
               </div>

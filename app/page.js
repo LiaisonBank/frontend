@@ -52,19 +52,21 @@ const Home = () => {
       </div>
       <section className="pt-2 bg-aliceblue ceo-message">
         <div className="container mx-auto pt-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className='aling-items-center mx-auto 'data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className='aling-items-center mx-auto image' data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
                   <Image
-                      // src="/teams/Mahadev.webp"
-                      src={devaImg}
-                      width={300}
-                      height={80}
-                      className='img-fluid'
-                      alt=""
-                      priority
-                    />
-                </div>
-              <div className='p-4'>
+                    src={devaImg}
+                    width={375}
+                    height={375}
+                    alt="Deva Birader"
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                    }}
+                    priority
+                  />
+              </div>
+              <div className='p-4 mt-2 mesg'>
                 <div className='quote'  data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">
                   <p>
                     It&apos;s not about waiting for things to fall into place, it&lsquo;s about what you make of yourself.
@@ -80,7 +82,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="welcome" >
+      <section className="welcome">
         <div className="container mx-auto py-5 bg-white">
           {/* <div className="smallObject" data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
             <Image
@@ -92,12 +94,12 @@ const Home = () => {
               priority
             />
           </div> */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center">
             <div className="p-4 d-flex justify-content-end letbanner" data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
               <Image
                 src={welcomeImg}
                 alt="Welcome to Liaison Bank Digital Banking Platform"
-                width={400}
+                width={450}
                 height={450}
                 priority
                 placeholder="blur"

@@ -63,7 +63,7 @@ export default function ContactusLiaisonbankPage() {
 
               <div className="col-lg-6 col-md-6 col-sm-12 pt-4 map" data-aos="fade-right" data-aos-duration="600" data-aos-delay="500">
                   <div><MapSection /></div>
-                 <div>
+                 <div className="col-lg-6 col-md-6 col-sm-12 pt-4">
                   <p><strong>Khar (HQ)</strong> <br/>
                   Plot 466, New Apollo CHSL,
                   Beside Blue Tokai Coffee, <br/>14th Road,
@@ -77,7 +77,7 @@ export default function ContactusLiaisonbankPage() {
                     <Link href="tel:+65 9856 0609" >   (+65) 9856 0609 </Link>
                   </p>
                   <p className="pb-4"><strong>Email</strong> <br/> 
-                  <Link href="mailto:ceo.desk@liaisonbank.com" >ceo.desk@liaisonbank.com</Link> <br/>
+                  {/* <Link href="mailto:ceo.desk@liaisonbank.com" >ceo.desk@liaisonbank.com</Link> <br/> */}
                   <Link href="mailto:info@liaisonbank.com" >info@liaisonbank.com</Link>
                   </p>
                  </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
+import Select from 'react-select';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
@@ -28,7 +29,10 @@ export default function EnquiryForm() {
     "AMC",
     "Pest Control",
   ];
-
+  const serviceOptions = services.map((item) => ({
+    value: item,
+    label: item,
+  }));
   useEffect(() => {
     if (countryDropdownOpen) {
       document.body.style.overflow = "hidden";
@@ -185,12 +189,13 @@ export default function EnquiryForm() {
       <div className="grid md:grid-cols-2 gap-2">
         <div>
           <label className="block mb-2">
-            Company Name <span className="text-red-500">*</span>
+            Contact Person <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            name="company_name"
-            value={form.company_name}
+            name="contact_person"
+            value={form.contact_person}
+            placeholder="Your Name"
             onChange={handleChange}
             className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
           />
@@ -198,12 +203,13 @@ export default function EnquiryForm() {
 
         <div>
           <label className="block mb-2">
-            Contact Person <span className="text-red-500">*</span>
+            Company Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            name="contact_person"
-            value={form.contact_person}
+            name="company_name"
+            value={form.company_name}
+            placeholder="Your Company Name"
             onChange={handleChange}
             className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
           />
@@ -239,6 +245,7 @@ export default function EnquiryForm() {
           <input
             type="email"
             name="email_id"
+            placeholder="Your Email Id"
             value={form.email_id}
             onChange={handleChange}
             className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
@@ -249,8 +256,67 @@ export default function EnquiryForm() {
           <label className="block mb-2">
             Type of Services <span className="text-red-500">*</span>
           </label>
+          <Select
+            isMulti
+            name="type_of_services"
+            options={serviceOptions}
+            value={serviceOptions.filter((option) =>
+              form.type_of_services.includes(option.value)
+            )}
+            onChange={(selected) => {
+              setForm((prev) => ({
+                ...prev,
+                type_of_services: selected
+                  ? selected.map((item) => item.value)
+                  : [],
+              }));
+            }}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                borderColor: state.isFocused ? "#808080" : "#ced4da",
+                boxShadow: "none",
+                "&:hover": {
+                  borderColor: "#808080",
+                },
+              }),
 
-          <select
+              multiValue: (base) => ({
+                ...base,
+                backgroundColor: "#808080",
+              }),
+
+              multiValueLabel: (base) => ({
+                ...base,
+                color: "#ffffff",
+              }),
+
+              multiValueRemove: (base) => ({
+                ...base,
+                color: "#ffffff",
+                ":hover": {
+                  backgroundColor: "#666666",
+                  color: "#ffffff",
+                },
+              }),
+
+              option: (base, state) => ({
+                ...base,
+                backgroundColor:
+                  state.isFocused || state.isSelected
+                    ? "#808080"
+                    : "#ffffff",
+                color:
+                  state.isFocused || state.isSelected
+                    ? "#ffffff"
+                    : "#000000",
+                cursor: "pointer",
+              }),
+            }}
+          />
+          {/* <select
             name="type_of_services"
             value={form.type_of_services}
             onChange={handleChange}
@@ -263,7 +329,7 @@ export default function EnquiryForm() {
                 {item}
               </option>
             ))}
-          </select>
+          </select> */}
         </div>
       </div>
 
@@ -272,8 +338,8 @@ export default function EnquiryForm() {
           rows="3"
           name="enquiry_details"
           value={form.enquiry_details}
+           placeholder="Leave Us a Message"
           onChange={handleChange}
-          placeholder="Message..."
           className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
         />
       </div>
