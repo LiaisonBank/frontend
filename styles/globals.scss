@@ -6752,44 +6752,142 @@ div:where(.swal2-container){
      transition: all 0.3s ease;
   }
 }
+
 /* HAMBURGER */
-  .hamburger {
-    position: fixed;
-    cursor: pointer;
+.hamburger {
+  position: fixed;
+  cursor: pointer;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+  transition-duration: 500ms;
+  -webkit-transition-duration: 500ms;
+  transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
+  -webkit-transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
+  right: 100px;
+  z-index: 1;
+  top: 2rem;
+  display: none;
+  span {
+    display: block;
+    height: 2px;
+    width: 50px;
+    background: $primary-color;
+    // background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+    opacity: 1;
+    position: absolute;
+    left: 0;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
     -o-transform: rotate(0deg);
     transform: rotate(0deg);
-    transition-duration: 500ms;
-    -webkit-transition-duration: 500ms;
-    transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
-    -webkit-transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
-    right: 100px;
-    z-index: 1;
-    top: 2rem;
-    display: none;
-    span {
-      display: block;
-      height: 2px;
-      width: 50px;
-      background: $primary-color;
-      // background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
-      opacity: 1;
-      position: absolute;
-      left: 0;
-      -webkit-transform: rotate(0deg);
-      -moz-transform: rotate(0deg);
-      -o-transform: rotate(0deg);
-      transform: rotate(0deg);
-      -webkit-transition: 0.25s ease-in-out;
-      -moz-transition: 0.25s ease-in-out;
-      -o-transition: 0.25s ease-in-out;
-      transition: 0.25s ease-in-out;
-      &:nth-child(2) {
-        top: 9px;
-      }
+    -webkit-transition: 0.25s ease-in-out;
+    -moz-transition: 0.25s ease-in-out;
+    -o-transition: 0.25s ease-in-out;
+    transition: 0.25s ease-in-out;
+    &:nth-child(2) {
+      top: 9px;
     }
   }
+}
+#enquiryform {
+  position: relative;
+  padding: 1rem 0;
+  .form-group {
+    display: block;
+    position: relative;
+    margin-bottom: 35px;
+
+    span {
+      width: 100%;
+      line-height: 40px;
+      position: absolute;
+      top: 0;
+      left: 0.2rem;
+      padding: 0 10px;
+      z-index: 0;
+      text-align: left;
+      color: #777;
+      transition: 0.25s ease-in-out;
+    }
+
+    // ✅ Floating label (JS controlled)
+    span.label-up {
+      font-size: 13px;
+      line-height: 16px;
+      top: -20px;
+      font-weight: 500;
+      color: #000;
+    }
+
+    input,
+    textarea {
+      background: none;
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      border: 1px solid #eee;
+      padding: 0 10px;
+      outline: none;
+      transition: 0.25s ease;
+    }
+
+    input {
+      height: 40px;
+
+      &::placeholder {
+        color: transparent;
+      }
+    }
+
+    textarea {
+      height: 160px;
+      padding: 15px 20px;
+
+      &::placeholder {
+        color: transparent;
+      }
+    }
+
+    // ✅ Focus effect (auto float label)
+    input:focus + span,
+    textarea:focus + span {
+      font-size: 13px;
+      line-height: 16px;
+      top: -20px;
+      font-weight: 500;
+      color: #000;
+    }
+
+    // ✅ ERROR STATE (Red Border)
+    input.error,
+    textarea.error {
+      border: 2px solid red;
+    }
+
+    // Optional: label color change on error
+    input.error + span,
+    textarea.error + span {
+      color: red;
+    }
+
+    // Optional: focus + error
+    input.error:focus,
+    textarea.error:focus {
+      border-color: darkred;
+    }
+
+    // Optional inline error text (if used)
+    label.error {
+      color: red;
+      margin-top: 5px;
+      margin-bottom: 0;
+      font-weight: 600;
+      font-size: 13px;
+    }
+  }
+}
 
 
 @keyframes modalFade {

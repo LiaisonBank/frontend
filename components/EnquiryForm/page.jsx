@@ -7,6 +7,11 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 export default function EnquiryForm() {
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [phoneFocused, setPhoneFocused] = useState(false);
+
+  
   const [form, setForm] = useState({
     company_name: "",
     contact_person: "",
@@ -17,7 +22,6 @@ export default function EnquiryForm() {
   });
 
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const services = [
     "Fire Safety",
@@ -185,42 +189,49 @@ export default function EnquiryForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} id="enquiryform">
       <div className="grid md:grid-cols-2 gap-2">
-        <div>
-          <label className="block mb-2">
+        <div className="form-group">
+          {/* <label className="block mb-2">
             Contact Person <span className="text-red-500">*</span>
-          </label>
+          </label> */}
           <input
             type="text"
             name="contact_person"
             value={form.contact_person}
             placeholder="Your Name"
             onChange={handleChange}
-            className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
+            className={errors.contact_person ? "error" : ""}
+            // className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
           />
+          <span className={form.contact_person ? "label-up" : ""}>
+            Contact Person Name
+          </span>
         </div>
 
-        <div>
-          <label className="block mb-2">
+        <div className="form-group">
+          {/* <label className="block mb-2">
             Company Name <span className="text-red-500">*</span>
-          </label>
+          </label> */}
           <input
             type="text"
             name="company_name"
             value={form.company_name}
             placeholder="Your Company Name"
             onChange={handleChange}
-            className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
+            className={errors.company_name ? "error" : ""}
+            // className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
           />
+          <span className={form.company_name ? "label-up" : ""}>
+            Company Name
+          </span>
         </div>
 
-        <div>
-          <label className="block mb-2">
+        <div className="form-group">
+          {/* <label className="block mb-2">
             Phone Number <span className="text-red-500">*</span>
-          </label>
-
-          <PhoneInput
+          </label> */}
+          {/* <PhoneInput
             country={"in"}
             onlyCountries={["in"]}
             disableDropdown={true}
@@ -235,13 +246,36 @@ export default function EnquiryForm() {
             }
             inputClass="!w-full !pl-14"
             containerClass="!w-full"
-          />
+          /> */}
+          <PhoneInput
+              country="in"
+              value={form.phone_number}
+              onChange={(phone) =>
+                setForm({
+                  ...form,
+                  phone_number: phone,
+                })
+              }
+              inputProps={{
+                onFocus: () => setPhoneFocused(true),
+                onBlur: () => setPhoneFocused(false),
+              }}
+            />
+          <span
+            className={
+              phoneFocused || form.phone_number
+                ? "label-up"
+                : ""
+            }
+          >
+            Phone Number
+          </span>
         </div>
 
-        <div>
-          <label className="block mb-2">
+        <div className="form-group">
+          {/* <label className="block mb-2">
             Email ID <span className="text-red-500">*</span>
-          </label>
+          </label> */}
           <input
             type="email"
             name="email_id"
@@ -250,12 +284,15 @@ export default function EnquiryForm() {
             onChange={handleChange}
             className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
           />
+          <span className={form.email_id ? "label-up" : ""}>
+            Email ID 
+          </span>
         </div>
 
-        <div className="md:col-span-2">
-          <label className="block mb-2">
+        <div className="md:col-span-2 form-group">
+          {/* <label className="block mb-2">
             Type of Services <span className="text-red-500">*</span>
-          </label>
+          </label> */}
           <Select
             isMulti
             name="type_of_services"
@@ -316,6 +353,9 @@ export default function EnquiryForm() {
               }),
             }}
           />
+          <span className={form.type_of_services ? "label-up" : ""}>
+            Type of Services
+          </span>
           {/* <select
             name="type_of_services"
             value={form.type_of_services}
