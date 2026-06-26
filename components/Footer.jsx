@@ -88,8 +88,8 @@ export default function Footer() {
               {/* <Image src="/phone.png" width={25} height={25} alt="Call" /> */}
               <Image src="/phone-call-white-icon.png" width={30} height={30} alt="Call" />
               <Link href="tel:+91 91364 43852" >  97694 58515</Link> 
-              {/* / &nbsp; 
-              <Link href="tel:+91 91364 43852" >  91371 28401</Link>  */}
+              / &nbsp; 
+              <Link href="tel:+91 93245 77378" >  (+91) 93245 77378</Link>
             </div>
 
             <div className="mb-3 flex items-center gap-2 email" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">

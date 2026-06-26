@@ -73,7 +73,7 @@ export default function ContactusLiaisonbankPage() {
                   <p>
                     <strong>Phone</strong> <br/> 
                     <Link href="tel:+91 91364 43852">  (+91) 97694 58515</Link> / &nbsp; 
-                    <Link href="tel:+91 91364 43852" >  (+91) 91371 28401</Link> <br/>
+                    <Link href="tel:+91 93245 77378" >  (+91) 93245 77378</Link> <br/>
                     <strong>Singapore Phone</strong><br/>
                     <Link href="tel:+65 9856 0609" >   (+65) 9856 0609 </Link>
                   </p>
