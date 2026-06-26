@@ -6755,17 +6755,28 @@ div:where(.swal2-container){
       }
   }
 }
-
+.sticky-trigger {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 100vh;
+    z-index: 998;
+}
 .sticky-icon {
   position: fixed;
   font-family: var(--font-barlow);
   top: 50%; /* center relative to viewport */
-  right: 0%;
+  right: -60px;
   width: 220px;
   display: flex;
   flex-direction: column;
   transform: translateY(-50%);
+  transition: right .3s ease;
   z-index: 49;
+  &.show {
+    right: 0;
+  }
   a {
     transform: translate(160px, 0px);
     border-radius: 50px 0px 0px 50px;

@@ -15,6 +15,7 @@ import ChatBot from "./ChatBot/ChatBot.jsx";
 
 export default function Footer() {
   const pathname = usePathname();
+  const [showIcons, setShowIcons] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const closePopup = () => setIsActive(false);
   const [open, setOpen] = useState(false); // Enquiry
@@ -122,54 +123,61 @@ export default function Footer() {
       <ScrollToTopButton />
   
       {/* Sticky CTA */}
-      <div className="sticky-icon" key={pathname}>
-        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
-          <a href="tel:+919769458515" target="_blank" className="callnow" >
-            <i className="fi fi-sr-phone-flip" ></i>  +91 97694 58515
+      <>
+        <div
+            className="sticky-trigger"
+            onMouseEnter={() => setShowIcons(true)}
+          />
+        <div key={pathname} className={`sticky-icon ${showIcons ? "show" : ""}`}
+      onMouseEnter={() => setShowIcons(true)}
+      onMouseLeave={() => setShowIcons(false)}>
+          <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
+            <a href="tel:+919769458515" target="_blank" className="callnow" >
+              <i className="fi fi-sr-phone-flip" ></i>  +91 97694 58515
+            </a>
+          </div>
+        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="600">
+          <a className="hiring open-form" onClick={() => setHiringOpen(true)}>
+            &nbsp;<Image src={hiring} alt="WhatsApp" width={30} height={30} />&nbsp;  &nbsp; We are Hiring
           </a>
         </div>
-       <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="600">
-        <a className="hiring open-form" onClick={() => setHiringOpen(true)}>
-          &nbsp;<Image src={hiring} alt="WhatsApp" width={30} height={30} />&nbsp;  &nbsp; We are Hiring
-        </a>
-       </div>
-       <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="800">
-        <a className="enquire open-form" onClick={() => setOpen(true)}>
-          <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
-        </a>
-       </div>
-      </div>
-            {/* {Sticky CTA from 1024 to below} */}
-       <div className="sticky-icon-below-1024">
-        <div className="container-fluid mx-auto">
-          <div className="row">
-            <div className="col-4 callnow p-2">
-               <a href="tel:+919769458515" target="_blank">
-                <i className="fi fi-sr-phone-flip" ></i> Call Now
-              </a>
-            </div>
-            <div className="col-4 enquire open-form p-2">
-              <a onClick={() => setOpen(true)}>
-                <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
-              </a>
-            </div>
-            <div className="col-4 whatsapp p-2 d-flex align-items-center justify-content-center">
-              <a>
-                <ChatBot/> Whats App 
-              </a>
-              {/* <a href="https://wa.me/919324577378" target="_blank" rel="noopener noreferrer">
-                <i className="fi fi-brands-whatsapp"></i> WhatsApp
-              </a> */}
+        <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="800">
+          <a className="enquire open-form" onClick={() => setOpen(true)}>
+            <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
+          </a>
+        </div>
+        </div>
+              {/* {Sticky CTA from 1024 to below} */}
+        <div className="sticky-icon-below-1024">
+          <div className="container-fluid mx-auto">
+            <div className="row">
+              <div className="col-4 callnow p-2">
+                <a href="tel:+919769458515" target="_blank">
+                  <i className="fi fi-sr-phone-flip" ></i> Call Now
+                </a>
+              </div>
+              <div className="col-4 enquire open-form p-2">
+                <a onClick={() => setOpen(true)}>
+                  <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
+                </a>
+              </div>
+              <div className="col-4 whatsapp p-2 d-flex align-items-center justify-content-center">
+                <a>
+                  <ChatBot/> Whats App 
+                </a>
+                {/* <a href="https://wa.me/919324577378" target="_blank" rel="noopener noreferrer">
+                  <i className="fi fi-brands-whatsapp"></i> WhatsApp
+                </a> */}
+              </div>
             </div>
           </div>
-        </div>
 
-         
+          
+          
         
-       
 
-      </div>
-
+        </div>
+      </>
        {/* Enquiry Modal */}             
       <Modal
         isOpen={open}
