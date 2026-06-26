@@ -305,6 +305,11 @@ export default function EnquiryForm() {
             isMulti
             name="type_of_services"
             options={serviceOptions}
+            openMenuOnClick={true}
+            openMenuOnFocus={true}
+            blurInputOnSelect={false}
+            closeMenuOnSelect={false}
+            placeholder=""
             value={serviceOptions.filter((option) =>
               form.type_of_services.includes(option.value)
             )}
@@ -415,7 +420,7 @@ export default function EnquiryForm() {
           disabled={loading}
           className="px-10 py-3 rounded-xl bg-black text-white"
         >
-          {loading ? "Saving..." : "Save"}
+          {loading ? "Saving..." : "Submit"}
         </button>
       </div>
     </form>

@@ -1285,7 +1285,7 @@ header {
   padding: 0.2rem 1rem 0;
   background: transparent;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  // background: white;
+  background: white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.1) inset;
   &:before {
     // content: "";
@@ -6804,7 +6804,18 @@ div:where(.swal2-container){
     position: relative;
     margin-bottom: 35px;
     &.phone-input{
-      span {
+      &:focus-within {
+        span.label-up {
+          padding-left: 0rem;
+        }
+        &:has(input[value]:not([value=""])) .label-up {
+          padding-left: 0rem;
+        }
+      }
+      &:has(input[value]:not([value=""])) .label-up {
+        padding-left: 0rem;
+      }
+       span {
         padding-left: 5.5rem;
       }
     }
