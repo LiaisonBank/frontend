@@ -256,9 +256,9 @@ export default function RootLayout({ children }) {
             {/* ========================================= */}
 
             <Footer />
-            <div className="d-none d-xl-block">
-              {/* <ChatBot /> */}
-            </div>
+            {/* <div className="d-none d-xl-block">
+              <ChatBot />
+            </div> */}
             
           </AOSProvider>
         </ReduxProvider>

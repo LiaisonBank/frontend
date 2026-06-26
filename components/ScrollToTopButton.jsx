@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { BsArrowUp } from "react-icons/bs";
+
 
 
 export default function ScrollToTopButton() {
@@ -47,14 +49,16 @@ export default function ScrollToTopButton() {
           d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"
         />
       </svg> */}
+      {/* <BsArrowUp size={36} /> */}
+      <i className="bi bi-arrow-up fs-2"></i>
 
-      <Image
+      {/* <Image
         src={scrollTop}
         alt="Back to top"
         width={50}
         height={50}
         priority
-      />
+      /> */}
     </button>
   );
 }

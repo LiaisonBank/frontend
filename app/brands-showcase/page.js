@@ -12,7 +12,7 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
-export default function AwardPage() {
+export default function BrandPage() {
 useBodyClass('awards-recognition');
    const galleryRef = useRef(null);
 
@@ -88,7 +88,7 @@ useBodyClass('awards-recognition');
                           className="breadcrumb-item active"
                           aria-current="page"
                         >
-                          Awards & Certifications
+                          Browse Our Brand
                         </li>
                       </ol>
                     </nav>

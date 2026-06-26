@@ -66,9 +66,10 @@ export default function ContactusLiaisonbankPage() {
                  <div className="col-lg-6 col-md-6 col-sm-12 pt-4">
                   <p><strong>Khar (HQ)</strong> <br/>
                   Plot 466, New Apollo CHSL,
-                  Beside Blue Tokai Coffee, <br/>14th Road,
-                  Khar West, Mumbai-400052.<br/>
-                  <strong>Landmark</strong> - Domino’s Pizza,14th Road.</p>
+                  Beside Blue Tokai Coffee, 14th Road,
+                  Khar West, <br/>Mumbai-400052.<br/>
+                  {/* <strong>Landmark</strong> - Domino’s Pizza,14th Road. */}
+                  </p>
                   <p>
                     <strong>Phone</strong> <br/> 
                     <Link href="tel:+91 91364 43852">  (+91) 97694 58515</Link> / &nbsp; 
@@ -78,7 +79,7 @@ export default function ContactusLiaisonbankPage() {
                   </p>
                   <p className="pb-4"><strong>Email</strong> <br/> 
                   {/* <Link href="mailto:ceo.desk@liaisonbank.com" >ceo.desk@liaisonbank.com</Link> <br/> */}
-                  <Link href="mailto:info@liaisonbank.com" >info@liaisonbank.com</Link>
+                  <Link href="mailto:ceo.desk@liaisonbank.com" >ceo.desk@liaisonbank.com</Link>
                   </p>
                  </div>
                  {/* <div className="pattern-bg"></div> */}

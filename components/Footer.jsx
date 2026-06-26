@@ -87,8 +87,9 @@ export default function Footer() {
             <div className="mb-3 flex items-center gap-2 tell"  data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
               {/* <Image src="/phone.png" width={25} height={25} alt="Call" /> */}
               <Image src="/phone-call-white-icon.png" width={30} height={30} alt="Call" />
-              <Link href="tel:+91 91364 43852" >  97694 58515</Link> / &nbsp; 
-              <Link href="tel:+91 91364 43852" >  91371 28401</Link> 
+              <Link href="tel:+91 91364 43852" >  97694 58515</Link> 
+              {/* / &nbsp; 
+              <Link href="tel:+91 91364 43852" >  91371 28401</Link>  */}
             </div>
 
             <div className="mb-3 flex items-center gap-2 email" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
@@ -100,8 +101,8 @@ export default function Footer() {
               sizes="100vw"
               style={{ width: '25px', height: '25px' }} 
             />&nbsp;
-              <a href="mailto:info@liaisonbank.com" target="_blank">
-                info@liaisonbank.com
+              <a href="mailto:ceo.desk@liaisonbank.com" target="_blank">
+                ceo.desk@liaisonbank.com
               </a>
             </div>
 
