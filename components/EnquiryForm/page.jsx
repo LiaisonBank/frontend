@@ -10,6 +10,8 @@ export default function EnquiryForm() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [phoneFocused, setPhoneFocused] = useState(false);
+  const [serviceFocused, setServiceFocused] = useState(false);
+
 
   
   const [form, setForm] = useState({
@@ -227,7 +229,7 @@ export default function EnquiryForm() {
           </span>
         </div>
 
-        <div className="form-group">
+        <div className="form-group phone-input">
           {/* <label className="block mb-2">
             Phone Number <span className="text-red-500">*</span>
           </label> */}
@@ -248,7 +250,11 @@ export default function EnquiryForm() {
             containerClass="!w-full"
           /> */}
           <PhoneInput
-              country="in"
+              country={"in"}
+              onlyCountries={["in"]}
+              disableDropdown={true}
+              countryCodeEditable={false}
+              enableSearch={false}
               value={form.phone_number}
               onChange={(phone) =>
                 setForm({
@@ -260,6 +266,8 @@ export default function EnquiryForm() {
                 onFocus: () => setPhoneFocused(true),
                 onBlur: () => setPhoneFocused(false),
               }}
+              inputClass="!w-full !pl-14"
+              containerClass="!w-full"
             />
           <span
             className={
@@ -308,6 +316,8 @@ export default function EnquiryForm() {
                   : [],
               }));
             }}
+            onFocus={() => setServiceFocused(true)}
+            onBlur={() => setServiceFocused(false)}
             className="basic-multi-select"
             classNamePrefix="select"
             styles={{
@@ -319,6 +329,7 @@ export default function EnquiryForm() {
                   borderColor: "#808080",
                 },
               }),
+              
 
               multiValue: (base) => ({
                 ...base,
@@ -353,8 +364,14 @@ export default function EnquiryForm() {
               }),
             }}
           />
-          <span className={form.type_of_services ? "label-up" : ""}>
-            Type of Services
+          <span
+              className={
+                serviceFocused || form.type_of_services.length
+                  ? "label-up"
+                  : ""
+              }
+            >
+              Type of Services
           </span>
           {/* <select
             name="type_of_services"

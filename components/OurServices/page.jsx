@@ -17,7 +17,7 @@ const services = [
   { id: 2, title: "Health Care", img: "/service-images/H_C.png", slug: "health-care" },
   { id: 3, title: "Industrial & Manufacturer", img: "/service-images/I_M.png", slug: "industrial-manufacturer" },
   { id: 4, title: "Real Estate", img: "/service-images/R_E.png", slug: "real-estate" },
-  { id: 5, title: "Phonographic Performance Limited", img: "/service-images/entertainment.png", slug: "entertainment" },
+  { id: 5, title: "Phonographic Performance Limited", img: "/service-images/ppl.png", slug: "phonographic-performance" },
   { id: 6, title: "Brihan Mumbai Municipal Corporation", img: "/service-images/bmc.png", slug: "bmc" },
   { id: 7, title: "Vasai Virar Municipal Corporation", img: "/service-images/vvmc.png", slug: "vvmc" },
   { id: 8, title: "Kalyan Dombivali Municipal Corporation", img: "/service-images/kdmc.png", slug: "kdmc" },

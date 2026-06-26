@@ -189,14 +189,6 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="clientfeedback py-5">
-        <div className="container-fluid mx-auto px-0 bg-white">
-          <div className="section-title">
-            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">What Clients Say</h3>
-          </div>
-          <TestimonialSlider  />
-        </div>
-      </section>
 
       <section className="ourclients">
         <div className="container-fluid mx-auto px-0 py-5 bg-white">
@@ -208,6 +200,17 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <section className="clientfeedback py-5">
+        <div className="container-fluid mx-auto px-0 bg-white">
+          <div className="section-title">
+            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">What Clients Say</h3>
+          </div>
+          <TestimonialSlider  />
+        </div>
+      </section>
+
+      
 
 
       <section className="faqs">

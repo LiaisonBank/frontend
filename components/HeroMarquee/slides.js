@@ -21,7 +21,7 @@ const slides = [
   },
   {
     title: "Integrated Licensing & Liaisoning, Approval Compliance Solutions",
-    image: "/images/home/Licensing&Liaisoning.webp",
+    image: "/images/home/Kalpita.png",
     category: "Motion",
   },
   {
@@ -31,7 +31,7 @@ const slides = [
   },
   {
     title: "Integrated Licensing & Compliance Solutions ",
-    image: "/images/home/RegulatoryLiaisoning.webp",
+    image: "/images/home/jayesh.png",
     category: "Motion",
   },
 ];

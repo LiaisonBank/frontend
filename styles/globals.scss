@@ -633,7 +633,7 @@ body.home {
   .page-header {
     // height: calc(100vh - 5vh);
     // min-height: 95vh;
-    background-color: $page-header;
+    // background-color: $page-header;
     img{
       position: relative !important;
     }
@@ -1285,7 +1285,7 @@ header {
   padding: 0.2rem 1rem 0;
   background: transparent;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  background: white;
+  // background: white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.1) inset;
   &:before {
     // content: "";
@@ -3876,8 +3876,13 @@ section.ceo-message{
         }
       }
     }
-    img{
-      // filter:grayscale(1);
+    overflow: hidden;
+    img {
+      transition: transform 0.5s ease;
+      display: block;
+      &:hover {
+          transform: scale(1.4);
+      }
     }
   }
 
@@ -6584,8 +6589,8 @@ footer {
 }
 .scroll-top {
   position: fixed;
-  bottom: 60px;
-  right: 90px;
+  bottom: 1rem;
+  right: 0.2rem;
   // z-index: 600;
   opacity: 0;
   visibility: hidden;
@@ -6798,7 +6803,11 @@ div:where(.swal2-container){
     display: block;
     position: relative;
     margin-bottom: 35px;
-
+    &.phone-input{
+      span {
+        padding-left: 5.5rem;
+      }
+    }
     span {
       width: 100%;
       line-height: 40px;

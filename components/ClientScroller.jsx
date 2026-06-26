@@ -8,7 +8,7 @@ const ClientScroller = () => {
         <div className="slider-container py-10 bg-white">
             <Slider
                 width="250px"
-                duration={400}
+                duration={100}
                 pauseOnHover={true}
                 blurBorders={false}
                 blurBorderColor="#fff"
