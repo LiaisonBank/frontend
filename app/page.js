@@ -69,7 +69,23 @@ const Home = () => {
               <div className='p-4 mt-2 mesg'>
                 <div className='quote'  data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">
                   <p>
-                    It&apos;s not about waiting for things to fall into place, it&lsquo;s about what you make of yourself.
+                    <span className="quote-close">
+                       <Image
+                        src="/images/top-left-quote.webp"
+                        width={40}
+                        height={40}
+                        alt="Closing quote"
+                        className="quote-close top"
+                      />
+                    </span>
+                        It&apos;s not about waiting for things to fall into place, it&lsquo;s about what you make of yourself.
+                    <Image
+                      src="/images/bottom-right-quote.webp"
+                      width={40}
+                      height={40}
+                      alt="Closing quote"
+                      className="quote-close bottom"
+                    />
                   </p>
                 </div>
                 <div className='col-auto ceo-name'  data-aos="fade-right" data-aos-duration="600" data-aos-delay="300">

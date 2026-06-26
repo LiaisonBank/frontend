@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
 import Select from 'react-select';
 import PhoneInput from "react-phone-input-2";
@@ -11,7 +11,7 @@ export default function EnquiryForm() {
   const [loading, setLoading] = useState(false);
   const [phoneFocused, setPhoneFocused] = useState(false);
   const [serviceFocused, setServiceFocused] = useState(false);
-
+  const selectRef = useRef(null);
 
   
   const [form, setForm] = useState({
@@ -82,10 +82,10 @@ export default function EnquiryForm() {
       errors.push("Enter valid Email ID");
     }
 
-    if (!form.type_of_services) {
+    if (form.type_of_services.length === 0) {
       errors.push("Please select Type of Service");
     }
-    if (!form.enquiry_details) {
+    if (form.enquiry_details.length === 0) {
       errors.push("Please Leave us Message");
     }
 
@@ -301,12 +301,14 @@ export default function EnquiryForm() {
           </span>
         </div>
 
-        <div className="md:col-span-2 form-group typeservices">
+        <div className="md:col-span-2 form-group typeservices" id="typeservices">
           {/* <label className="block mb-2">
             Type of Services <span className="text-red-500">*</span>
           </label> */}
           <Select
             isMulti
+            instanceId="type-of-services"
+            ref={selectRef}
             name="type_of_services"
             options={serviceOptions}
             openMenuOnClick={true}
@@ -374,28 +376,14 @@ export default function EnquiryForm() {
             }}
           />
           <span
-              className={
-                serviceFocused || form.type_of_services.length
-                  ? "label-up"
-                  : ""
-              }
-            >
-              Type of Services
-          </span>
-          {/* <select
-            name="type_of_services"
-            value={form.type_of_services}
-            onChange={handleChange}
-            className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
+            onClick={() => {
+              selectRef.current?.focus();
+            }}
+            className={serviceFocused || form.type_of_services.length ? "label-up" : ""}
           >
-            <option value="">Select Service</option>
-
-            {services.map((item, index) => (
-              <option key={index} value={item}>
-                {item}
-              </option>
-            ))}
-          </select> */}
+            Type of Services
+          </span>
+          
         </div>
       </div>
 
