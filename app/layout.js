@@ -185,7 +185,7 @@ const organizationSchema = {
 // ======================================================
 
 export default function RootLayout({ children }) {
-    const handleChatFormSubmit = () => {};
+  const handleChatFormSubmit = () => {};
   return (
     <html lang="en" suppressHydrationWarning>
       {/* ========================================= */}
