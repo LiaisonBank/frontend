@@ -73,7 +73,7 @@ useBodyClass('awards-recognition');
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Awards and Recognition</h1>
+                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Awards and Certifications</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
                       <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">

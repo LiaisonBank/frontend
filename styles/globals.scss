@@ -2479,20 +2479,24 @@ section.ceo-message{
       display: block;
       z-index: 1;
     }
-    &:after{
-      content: "";
-      position: absolute;
-      bottom: -1rem;
-      right: 0;
-      width: 40px;   // Set image width
-      height: 40px;  // Set image height
-      background: url("/images/bottom-right-quote.webp") no-repeat center;
-      background-size: contain;
-      display: block;
-      z-index: 1;
+    p{
+      &:after{
+        content: "";
+        position: absolute;
+        bottom: -1rem;
+        right: 0;
+        width: 40px;   // Set image width
+        height: 40px;  // Set image height
+        background: url("/images/bottom-right-quote.webp") no-repeat center;
+        background-size: contain;
+        display: block;
+        z-index: 1;
+      }
     }
     
+    
     p{
+      position:relative;
       font-size: 2.4rem;
       @media only screen and (max-width:768){
         font-size:1.8rem;
@@ -3817,74 +3821,100 @@ section.ceo-message{
       }
     }
   }
-
+  
   section.ourclients {
-    .section-title {
-      // text-align:center;
-      margin: 0;
-      padding: 1rem 0;
-      background-color: white;
+  min-height: 180px;
+  .section-title {
+    margin: 0;
+    padding: 1rem 0;
+    background-color: white;
+    text-align: center;
+
+    h3 {
       text-align: center;
-      h3 {
-        text-align: center;
-        line-height: 1;
-        padding-bottom: 1rem;
-        position: relative;
-        display: inline-block;
-        font-size: 2rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        margin-bottom: 1rem;
-        background:$secodary-bg-color;
-        // background: linear-gradient(
-        //   115deg,
-        //   var(--themeht-primary-color),
-        //   var(--themeht-secondary-color)
-        // );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        // z-index: 9;
+      line-height: 1;
+      padding-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+      font-size: 2rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      background: $secodary-bg-color;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
 
-        /* ORANGE UNDERLINE (CENTERED) */
-        &::after {
-          content: "";
-          position: absolute;
-          left: 50%;
-          bottom: 0;
-          width: 90px;
-          height: 3px;
-          background: $primary-color1;
-          border-radius: 4px;
-          transform: translateX(-45%);
-          overflow: hidden;
-        }
-
-        /* SINGLE MOVING DOT (CENTERED FLOW) */
-        &::before {
-          content: "";
-          position: absolute;
-          bottom: -6px;
-          left: 50%;
-          width: 14px;
-          height: 14px;
-          background: #ffffff;
-          border: 3px solid $primary-color1;
-          border-radius: 50%;
-          transform: translateX(-45px); // half of underline width
-          animation: dot-flow 3s linear infinite alternate;
-          z-index: 2;
-        }
+      &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 90px;
+        height: 3px;
+        background: $primary-color1;
+        border-radius: 4px;
+        transform: translateX(-45%);
       }
-    }
-    overflow: hidden;
-    img {
-      transition: transform 0.5s ease;
-      display: block;
-      &:hover {
-          transform: scale(1.4);
+
+      &::before {
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        width: 14px;
+        height: 14px;
+        background: #ffffff;
+        border: 3px solid $primary-color1;
+        border-radius: 50%;
+        transform: translateX(-45px);
+        animation: dot-flow 3s linear infinite alternate;
+        z-index: 2;
       }
     }
   }
+    
+.client-image-wrapper {
+  width: 175px;
+  height: 175px;
+  overflow: visible; // Hides the scaled image outside the container
+  border-radius: 8px; // Optional
+
+  .client-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  &:hover .client-image {
+    transform: scale(1.2);
+  }
+}
+
+  .slider-container {
+    padding: 25px 0; // space for scaled logos
+    overflow: visible;
+  }
+
+  img {
+    display: block;
+    transition: transform 0.5s ease;
+    transform-origin: center;
+  }
+
+  img:hover {
+    transform: scale(1.3);
+    position: relative;
+    z-index: 10;
+  }
+}
+section.ourclients {
+  .slider-container,
+  .slider,
+  .slider-track {
+    overflow: visible !important;
+  }
+}
 
   section.faqs {
     .section-title {
@@ -3946,6 +3976,12 @@ section.ceo-message{
     }
     .faq-items{
       border-bottom:lightgray solid 1px;
+      &:has(.max-h-96) > button {
+        // background-color: $border-top-color_1;   
+        background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+        border-radius: 1rem;
+        color:white;
+      }
     }
   }
 }
@@ -6818,6 +6854,9 @@ div:where(.swal2-container){
        span {
         padding-left: 5.5rem;
       }
+    }
+    &.typeservices{
+      z-index: 9;
     }
     span {
       width: 100%;

@@ -5,7 +5,8 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 // import PageTitleWave from '@/components/PageTitleWave';
 // import PageTitleWaveLeft from '@/components/PageTitleWaveLeft';
 import MapSection from '@/components/MapSection'
-import ContactForm from "@/components/ContactForm";
+import EnquiryForm from "@/components/EnquiryForm/page.jsx";
+// import ContactForm from "@/components/ContactForm";
 
 
 export default function ContactusLiaisonbankPage() {
@@ -90,7 +91,8 @@ export default function ContactusLiaisonbankPage() {
                   <h5>Get in touch! We look forward to hearing from you.</h5>
                 </div>
                   <div className="contact-form py-4">
-                    <ContactForm />
+                    <EnquiryForm />
+                    {/* <ContactForm /> */}
                     <form id="contact" className="d-none"  onSubmit={handleSubmit} noValidate>
                       <div className="form-group">
                         <label htmlFor="name" className="d-none">Your Name</label>

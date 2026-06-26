@@ -22,7 +22,8 @@ const services = [
   { id: 7, title: "Vasai Virar Municipal Corporation", img: "/service-images/vvmc.png", slug: "vvmc" },
   { id: 8, title: "Kalyan Dombivali Municipal Corporation", img: "/service-images/kdmc.png", slug: "kdmc" },
   { id: 9, title: "Thane Municipal Corporation", img: "/service-images/tmc.png", slug: "thane-municipal-corporation" },
-  { id: 10, title: "MHADA and Slum Rehabilitation Authority", img: "/service-images/mhada_sra.png", slug: "mhada-sra" },
+  { id: 10, title: "MHADA Rehabilitation Authority", img: "/service-images/mhada.png", slug: "mhada" },
+  { id: 11, title: "Slum Rehabilitation Authority", img: "/service-images/slum.png", slug: "sra" },
 ];
 
 export default function ServicesSlider() {

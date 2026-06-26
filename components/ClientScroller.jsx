@@ -15,16 +15,18 @@ const ClientScroller = () => {
                 direction="right"   // ✅ KEY CHANGE
             >
                 {clientImageName.map((name, index) => (
-                    <Slider.Slide key={index} 
+                    <Slider.Slide key={index}
                         data-aos="fade-up"
                         data-aos-delay={index * 100}>
-                        <Image
-                            src={`/clients/${name}.jpg`}
-                            width={175}
-                            height={75}
-                            alt={name}
-                            loading="lazy"
-                        />
+                        <div className="client-image-wrapper">
+                            <Image
+                                src={`/clients/${name}.jpg`}
+                                width={175}
+                                height={125}
+                                alt={name}
+                                loading="lazy"
+                            />
+                        </div>
                     </Slider.Slide>
                 ))}
             </Slider>

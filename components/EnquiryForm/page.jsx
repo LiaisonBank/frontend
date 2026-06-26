@@ -85,6 +85,9 @@ export default function EnquiryForm() {
     if (!form.type_of_services) {
       errors.push("Please select Type of Service");
     }
+    if (!form.enquiry_details) {
+      errors.push("Please Leave us Message");
+    }
 
     return errors;
   };
@@ -125,7 +128,8 @@ export default function EnquiryForm() {
 
       // console.log("Sending Payload:", payload);
       // return;
-      const response = await fetch("/api/v1/enquiry", {
+      const response = await fetch("https://liaisonbank.frappe.cloud/api/method/create_enquiry", {
+        
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -137,7 +141,7 @@ export default function EnquiryForm() {
 
       if (response.ok && data.status !== "error") {
         Swal.fire({
-          icon: "success",
+          icon: "success",  
           title: "Enquiry Submitted",
           text: "Your enquiry has been submitted successfully.",
           confirmButtonColor: "#000",
@@ -297,7 +301,7 @@ export default function EnquiryForm() {
           </span>
         </div>
 
-        <div className="md:col-span-2 form-group">
+        <div className="md:col-span-2 form-group typeservices">
           {/* <label className="block mb-2">
             Type of Services <span className="text-red-500">*</span>
           </label> */}
@@ -395,7 +399,7 @@ export default function EnquiryForm() {
         </div>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 form-group">
         <textarea
           rows="3"
           name="enquiry_details"
@@ -404,6 +408,9 @@ export default function EnquiryForm() {
           onChange={handleChange}
           className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
         />
+        <span className={form.enquiry_details ? "label-up" : ""}>
+            Leave Us a Message
+          </span>
       </div>
 
       <div className="flex justify-end gap-4 mt-8">
