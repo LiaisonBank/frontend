@@ -12,6 +12,7 @@ import ScrollToTopButton from "@/components/ScrollToTopButton";
 import EnquiryForm from "@/components/EnquiryForm/page.jsx";
 import HiringForm from "@/components/HiringForm/page.jsx";
 import ChatBot from "./ChatBot/ChatBot.jsx";
+import { PersonPlus, PersonPlusFill, Briefcase, PersonWorkspace } from 'react-bootstrap-icons';
 
 export default function Footer() {
   const pathname = usePathname();
@@ -123,27 +124,23 @@ export default function Footer() {
       <ScrollToTopButton />
   
       {/* Sticky CTA */}
-      <>
-        <div
-            className="sticky-trigger"
-            onMouseEnter={() => setShowIcons(true)}
-          />
         <div key={pathname} className={`sticky-icon ${showIcons ? "show" : ""}`}
       onMouseEnter={() => setShowIcons(true)}
       onMouseLeave={() => setShowIcons(false)}>
           <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
             <a href="tel:+919769458515" target="_blank" className="callnow" >
-              <i className="fi fi-sr-phone-flip" ></i>  +91 97694 58515
+              +91 97694 58515 <i className="fi fi-sr-phone-flip" ></i> &nbsp;
             </a>
           </div>
         <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="600">
-          <a className="hiring open-form" onClick={() => setHiringOpen(true)}>
-            &nbsp;<Image src={hiring} alt="WhatsApp" width={30} height={30} />&nbsp;  &nbsp; We are Hiring
+          <a className="hiring open-form text-right" onClick={() => setHiringOpen(true)}>
+             We are Hiring &nbsp;  &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+             <PersonPlusFill size={30} color="white" /> &nbsp;&nbsp;
           </a>
         </div>
         <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="800">
           <a className="enquire open-form" onClick={() => setOpen(true)}>
-            <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
+            Enquire Now <i className="fi fi-sr-attribution-pencil" ></i>
           </a>
         </div>
         </div>
@@ -177,7 +174,6 @@ export default function Footer() {
         
 
         </div>
-      </>
        {/* Enquiry Modal */}             
       <Modal
         isOpen={open}

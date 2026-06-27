@@ -4055,7 +4055,7 @@ section.ourclients {
         max-height: 70%;
         object-fit: contain;
         // filter: grayscale(100%);
-        opacity: 0.8;
+        // opacity: 0.8;
 
         transition: 
           transform 0.4s ease,
@@ -6755,32 +6755,21 @@ div:where(.swal2-container){
       }
   }
 }
-.sticky-trigger {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 10px;
-    height: 100vh;
-    z-index: 998;
-}
+
 .sticky-icon {
   position: fixed;
   font-family: var(--font-barlow);
   top: 50%; /* center relative to viewport */
-  right: -60px;
+  left: 0%;
   width: 220px;
   display: flex;
   flex-direction: column;
   transform: translateY(-50%);
-  transition: right .3s ease;
   z-index: 49;
-  &.show {
-    right: 0;
-  }
   a {
-    transform: translate(160px, 0px);
-    border-radius: 50px 0px 0px 50px;
-    text-align: left;
+    transform: translate(-160px, 0px);
+    border-radius: 0px 50px 50px 0px;
+    text-align: right;
     margin: 5px 0;
     text-decoration: none;
     padding: 10px;
@@ -6789,14 +6778,28 @@ div:where(.swal2-container){
     transition: all 0.8s;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     cursor: pointer;
     color: white;
+    &.enquire{
+      &:hover{
+         i{
+          transform: rotate(360deg);
+        }
+      }
+      i{
+        margin-right:0.5rem;
+      }
+    }
     &:hover {
       color: white;
       transform: translate(0px, 0px);
-      i {
+      svg, i {
         transform: rotate(360deg);
       }
+    }
+    svg{
+       transition: all 0.5s;
     }
     i {
       height: 40px;
@@ -6805,7 +6808,7 @@ div:where(.swal2-container){
       text-align: center;
       line-height: 40px;
       border-radius: 50%;
-      margin-right: 20px;
+      margin-left: 20px;
       transition: all 0.5s;
       &.fa-whatsapp:before {
         font-size: 1.5rem;

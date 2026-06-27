@@ -19,7 +19,7 @@ export default class OurClients extends Component {
                     <div className="client-item" key={index}
                         {...getAosAnimation(index)}>
                         <Image
-                            src={`/clients/${name}.jpg`}
+                            src={`/clients/${name}.webp`}
                             width={200}
                             height={200}
                             alt={name}
