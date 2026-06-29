@@ -132,8 +132,7 @@ export default function EnquiryForm({isOpen,
         enquiry_details: form.enquiry_details.trim(),
       };
 
-      const response = await fetch(
-        "https://liaisonbank.frappe.cloud/api/method/create_enquiry",
+      const response = await fetch("/api/v1/enquiry",
         {
           method: "POST",
           headers: {
