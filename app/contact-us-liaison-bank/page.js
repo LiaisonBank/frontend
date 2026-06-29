@@ -5,7 +5,7 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 // import PageTitleWave from '@/components/PageTitleWave';
 // import PageTitleWaveLeft from '@/components/PageTitleWaveLeft';
 import MapSection from '@/components/MapSection'
-import EnquiryForm from "@/components/EnquiryForm/page.jsx";
+import EnquiryForm from "@/components/EnquiryForm/form";
 // import ContactForm from "@/components/ContactForm";
 
 
