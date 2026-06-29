@@ -1,29 +1,32 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import Swal from "sweetalert2";
-import Select from 'react-select';
+import Select from "react-select";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+
+const EMAIL_REGEX =
+  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+const INITIAL_FORM = {
+  company_name: "",
+  contact_person: "",
+  phone_number: "",
+  email_id: "",
+  type_of_services: [],
+  enquiry_details: "",
+};
 
 export default function EnquiryForm() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [phoneFocused, setPhoneFocused] = useState(false);
   const [serviceFocused, setServiceFocused] = useState(false);
+
   const selectRef = useRef(null);
 
-  
-  const [form, setForm] = useState({
-    company_name: "",
-    contact_person: "",
-    phone_number: "",
-    email_id: "",
-    type_of_services: "",
-    enquiry_details: "",
-  });
-
-  const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
+  const [form, setForm] = useState(INITIAL_FORM);
 
   const services = [
     "Fire Safety",
@@ -35,59 +38,57 @@ export default function EnquiryForm() {
     "AMC",
     "Pest Control",
   ];
+
   const serviceOptions = services.map((item) => ({
     value: item,
     label: item,
   }));
-  useEffect(() => {
-    if (countryDropdownOpen) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-      document.documentElement.style.overflow = "auto";
-    }
 
-    return () => {
-      document.body.style.overflow = "auto";
-      document.documentElement.style.overflow = "auto";
-    };
-  }, [countryDropdownOpen]);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = ({ target: { name, value } }) => {
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const resetForm = () => {
-    setForm({
-      company_name: "",
-      contact_person: "",
-      phone_number: "",
-      email_id: "",
-      type_of_services: "",
-      enquiry_details: "",
-    });
+    setForm(INITIAL_FORM);
   };
 
   const validateForm = () => {
     const errors = [];
 
-    if (!form.company_name.trim()) errors.push("Company Name is required");
-    if (!form.contact_person.trim()) errors.push("Contact Person is required");
-    if (!form.phone_number.trim()) errors.push("Phone Number is required");
+    const company = form.company_name.trim();
+    const person = form.contact_person.trim();
+    const email = form.email_id.trim();
+    const message = form.enquiry_details.trim();
 
-    if (!form.email_id.trim()) {
-      errors.push("Email ID is required");
-    } else if (!/\S+@\S+\.\S+/.test(form.email_id)) {
-      errors.push("Enter valid Email ID");
-    }
+    const phone = form.phone_number.replace(/\D/g, "");
+    const localPhone = phone.startsWith("91")
+      ? phone.slice(2)
+      : phone;
 
-    if (form.type_of_services.length === 0) {
-      errors.push("Please select Type of Service");
-    }
-    if (form.enquiry_details.length === 0) {
-      errors.push("Please Leave us Message");
-    }
+    if (!person)
+      errors.push("Contact Person is required.");
+
+    if (!company)
+      errors.push("Company Name is required.");
+
+    if (!localPhone)
+      errors.push("Phone Number is required.");
+    else if (!/^[6-9]\d{9}$/.test(localPhone))
+      errors.push("Please enter a valid 10-digit mobile number.");
+
+    if (!email)
+      errors.push("Email ID is required.");
+    else if (!EMAIL_REGEX.test(email))
+      errors.push("Please enter a valid Email ID.");
+
+    if (form.type_of_services.length === 0)
+      errors.push("Please select at least one Type of Service.");
+
+    if (!message)
+      errors.push("Please leave us a message.");
 
     return errors;
   };
@@ -95,73 +96,75 @@ export default function EnquiryForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = validateForm();
+    if (loading) return;
 
-    if (errors.length > 0) {
-      Swal.fire({
+    const validationErrors = validateForm();
+
+    if (validationErrors.length) {
+      return Swal.fire({
         icon: "error",
         title: "Validation Error",
-        html: `
-          <ul style="text-align:left;padding-left:20px;">
-            ${errors.map((err) => `<li>${err}</li>`).join("")}
-          </ul>
-        `,
+        html: `<ul style="text-align:left;padding-left:20px;">
+          ${validationErrors.map((item) => `<li>${item}</li>`).join("")}
+        </ul>`,
         confirmButtonColor: "#000",
       });
-      return;
     }
 
     try {
       setLoading(true);
 
-      /* Format phone to +91 9892021702 */
-      const rawNumber = form.phone_number.replace(/\D/g, "");
-
-      const localNumber = rawNumber.startsWith("91")
-        ? rawNumber.slice(2)
-        : rawNumber;
+      const phone = form.phone_number.replace(/\D/g, "");
+      const localPhone = phone.startsWith("91")
+        ? phone.slice(2)
+        : phone;
 
       const payload = {
-        ...form,
-        phone_number: `+91-${localNumber}`,
+        company_name: form.company_name.trim(),
+        contact_person: form.contact_person.trim(),
+        phone_number: `+91-${localPhone}`,
+        email_id: form.email_id.trim(),
+        type_of_services: form.type_of_services,
+        enquiry_details: form.enquiry_details.trim(),
       };
 
-      // console.log("Sending Payload:", payload);
-      // return;
-      const response = await fetch("https://liaisonbank.frappe.cloud/api/method/create_enquiry", {
-        
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        "https://liaisonbank.frappe.cloud/api/method/create_enquiry",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await response.json();
 
-      if (response.ok && data.status !== "error") {
-        Swal.fire({
-          icon: "success",  
-          title: "Enquiry Submitted",
-          text: "Your enquiry has been submitted successfully.",
-          confirmButtonColor: "#000",
-        }).then(() => {
-          window.location.reload();
-        });
-        // resetForm();
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Failed",
-          text: data.error || data.message || "Something went wrong.",
-          confirmButtonColor: "#000",
-        });
+      if (!response.ok || data.status === "error") {
+        throw new Error(
+          data.message ||
+          data.error ||
+          "Unable to submit enquiry."
+        );
       }
+
+      await Swal.fire({
+        icon: "success",
+        title: "Enquiry Submitted",
+        text: "Your enquiry has been submitted successfully.",
+        confirmButtonColor: "#000",
+      });
+
+      resetForm();
+
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Server Error",
-        text: "Unable to submit enquiry.",
+        title: "Submission Failed",
+        text:
+          error.message ||
+          "Something went wrong. Please try again.",
         confirmButtonColor: "#000",
       });
     } finally {
@@ -179,23 +182,22 @@ export default function EnquiryForm() {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, Reset",
     }).then((result) => {
-      if (result.isConfirmed) {
-        resetForm();
+      if (!result.isConfirmed) return;
 
-        Swal.fire({
-          icon: "success",
-          title: "Reset",
-          text: "Form has been cleared.",
-          confirmButtonColor: "#000",
-        }).then(() => {
-          window.location.reload();
-        });
-      }
+      resetForm();
+
+      Swal.fire({
+        icon: "success",
+        title: "Reset",
+        text: "Form has been cleared.",
+        confirmButtonColor: "#000",
+      });
     });
   };
 
   return (
-    <form onSubmit={handleSubmit} id="enquiryform">
+    <>
+        <form onSubmit={handleSubmit} id="enquiryform">
       <div className="grid md:grid-cols-2 gap-2">
         <div className="form-group">
           {/* <label className="block mb-2">
@@ -419,5 +421,6 @@ export default function EnquiryForm() {
         </button>
       </div>
     </form>
+    </>
   );
 }

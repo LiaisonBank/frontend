@@ -90,7 +90,7 @@ export default function ContactusLiaisonbankPage() {
                   <h3>Leave Us A Message</h3>
                   <h5>Get in touch! We look forward to hearing from you.</h5>
                 </div>
-                  <div className="contact-form py-4">
+                  <div className="contact-form py-2">
                     <EnquiryForm />
                     {/* <ContactForm /> */}
                     <form id="contact" className="d-none"  onSubmit={handleSubmit} noValidate>

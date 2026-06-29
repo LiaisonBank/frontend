@@ -66,13 +66,8 @@ export default function AwardP() {
       aria-labelledby="certificates-heading"
     >
       <div className="container">
-        <div
-          className="row g-4"
-          ref={galleryRef}
-        >
-        {certificateList
-          .slice(0, -4)
-          .map((certificate, index) => (
+        <div className="row g-4" ref={galleryRef}>
+          {certificateList.slice(0, 8).map((certificate, index) => (
             <div
               className="col-12 col-sm-6 col-md-6 col-lg-3"
               key={certificate.src}
@@ -112,7 +107,7 @@ export default function AwardP() {
           ))}
         </div>
         <div className="col-8  mx-auto text-center d-flex align-items-center justify-content-center" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="900">
-            <Link href="/awards" className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4">
+            <Link href="/awards" scroll={true} className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4">
             View More &nbsp;&nbsp;&nbsp;
             <svg
                 xmlns="http://www.w3.org/2000/svg"
