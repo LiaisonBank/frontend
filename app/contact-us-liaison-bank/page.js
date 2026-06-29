@@ -10,7 +10,7 @@ import EnquiryForm from "@/components/EnquiryForm/page.jsx";
 
 
 export default function ContactusLiaisonbankPage() {
-   useBodyClass('contactus');
+   useBodyClass('contact-us-liaison-bank');
      const handleSubmit = (event) => {
       event.preventDefault(); // Prevents default form submission behavior
 

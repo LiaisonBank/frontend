@@ -538,7 +538,9 @@ html {
   // touch-action: pan-y;
   overflow-x: hidden !important;
 }
-
+body.modal-open {
+  overflow: hidden;
+}
 html body {
   font-family: var(--font-family);
   color: var(--foreground);
@@ -1287,6 +1289,13 @@ header {
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   background: white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.1) inset;
+  .brand-logo {
+    > img{
+      @media (max-width: 767px) {
+        width: 70px;
+      }
+    }
+  }
   &:before {
     // content: "";
     position: absolute;
@@ -7034,8 +7043,11 @@ div:where(.swal2-container){
 .modal-container {
 	background: #fff;
 	width: 100%;
+  max-width: 90dvw;
 	border-radius: 8px;
+  max-height: 90dvh;
 	padding: 20px;
+  overflow-y:scroll;
 	animation: modalFade 0.3s ease;
 }
 .modal-header {

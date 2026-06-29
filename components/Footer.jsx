@@ -28,6 +28,10 @@ export default function Footer() {
       behavior: "smooth",
     });
   };
+   // Hide ONLY on sitemap page
+  const hideOnSitemap = pathname === "/sitemap";
+  // if (hideOnSitemap) return null; // 🔥 clean unmount (best performance)
+  
   return (
     <>
       <footer className="text-white px-2 py-2 font-sans text-md">
@@ -124,7 +128,9 @@ export default function Footer() {
       <ScrollToTopButton />
   
       {/* Sticky CTA */}
-        <div key={pathname} className={`sticky-icon ${showIcons ? "show" : ""}`}
+        <div key={pathname} id="sticky-icon"  className={`sticky-icon ${showIcons ? "show" : ""} ${
+        hideOnSitemap ? "d-none" : ""
+      }`}
       onMouseEnter={() => setShowIcons(true)}
       onMouseLeave={() => setShowIcons(false)}>
           <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="400">
@@ -159,9 +165,12 @@ export default function Footer() {
                 </a>
               </div>
               <div className="col-4 whatsapp p-2 d-flex align-items-center justify-content-center">
-                <a>
-                  <ChatBot/> Whats App 
+                <a className="hiring open-form text-right" onClick={() => setHiringOpen(true)}>
+                 <PersonPlusFill size={36} color="white" /> &nbsp;We are Hiring 
                 </a>
+                {/* <a>
+                  <ChatBot/> Whats App 
+                </a> */}
                 {/* <a href="https://wa.me/919324577378" target="_blank" rel="noopener noreferrer">
                   <i className="fi fi-brands-whatsapp"></i> WhatsApp
                 </a> */}

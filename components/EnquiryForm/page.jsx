@@ -18,7 +18,10 @@ const INITIAL_FORM = {
   enquiry_details: "",
 };
 
-export default function EnquiryForm() {
+export default function EnquiryForm({isOpen,
+  onClose,
+  title,
+  width = "600px",}) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [phoneFocused, setPhoneFocused] = useState(false);
@@ -197,230 +200,248 @@ export default function EnquiryForm() {
 
   return (
     <>
-        <form onSubmit={handleSubmit} id="enquiryform">
-      <div className="grid md:grid-cols-2 gap-2">
-        <div className="form-group">
-          {/* <label className="block mb-2">
-            Contact Person <span className="text-red-500">*</span>
-          </label> */}
-          <input
-            type="text"
-            name="contact_person"
-            value={form.contact_person}
-            placeholder="Your Name"
-            onChange={handleChange}
-            className={errors.contact_person ? "error" : ""}
-            // className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
-          />
-          <span className={form.contact_person ? "label-up" : ""}>
-            Contact Person Name
-          </span>
+      <div className="modal-overlay" onClick={onClose}>
+      <div
+        className="modal-content"
+        style={{ maxWidth: width }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-header">
+          <h3>{title}</h3>
+
+          <button className="modal-close" onClick={onClose}>
+            ✕
+          </button>
         </div>
 
-        <div className="form-group">
-          {/* <label className="block mb-2">
-            Company Name <span className="text-red-500">*</span>
-          </label> */}
-          <input
-            type="text"
-            name="company_name"
-            value={form.company_name}
-            placeholder="Your Company Name"
-            onChange={handleChange}
-            className={errors.company_name ? "error" : ""}
-            // className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
-          />
-          <span className={form.company_name ? "label-up" : ""}>
-            Company Name
-          </span>
-        </div>
+          <div className="modal-body">
+          <form onSubmit={handleSubmit} id="enquiryform">
+          <div className="grid md:grid-cols-2 gap-2">
+            <div className="form-group">
+              {/* <label className="block mb-2">
+                Contact Person <span className="text-red-500">*</span>
+              </label> */}
+              <input
+                type="text"
+                name="contact_person"
+                value={form.contact_person}
+                placeholder="Your Name"
+                onChange={handleChange}
+                className={errors.contact_person ? "error" : ""}
+                // className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
+              />
+              <span className={form.contact_person ? "label-up" : ""}>
+                Contact Person Name
+              </span>
+            </div>
 
-        <div className="form-group phone-input">
-          {/* <label className="block mb-2">
-            Phone Number <span className="text-red-500">*</span>
-          </label> */}
-          {/* <PhoneInput
-            country={"in"}
-            onlyCountries={["in"]}
-            disableDropdown={true}
-            countryCodeEditable={false}
-            enableSearch={false}
-            value={form.phone_number}
-            onChange={(phone) =>
-              setForm({
-                ...form,
-                phone_number: phone,
-              })
-            }
-            inputClass="!w-full !pl-14"
-            containerClass="!w-full"
-          /> */}
-          <PhoneInput
-              country={"in"}
-              onlyCountries={["in"]}
-              disableDropdown={true}
-              countryCodeEditable={false}
-              enableSearch={false}
-              value={form.phone_number}
-              onChange={(phone) =>
-                setForm({
-                  ...form,
-                  phone_number: phone,
-                })
-              }
-              inputProps={{
-                onFocus: () => setPhoneFocused(true),
-                onBlur: () => setPhoneFocused(false),
-              }}
-              inputClass="!w-full !pl-14"
-              containerClass="!w-full"
-            />
-          <span
-            className={
-              phoneFocused || form.phone_number
-                ? "label-up"
-                : ""
-            }
-          >
-            Phone Number
-          </span>
-        </div>
+            <div className="form-group">
+              {/* <label className="block mb-2">
+                Company Name <span className="text-red-500">*</span>
+              </label> */}
+              <input
+                type="text"
+                name="company_name"
+                value={form.company_name}
+                placeholder="Your Company Name"
+                onChange={handleChange}
+                className={errors.company_name ? "error" : ""}
+                // className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
+              />
+              <span className={form.company_name ? "label-up" : ""}>
+                Company Name
+              </span>
+            </div>
 
-        <div className="form-group">
-          {/* <label className="block mb-2">
-            Email ID <span className="text-red-500">*</span>
-          </label> */}
-          <input
-            type="email"
-            name="email_id"
-            placeholder="Your Email Id"
-            value={form.email_id}
-            onChange={handleChange}
-            className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
-          />
-          <span className={form.email_id ? "label-up" : ""}>
-            Email ID 
-          </span>
-        </div>
+            <div className="form-group phone-input">
+              {/* <label className="block mb-2">
+                Phone Number <span className="text-red-500">*</span>
+              </label> */}
+              {/* <PhoneInput
+                country={"in"}
+                onlyCountries={["in"]}
+                disableDropdown={true}
+                countryCodeEditable={false}
+                enableSearch={false}
+                value={form.phone_number}
+                onChange={(phone) =>
+                  setForm({
+                    ...form,
+                    phone_number: phone,
+                  })
+                }
+                inputClass="!w-full !pl-14"
+                containerClass="!w-full"
+              /> */}
+              <PhoneInput
+                  country={"in"}
+                  onlyCountries={["in"]}
+                  disableDropdown={true}
+                  countryCodeEditable={false}
+                  enableSearch={false}
+                  value={form.phone_number}
+                  onChange={(phone) =>
+                    setForm({
+                      ...form,
+                      phone_number: phone,
+                    })
+                  }
+                  inputProps={{
+                    onFocus: () => setPhoneFocused(true),
+                    onBlur: () => setPhoneFocused(false),
+                  }}
+                  inputClass="!w-full !pl-14"
+                  containerClass="!w-full"
+                />
+              <span
+                className={
+                  phoneFocused || form.phone_number
+                    ? "label-up"
+                    : ""
+                }
+              >
+                Phone Number
+              </span>
+            </div>
 
-        <div className="md:col-span-2 form-group typeservices" id="typeservices">
-          {/* <label className="block mb-2">
-            Type of Services <span className="text-red-500">*</span>
-          </label> */}
-          <Select
-            isMulti
-            instanceId="type-of-services"
-            ref={selectRef}
-            name="type_of_services"
-            options={serviceOptions}
-            openMenuOnClick={true}
-            openMenuOnFocus={true}
-            blurInputOnSelect={false}
-            closeMenuOnSelect={false}
-            placeholder=""
-            value={serviceOptions.filter((option) =>
-              form.type_of_services.includes(option.value)
-            )}
-            onChange={(selected) => {
-              setForm((prev) => ({
-                ...prev,
-                type_of_services: selected
-                  ? selected.map((item) => item.value)
-                  : [],
-              }));
-            }}
-            onFocus={() => setServiceFocused(true)}
-            onBlur={() => setServiceFocused(false)}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            styles={{
-              control: (base, state) => ({
-                ...base,
-                borderColor: state.isFocused ? "#808080" : "#ced4da",
-                boxShadow: "none",
-                "&:hover": {
-                  borderColor: "#808080",
-                },
-              }),
+            <div className="form-group">
+              {/* <label className="block mb-2">
+                Email ID <span className="text-red-500">*</span>
+              </label> */}
+              <input
+                type="email"
+                name="email_id"
+                placeholder="Your Email Id"
+                value={form.email_id}
+                onChange={handleChange}
+                className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
+              />
+              <span className={form.email_id ? "label-up" : ""}>
+                Email ID 
+              </span>
+            </div>
+
+            <div className="md:col-span-2 form-group typeservices" id="typeservices">
+              {/* <label className="block mb-2">
+                Type of Services <span className="text-red-500">*</span>
+              </label> */}
+              <Select
+                isMulti
+                instanceId="type-of-services"
+                ref={selectRef}
+                name="type_of_services"
+                options={serviceOptions}
+                openMenuOnClick={true}
+                openMenuOnFocus={true}
+                blurInputOnSelect={false}
+                closeMenuOnSelect={false}
+                placeholder=""
+                value={serviceOptions.filter((option) =>
+                  form.type_of_services.includes(option.value)
+                )}
+                onChange={(selected) => {
+                  setForm((prev) => ({
+                    ...prev,
+                    type_of_services: selected
+                      ? selected.map((item) => item.value)
+                      : [],
+                  }));
+                }}
+                onFocus={() => setServiceFocused(true)}
+                onBlur={() => setServiceFocused(false)}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
+                    borderColor: state.isFocused ? "#808080" : "#ced4da",
+                    boxShadow: "none",
+                    "&:hover": {
+                      borderColor: "#808080",
+                    },
+                  }),
+                  
+
+                  multiValue: (base) => ({
+                    ...base,
+                    backgroundColor: "#808080",
+                  }),
+
+                  multiValueLabel: (base) => ({
+                    ...base,
+                    color: "#ffffff",
+                  }),
+
+                  multiValueRemove: (base) => ({
+                    ...base,
+                    color: "#ffffff",
+                    ":hover": {
+                      backgroundColor: "#666666",
+                      color: "#ffffff",
+                    },
+                  }),
+
+                  option: (base, state) => ({
+                    ...base,
+                    backgroundColor:
+                      state.isFocused || state.isSelected
+                        ? "#808080"
+                        : "#ffffff",
+                    color:
+                      state.isFocused || state.isSelected
+                        ? "#ffffff"
+                        : "#000000",
+                    cursor: "pointer",
+                  }),
+                }}
+              />
+              <span
+                onClick={() => {
+                  selectRef.current?.focus();
+                }}
+                className={serviceFocused || form.type_of_services.length ? "label-up" : ""}
+              >
+                Type of Services
+              </span>
               
+            </div>
+          </div>
 
-              multiValue: (base) => ({
-                ...base,
-                backgroundColor: "#808080",
-              }),
+          <div className="mt-6 form-group">
+            <textarea
+              rows="2"
+              name="enquiry_details"
+              value={form.enquiry_details}
+              placeholder="Leave Us a Message"
+              onChange={handleChange}
+              className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
+            />
+            <span className={form.enquiry_details ? "label-up" : ""}>
+                Leave Us a Message
+              </span>
+          </div>
 
-              multiValueLabel: (base) => ({
-                ...base,
-                color: "#ffffff",
-              }),
+          <div className="flex justify-end gap-4 mt-8">
+            <button
+              type="button"
+              onClick={handleDiscard}
+              className="px-6 py-3 rounded-xl bg-gray-100"
+            >
+              Reset
+            </button>
 
-              multiValueRemove: (base) => ({
-                ...base,
-                color: "#ffffff",
-                ":hover": {
-                  backgroundColor: "#666666",
-                  color: "#ffffff",
-                },
-              }),
-
-              option: (base, state) => ({
-                ...base,
-                backgroundColor:
-                  state.isFocused || state.isSelected
-                    ? "#808080"
-                    : "#ffffff",
-                color:
-                  state.isFocused || state.isSelected
-                    ? "#ffffff"
-                    : "#000000",
-                cursor: "pointer",
-              }),
-            }}
-          />
-          <span
-            onClick={() => {
-              selectRef.current?.focus();
-            }}
-            className={serviceFocused || form.type_of_services.length ? "label-up" : ""}
-          >
-            Type of Services
-          </span>
-          
-        </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-10 py-3 rounded-xl bg-black text-white"
+            >
+              {loading ? "Saving..." : "Submit"}
+            </button>
+          </div>
+          </form>
+          </div>
       </div>
-
-      <div className="mt-6 form-group">
-        <textarea
-          rows="3"
-          name="enquiry_details"
-          value={form.enquiry_details}
-           placeholder="Leave Us a Message"
-          onChange={handleChange}
-          className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
-        />
-        <span className={form.enquiry_details ? "label-up" : ""}>
-            Leave Us a Message
-          </span>
-      </div>
-
-      <div className="flex justify-end gap-4 mt-8">
-        <button
-          type="button"
-          onClick={handleDiscard}
-          className="px-6 py-3 rounded-xl bg-gray-100"
-        >
-          Reset
-        </button>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-10 py-3 rounded-xl bg-black text-white"
-        >
-          {loading ? "Saving..." : "Submit"}
-        </button>
-      </div>
-    </form>
+    </div>
     </>
   );
 }

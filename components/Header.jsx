@@ -1,6 +1,6 @@
 "use client"
 
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -23,11 +23,26 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null); // Mobile SUbmenu
   const [isScrolled, setIsScrolled] = useState(false);
- 
-  
+  const [activeMegaMenu, setActiveMegaMenu] = useState(null);
+
+    
   const handleMegaScroll = (e) => {
     e.stopPropagation();
   };
+  const handleNavigation = (href) => {
+    setActiveMegaMenu(null);
+    setIsOpen(false);
+    setOpenSubmenu(null);
+    
+    if (pathname === href) {
+     window.location.reload();
+     return;
+    }
+
+    router.push(href);
+  };
+  
+
   return (
     <>
       <header className={`fixed w-full z-50 py-2 transition-all ${isSticky ? "" : ""}`}>
@@ -75,12 +90,18 @@ export default function Header() {
                         ${hasSubmenu ? "has-submenu" : ""}
                         ${singleSubmenu ? "has-single-submenu" : ""}
                       `}
+                      onMouseEnter={() => setActiveMegaMenu(link.name)}
+                      onMouseLeave={() => setActiveMegaMenu(null)}
                       // onMouseEnter={() => hasSubmenu && setMenuOpen(true)}
                       // onMouseLeave={() => hasSubmenu && setMenuOpen(false)}
                     >
                       {link.href ? (
                        <Link
                           href={link.href}
+                          
+                           onClick={(e) => {
+                            handleNavigation(link.href);
+                          }}
                           className="nav-link"
                           data-aos="fade-left"
                           data-aos-delay={index * 100}
@@ -107,7 +128,8 @@ export default function Header() {
                       )}
                       {singleSubmenu && (
                         <div
-                          className={`mega-menu ${menuOpen ? "active" : ""}`}
+                          // className={`mega-menu ${menuOpen ? "active" : ""}`}
+                          className={`mega-menu ${activeMegaMenu === link.name ? "active" : ""  }`}
                           onWheel={handleMegaScroll}
                           onTouchMove={(e) => e.stopPropagation()}
                           onScroll={(e) => e.stopPropagation()}
@@ -186,7 +208,7 @@ export default function Header() {
                                                   {item.children.map((child, i) => (
                                                     <li key={i} 
                                                     className={`mega-item ${child?.children ? "has-child2" : ""}`}>
-                                                      <Link href={child.href || "#"}>{child.name}</Link>
+                                                      <Link href={child.href || "#"} >{child.name}</Link>
                                                         {/* THIRD LEVEL CHILDREN */}
                                                         {child?.children && (
                                                           <ul className="mega-submenu-level2">

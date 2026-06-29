@@ -4,7 +4,7 @@ import Link from "next/link";
 import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 import PageTitleWave from '@/components/PageTitleWave';
 import {navLinks} from "@/lib/data/menus";
-import SitemapDiagram from "@/components/SiteMap/SitemapDiagram";
+import SitemapDiagram from "@/components/SiteMap/page";
 // import PageTitleWaveLeft from '@/components/PageTitleWaveLeft';
 
 

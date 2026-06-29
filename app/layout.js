@@ -5,11 +5,12 @@ import {
 } from "@next/third-parties/google";
 
 import Script from "next/script";
+import IntroLoader from "@/components/GlobalLoader/IntroLoader";
+import DisableZoom from "@/components/DisableZoom";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 // import Cursor from "@/components/Cursor";
-import DisableZoom from "@/components/DisableZoom";
 
 import AOSProvider from "@/components/AOSProvider";
 import ReduxProvider from "@/components/ReduxProvider";
@@ -20,7 +21,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "@flaticon/flaticon-uicons/css/all/all.css";
 import "@fontsource/josefin-sans";
 import "@/styles/globals.scss";
-import IntroLoader from "@/components/GlobalLoader/IntroLoader";
 
 
 // ======================================================
