@@ -19,7 +19,7 @@ export default function PressReleaseLiaisonbankPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
 
-  
+
 
   // Category Options
   const categoryOptions = useMemo(() => {
@@ -118,8 +118,8 @@ export default function PressReleaseLiaisonbankPage() {
 
   // Pagination
   const visibleData = useMemo(() => {
-  return filteredData.slice(0, visibleCount);
-}, [filteredData, visibleCount]);
+    return filteredData.slice(0, visibleCount);
+  }, [filteredData, visibleCount]);
 
   return (
     <>
@@ -187,7 +187,7 @@ export default function PressReleaseLiaisonbankPage() {
                 ) => {
                   setCategory(
                     option?.value ??
-                      "All"
+                    "All"
                   );
                   setVisibleCount(ITEMS_PER_LOAD);
                 }}
@@ -218,7 +218,7 @@ export default function PressReleaseLiaisonbankPage() {
                 ) => {
                   setYear(
                     option?.value ??
-                      "All"
+                    "All"
                   ); setVisibleCount(ITEMS_PER_LOAD);
                 }}
                 isSearchable={
@@ -234,7 +234,7 @@ export default function PressReleaseLiaisonbankPage() {
       <section className="press-release-content py-5" ref={sectionRef}>
         <div className="container" ref={listingRef}>
           <div className="row g-4">
-           {visibleData.length > 0 ? (
+            {visibleData.length > 0 ? (
               <>
                 {visibleData.map((post, index) => (
                   <div
@@ -307,42 +307,24 @@ export default function PressReleaseLiaisonbankPage() {
                     </div>
                   </div>
                 ))}
-                {visibleCount < filteredData.length && (
                 <div className="col-12 text-center mt-5">
-                  <button
-                    type="button"
-                    className="themeht-btn btn"
-                    onClick={() => {
-                      setVisibleCount((prev) =>
-                        Math.min(prev + ITEMS_PER_LOAD, filteredData.length)
-                      );
-
-                      setTimeout(() => {
-                        listingRef.current?.scrollIntoView({
-                          behavior: "smooth",
-                          block: "nearest",
-                        });
-                      }, 100);
-                    }}
-                  >
-                    Load More
-                  </button>
-                </div>
-              )}
+                {/* Load More */} {visibleCount < filteredData.length && 
+                (<button type="button" className="themeht-btn btn btn-primary btn-lg primary-btn d-inline-flex align-items-center mt-4" onClick={() => { setVisibleCount((prev) => Math.min(prev + ITEMS_PER_LOAD, filteredData.length)); setTimeout(() => { listingRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", }); }, 100); }} > Load More </button>)} {/* Load Less */} {visibleCount > ITEMS_PER_LOAD && (<button type="button" className="themeht-btn btn btn-primary btn-lg primary-btn d-inline-flex align-items-center mt-4" onClick={() => { setVisibleCount((prev) => Math.max(prev - ITEMS_PER_LOAD, ITEMS_PER_LOAD)); setTimeout(() => { listingRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", }); }, 100); }} > Load Less </button>)}
+              </div>
               </>
             ) : (
               <div className="col-12">
                 <div className="text-center py-5">
                   <h4 className="mb-2">
                     {pressReleaseData.length ===
-                    0
+                      0
                       ? "Press Releases Not Yet Released"
                       : "No Data Found"}
                   </h4>
 
                   <p className="text-center text-muted mb-0">
                     {pressReleaseData.length ===
-                    0
+                      0
                       ? "Press releases will appear here once they are published."
                       : "No press releases match your search or filter criteria."}
                   </p>
