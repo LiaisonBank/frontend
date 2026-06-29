@@ -190,7 +190,7 @@ export default function Footer() {
         title="Enquiry Form"
         width="600px"
       >
-        <EnquiryForm />
+        <EnquiryForm  onClose={() => setOpen(false)} />
       </Modal>
 
       {/* Hiring Modal */}
