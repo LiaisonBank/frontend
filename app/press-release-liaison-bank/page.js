@@ -6,6 +6,7 @@ import Image from "next/image";
 import Select from "react-select";
 import useBodyClass from "@/components/useBodyClass";
 import pressReleaseData from "@/lib/data/pressReleaseData";
+import { section } from "framer-motion/client";
 
 export default function PressReleaseLiaisonbankPage() {
   useBodyClass("pressrelease");
@@ -18,17 +19,14 @@ export default function PressReleaseLiaisonbankPage() {
   const [year, setYear] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
-
+  const [dbStatus, setDbStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
 
 
   // Category Options
   const categoryOptions = useMemo(() => {
     const categories = [
-      ...new Set(
-        pressReleaseData.map(
-          (item) => item.category
-        )
-      ),
+      ...new Set(pressReleaseData.map((item) => item.category)),
     ];
 
     return [
@@ -48,12 +46,8 @@ export default function PressReleaseLiaisonbankPage() {
     const years = [
       ...new Set(
         pressReleaseData.map((item) =>
-          String(
-            new Date(
-              item.publishedAt
-            ).getFullYear()
-          )
-        )
+          String(new Date(item.publishedAt).getFullYear()),
+        ),
       ),
     ].sort((a, b) => Number(b) - Number(a));
 
@@ -71,49 +65,27 @@ export default function PressReleaseLiaisonbankPage() {
 
   // Filter Data
   const filteredData = useMemo(() => {
-    const search = searchTerm
-      .trim()
-      .toLowerCase();
+    const search = searchTerm.trim().toLowerCase();
 
-    return pressReleaseData.filter(
-      (post) => {
-        const title =
-          post.title?.toLowerCase() ??
-          "";
+    return pressReleaseData.filter((post) => {
+      const title = post.title?.toLowerCase() ?? "";
 
-        const postCategory =
-          post.category?.toLowerCase() ??
-          "";
+      const postCategory = post.category?.toLowerCase() ?? "";
 
-        const postYear = String(
-          new Date(
-            post.publishedAt
-          ).getFullYear()
-        );
+      const postYear = String(new Date(post.publishedAt).getFullYear());
 
-        const matchesSearch =
-          !search ||
-          title.includes(search) ||
-          postCategory.includes(
-            search
-          ) ||
-          postYear.includes(search);
+      const matchesSearch =
+        !search ||
+        title.includes(search) ||
+        postCategory.includes(search) ||
+        postYear.includes(search);
 
-        const matchesCategory =
-          category === "All" ||
-          post.category === category;
+      const matchesCategory = category === "All" || post.category === category;
 
-        const matchesYear =
-          year === "All" ||
-          postYear === year;
+      const matchesYear = year === "All" || postYear === year;
 
-        return (
-          matchesSearch &&
-          matchesCategory &&
-          matchesYear
-        );
-      }
-    );
+      return matchesSearch && matchesCategory && matchesYear;
+    });
   }, [searchTerm, category, year]);
 
   // Pagination
@@ -121,6 +93,27 @@ export default function PressReleaseLiaisonbankPage() {
     return filteredData.slice(0, visibleCount);
   }, [filteredData, visibleCount]);
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/v1/backend/db-test");
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const data = await res.json();
+        setDbStatus(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+  // if (loading) return <p>Loading...</p>;
   return (
     <>
       {/* PAGE HEADER */}
@@ -131,9 +124,7 @@ export default function PressReleaseLiaisonbankPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1>
-                      Press Releases
-                    </h1>
+                    <h1>Press Releases</h1>
                   </div>
                 </div>
               </div>
@@ -152,15 +143,9 @@ export default function PressReleaseLiaisonbankPage() {
                 type="text"
                 className="form-control"
                 placeholder="Search by title, category or year..."
-                value={
-                  searchTerm
-                }
-                onChange={(
-                  e
-                ) => {
-                  setSearchTerm(
-                    e.target.value
-                  );
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
                   setVisibleCount(ITEMS_PER_LOAD);
                 }}
               />
@@ -172,28 +157,15 @@ export default function PressReleaseLiaisonbankPage() {
                 instanceId="category-select"
                 inputId="category-select"
                 classNamePrefix="react-select"
-                options={
-                  categoryOptions
-                }
+                options={categoryOptions}
                 value={categoryOptions.find(
-                  (
-                    option
-                  ) =>
-                    option.value ===
-                    category
+                  (option) => option.value === category,
                 )}
-                onChange={(
-                  option
-                ) => {
-                  setCategory(
-                    option?.value ??
-                    "All"
-                  );
+                onChange={(option) => {
+                  setCategory(option?.value ?? "All");
                   setVisibleCount(ITEMS_PER_LOAD);
                 }}
-                isSearchable={
-                  false
-                }
+                isSearchable={false}
               />
             </div>
 
@@ -203,37 +175,40 @@ export default function PressReleaseLiaisonbankPage() {
                 instanceId="year-select"
                 inputId="year-select"
                 classNamePrefix="react-select"
-                options={
-                  yearOptions
-                }
-                value={yearOptions.find(
-                  (
-                    option
-                  ) =>
-                    option.value ===
-                    year
-                )}
-                onChange={(
-                  option
-                ) => {
-                  setYear(
-                    option?.value ??
-                    "All"
-                  ); setVisibleCount(ITEMS_PER_LOAD);
+                options={yearOptions}
+                value={yearOptions.find((option) => option.value === year)}
+                onChange={(option) => {
+                  setYear(option?.value ?? "All");
+                  setVisibleCount(ITEMS_PER_LOAD);
                 }}
-                isSearchable={
-                  false
-                }
+                isSearchable={false}
               />
             </div>
           </div>
         </div>
       </section>
 
+      <section className="press-release-content py-5">
+        <div className="container">
+          <div className="row">
+            <div className="col-6 mx-auto">
+       {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <div>
+                  <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">Status: {dbStatus?.status}</p>
+                  <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">Database: {dbStatus?.database}</p>
+                  <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">Version: {dbStatus?.version}</p>
+                </div>
+              )}
+              </div></div>
+              </div>
+      </section>
       {/* GRID */}
       <section className="press-release-content py-5" ref={sectionRef}>
         <div className="container" ref={listingRef}>
-          <div className="row g-4">
+          <div className="row g-4">          
+
             {visibleData.length > 0 ? (
               <>
                 {visibleData.map((post, index) => (
@@ -267,7 +242,9 @@ export default function PressReleaseLiaisonbankPage() {
 
                         <div className="d-flex align-items-center justify-between">
                           <div>
-                            <Link href={`/press-release-liaison-bank/${post.slug}`}>
+                            <Link
+                              href={`/press-release-liaison-bank/${post.slug}`}
+                            >
                               <span className="badge theme-bg mb-2 align-self-start">
                                 {post.category}
                               </span>
@@ -308,23 +285,61 @@ export default function PressReleaseLiaisonbankPage() {
                   </div>
                 ))}
                 <div className="col-12 text-center mt-5">
-                {/* Load More */} {visibleCount < filteredData.length && 
-                (<button type="button" className="themeht-btn btn btn-primary btn-lg primary-btn d-inline-flex align-items-center mt-4" onClick={() => { setVisibleCount((prev) => Math.min(prev + ITEMS_PER_LOAD, filteredData.length)); setTimeout(() => { listingRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", }); }, 100); }} > Load More </button>)} {/* Load Less */} {visibleCount > ITEMS_PER_LOAD && (<button type="button" className="themeht-btn btn btn-primary btn-lg primary-btn d-inline-flex align-items-center mt-4" onClick={() => { setVisibleCount((prev) => Math.max(prev - ITEMS_PER_LOAD, ITEMS_PER_LOAD)); setTimeout(() => { listingRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", }); }, 100); }} > Load Less </button>)}
-              </div>
+                  {/* Load More */}{" "}
+                  {visibleCount < filteredData.length && (
+                    <button
+                      type="button"
+                      className="themeht-btn btn btn-primary btn-lg primary-btn d-inline-flex align-items-center mt-4"
+                      onClick={() => {
+                        setVisibleCount((prev) =>
+                          Math.min(prev + ITEMS_PER_LOAD, filteredData.length),
+                        );
+                        setTimeout(() => {
+                          listingRef.current?.scrollIntoView({
+                            behavior: "smooth",
+                            block: "nearest",
+                          });
+                        }, 100);
+                      }}
+                    >
+                      {" "}
+                      Load More{" "}
+                    </button>
+                  )}{" "}
+                  {/* Load Less */}{" "}
+                  {visibleCount > ITEMS_PER_LOAD && (
+                    <button
+                      type="button"
+                      className="themeht-btn btn btn-primary btn-lg primary-btn d-inline-flex align-items-center mt-4"
+                      onClick={() => {
+                        setVisibleCount((prev) =>
+                          Math.max(prev - ITEMS_PER_LOAD, ITEMS_PER_LOAD),
+                        );
+                        setTimeout(() => {
+                          listingRef.current?.scrollIntoView({
+                            behavior: "smooth",
+                            block: "nearest",
+                          });
+                        }, 100);
+                      }}
+                    >
+                      {" "}
+                      Load Less{" "}
+                    </button>
+                  )}
+                </div>
               </>
             ) : (
               <div className="col-12">
                 <div className="text-center py-5">
                   <h4 className="mb-2">
-                    {pressReleaseData.length ===
-                      0
+                    {pressReleaseData.length === 0
                       ? "Press Releases Not Yet Released"
                       : "No Data Found"}
                   </h4>
 
                   <p className="text-center text-muted mb-0">
-                    {pressReleaseData.length ===
-                      0
+                    {pressReleaseData.length === 0
                       ? "Press releases will appear here once they are published."
                       : "No press releases match your search or filter criteria."}
                   </p>
