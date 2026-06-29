@@ -224,7 +224,6 @@ export default function Header() {
                                       <a
                                         href={sub.pdf}
                                         target="_blank"
-                                        download
                                         className="pdf-download"
                                       >
                                         <Image

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
-import license from "@/assets/images/liaisoning-in-real-estate.jpg"
+import license from "@/assets/images/liaisoning-in-real-estate.webp"
 import licenseService from "@/assets/images/licensing-services.png"
 import commitment from "@/assets/images/commitment.jpg"
 
