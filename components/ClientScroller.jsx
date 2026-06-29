@@ -20,7 +20,7 @@ const ClientScroller = () => {
                         data-aos-delay={index * 100}>
                         <div className="client-image-wrapper">
                             <Image
-                                src={`/clients/${name}.jpg`}
+                                src={`/clients/${name}.webp`}
                                 width={175}
                                 height={125}
                                 alt={name}
