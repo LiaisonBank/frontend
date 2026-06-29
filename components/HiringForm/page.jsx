@@ -14,6 +14,7 @@ export default function HiringForm() {
     phone_number: "",
     enquiry_details: "",
   });
+  
 
   const [resume, setResume] = useState(null);
 
@@ -35,8 +36,12 @@ export default function HiringForm() {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
 
-    const maxSize = 1024 * 1024; // 1 MB
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
+    if (file.size > MAX_FILE_SIZE) {
+      alert("Resume must be less than 5 MB.");
+      return;
+    }
     if (!allowedTypes.includes(file.type)) {
       Swal.fire({
         icon: "error",
@@ -50,7 +55,7 @@ export default function HiringForm() {
       return;
     }
 
-    if (file.size > maxSize) {
+    if (file.size > MAX_FILE_SIZE) {
       Swal.fire({
         icon: "error",
         title: "File Too Large",
@@ -271,7 +276,7 @@ export default function HiringForm() {
         />
 
         <p className="mt-3 text-sm text-gray-500">
-          Max File Limit Size 1MB
+          Max File Limit Size 2-5 MB
         </p>
 
         {resume && (
