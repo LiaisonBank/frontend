@@ -193,7 +193,7 @@ const handleSubmit = async (e) => {
     });
 
     // const response = await fetch("/api/v1/hiring", {
-    const response = await fetch("https://backend.liaisonbank.com/api/v1/hiring", {
+    const response = await fetch("/api/v1/hiring", {
       method: "POST",
       body: formData,
     });
