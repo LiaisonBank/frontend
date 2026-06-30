@@ -6,198 +6,267 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 export default function HiringForm() {
-  const [loading, setLoading] = useState(false);
+ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-  const [form, setForm] = useState({
-    contact_person: "",
-    email_id: "",
-    phone_number: "",
-    enquiry_details: "",
-  });
-  
+const ALLOWED_FILE_TYPES = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
 
-  const [resume, setResume] = useState(null);
+const EMAIL_REGEX =
+  /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
-  const handleChange = (e) => {
+const MOBILE_REGEX = /^[6-9]\d{9}$/;
+
+const [loading, setLoading] = useState(false);
+
+const [form, setForm] = useState({
+  name: "",
+  email_id: "",
+  phone_number: "91",
+  enquiry_details: "",
+});
+
+const [resume, setResume] = useState(null);
+
+const handleChange = (eOrValue, fieldName = null) => {
+  // Handle react-phone-input-2
+  if (fieldName === "phone_number") {
+    // Store the value exactly as received (e.g. 919892021702)
     setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      phone_number: eOrValue.replace(/\D/g, ""),
     }));
-  };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
+    return;
+  }
 
-    if (!file) return;
+  // Handle normal HTML inputs
+  const { name, value } = eOrValue.target;
 
-    const allowedTypes = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ];
+  setForm((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
 
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const handleFileChange = (e) => {
+  const file = e.target.files?.[0];
 
-    if (file.size > MAX_FILE_SIZE) {
-      alert("Resume must be less than 5 MB.");
-      return;
-    }
-    if (!allowedTypes.includes(file.type)) {
-      Swal.fire({
-        icon: "error",
-        title: "Invalid File",
-        text: "Only PDF, DOC and DOCX files are allowed.",
-        confirmButtonColor: "#f97316",
-      });
+  if (!file) {
+    setResume(null);
+    return;
+  }
 
-      e.target.value = "";
-      setResume(null);
-      return;
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      Swal.fire({
-        icon: "error",
-        title: "File Too Large",
-        text: "Maximum file size allowed is 1 MB.",
-        confirmButtonColor: "#f97316",
-      });
-
-      e.target.value = "";
-      setResume(null);
-      return;
-    }
-
-    setResume(file);
-  };
-
-  const validateForm = () => {
-    const errors = [];
-
-    if (!form.contact_person.trim()) {
-      errors.push("Your Name is required");
-    }
-
-    if (!form.email_id.trim()) {
-      errors.push("Email ID is required");
-    } else if (!/^\S+@\S+\.\S+$/.test(form.email_id)) {
-      errors.push("Please enter a valid Email ID");
-    }
-
-    const mobile = form.phone_number.replace(/\D/g, "");
-
-    if (!mobile) {
-      errors.push("Mobile Number is required");
-    } else if (mobile.length !== 10) {
-      errors.push("Mobile Number must be 10 digits");
-    }
-
-    if (!resume) {
-      errors.push("Please upload your CV");
-    }
-
-    return errors;
-  };
-
-  const resetForm = () => {
-    setForm({
-      contact_person: "",
-      email_id: "",
-      phone_number: "",
-      enquiry_details: "",
+  if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+    Swal.fire({
+      icon: "error",
+      title: "Invalid Resume",
+      text: "Only PDF, DOC and DOCX files are allowed.",
+      confirmButtonColor: "#f97316",
     });
 
+    e.target.value = "";
     setResume(null);
+    return;
+  }
 
-    const fileInput = document.getElementById("resume");
-    if (fileInput) fileInput.value = "";
+  if (file.size > MAX_FILE_SIZE) {
+    Swal.fire({
+      icon: "error",
+      title: "File Too Large",
+      text: "Resume size must not exceed 5 MB.",
+      confirmButtonColor: "#f97316",
+    });
+
+    e.target.value = "";
+    setResume(null);
+    return;
+  }
+
+  setResume(file);
+};
+
+const validateForm = () => {
+  const errors = [];
+
+  // Name
+  if (!form.name.trim()) {
+    errors.push("Name is required.");
+  }
+
+  // Email
+  const email = form.email_id.trim();
+
+  if (!email) {
+    errors.push("Email ID is required.");
+  } else if (!EMAIL_REGEX.test(email)) {
+    errors.push("Please enter a valid Email ID.");
+  }
+
+  // Mobile
+  let mobile = form.phone_number.replace(/\D/g, "");
+
+  if (mobile.startsWith("91") && mobile.length === 12) {
+    mobile = mobile.substring(2);
+  }
+
+  if (!mobile) {
+    errors.push("Mobile Number is required.");
+  } else if (!/^[6-9]\d{9}$/.test(mobile)) {
+    errors.push(
+      "Mobile Number must be exactly 10 digits and start with 6, 7, 8 or 9."
+    );
+  }
+
+  // Resume
+  if (!resume) {
+    errors.push("Please upload your Resume.");
+  }
+
+  return {
+    errors,
+    mobile,
   };
+};
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const resetForm = () => {
+  setForm({
+    name: "",
+    email_id: "",
+    phone_number: "91",
+    enquiry_details: "",
+  });
 
-    const errors = validateForm();
+  setResume(null);
 
-    if (errors.length > 0) {
-      Swal.fire({
-        icon: "error",
-        title: "Validation Error",
-        html: `
-          <ul style="text-align:left;padding-left:20px;">
-            ${errors.map((err) => `<li>${err}</li>`).join("")}
-          </ul>
-        `,
-        confirmButtonColor: "#f97316",
-      });
+  const fileInput = document.getElementById("resume");
 
-      return;
-    }
+  if (fileInput) {
+    fileInput.value = "";
+  }
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const { errors, mobile } = validateForm();
+
+  if (errors.length) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      html: `
+        <ul style="text-align:left;padding-left:20px;line-height:1.8;">
+          ${errors.map((err) => `<li>${err}</li>`).join("")}
+        </ul>
+      `,
+      confirmButtonColor: "#f97316",
+    });
+
+    return;
+  }
+
+  const formData = new FormData();
+
+  formData.append("name", form.name.trim());
+  formData.append("email_id ", form.email_id.trim());
+  formData.append("phone_number", mobile);
+  formData.append("enquiry_details", form.enquiry_details.trim());
+  formData.append("resume", resume);
+  for (const [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
+  // return;
+  try {
+    setLoading(true);
+
+    Swal.fire({
+      title: "Submitting Application",
+      text: "Please wait...",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    // const response = await fetch("/api/v1/hiring", {
+    const response = await fetch("https://backend.liaisonbank.com/api/v1/hiring", {
+      method: "POST",
+      body: formData,
+    });
+    
+
+    // const result = await response.json();
+    const text = await response.text();
+
+    console.log("Status:", response.status);
+    console.log("Response:", text);
+    var result;
 
     try {
-      setLoading(true);
+      result = JSON.parse(text);
+    } catch (e) {
+      throw new Error(text);
+    }
 
-      const payload = {
-        name: form.contact_person.trim(),
-        email: form.email_id.trim(),
-        mobile: form.phone_number.trim(),
-        message: form.enquiry_details.trim(),
-        resume_name: resume?.name,
-        resume_size: resume?.size,
-        resume_type: resume?.type,
-      };
+    Swal.close();
 
-      console.group("Hiring Form Submission");
-      console.log(payload);
-      console.log("Resume File:", resume);
-      console.groupEnd();
+    if (!response.ok) {
+      throw new Error(
+        result.message || "Unable to submit your application."
+      );
+    }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    Swal.fire({
+      icon: "success",
+      title: "Application Submitted",
+      text:
+        result.message ||
+        "Thank you! Your application has been submitted successfully.",
+      confirmButtonColor: "#f97316",
+    });
+
+    resetForm();
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Submission Failed",
+      text:
+        error.message ||
+        "Something went wrong. Please try again later.",
+      confirmButtonColor: "#f97316",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleDiscard = () => {
+  Swal.fire({
+    title: "Discard Changes?",
+    text: "All entered details will be lost.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, Reset",
+    cancelButtonText: "Cancel",
+    confirmButtonColor: "#f97316",
+    cancelButtonColor: "#6b7280",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      resetForm();
 
       Swal.fire({
         icon: "success",
-        title: "Application Submitted",
-        text: "Your application has been submitted successfully.",
+        title: "Form Reset",
+        text: "The form has been cleared successfully.",
         confirmButtonColor: "#f97316",
       });
-
-      resetForm();
-    } catch (error) {
-      console.error(error);
-
-      Swal.fire({
-        icon: "error",
-        title: "Server Error",
-        text: "Something went wrong. Please try again.",
-        confirmButtonColor: "#f97316",
-      });
-    } finally {
-      setLoading(false);
     }
-  };
-   const handleDiscard = () => {
-      Swal.fire({
-        title: "Reset Form?",
-        text: "All entered details will be removed.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#000",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, Reset",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          resetForm();
-  
-          Swal.fire({
-            icon: "success",
-            title: "Reset",
-            text: "Form has been cleared.",
-            confirmButtonColor: "#000",
-          }).then(() => {
-            window.location.reload();
-          });
-        }
-      });
-    };
+  });
+};
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 hiring-form">
@@ -206,8 +275,8 @@ export default function HiringForm() {
           <label className="block mb-2">Your Name <span className="text-red-500">*</span></label>
            <input
               type="text"
-              name="contact_person"
-              value={form.contact_person}
+              name="name"
+              value={form.name}
               onChange={handleChange}
               placeholder="Your Name"
               className="w-full form-control px-2 py-1 rounded-xl bg-gray-100"
@@ -227,18 +296,13 @@ export default function HiringForm() {
         <div>
           <label className="block mb-2">Mobile No. <span className="text-red-500">*</span></label>
           <PhoneInput
-            country={"in"}
+            country="in"
             onlyCountries={["in"]}
-            disableDropdown={true}
+            disableDropdown
             countryCodeEditable={false}
             enableSearch={false}
             value={form.phone_number}
-            onChange={(phone) =>
-              setForm({
-                ...form,
-                phone_number: phone,
-              })
-            }
+            onChange={(value) => handleChange(value, "phone_number")}
             inputClass="!w-full !pl-14"
             containerClass="!w-full"
           />
