@@ -188,7 +188,7 @@ export default function PressReleaseLiaisonbankPage() {
         </div>
       </section>
 
-      <section className="press-release-content py-5">
+      <section className="press-release-content py-5 d-none">
         <div className="container">
           <div className="row">
             <div className="col-6 mx-auto">
