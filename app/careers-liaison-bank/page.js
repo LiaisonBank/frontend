@@ -1,103 +1,120 @@
-"use client";
-// import Image from "next/image";
-import Link from "next/link";
-import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
-// import PageTitleWave from '@/components/PageTitleWave';
-// import PageTitleWaveLeft from '@/components/PageTitleWaveLeft';
-// import JobsPage from "@/components/JobPage";
+import Career from "./Career.jsx";
 
+export const metadata = {
+  title:
+    "Careers | Join Liaison Bank | Business Licensing & Government Liaison Jobs Mumbai",
 
-export default function CareersLiaisonPage() {
-  useBodyClass('careers');
-  return (
-    <>
-      <div className="page-header">
-        <div className="inner-header">
-          {/* <PageTitleWave /> */}
-          <div className="page-title">
-            <div className="container">
-              <div className="row justify-content-center text-center">
-                <div className="col-lg-10">
-                  <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Careers</h1>
+  description:
+    "Build your career with Liaison Bank. Explore exciting job opportunities in business licensing, government liaisoning, statutory approvals, regulatory compliance, project management, and corporate consulting. Join our growing team in Mumbai and shape the future of business compliance across India.",
 
-                    <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
-                        <li className="breadcrumb-item">
-                          <Link href="/">
-                            <i className="bi bi-house-door me-1" aria-hidden="true"></i>
-                            Home
-                          </Link>
-                        </li>
+  keywords: [
+    "Liaison Bank careers",
+    "Liaison Bank jobs",
+    "Business licensing jobs",
+    "Government liaison jobs",
+    "Regulatory compliance jobs",
+    "Corporate compliance careers",
+    "Business consultant jobs",
+    "Government approval consultant jobs",
+    "Mumbai jobs",
+    "Business licensing careers India",
+    "Government liaison careers",
+    "Compliance consultant jobs",
+    "Project management jobs",
+    "Corporate consulting careers",
+    "Business registration consultant jobs",
+    "FSSAI consultant jobs",
+    "Factory license consultant jobs",
+    "Fire NOC consultant jobs",
+    "Environmental clearance jobs",
+    "Import export consultant jobs",
+    "Healthcare licensing jobs",
+    "Educational compliance jobs",
+    "Real estate liaison jobs",
+    "Commercial licensing jobs",
+    "Industrial licensing jobs",
+    "BMC consultant jobs",
+    "Business consultant careers Mumbai",
+    "Corporate jobs Mumbai",
+    "Compliance jobs Mumbai",
+    "Government liaison consultants Mumbai",
+    "Hiring business consultants",
+    "Hiring compliance specialists",
+    "Join Liaison Bank",
+    "Career opportunities Mumbai",
+    "Corporate careers India",
+    "Professional consulting careers",
+    "Regulatory compliance specialists",
+    "Business compliance careers",
+    "Business licensing experts",
+    "Government liaison experts",
+    "Corporate career opportunities",
+    "Business consulting company jobs",
+    "Experienced compliance professionals",
+    "Freshers jobs Mumbai",
+    "Experienced professionals hiring",
+    "Consulting firm careers",
+    "Apply for business consultant jobs",
+    "Work at Liaison Bank",
+    "Career growth opportunities",
+    "Business licensing recruitment"
+  ],
 
-                        <li
-                          className="breadcrumb-item active"
-                          aria-current="page"
-                        >
-                          Careers
-                        </li>
-                      </ol>
-                    </nav>
+  alternates: {
+    canonical: "https://www.liaisonbank.com/careers",
+  },
 
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* <PageTitleWaveLeft /> */}
-        </div>
-      </div>
-      <section className="container py-5">
-        <div className="row justify-content-center text-center">
-            <div className="col-12 col-md-6">
-              <h5>Join Liaison Bank</h5>
-              <p className="py-2 text-gray"><strong>Thrive in an innovative, collaborative career environment.</strong></p>
-              <p>At Liaison Bank we believe in fostering a dynamic, collaborative, and innovative work environment and 
-              we’re on the lookout for talented individuals who share our passion for business.</p>
+  openGraph: {
+    title:
+      "Careers | Join Liaison Bank | Business Licensing & Government Liaison Jobs",
 
-              <address className="themeht-btn primary-btn">
-                <p>Contact HR</p>
-                <p>Email: <Link href="mailto:hr@liaisonbank.com">hr@liaisonbank.com</Link></p>
-                <p>Phone: <Link href="tel:+91 82684 32177">+91 82684 32177</Link> / <Link href="tel:+91 93217 09265">+91 93217 09265</Link></p>
-              </address>
-            </div>
-            <div className="col-12 col-md-6">
-              <h5>Positions Available</h5>
-              <div className="py-2">
-                <p>Explore exciting career opportunities with us and become part of a dynamic and growing organization.
-                We are looking for talented and motivated individuals who are eager to contribute their skills and grow professionally.</p>
-                <p className="py-2">Our team is currently expanding, and we are actively seeking candidates for multiple positions across various departments.
-                Please note that all roles are open for recruitment.</p>
-                {/* We are currently expanding our team and are looking to fill all positions (barring Accounts & Admin roles). 
-                If you’re ready to embark on a rewarding career journey, join us and be part of something extraordinary. 
-                 */}
-                </div>  
-              <div className="mt-2 col-4 text-start">
-                <Link className="themeht-btn primary-btn px-4 py-2 " href="https://liaisonbank.frappe.cloud/jobs" target="_blank">
-                Careers List</Link>
-              </div>
-                     
-            </div>
+    description:
+      "Explore career opportunities at Liaison Bank and join one of India's leading business licensing and government liaison consultancies. Apply today.",
 
+    url: "https://www.liaisonbank.com/careers",
+    siteName: "Liaison Bank",
+    locale: "en_IN",
+    type: "website",
+  },
 
-          {/* <Link href="https://liaisonbank.frappe.cloud/jobs" target="_blank">
-            Careers
-            </Link> */}
-          {/* <div style={{ width: "100%", height: "100vh" }}>
-            <iframe
-              src="https://liaisonbank.frappe.cloud/jobs"
-              style={{
-                border: "none",
-                width: "100%",
-                height: "100%",
-              }}
-              loading="lazy"
-            />
-          </div> */}
-        </div>
-      </section>
-    </>
-  );
+  twitter: {
+    card: "summary_large_image",
+
+    title:
+      "Careers | Join Liaison Bank",
+
+    description:
+      "Discover exciting career opportunities in business licensing, government liaisoning, statutory approvals, and regulatory compliance at Liaison Bank.",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+
+  category: "Careers",
+
+  authors: [
+    {
+      name: "Liaison Bank",
+      url: "https://www.liaisonbank.com",
+    },
+  ],
+
+  creator: "Liaison Bank",
+
+  publisher: "Liaison Bank",
+
+  metadataBase: new URL("https://www.liaisonbank.com"),
+};
+
+export default function Home() {
+  return <Career />;
 }
-
-// export default AboutUsLiaisonPage;

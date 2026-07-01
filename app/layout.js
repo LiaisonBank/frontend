@@ -23,6 +23,8 @@ import "@fontsource/josefin-sans";
 import "@/styles/globals.scss";
 
 
+
+
 // ======================================================
 // FONT CONFIGURATION
 // ======================================================
@@ -36,47 +38,100 @@ const barlow = Barlow({
   preload: true,
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://liaisonbank.com";
+
+
 // ======================================================
 // SEO METADATA
 // ======================================================
-
 export const metadata = {
-  metadataBase: new URL("https://liaisonbank.com"),
+  metadataBase: new URL(siteUrl),
 
   title: {
-    default: "Liaison Bank",
+  default:
+      "Liaison Bank | Business Licensing, Fire NOC & Government Approval Consultants",
     template: "%s | Liaison Bank",
   },
 
-  description:
-    "Liaison Bank provides expert licensing, liaisoning, compliance, approvals, and regulatory consulting services across India.",
+ description:
+  "Liaison Bank is India's trusted business licensing and liaisoning consultancy providing Factory License, Fire NOC, MPCB, Electrical Inspector approvals, Trade License, statutory compliance, industrial approvals and government liaison services across India.",
+  
+  applicationName: "Liaison Bank",
 
   keywords: [
-    "liaison services",
-    "license consultant",
-    "business licensing India",
-    "government approvals",
-    "regulatory compliance",
-    "factory license",
-    "pollution NOC",
-    "trade license",
-    "MPCB consultant",
-    "liaisonbank",
-  ],
+  "Liaison Bank",
+  "Liaison Bank Mumbai",
+  "Business Liaison Services",
+  "Government Liaison Services",
+  "Business Licensing Services",
+  "Regulatory Compliance Services",
+  "Industrial Licensing Consultant",
+  "Commercial Licensing Consultant",
+  "Corporate Compliance Consultant",
+  "Government Approval Consultant",
+  "Business Approval Services",
+  "Factory License Consultant",
+  "Factory License Services",
+  "Trade License Consultant",
+  "Trade License Services",
+  "Fire NOC Consultant",
+  "Fire NOC Approval",
+  "Electrical Safety Consultant",
+  "Electrical Inspector Approval",
+  "Electrical Licensing Services",
+  "MPCB Consultant",
+  "Pollution Control Consultant",
+  "Pollution NOC Services",
+  "Consent to Establish",
+  "Consent to Operate",
+  "Industrial Compliance Services",
+  "Environmental Clearance Consultant",
+  "Industrial Approval Consultant",
+  "Factory Compliance Services",
+  "Industrial Project Approvals",
+  "Government Licensing Consultant",
+  "Statutory Approval Services",
+  "Industrial Permit Consultant",
+  "Commercial Permit Consultant",
+  "Legal Compliance Services",
+  "Business Registration Consultant",
+  "Building Plan Approval",
+  "Occupancy Certificate Consultant",
+  "Fire Safety Compliance",
+  "Electrical Compliance Services",
+  "Manufacturing License Consultant",
+  "Industrial Safety Consultant",
+  "Factory Approval Services",
+  "Single Window Clearance Consultant",
+  "Business Expansion Approvals",
+  "Liaison Consultant India",
+  "Licensing Consultant India",
+  "Compliance Consultant India",
+  "Government Permit Consultant",
+  "End-to-End Licensing Solutions"
+],
 
   authors: [
     {
       name: "Liaison Bank",
-      url: "https://liaisonbank.com",
+      url: siteUrl,
     },
   ],
 
   creator: "Liaison Bank",
   publisher: "Liaison Bank",
 
+  formatDetection: {
+    email: false,
+    telephone: false,
+    address: false,
+  },
+
   robots: {
     index: true,
     follow: true,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
@@ -91,14 +146,14 @@ export const metadata = {
   },
 
   openGraph: {
-    title: "Liaison Bank",
-    description:
-      "Professional liaisoning and licensing services across India.",
-    url: "https://liaisonbank.com",
-    siteName: "Liaison Bank",
-    locale: "en_IN",
     type: "website",
+    locale: "en_IN",
+    url: siteUrl,
+    siteName: "Liaison Bank",
 
+    description:
+    "Liaison Bank is India's trusted business licensing and liaisoning consultancy providing Factory License, Fire NOC, MPCB, Electrical Inspector approvals, Trade License, statutory compliance, industrial approvals and government liaison services across India.",
+  
     images: [
       {
         url: "/og-image.jpg",
@@ -111,20 +166,30 @@ export const metadata = {
 
   twitter: {
     card: "summary_large_image",
+
     title: "Liaison Bank",
+
     description:
-      "Professional liaisoning and licensing services across India.",
+      "Professional Liaisoning, Licensing, Fire Safety and Compliance Services.",
+
     images: ["/og-image.jpg"],
   },
 
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-32x32.png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", sizes: "16x16" },
+    ],
     apple: "/apple-touch-icon.png",
   },
 
+  manifest: "/site.webmanifest",
+
+  category: "Business",
+
   verification: {
-    google: "YOUR_GOOGLE_VERIFICATION_CODE",
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "",
   },
 };
 
@@ -183,6 +248,7 @@ const organizationSchema = {
 // ======================================================
 // ROOT LAYOUT
 // ======================================================
+
 
 export default function RootLayout({ children }) {
   const handleChatFormSubmit = () => {};

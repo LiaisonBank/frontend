@@ -192,7 +192,7 @@ export default function PressReleaseLiaisonbankPage() {
         <div className="container">
           <div className="row">
             <div className="col-6 mx-auto">
-       {loading ? (
+              {loading ? (
                 <p>Loading...</p>
               ) : (
                 <div>

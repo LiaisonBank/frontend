@@ -1,40 +1,90 @@
 import { NextResponse } from "next/server";
 
-export async function POST(req) {
+const REQUEST_TIMEOUT = 30000; // 30 seconds
+
+export async function POST(request) {
   try {
-    const formData = await req.formData();
+    const backendUrl = process.env.BACKEND_PUBLIC_URL;
 
-    const response = await fetch(
-      `${process.env.BACKEND_PUBLIC_URL}/send-hiring-email`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    if (!backendUrl) {
+      console.error("BACKEND_PUBLIC_URL is not configured.");
 
-    const contentType = response.headers.get("content-type");
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Server configuration error.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
 
-    let result;
+    const formData = await request.formData();
 
-    if (contentType?.includes("application/json")) {
-      result = await response.json();
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, REQUEST_TIMEOUT);
+
+    let backendResponse;
+
+    try {
+      backendResponse = await fetch(
+        `${backendUrl}/send-hiring-email`,
+        {
+          method: "POST",
+          body: formData,
+          signal: controller.signal,
+          cache: "no-store",
+        }
+      );
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    const contentType =
+      backendResponse.headers.get("content-type") || "";
+
+    let responseData;
+
+    if (contentType.includes("application/json")) {
+      responseData = await backendResponse.json();
     } else {
-      result = {
-        success: false,
-        message: await response.text(),
+      const text = await backendResponse.text();
+
+      responseData = {
+        success: backendResponse.ok,
+        message: text || "Unexpected response received from backend.",
       };
     }
 
-    return Response.json(result, {
-      status: response.status,
+    return NextResponse.json(responseData, {
+      status: backendResponse.status,
     });
   } catch (error) {
     console.error("Hiring API Error:", error);
 
-    return Response.json(
+    if (error.name === "AbortError") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Backend request timed out. Please try again.",
+        },
+        {
+          status: 504,
+        }
+      );
+    }
+
+    return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error",
+        message:
+          process.env.NODE_ENV === "development"
+            ? error.message
+            : "Internal Server Error",
       },
       {
         status: 500,

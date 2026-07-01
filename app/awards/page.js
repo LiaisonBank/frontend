@@ -1,155 +1,120 @@
-"use client";
+import Awards from "./Awards.jsx";
 
-import { useEffect, useRef } from "react";
-import Link from 'next/link'
+export const metadata = {
+  title:
+    "Awards & Recognition | Liaison Bank | Business Licensing & Government Liaison Experts",
 
-import Image from "next/image";
-import { Fancybox } from "@fancyapps/ui";
+  description:
+    "Explore the awards, achievements, certifications, and industry recognition earned by Liaison Bank. Our commitment to excellence in business licensing, government liaisoning, statutory approvals, and regulatory compliance has made us a trusted consultancy across Mumbai and India.",
 
-import { certificateList } from "@/lib/data/certificateList";
-import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
+  keywords: [
+    "Liaison Bank awards",
+    "Liaison Bank recognition",
+    "Liaison Bank achievements",
+    "Award winning business consultants",
+    "Award winning liaison consultants",
+    "Business excellence awards",
+    "Government liaison experts",
+    "Business licensing experts",
+    "Regulatory compliance experts",
+    "Trusted business consultants",
+    "Business licensing consultants",
+    "Government liaison services",
+    "Business licensing services",
+    "Corporate compliance consultants",
+    "Business compliance consultants India",
+    "Government approval consultants",
+    "Statutory approvals consultants",
+    "Commercial licensing consultants",
+    "Industrial licensing consultants",
+    "Corporate licensing experts",
+    "Business registration consultants",
+    "Government permits and licensing",
+    "End-to-end licensing support",
+    "FSSAI registration consultants",
+    "Trade license consultants",
+    "Factory license consultants",
+    "Fire NOC consultants",
+    "Environmental clearance consultants",
+    "Import export license consultants",
+    "Healthcare licensing consultants",
+    "Educational institution licensing",
+    "Restaurant licensing consultants",
+    "Retail licensing consultants",
+    "Hotel licensing consultants",
+    "Warehouse licensing consultants",
+    "Office licensing consultants",
+    "Manufacturing licensing consultants",
+    "Real estate liaison consultants",
+    "Structural compliance consultants",
+    "Building regularization consultants",
+    "BMC compliance consultants",
+    "Business consultants Mumbai",
+    "Government liaisoning firm Mumbai",
+    "Business license consultants Mumbai",
+    "Industrial approvals Mumbai",
+    "Commercial project approvals",
+    "Regulatory compliance specialists",
+    "Trusted compliance partner",
+    "Leading liaison consultants India",
+    "Award winning compliance consultancy"
+  ],
 
+  alternates: {
+    canonical: "https://www.liaisonbank.com/awards",
+  },
 
-import "@fancyapps/ui/dist/fancybox/fancybox.css";
+  openGraph: {
+    title:
+      "Awards & Recognition | Liaison Bank | Industry-Leading Business Licensing Experts",
 
-export default function AwardPage() {
-useBodyClass('awards-recognition');
-   const galleryRef = useRef(null);
+    description:
+      "Discover Liaison Bank's awards, achievements, and industry recognition for excellence in government liaisoning, statutory approvals, regulatory compliance, and business licensing services.",
 
-  useEffect(() => {
-    const container = galleryRef.current;
+    url: "https://www.liaisonbank.com/awards",
+    siteName: "Liaison Bank",
+    locale: "en_IN",
+    type: "website",
+  },
 
-    if (!container) return;
+  twitter: {
+    card: "summary_large_image",
 
-    Fancybox.bind(
-      container,
-      '[data-fancybox="certificates"]',
-      {
-        animated: true,
+    title:
+      "Awards & Recognition | Liaison Bank",
 
-        Carousel: {
-          infinite: true,
-        },
+    description:
+      "Explore the awards and achievements that reflect Liaison Bank's commitment to excellence in business licensing and government liaison services.",
+  },
 
-        Thumbs: {
-          autoStart: false,
-        },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 
-        Toolbar: {
-          display: {
-            left: [],
-            middle: [
-              "zoomIn",
-              "zoomOut",
-              "toggle1to1",
-            ],
-            right: [
-              "slideshow",
-              "fullscreen",
-              "close",
-            ],
-          },
-        },
-      }
-    );
+  category: "Business Services",
 
-    return () => {
-      Fancybox.unbind(container);
-      Fancybox.close();
-    };
-  }, []);
+  authors: [
+    {
+      name: "Liaison Bank",
+      url: "https://www.liaisonbank.com",
+    },
+  ],
 
-  if (!certificateList?.length) {
-    return null;
-  }
+  creator: "Liaison Bank",
 
-  return (
-    <>
-      <div className="page-header">
-        <div className="inner-header">
-          {/* <PageTitleWave /> */}
-          <div className="page-title">
-            <div className="container">
-              <div className="row justify-content-center text-center">
-                <div className="col-lg-10">
-                  <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Awards and Certifications</h1>
+  publisher: "Liaison Bank",
 
-                    <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
-                        <li className="breadcrumb-item">
-                          <Link href="/">
-                            <i className="bi bi-house-door me-1" aria-hidden="true"></i>
-                            Home
-                          </Link>
-                        </li>
+  metadataBase: new URL("https://www.liaisonbank.com"),
+};
 
-                        <li
-                          className="breadcrumb-item active"
-                          aria-current="page"
-                        >
-                          Awards & Certifications
-                        </li>
-                      </ol>
-                    </nav>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* <PageTitleWaveLeft /> */}
-        </div>
-      </div>
-    <section
-      className="certificate-section py-5"
-      aria-labelledby="certificates-heading"
-    >
-      <div className="container">
-        <div
-          className="row g-4"
-          ref={galleryRef}
-        >
-         {certificateList
-            .map((certificate) => (
-                <div
-                className="col-6 col-md-4 col-lg-3"
-                key={certificate.src}
-                >
-                <article className="certificate-card h-100">
-                    <a
-                    href={certificate.src}
-                    data-fancybox="certificates"
-                    data-caption={certificate.caption}
-                    className="certificate-link"
-                    aria-label={`Open ${certificate.caption}`}
-                    >
-                    <div className="certificate-image-wrapper">
-                        <Image
-                        src={certificate.src}
-                        alt={certificate.caption}
-                        width={600}
-                        height={850}
-                        className="certificate-image"
-                        loading="lazy"
-                        sizes="
-                            (max-width: 576px) 50vw,
-                            (max-width: 991px) 33vw,
-                            25vw
-                        "
-                        />
-                    </div>
-
-                    <div className="certificate-caption">
-                        {certificate.caption}
-                    </div>
-                    </a>
-                </article>
-                </div>
-            ))}
-        </div>
-      </div>
-    </section>
-    </>
-  );
+export default function Home() {
+  return <Awards />;
 }

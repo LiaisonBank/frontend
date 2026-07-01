@@ -1,67 +1,120 @@
-"use client";
-// import Image from "next/image";
-import Link from "next/link";
-import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
-// import PageTitleWave from '@/components/PageTitleWave';
-// import PageTitleWaveLeft from '@/components/PageTitleWaveLeft';
-import OurClients from "@/components/OurClients/OurClients"
+import Clients from "./clients.jsx";
 
-export default function ClientLiaisonbankPage() {
-  useBodyClass('client');
-  return (
-    <>
-      <div className="page-header">
-        <div className="inner-header">
-          {/* <PageTitleWave /> */}
-          <div className="page-title">
-            <div className="container">
-              <div className="row justify-content-center text-center">
-                <div className="col-lg-10">
-                  <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Our Clients</h1>
+export const metadata = {
+  title:
+    "Our Clients | Trusted Business Licensing & Government Liaison Partners | Liaison Bank",
 
-                    <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
-                        <li className="breadcrumb-item">
-                          <Link href="/">
-                            <i className="bi bi-house-door me-1" aria-hidden="true"></i>
-                            Home
-                          </Link>
-                        </li>
+  description:
+    "Explore Liaison Bank's portfolio of trusted clients across commercial, industrial, healthcare, hospitality, education, retail, and real estate sectors. Discover why businesses rely on our expertise for government liaisoning, statutory approvals, regulatory compliance, and business licensing services across Mumbai and India.",
 
-                        <li
-                          className="breadcrumb-item active"
-                          aria-current="page"
-                        >
-                          Our Clients
-                        </li>
-                      </ol>
-                    </nav>
+  keywords: [
+    "Liaison Bank clients",
+    "Our Clients",
+    "Liaison Bank Mumbai",
+    "Mr. Mahadev Biradar Consulting",
+    "DBRE India",
+    "Trusted business consultants",
+    "Business licensing clients",
+    "Government liaison clients",
+    "Corporate clients Mumbai",
+    "Business licensing services",
+    "Government liaison services",
+    "Regulatory compliance services",
+    "Corporate compliance consultants",
+    "Business licensing India",
+    "Government approval consultants",
+    "Statutory approvals consultants",
+    "Commercial licensing consultants",
+    "Industrial licensing consultants",
+    "Corporate licensing experts",
+    "Business registration consultants",
+    "Government permits and licensing",
+    "End-to-end licensing support",
+    "FSSAI registration consultants",
+    "Trade license consultants",
+    "Factory license consultants",
+    "Fire NOC consultants",
+    "Environmental clearance consultants",
+    "Import export license consultants",
+    "Healthcare licensing consultants",
+    "Educational institution licensing",
+    "Restaurant licensing consultants",
+    "Retail licensing consultants",
+    "Hotel licensing consultants",
+    "Warehouse licensing consultants",
+    "Office licensing consultants",
+    "Manufacturing licensing consultants",
+    "Real estate liaison consultants",
+    "Asset management and regularization",
+    "Building regularization consultants",
+    "Structural compliance consultants",
+    "BMC compliance consultants",
+    "Brihanmumbai Municipal Corporation approvals",
+    "Business consultants Mumbai",
+    "Government liaisoning firm Mumbai",
+    "Business license consultants Mumbai",
+    "Industrial approvals Mumbai",
+    "Commercial project approvals",
+    "Regulatory compliance specialists",
+    "Trusted compliance partner",
+    "Leading liaison consultants India"
+  ],
 
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* <PageTitleWaveLeft /> */}
-        </div>
-      </div>
-      <section className="container py-5">
-        <div className="row justify-content-center text-center">
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
-            <h3>We pioneer innovative and sustainable solutions to address <br />the most complex challenges faced by our clients. </h3>
-          </div>
-          <div className="client-section">
-            <div className="row justify-content-center text-center">
+  alternates: {
+    canonical: "https://www.liaisonbank.com/clients",
+  },
 
-              <div className="client-grid">
-                <OurClients />
-              </div>
+  openGraph: {
+    title:
+      "Our Clients | Trusted Business Licensing & Government Liaison Partners",
 
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
-  );
+    description:
+      "See why leading businesses across Mumbai and India trust Liaison Bank for statutory approvals, regulatory compliance, business licensing, and government liaisoning services.",
+
+    url: "https://www.liaisonbank.com/clients",
+    siteName: "Liaison Bank",
+    locale: "en_IN",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+
+    title:
+      "Our Clients | Trusted Business Licensing & Government Liaison Partners",
+
+    description:
+      "Explore Liaison Bank's trusted client portfolio across multiple industries and discover why businesses choose us for licensing and compliance solutions.",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+
+  category: "Business Services",
+
+  authors: [
+    {
+      name: "Liaison Bank",
+      url: "https://www.liaisonbank.com",
+    },
+  ],
+
+  creator: "Liaison Bank",
+
+  publisher: "Liaison Bank",
+
+  metadataBase: new URL("https://www.liaisonbank.com"),
+};
+
+export default function Home() {
+  return <Clients />;
 }

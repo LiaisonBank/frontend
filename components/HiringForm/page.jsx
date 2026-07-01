@@ -171,7 +171,7 @@ const handleSubmit = async (e) => {
   const formData = new FormData();
 
   formData.append("name", form.name.trim());
-  formData.append("email_id ", form.email_id.trim());
+  formData.append("email_id", form.email_id.trim());
   formData.append("phone_number", mobile);
   formData.append("enquiry_details", form.enquiry_details.trim());
   formData.append("resume", resume);
@@ -192,24 +192,24 @@ const handleSubmit = async (e) => {
       },
     });
 
-    // const response = await fetch("/api/v1/hiring", {
     const response = await fetch("/api/v1/hiring", {
       method: "POST",
       body: formData,
+      cache: "no-store",
     });
-    
 
-    // const result = await response.json();
-    const text = await response.text();
+    const contentType = response.headers.get("content-type") || "";
 
-    console.log("Status:", response.status);
-    console.log("Response:", text);
-    var result;
+    let result = {};
 
-    try {
-      result = JSON.parse(text);
-    } catch (e) {
-      throw new Error(text);
+    if (contentType.includes("application/json")) {
+      result = await response.json();
+    } else {
+      throw new Error(await response.text());
+    }
+
+    if (!response.ok) {
+      throw new Error(result.message || "Request failed.");
     }
 
     Swal.close();
