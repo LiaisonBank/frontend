@@ -188,7 +188,7 @@ export default function PressReleaseLiaisonbankPage() {
         </div>
       </section>
 
-      <section className="press-release-content py-5 d-none">
+      <section className="press-release-content py-5">
         <div className="container">
           <div className="row">
             <div className="col-6 mx-auto">
@@ -196,16 +196,25 @@ export default function PressReleaseLiaisonbankPage() {
                 <p>Loading...</p>
               ) : (
                 <div>
-                  <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">Status: {dbStatus?.status}</p>
-                  <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">Database: {dbStatus?.database}</p>
-                  <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">Version: {dbStatus?.version}</p>
+                 <p
+                    data-aos="fade-up"
+                    data-aos-duration="600"
+                    data-aos-delay="200"
+                    className="d-block px-3 py-2 border border-success rounded-pill bg-success-subtle text-success fw-semibold text-center text-capitalize"
+                  >
+                    Status: {dbStatus?.status}
+                  </p>
+                  {/* <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+                    Database: {dbStatus?.database}</p>
+                  <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+                    Version: {dbStatus?.version}</p> */}
                 </div>
               )}
               </div></div>
               </div>
       </section>
       {/* GRID */}
-      <section className="press-release-content py-5" ref={sectionRef}>
+      <section className="press-release-content py-5 d-none" ref={sectionRef}>
         <div className="container" ref={listingRef}>
           <div className="row g-4">          
 
