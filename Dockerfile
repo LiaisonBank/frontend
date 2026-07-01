@@ -31,4 +31,4 @@ COPY --from=builder /app/next.config.* ./
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:prod"]
