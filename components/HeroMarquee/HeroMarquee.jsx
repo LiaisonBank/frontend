@@ -298,7 +298,7 @@ export default function HeroSlider() {
                   </video>
                 ) : (
                   <Image
-                    src={slide.image}
+                    src={isMobile ? slide.mobileImage : slide.image}
                     alt={slide.title}
                     fill
                     priority={
