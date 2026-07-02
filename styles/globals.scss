@@ -2502,11 +2502,22 @@ section.ceo-message{
       display: inline-block;
       position: absolute;
       left: -3rem;
+      @media only screen and (max-width:768){
+        left: 0.5rem;
+        top: -0.5rem;
+      }
     }
     .bottom {
       display: inline-block;
       position: absolute;
-      left: 50%;
+      left: 22%;
+      @media only screen and (max-width:1024px){
+       left: 30%;
+      }
+      @media only screen and (max-width:768){
+        bottom: 0;
+        left: auto;
+      }
     }
     // &:before{
     //   content: "";
@@ -2541,6 +2552,7 @@ section.ceo-message{
       font-size: 2.4rem;
       @media only screen and (max-width:768){
         font-size:1.8rem;
+        padding: 1rem;
       }
     }
   }
@@ -2660,27 +2672,27 @@ section.ceo-message{
     }
     img{
       filter:brightness(1.1);
-      -webkit-border-radius: 20px;
-      -webkit-border-top-right-radius: 150px;
-      -webkit-border-bottom-left-radius: 150px;
-      -moz-border-radius: 20px;
-      -moz-border-radius-topright: 150px;
-      -moz-border-radius-bottomleft: 150px;
-      border-radius: 20px;
-      border-top-right-radius: 150px;
-      border-bottom-left-radius: 150px;
-       @media (max-width: 1023px) {
-        width: 100dvw;
-        -webkit-border-radius: 20px;
-        -webkit-border-top-right-radius: 50px;
-        -webkit-border-bottom-left-radius: 50px;
-        -moz-border-radius: 20px;
-        -moz-border-radius-topright: 50px;
-        -moz-border-radius-bottomleft: 50px;
-        border-radius: 20px;
-        border-top-right-radius: 50px;
-        border-bottom-left-radius: 50px;
-       }
+      // -webkit-border-radius: 20px;
+      // -webkit-border-top-right-radius: 150px;
+      // -webkit-border-bottom-left-radius: 150px;
+      // -moz-border-radius: 20px;
+      // -moz-border-radius-topright: 150px;
+      // -moz-border-radius-bottomleft: 150px;
+      // border-radius: 20px;
+      // border-top-right-radius: 150px;
+      // border-bottom-left-radius: 150px;
+      //  @media (max-width: 1023px) {
+      //   width: 100dvw;
+      //   -webkit-border-radius: 20px;
+      //   -webkit-border-top-right-radius: 50px;
+      //   -webkit-border-bottom-left-radius: 50px;
+      //   -moz-border-radius: 20px;
+      //   -moz-border-radius-topright: 50px;
+      //   -moz-border-radius-bottomleft: 50px;
+      //   border-radius: 20px;
+      //   border-top-right-radius: 50px;
+      //   border-bottom-left-radius: 50px;
+      //  }
     }
     div.grid {
       @media (max-width: 1023px) {
@@ -2853,6 +2865,9 @@ section.ceo-message{
         width: 325px;
         @media screen and (max-width: 912px) {
           width: 100%;
+        }
+        @media screen and (max-width: 768px) {
+          width: 75%;
         }
      .service-card {
         position: relative;
@@ -3409,7 +3424,7 @@ section.ceo-message{
 
     .certificate-image {
       width: 100%;
-      height: 215px;
+      height: auto;
       // object-fit: cover;
 
       transition:
@@ -3440,7 +3455,7 @@ section.ceo-message{
 
     @media (max-width: 767px) {
       .certificate-image {
-        height: 200px;
+        height: auto; // Adjust height for smaller screens
       }
 
       .certificate-caption {

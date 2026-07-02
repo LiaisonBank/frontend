@@ -10,28 +10,29 @@ const slides = [
     category: "Branding",
   },
   {
-    title: "PAN-India Equipment Solutions For Construction & Infrastructure Projects",
-    image: "/images/home/EquipmentSolutions.webp",
+    // title: "PAN-India Equipment Solutions For Construction & Infrastructure Projects",
+    title: "Sales Head & Business Development Services",
+    image: "/images/home/Sonali.png",
     category: "Design",
   },
   {
     title: "FIRE & SAFETY SYSTEMS AND COMPLIANCE SOLUTIONS",
-    image: "/images/home/Fire&SafetyServices.webp",
+    image: "/images/home/Neekuj.png",
     category: "Strategy",
   },
   {
     title: "Integrated Licensing & Liaisoning, Approval Compliance Solutions",
-    image: "/images/home/Licensing&Liaisoning.webp",
+    image: "/images/home/Kalpita.png",
     category: "Motion",
   },
   {
     title: "PIPED NATURAL GAS (PNG) SERVICES & REGULATORY COMPLIANCE",
-    image: "/images/home/PipedNaturalGas.webp",
+    image: "/images/home/Hunan.png",
     category: "Motion",
   },
   {
     title: "Integrated Licensing & Compliance Solutions ",
-    image: "/images/home/RegulatoryLiaisoning.webp",
+    image: "/images/home/Jayesh.png",
     category: "Motion",
   },
 ];

@@ -41,31 +41,9 @@ export default function EnquiryForm({isOpen,
 
   return (
     <>
-      <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="modal-content modal-container"
-        style={{ maxWidth: width }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="modal-header">
-          <h3>ENQUIRY FORM</h3>
-
-          <button
-            type="button"
-            className="modal-close"
-            onClick={onClose}
-            aria-label="Close"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
-          <div className="modal-body">
-            <Form onSuccess={onClose} />
-         
-          </div>
+      <div style={{ maxWidth: width }} onClick={(e) => e.stopPropagation()} >
+        <Form onSuccess={onClose} className="p-4" />
       </div>
-    </div>
     </>
   );
 }

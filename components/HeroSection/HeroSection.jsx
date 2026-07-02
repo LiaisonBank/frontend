@@ -117,7 +117,7 @@ export default function HeroSection() {
                                     {/* <SearchRotator /> */}
                                      <ScrollUpList items={searchPhrases} />
                                     {/* Search services for you business..
-                                     <span class="rotator" aria-hidden="true"><span class="rotator__item"></span></span>
+                                     <span className="rotator" aria-hidden="true"><span class="rotator__item"></span></span>
                                       */}
                                 </div>
                                 {/* <input

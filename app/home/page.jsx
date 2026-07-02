@@ -66,7 +66,7 @@ const Home = () => {
                     priority
                   />
               </div>
-              <div className='p-4 mt-2 mesg'>
+              <div className=' mt-2 mesg'>
                 <div className='quote'  data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">
                   <p>
                     <span className="quote-close">
@@ -110,8 +110,8 @@ const Home = () => {
               priority
             />
           </div> */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center">
-            <div className="p-4 d-flex justify-content-end letbanner" data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
+          <div className="row">
+            <div className="col-12 col-md-12 col-lg-6 p-4 d-flex justify-content-end letbanner" data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
               <Image
                 src={welcomeImg}
                 alt="Welcome to Liaison Bank Digital Banking Platform"
@@ -123,7 +123,7 @@ const Home = () => {
                 sizes="(max-width: 768px) 100vw, 500px"
               />
             </div>
-            <div className=" p-4">
+            <div className="col-12 col-md-12 col-lg-6 p-4">
               <div className='section-title'>
                 {/* <h6 data-aos="fade-left" data-aos-duration="600" data-aos-delay="100">Welcome to, Liaison Bank  </h6> */}
                 <h3 data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">Your Partner in Bank
@@ -132,6 +132,9 @@ const Home = () => {
                 </h3>
               </div>
               <div className='home-abt'>
+                <p data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">Your trusted partner for seamless bank licensing and liaisoning services.
+We simplify complex regulatory processes with expert guidance and industry expertise.
+Helping financial institutions achieve compliance and operational success.</p>
                 <p data-aos="fade-left" data-aos-duration="600" data-aos-delay="300">Bridging the gap between the complicated regulatory frameworks and your business goals, we act as an interface for all your statutory requirements. As your dedicated licensing and liaisoning partner, we specialize in managing the intricate legalities and bureaucratic uncertainties that often stall business momentum. Our expertise ensures smoother operations, allowing you to channelize your energy into core priorities and other important business objectives.</p>
                 <p data-aos="fade-left" data-aos-duration="600" data-aos-delay="400">We commit to deliver a seamless, and reliable framework that offers absolute clarity and operational confidence. By taking care of the complexities of industrial licensing, permits, and government liaisoning, we transform a traditionally slow process into a smooth, efficient experience. While we handle the administrative hurdles, you stay empowered to focus on strategic growth and achieving your business milestones with the certainty that your legal standing is in expert hands.</p>
                 {/* <p>By entrusting us with your regulatory approvals and government relations, you accelerate the transition between policy and progress.</p> */}
@@ -196,7 +199,7 @@ const Home = () => {
             <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">Awards & Certifications</h3>
           </div>
 
-          <div ref={fancyboxRef} className="row  py-5 d-flex align-items-center">
+          <div ref={fancyboxRef} className="row  pt-5 d-flex align-items-center">
             {/* <div className="col-lg-2 col-md-2 col-sm-6 col-6"> */}
             <CertificateGallery />
             {/* <CertificateScroller /> */}
@@ -207,7 +210,7 @@ const Home = () => {
 
 
       <section className="ourclients">
-        <div className="container-fluid mx-auto px-0 py-5 bg-white">
+        <div className="container-fluid mx-auto px-0 pt-5 bg-white">
           <div className="section-title">
             <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">Our Latest Clients</h3>
           </div>
@@ -217,7 +220,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="clientfeedback py-5">
+      <section className="clientfeedback pb-5">
         <div className="container-fluid mx-auto px-0 bg-white">
           <div className="section-title">
             <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">What Clients Say</h3>
