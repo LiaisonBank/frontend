@@ -27,10 +27,10 @@ export default function ContactusLiaisonbankPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Contact Us</h1>
+                    <h1>Contact Us</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -58,11 +58,11 @@ export default function ContactusLiaisonbankPage() {
       <section className="container  pt-4">
         <div className="contact-section">
           <div className="row justify-content-center text-center">
-             <div className="section-title pb-4 d-none"  data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+             <div className="section-title pb-4 d-none">
                 <h3>Feel free to reach out to us at any time if you have questions. constraints. </h3>
               </div>
 
-              <div className="col-lg-6 col-md-6 col-sm-12 pt-4 map" data-aos="fade-right" data-aos-duration="600" data-aos-delay="500">
+              <div className="col-lg-6 col-md-6 col-sm-12 pt-4 map">
                   <div><MapSection /></div>
                  <div className="col-lg-6 col-md-6 col-sm-12 pt-4">
                   <p><strong>Khar (HQ)</strong> <br/>
@@ -85,7 +85,7 @@ export default function ContactusLiaisonbankPage() {
                  </div>
                  {/* <div className="pattern-bg"></div> */}
               </div>
-              <div className="col-lg-6 col-md-6 col-sm-12 pt-4"  data-aos="fade-left" data-aos-duration="600" data-aos-delay="600">
+              <div className="col-lg-6 col-md-6 col-sm-12 pt-4">
                 <div className="block-title">
                   <h3>Leave Us A Message</h3>
                   <h5>Get in touch! We look forward to hearing from you.</h5>

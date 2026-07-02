@@ -9,7 +9,7 @@ export default function ServicesSection() {
 
     return (
         <>
-           <div data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
+           <div>
                 <ServiceList
                     activeIndex={activeIndex}
                     onChange={setActiveIndex}

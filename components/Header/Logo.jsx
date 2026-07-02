@@ -13,12 +13,7 @@ export default function Logo({
   onNavigate,
 }) {
   return (
-    <div
-      data-aos="fade-right"
-      data-aos-duration="1000"
-      data-aos-anchor="html"
-      className="flex-shrink-0"
-    >
+    <div className="flex-shrink-0">
       <Link
         href="/"
         onClick={() => onNavigate("/")}

@@ -78,12 +78,7 @@ export default function TestimonialSlider() {
   /* ---------------- RENDER ---------------- */
 
   return (
-    <section
-      className="testimonial-section"
-      data-aos="fade-up"
-      data-aos-duration="600"
-      data-aos-once="true"
-    >
+    <section className="testimonial-section">
       <div
         className="slider"
         onMouseEnter={stopAutoplay}

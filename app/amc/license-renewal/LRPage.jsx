@@ -140,11 +140,7 @@ export default function LRPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1
-                      data-aos="fade-up"
-                      data-aos-duration="600"
-                      data-aos-delay="100"
-                    >
+                    <h1>
                       License Renewal
                     </h1>
 
@@ -153,11 +149,7 @@ export default function LRPage() {
                       className="page-breadcrumb"
                     >
                       <ol
-                        className="breadcrumb justify-content-center"
-                        data-aos="fade-up"
-                        data-aos-duration="1000"
-                        data-aos-delay="200"
-                      >
+                        className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i
@@ -190,31 +182,19 @@ export default function LRPage() {
           <div className="row justify-content-center text-center">
             <div className="col-lg-10">
               <div
-                className="section-title"
-                data-aos="fade-up"
-                data-aos-duration="600"
-                data-aos-delay="100"
-              >
+                className="section-title">
                 <h2 className="fw-bold">
                   License Extension Services
                 </h2>
               </div>
 
               <h5
-                className="lead mt-4"
-                data-aos="fade-up"
-                data-aos-duration="600"
-                data-aos-delay="200"
-              >
+                className="lead mt-4">
                 Avoid penalties, compliance delays, and operational interruptions with timely renewal of business licenses, registrations, and statutory approvals across multiple departments.
               </h5>
 
               <div
-                className="d-flex flex-wrap justify-content-center gap-3 mt-4"
-                data-aos="fade-up"
-                data-aos-duration="600"
-                data-aos-delay="300"
-              >
+                className="d-flex flex-wrap justify-content-center gap-3 mt-4">
                 <Link
                   href="/contact"
                   className="themeht-btn primary-btn btn px-4 py-2"
@@ -237,18 +217,11 @@ export default function LRPage() {
 
           <div
             className="section-title mt-4"
-            data-aos="fade-up"
-            data-aos-duration="600"
-            data-aos-delay="200"
           >
             <h3>What is License Renewal?</h3>
           </div>
 
-          <div
-            data-aos="fade-up"
-            data-aos-duration="600"
-            data-aos-delay="300"
-          >
+          <div>
             <p className="text-center"> 
               License renewal is the process of extending the validity of
               government-issued licenses, registrations, permits, and operational
@@ -269,20 +242,12 @@ export default function LRPage() {
       <section className="pb-5">
         <div className="container">
           <div
-            className="section-title text-center"
-            data-aos="fade-up"
-            data-aos-duration="600"
-            data-aos-delay="400"
-          >
+            className="section-title text-center">
             <h3>Overview</h3>
           </div>
 
           <div
-            className="table-responsive mt-4"
-            data-aos="fade-up"
-            data-aos-duration="600"
-            data-aos-delay="500"
-          >
+            className="table-responsive mt-4">
             <table className="table table-bordered table-hover align-middle">
               <thead className="table-dark">
                 <tr>

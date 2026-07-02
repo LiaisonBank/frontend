@@ -18,10 +18,10 @@ export default function CeosDeskPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">CEO&apos;s Desk</h1>
+                    <h1>CEO&apos;s Desk</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -48,7 +48,7 @@ export default function CeosDeskPage() {
       </div>
       <section className="container py-5">
         <div className="row justify-content-center text-center">
-          <div className="section-title px-5 w-75 theme-secondary" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+          <div className="section-title px-5 w-75 theme-secondary">
             <h3 className="pt-4">“It’s not about waiting for things to fall into place, it’s about what you make of yourself.”</h3>
             <h5 className="text-end">— Mr. Mahadev Biradar</h5>
             

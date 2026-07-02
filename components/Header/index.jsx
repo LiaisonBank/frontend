@@ -41,8 +41,62 @@ export default function Header() {
 
     router.push(href);
   };
-  
+  const [openMenus, setOpenMenus] = useState({});
 
+  const toggleMenu = (key) => {
+    setOpenMenus((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+  const renderMenu = (items, level = 0) => {
+  return (
+    <ul className={level > 0 ? "px-4" : "mobilesubmenu row"}>
+      {items.map((item) => {
+        const children =
+          item.submenu ||
+          item.projects ||
+          item.items ||
+          item.children;
+
+        const menuKey = `${level}-${item.name}`;
+
+        return (
+          <li key={menuKey}>
+            <div className="flex items-center justify-between">
+              {item.href ? (
+                <Link
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className="flex-1"
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <span className="flex-1">
+                  {item.name}
+                </span>
+              )}
+
+              {children && (
+                <button
+                  onClick={() => toggleMenu(menuKey)}
+                  className="ml-2"
+                >
+                  {openMenus[menuKey] ? "-" : "+"}
+                </button>
+              )}
+            </div>
+
+            {children &&
+              openMenus[menuKey] &&
+              renderMenu(children, level + 1)}
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
   return (
     <>
       <header className={`fixed w-full z-50 py-2 transition-all ${isSticky ? "" : ""}`}>
@@ -50,7 +104,7 @@ export default function Header() {
           <nav key={pathname} className="flex items-center justify-between h-16">
 
             {/* LOGO: Left to Right Animation */}
-            <div data-aos="fade-right" data-aos-duration="1000" data-aos-anchor="html">
+            <div>
               <Link href="/" onClick={() => setIsOpen(false)} className='d-flex align-items-center '>
                 {/* <Image
                   src={logoScrolled}
@@ -69,6 +123,7 @@ export default function Header() {
                 />
                  <Image
                   src={isOpen ? whitename : name}
+                  // src={name}
                   width={101}
                   title="Liaisonbank"
                   alt="Liaisonbank"
@@ -103,21 +158,12 @@ export default function Header() {
                             handleNavigation(link.href);
                           }}
                           className="nav-link"
-                          data-aos="fade-left"
-                          data-aos-delay={index * 100}
-                          data-aos-duration="800"
                         >
                           <NavText text={link.name} />
                         </Link>
                       ) : (
-                        <span
-                          className="nav-link cursor-pointer flex items-center gap-1"
-                          data-aos="fade-left"
-                          data-aos-delay={index * 100}
-                          data-aos-duration="800"
-                        >
+                        <span className="nav-link cursor-pointer flex items-center gap-1">
                           <NavText text={link.name} />
-
                           {(hasSubmenu || singleSubmenu) && (
                             <ChevronDown
                               size={16}
@@ -282,59 +328,12 @@ export default function Header() {
         </div>
 
         {/* Mobile Navigation remains standard transform for performance */}
-        <div className={`fixed top-0 right-0 h-full w-100 shadow-lg transform transition-transform duration-300
-                  ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
-          <div
-            id="myNav"
-            className="overlay"
-            style={{ width: isOpen ? "100%" : "0%" }}
-          >
-            <div className="overlay-content">
-              <ul className="submenu flex flex-col pt-4 px-4 space-y-4">
-                {navLinks.map((link) => (
-                  <li key={link.name}>
-                    {link.href ? (
-                      <Link
-                        href={link.href}
-                        onClick={() => setIsOpen(false)}
-                        className="block font-medium"
-                      >
-                        {link.name}
-                      </Link>
-                    ) : (
-                      <button
-                        onClick={() =>
-                          setOpenSubmenu(
-                            openSubmenu === link.name ? null : link.name
-                          )
-                        }
-                        className="flex justify-between w-full font-medium"
-                      >
-                        {link.name}
-                        <span>
-                          {openSubmenu === link.name ? "-" : "+"}
-                        </span>
-                      </button>
-                    )}
-
-                    {link.submenu && openSubmenu === link.name && (
-                      <ul className="mt-2 ml-4 space-y-2">
-                        {link.submenu.map((sub) => (
-                          <li key={sub.name}>
-                            <Link
-                              href={sub.href}
-                              onClick={() => setIsOpen(false)}
-                              className="block text-sm text-gray-600"
-                            >
-                              {sub.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
-                ))}
-              </ul>
+        <div  id="myNav" className={`fixed top-0 right-0 h-screen w-full  shadow-xl transition-transform duration-300 
+         ${isOpen ? "menu-open translate-x-0" : "translate-x-full"}`}
+      >
+  <div className="overflow-y-auto w-full h-full">
+            <div className="overlay-content container ">
+               {renderMenu(navLinks)}
             </div>
           </div>
         </div>

@@ -14,10 +14,10 @@ export default function PNGPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Pest Control Service</h1>
+                    <h1>Pest Control Service</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -45,20 +45,20 @@ export default function PNGPage() {
       <section className="container py-5">
         <div className="row justify-content-center text-center">
           <div>
-            <p  data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+            <p>
             Clean, safe, and professionally maintained premises create a stronger impression for customers, employees, and visitors. 
             <b>Pest Control Services Certification</b> is a formal assurance that a property follows approved pest management practices and meets required hygiene and safety standards. It is especially valuable for restaurants, offices, warehouses, hotels, retail outlets, factories, healthcare facilities, and residential communities where cleanliness and compliance are essential.
             </p>
-            <p className="pt-4"  data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+            <p className="pt-4">
             Rather than waiting for infestations to become a costly problem, certified pest control systems focus on prevention, scheduled treatment, monitoring, and proper documentation. They help reduce risks caused by rodents, insects, termites, and contamination while supporting health regulations. At Liaison Bank, we assist clients with dependable pest control certification services, pest management compliance, hygiene approvals, inspection coordination, and renewal support tailored for modern business operations.
             </p>
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="500">
+          <div className="section-title">
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+          <div className="section-title">
             <h3>Overview </h3>
           </div>
-          <div className="container table-responsive py-2" data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+          <div className="container table-responsive py-2">
             <table className="mx-auto table table-bordered table-hover mx-auto w-100 w-md-75" >
               <thead className="thead-dark">
                 <tr>
@@ -90,11 +90,11 @@ export default function PNGPage() {
               </tbody>
             </table>
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
+          <div className="section-title">
             <h3>Conclusion </h3>
           </div>
           <div >
-            <p  data-aos="fade-up" data-aos-duration="600" data-aos-delay="900">
+            <p>
              Strong hygiene standards begin with prevention, consistency, and professional oversight. With <b>Liaison Bank’s 
              Pest Control Services Certification</b>, businesses can maintain cleaner environments, meet compliance expectations, 
              and manage pest risks with confidence. Our expert support helps organizations protect their reputation, maintain 

@@ -18,10 +18,10 @@ export default function CeosDeskPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Electrical (SITC)</h1>
+                    <h1>Electrical (SITC)</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -49,10 +49,10 @@ export default function CeosDeskPage() {
       <section className="container py-5">
          <div className="row justify-content-center text-center">
           <div>
-            <p  data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+            <p>
             Electrical SITC (Supply, Installation, Testing, and Commissioning) services ensure that electrical systems are properly installed, tested, and made fully operational as per safety and regulatory standards. These services play a crucial role in building reliable and compliant electrical infrastructure across commercial, industrial, and residential projects.
             </p>
-            <p className="pt-4"  data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+            <p className="pt-4">
             A well-executed electrical setup is not just about installation, it involves careful planning, precise execution, and strict adherence to &nbsp; 
             <b>electrical safety regulations and compliance standards</b>. At <b>Liaison Bank</b>, our Electrical SITC services focus on establishing 
             dependable electrical systems that support efficient operations while meeting <b>government approvals, electrical compliance 
@@ -60,10 +60,10 @@ export default function CeosDeskPage() {
             with performance expectations, safety guidelines, and long-term usability.
             </p>
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+          <div className="section-title">
             <h3>Overview </h3>
           </div>
-          <div className="container table-responsive py-2" data-aos="fade-up" data-aos-duration="600" data-aos-delay="500">
+          <div className="container table-responsive py-2">
             <table className="mx-auto table table-bordered table-hover mx-auto w-100 w-md-75" >
               <thead className="thead-dark">
                 <tr>
@@ -95,11 +95,11 @@ export default function CeosDeskPage() {
               </tbody>
             </table>
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+          <div className="section-title">
             <h3>Conclusion </h3>
           </div>
           <div >
-            <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+            <p>
               Electrical SITC services form the foundation of a safe, efficient, and regulation-compliant infrastructure. 
               With expert support from <b>Liaison Bank</b>, businesses and developers can ensure accurate installation, proper system testing, 
               and seamless electrical approvals without delays. Our structured approach to <b>electrical installation, testing, 

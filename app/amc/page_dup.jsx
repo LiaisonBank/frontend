@@ -23,10 +23,10 @@ export default function AMCPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">AMC</h1>
+                    <h1>AMC</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -53,14 +53,14 @@ export default function AMCPage() {
       </div>
       <section className="container py-5">
         <div className="row justify-content-center text-center">
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+          <div className="section-title">
             <h3>We have evolved <AnimatedCounter endValue={16} /> Years </h3>
           </div>
           <div className="growthscale">
             <div className="cols-12 flow">
 
               <div className="col-2 flow-item">
-                <table data-aos="fade-right" data-aos-duration="600" data-aos-delay="200">
+                <table>
                   <tbody>
                     <tr>
                       <td className="image-cell">
@@ -74,11 +74,11 @@ export default function AMCPage() {
                   </tbody>
                 </table>
 
-                <div className="draw-line" data-aos="fade-right" data-aos-duration="600" data-aos-delay="300"></div>
+                <div className="draw-line"></div>
               </div>
 
               <div className="col-2 flow-item space-top">
-                <table data-aos="fade-right" data-aos-duration="600" data-aos-delay="400">
+                <table>
                   <tbody>
                     <tr>
                       <td className="image-cell">
@@ -90,11 +90,11 @@ export default function AMCPage() {
                   </tbody>
                 </table>
 
-                <div className="draw-line" data-aos="fade-right" data-aos-duration="600" data-aos-delay="500"></div>
+                <div className="draw-line"></div>
               </div>
 
               <div className="col-2 flow-item space-top">
-                <table data-aos="fade-right" data-aos-duration="600" data-aos-delay="600">
+                <table >
                   <tbody>
                     <tr>
                       <td className="image-cell">
@@ -106,11 +106,11 @@ export default function AMCPage() {
                   </tbody>
                 </table>
 
-                <div className="draw-line" data-aos="fade-right" data-aos-duration="600" data-aos-delay="700"></div>
+                <div className="draw-line"></div>
               </div>
 
               <div className="col-2 flow-item space-top1">
-                <table data-aos="fade-right" data-aos-duration="600" data-aos-delay="800">
+                <table>
                   <tbody>
                     <tr>
                       <td className="image-cell">
@@ -126,21 +126,21 @@ export default function AMCPage() {
             </div>
           </div>
           <div className="document">
-            <div className="doc-info" data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">
+            <div className="doc-info">
               <p className="py-2 text-center">LB-001/11/2023</p>
               <p>DATE- 01-02-2024</p>
             </div>
 
-            <div className="title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+            <div className="title">
               Scope Of Work Of Amc (LA LOCA MARIA) (BKC)
             </div>
 
             <div className="section">
-              <p className="document-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+              <p className="document-title">
                 1. All License Renewal And Coordination - Correspondence With Authority.
               </p>
-              <p className="py-2" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400"><strong>*List Of Licenses.</strong></p>
-              <ol data-aos="fade-up" data-aos-duration="600" data-aos-delay="500">
+              <p className="py-2"><strong>*List Of Licenses.</strong></p>
+              <ol>
                 <li>Shop Establishment</li>
                 <li>Fssai</li>
                 <li>Fire Compliance</li>
@@ -152,8 +152,8 @@ export default function AMCPage() {
             </div>
 
             <div className="section">
-              <p className="py-2 document-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">2. AUDIT & CERTIFICATION.</p>
-              <ol data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
+              <p className="py-2 document-title">2. AUDIT & CERTIFICATION.</p>
+              <ol>
                 <li>Form A/B - Frd / Fire Alarm System / Hydrant System (Every 6 Months)</li>
                 <li>Electric Audit Report (Annually)</li>
                 <li>Water Test Report (3 Month Quarterly)</li>
@@ -166,24 +166,24 @@ export default function AMCPage() {
             </div>
 
             <div className="section">
-              <p className="py-2 document-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+              <p className="py-2 document-title">
                 3. Any Kind Of Correspondence For Above Mention Point.
               </p>
 
-              <ol data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
+              <ol>
                 <li>*2 Reply 2 Visit Is Included In Amc</li>
               </ol>
             </div>
 
             <div className="section">
-              <p className="py-2 document-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+              <p className="py-2 document-title">
                 4. Mathadi Intimation Letter To Labour Commissioner / Police Station.
               </p>
             </div>
 
             <div className="section">
-              <p className="py-2 document-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">*TERMS AND CONDITIONS APPLIED.</p>
-              <ol data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+              <p className="py-2 document-title">*TERMS AND CONDITIONS APPLIED.</p>
+              <ol >
                 <li>100% Payment Before Start The Amc Contract</li>
                 <li>Official Fees On Actual On All Above Licenses</li>
                 <li>If Required Miscellaneous Expenses On Actual</li>

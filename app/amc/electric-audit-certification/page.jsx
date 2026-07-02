@@ -2,7 +2,7 @@
 import Link from "next/link";
 import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 
-export default function electricPage() {
+export default function ElectricPage() {
   useBodyClass('electric-audit');
   return (
     <>
@@ -14,10 +14,10 @@ export default function electricPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Electric Audit</h1>
+                    <h1>Electric Audit</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -45,7 +45,7 @@ export default function electricPage() {
       <section className="container py-5">
         <div className="row justify-content-center text-center">
           <div>
-            <p  data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+            <p>
               Safe and efficient electrical infrastructure is essential for the uninterrupted performance of any property or business. 
               <b>Electrical Audit and Certification</b>evaluates wiring systems, panels, load capacity, grounding, and overall electrical 
               safety to ensure systems operate reliably and meet <b>government electrical compliance standards</b>. At Liaison Bank, we provide 
@@ -53,10 +53,10 @@ export default function electricPage() {
               factories, commercial spaces, retail outlets, and residential properties.    
             </p>
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+          <div className="section-title">
             <h3>Overview </h3>
           </div>
-          <div className="container table-responsive py-2" data-aos="fade-up" data-aos-duration="500" data-aos-delay="500">
+          <div className="container table-responsive py-2">
             <table className="mx-auto table table-bordered table-hover mx-auto w-100 w-md-75" >
               <thead className="thead-dark">
                 <tr>
@@ -84,10 +84,10 @@ export default function electricPage() {
               </tbody>
             </table>
           </div>
-           <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+           <div className="section-title">
             <h3>Conclusion </h3>
           </div>
-          <div  data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+          <div>
             <p>
               A timely <b>Electrical Audit and Certification</b> process is essential for maintaining safe, efficient, and <b>regulation-compliant 
               electrical systems</b> in every business or property. With professional support from Liaison Bank, clients can simplify &nbsp; 

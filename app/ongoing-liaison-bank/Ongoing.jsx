@@ -28,10 +28,10 @@ export default function OngoingLiaisonbankPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">On Going</h1>
+                    <h1>On Going</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -57,16 +57,13 @@ export default function OngoingLiaisonbankPage() {
       </div>
       <section className="container py-5">
         <div className="row justify-content-center text-center">
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+          <div className="section-title">
             <h3>Ongoing <AnimatedCounter endValue={23} />+ Projects </h3>
           </div>
         </div>
         <div className="project-grid">
           {chunks.map((chunk, index) => (
-            <div className="grid-item" key={index}
-            data-aos="fade-up"
-            data-aos-duration="600"
-            data-aos-delay={250 * (index + 1)}>
+            <div className="grid-item" key={index}>
               <ul className="item-list">
                 <li className="header-row">
                   <strong className="item-name">Client Name</strong>

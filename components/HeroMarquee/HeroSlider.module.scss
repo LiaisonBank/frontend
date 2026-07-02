@@ -1,69 +1,52 @@
 .hero {
   position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
-  min-height: 90vh;
-  min-height: 90dvh;
-  background: #000;}
+  background: #000;
+}
+
 .viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
+  touch-action: pan-y;
 }
 
 .track {
   display: flex;
-  width: 100%;
+  height: 100%;
   will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .slide {
   position: relative;
   flex: 0 0 100%;
-  // overflow: hidden;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .media {
   object-fit: cover;
-}
-
-
-
-.media {
-  object-fit: cover;
-  height: 100dvh !important;
-  // transform: scale(1); // No zoom effect
-}
-
-.cursor {
-  display: inline-block;
-  animation: blink 0.8s infinite;
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
-@keyframes heroZoom {
-  from {
-    transform: scale(1.05);
-  }
-
-  to {
-    transform: scale(1.15);
-  }
+  width: 100%;
+  height: 100%;
 }
 
 .overlay {
   position: absolute;
   inset: 0;
+  z-index: 1;
 
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0.15) 0%,
     rgba(0, 0, 0, 0.55) 100%
   );
-
-  z-index: 1;
 }
 
 .contentMask {
@@ -73,9 +56,9 @@
   display: flex;
   align-items: center;
 
-  overflow: hidden;
-
   z-index: 10;
+
+  overflow: hidden;
 }
 
 .content {
@@ -83,7 +66,7 @@
 
   width: min(75%, 1400px);
 
-  margin: 0 auto;
+  margin: auto;
   padding: 30px 40px;
 
   color: #fff;
@@ -99,72 +82,44 @@
   inset: 0;
 
   background: rgba(0, 0, 0, 0.45);
-
   backdrop-filter: blur(6px);
 
   z-index: -1;
 }
 
 .content h2 {
-  margin: 0 0 15px;
-
+  margin-bottom: 15px;
   font-size: clamp(2rem, 8vw, 2.5rem);
   line-height: 1.1;
-
-  text-align: left;
 }
 
 .content p {
-  margin: 0;
-
+  max-width: 700px;
   font-size: clamp(1rem, 1.5vw, 1.25rem);
   line-height: 1.6;
-
-  max-width: 700px;
 }
 
-.progressBar {
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 4px;
-
-  z-index: 50;
-
-  background: rgba(255, 255, 255, 0.1);
+.cursor {
+  display: inline-block;
+  animation: blink .8s infinite;
 }
 
-.progressBar span {
-  display: block;
-
-  width: 100%;
-  height: 100%;
-
-  transform: scaleX(0);
-  transform-origin: left center;
-
-  background: linear-gradient(
-    0deg,
-    #be2a2a -86.4%,
-    #ef7f1a 94.15%
-  );
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .pagination {
   position: absolute;
-
   left: 50%;
   bottom: 15%;
-
   transform: translateX(-50%);
 
   display: flex;
-  align-items: center;
   gap: 12px;
 
-  z-index: 0;
+  z-index: 20;
 }
 
 .dot {
@@ -174,15 +129,15 @@
   border: none;
   border-radius: 50%;
 
-  background: rgba(255, 255, 255, 0.4);
-
   cursor: pointer;
 
-  transition: all 0.35s ease;
+  background: rgba(255,255,255,.35);
+
+  transition: .3s;
 }
 
 .dot:hover {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255,255,255,.8);
 }
 
 .activeDot {
@@ -191,11 +146,11 @@
   width: 42px;
   height: 12px;
 
-  border-radius: 50px;
+  border-radius: 999px;
 
   overflow: hidden;
 
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255,255,255,.15);
 }
 
 .activeDot::after {
@@ -215,7 +170,7 @@
 
 @keyframes dotProgress {
   from {
-    width: 0%;
+    width: 0;
   }
 
   to {
@@ -223,15 +178,20 @@
   }
 }
 
-@media (max-width: 991px) {
+@media (max-width:991px) {
+
+  .hero {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
   .content {
     width: calc(100% - 40px);
-
     padding: 20px;
   }
 
   .content h2 {
-    font-size: clamp(1.75rem, 8vw, 2.25rem);
+    font-size: clamp(1.75rem,8vw,2.25rem);
   }
 
   .content p {
@@ -239,7 +199,7 @@
   }
 
   .pagination {
-    bottom: 22%;
+    bottom: 18%;
     gap: 8px;
   }
 

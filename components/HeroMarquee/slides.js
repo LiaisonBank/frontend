@@ -38,7 +38,7 @@ const slides = [
   {
     title: "Electrical Execution, Compliance & Maintenance Services",
     image: "/images/home/ElectricalCompliance.webp",
-    mobileImage: "/images/home/mobile/ElectricalCompliance.webp",
+    mobileImage: "/images/home/mobile/ElectricalCompliance.png",
     category: "Branding",
   },
 ];

@@ -14,10 +14,10 @@ export default function FIREPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Fire Audit</h1>
+                    <h1>Fire Audit</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -45,7 +45,7 @@ export default function FIREPage() {
       <section className="container py-5">
         <div className="row justify-content-center text-center">
           <div>
-            <p  data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+            <p>
                 Creating a safe and regulation-compliant environment starts with a professional <b>Fire Audit and Certification</b> process. 
                 Businesses, commercial spaces, residential buildings, factories, and institutions must regularly assess their <b>fire safety systems</b> 
                 to meet government <b>fire safety regulations</b> and reduce operational risks. At <b>Liaison Bank</b>, we offer trusted fire audit services, 
@@ -53,10 +53,10 @@ export default function FIREPage() {
                 verify safety equipment, improve emergency preparedness, and ensure complete fire compliance for smooth and secure operations.
             </p>
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+          <div className="section-title" >
             <h3>Overview </h3>
           </div>
-          <div className="container table-responsive py-2" data-aos="fade-up" data-aos-duration="500" data-aos-delay="500">
+          <div className="container table-responsive py-2">
             <table className="mx-auto table table-bordered table-hover mx-auto w-100 w-md-75" >
               <thead className="thead-dark">
                 <tr>
@@ -84,10 +84,10 @@ export default function FIREPage() {
               </tbody>
             </table>
           </div>
-           <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+           <div className="section-title">
             <h3>Conclusion </h3>
           </div>
-          <div  data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+          <div>
             <p>
               A timely <b>fire audit and certification</b> process is critical for every property and business to maintain fire safety 
               compliance and reduce operational risks. With expert support from Liaison Bank, clients can simplify fire inspections, 

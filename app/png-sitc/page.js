@@ -18,10 +18,10 @@ export default function CeosDeskPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">PNG (SITC)</h1>
+                    <h1>PNG (SITC)</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -49,13 +49,13 @@ export default function CeosDeskPage() {
       <section className="container py-5">
          <div className="row justify-content-center text-center">
           <div>
-            <p  data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+            <p>
              Energy systems demand precision, safety, and strict compliance, especially when it comes to gas distribution. 
              <b>PNG SITC</b> (Supply, Installation, Testing, and Commissioning) services ensure that <b>Piped Natural Gas (PNG)</b> 
              networks are correctly installed, pressure-tested, and made operational in line with <b>gas safety standards and regulatory guidelines</b>. 
              These services are critical for residential societies, commercial establishments, hotels, hospitals, and industrial units that rely on safe and continuous gas supply.
             </p>
-            <p className="pt-4"  data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+            <p>
               Our PNG SITC services focus on establishing dependable gas infrastructure with careful planning and controlled execution. 
               At Liaison Bank, we manage PNG pipeline installation, meter setup, regulator systems, pressure testing, leak detection, 
               and commissioning, along with support for gas approvals and compliance documentation. 
@@ -63,10 +63,10 @@ export default function CeosDeskPage() {
               distribution while minimizing risks such as leaks, pressure failures, or compliance gaps.
             </p>
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="500">
+          <div className="section-title">
             <h3>Overview </h3>
           </div>
-          <div className="container table-responsive py-2" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+          <div className="container table-responsive py-2">
             <table className="mx-auto table table-bordered table-hover mx-auto w-100 w-md-75" >
               <thead className="thead-dark">
                 <tr>
@@ -98,11 +98,11 @@ export default function CeosDeskPage() {
               </tbody>
             </table>
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+          <div className="section-title">
             <h3>Conclusion </h3>
           </div>
           <div >
-            <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+            <p>
               A well-implemented <b> PNG SITC</b> system is essential for maintaining safe, efficient, and regulation-compliant gas distribution. 
               With Liaison Bank’s PNG SITC services, clients can ensure accurate installation, thorough system testing, and smooth 
               approval processes without delays. Our structured approach to PNG installation, testing, commissioning,

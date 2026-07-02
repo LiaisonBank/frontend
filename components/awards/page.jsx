@@ -71,8 +71,6 @@ export default function AwardP() {
             <div
               className="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 mx-auto"
               key={certificate.src}
-              data-aos="fade-up"
-              data-aos-delay={100 * (index + 1)}
             >
               <article className="certificate-card">
                 <a
@@ -106,7 +104,7 @@ export default function AwardP() {
             </div>
           ))}
         </div>
-        <div className="col-8  mx-auto text-center d-flex align-items-center justify-content-center" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="900">
+        <div className="col-8  mx-auto text-center d-flex align-items-center justify-content-center">
             <Link href="/awards" scroll={true} className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4">
             View More &nbsp;&nbsp;&nbsp;
             <svg

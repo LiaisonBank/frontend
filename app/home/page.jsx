@@ -53,7 +53,7 @@ const Home = () => {
       <section className="pt-2 bg-aliceblue ceo-message">
         <div className="container mx-auto pt-2">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className='aling-items-center mx-auto image' data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
+              <div className='aling-items-center mx-auto image'>
                   <Image
                     src={devaImg}
                     width={375}
@@ -67,7 +67,7 @@ const Home = () => {
                   />
               </div>
               <div className=' mt-2 mesg'>
-                <div className='quote'  data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">
+                <div className='quote'>
                   <p>
                     <span className="quote-close">
                        <Image
@@ -88,7 +88,7 @@ const Home = () => {
                     />
                   </p>
                 </div>
-                <div className='col-auto ceo-name'  data-aos="fade-right" data-aos-duration="600" data-aos-delay="300">
+                <div className='col-auto ceo-name'>
                   <h1 className="author-title" aria-label="Deva Biradar">Deva Biradar</h1>
                   <p className="author-desc">Chief Executive Officer</p>
                 </div>
@@ -100,7 +100,7 @@ const Home = () => {
 
       <section className="welcome">
         <div className="container mx-auto py-5 bg-white">
-          {/* <div className="smallObject" data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
+          {/* <div className="smallObject">
             <Image
               src={smallLogo}
               alt=""
@@ -111,7 +111,7 @@ const Home = () => {
             />
           </div> */}
           <div className="row">
-            <div className="col-12 col-md-12 col-lg-6 p-4 d-flex justify-content-end leftbanner" data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
+            <div className="col-12 col-md-12 col-lg-6 p-4 d-flex justify-content-end leftbanner">
               <Image
                 src={welcomeImg}
                 alt="Welcome to Liaison Bank Digital Banking Platform"
@@ -125,18 +125,18 @@ const Home = () => {
             </div>
             <div className="col-12 col-md-12 col-lg-6 p-4">
               <div className='section-title'>
-                {/* <h6 data-aos="fade-left" data-aos-duration="600" data-aos-delay="100">Welcome to, Liaison Bank  </h6> */}
-                <h3 data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">Your Partner in Bank
+                {/* <h6>Welcome to, Liaison Bank  </h6> */}
+                <h3>Your Partner in Bank
                   <span className='theme-color'>Licensing</span> and
                   <span className='theme-color'>Liaisoning</span>
                 </h3>
               </div>
               <div className='home-abt'>
-                <p data-aos="fade-left" data-aos-duration="600" data-aos-delay="200">Your trusted partner for seamless bank licensing and liaisoning services.
+                <p>Your trusted partner for seamless bank licensing and liaisoning services.
 We simplify complex regulatory processes with expert guidance and industry expertise.
 Helping financial institutions achieve compliance and operational success.</p>
-                <p data-aos="fade-left" data-aos-duration="600" data-aos-delay="300">Bridging the gap between the complicated regulatory frameworks and your business goals, we act as an interface for all your statutory requirements. As your dedicated licensing and liaisoning partner, we specialize in managing the intricate legalities and bureaucratic uncertainties that often stall business momentum. Our expertise ensures smoother operations, allowing you to channelize your energy into core priorities and other important business objectives.</p>
-                <p data-aos="fade-left" data-aos-duration="600" data-aos-delay="400">We commit to deliver a seamless, and reliable framework that offers absolute clarity and operational confidence. By taking care of the complexities of industrial licensing, permits, and government liaisoning, we transform a traditionally slow process into a smooth, efficient experience. While we handle the administrative hurdles, you stay empowered to focus on strategic growth and achieving your business milestones with the certainty that your legal standing is in expert hands.</p>
+                <p>Bridging the gap between the complicated regulatory frameworks and your business goals, we act as an interface for all your statutory requirements. As your dedicated licensing and liaisoning partner, we specialize in managing the intricate legalities and bureaucratic uncertainties that often stall business momentum. Our expertise ensures smoother operations, allowing you to channelize your energy into core priorities and other important business objectives.</p>
+                <p>We commit to deliver a seamless, and reliable framework that offers absolute clarity and operational confidence. By taking care of the complexities of industrial licensing, permits, and government liaisoning, we transform a traditionally slow process into a smooth, efficient experience. While we handle the administrative hurdles, you stay empowered to focus on strategic growth and achieving your business milestones with the certainty that your legal standing is in expert hands.</p>
                 {/* <p>By entrusting us with your regulatory approvals and government relations, you accelerate the transition between policy and progress.</p> */}
                 {/* <h2 className="text-xl font-semibold mb-2">Column 2</h2> */}
                 {/* <p>We take care of the intricacies and uncertainties, allowing you to redirect your energy towards your core priorities and business objectives. This ensures a smoother and more efficient experience, providing you with the peace of mind to concentrate on what matters most to your success.</p>
@@ -144,7 +144,7 @@ Helping financial institutions achieve compliance and operational success.</p>
                 <hr />
               </div>
               <div className='d-flex flex-wrap justify-content-between align-items-center'>
-                <div data-aos="zoom-in" data-aos-duration="600" data-aos-delay="900">
+                <div>
                   <Link href="/" className="themeht-btn primary-btn d-flex align-items-center mr-2 mt-4 d-none">
                     CEO&apos;s DESK&nbsp;
                     <svg
@@ -170,10 +170,10 @@ Helping financial institutions achieve compliance and operational success.</p>
       <section className="ourservices">
         <div className="container mx-auto py-5 service-list">
           <div className="section-title">
-            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Licensing and Liaisoning</h3>
-            <h5 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">We bring our services to multiple sectors and create customised solutions for diverse set of business needs.</h5>
+            <h3>Licensing and Liaisoning</h3>
+            <h5>We bring our services to multiple sectors and create customised solutions for diverse set of business needs.</h5>
           </div>
-          <div className='col-12 mx-auto' data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+          <div className='col-12 mx-auto'>
             <OurServices/>
           </div>
         </div>
@@ -183,7 +183,7 @@ Helping financial institutions achieve compliance and operational success.</p>
       <section className="weprovide">
         <div className="container mx-auto  py-5 bg-white">
           <div className="section-title">
-            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">What we Provide ?</h3>
+            <h3>What we Provide ?</h3>
           </div>
           <section className="services-section">
             <div className="services-grid">
@@ -196,7 +196,7 @@ Helping financial institutions achieve compliance and operational success.</p>
       <section className="awardscertification">
         <div className="container-fluid mx-auto py-5">
           <div className="section-title">
-            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">Awards & Certifications</h3>
+            <h3>Awards & Certifications</h3>
           </div>
 
           <div ref={fancyboxRef} className="row  pt-5 d-flex align-items-center">
@@ -212,7 +212,7 @@ Helping financial institutions achieve compliance and operational success.</p>
       <section className="ourclients">
         <div className="container-fluid mx-auto px-0 pt-5 bg-white">
           <div className="section-title">
-            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">Our Latest Clients</h3>
+            <h3>Our Latest Clients</h3>
           </div>
           <div>
             <ClientScroller />
@@ -223,7 +223,7 @@ Helping financial institutions achieve compliance and operational success.</p>
       <section className="clientfeedback pb-5">
         <div className="container-fluid mx-auto px-0 bg-white">
           <div className="section-title">
-            <h3 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">What Clients Say</h3>
+            <h3>What Clients Say</h3>
           </div>
           <TestimonialSlider  />
         </div>
@@ -235,14 +235,13 @@ Helping financial institutions achieve compliance and operational success.</p>
       <section className="faqs">
         <div className="container mx-auto  py-4 bg-white">
           <div className="section-title">
-            <h3  data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">Frequently ask Questions</h3>
+            <h3>Frequently ask Questions</h3>
           </div>
           <div>
             <FAQAccordion />
           </div>
         </div>
       </section>
-
     </>
   );
 };

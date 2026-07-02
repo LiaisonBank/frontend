@@ -17,7 +17,7 @@ const services = [
 const OurServices = () => {
   return (
     <div className="service-type grid-wrapper">
-        <div className="grid-item service-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+        <div className="grid-item service-card">
           <Link href="">
               <div className="image-wrapper">
                 <Image src={services[0].img} alt={services[0].title} layout="fill" objectFit="cover" />
@@ -25,7 +25,7 @@ const OurServices = () => {
               <h3>{services[0].title}</h3>
           </Link>
         </div>
-        <div className="grid-item service-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
+        <div className="grid-item service-card">
           <Link href="">
               <div className="image-wrapper">
                 <Image src={services[1].img} alt={services[1].title} layout="fill" objectFit="cover" />
@@ -33,7 +33,7 @@ const OurServices = () => {
               <h3>{services[1].title}</h3>
           </Link>
         </div>
-        <div className="grid-item service-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+        <div className="grid-item service-card">
           <Link href="">
               <div className="image-wrapper">
                 <Image src={services[2].img} alt={services[2].title} layout="fill" objectFit="cover" />
@@ -41,7 +41,7 @@ const OurServices = () => {
               <h3>{services[2].title}</h3>
           </Link>
         </div>
-        <div className="grid-item service-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+        <div className="grid-item service-card">
           <Link href="">
               <div className="image-wrapper">
                 <Image src={services[3].img} alt={services[3].title} layout="fill" objectFit="cover" />
@@ -49,7 +49,7 @@ const OurServices = () => {
               <h3>{services[3].title}</h3>
           </Link>
         </div>
-        <div className="grid-item service-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="500">
+        <div className="grid-item service-card">
           <Link href="">
               <div className="image-wrapper">
                 <Image src={services[4].img} alt={services[4].title} layout="fill" objectFit="cover" />
@@ -57,7 +57,7 @@ const OurServices = () => {
               <h3>{services[4].title}</h3>
           </Link>
         </div>
-        <div className="grid-item service-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+        <div className="grid-item service-card">
           <Link href="">
               <div className="image-wrapper">
                 <Image src={services[5].img} alt={services[5].title} layout="fill" objectFit="cover" />
@@ -65,7 +65,7 @@ const OurServices = () => {
               <h3>{services[5].title}</h3>
           </Link>
         </div>
-        <div className="grid-item service-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+        <div className="grid-item service-card">
           <Link href="">
               <div className="image-wrapper">
                 <Image src={services[6].img} alt={services[6].title} layout="fill" objectFit="cover" />
@@ -73,7 +73,7 @@ const OurServices = () => {
               <h3>{services[6].title}</h3>
           </Link>
         </div>
-        <div className="grid-item service-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
+        <div className="grid-item service-card">
           <Link href="">
               <div className="image-wrapper">
                 <Image src={services[7].img} alt={services[7].title} layout="fill" objectFit="cover" />
@@ -81,7 +81,7 @@ const OurServices = () => {
               <h3>{services[7].title}</h3>
           </Link>
         </div>
-        <div className="grid-item service-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="900">
+        <div className="grid-item service-card">
           <Link href="">
               <div className="image-wrapper">
                 <Image src={services[8].img} alt={services[8].title} layout="fill" objectFit="cover" />
@@ -89,7 +89,7 @@ const OurServices = () => {
               <h3>{services[8].title}</h3>
           </Link>
         </div>
-        <div className="grid-item service-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="1000">
+        <div className="grid-item service-card">
           <Link href="">
               <div className="image-wrapper">
                 <Image src={services[9].img} alt={services[9].title} layout="fill" objectFit="cover" />

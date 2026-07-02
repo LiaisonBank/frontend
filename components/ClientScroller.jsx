@@ -15,9 +15,7 @@ const ClientScroller = () => {
                 direction="right"   // ✅ KEY CHANGE
             >
                 {clientImageName.map((name, index) => (
-                    <Slider.Slide key={index}
-                        data-aos="fade-up"
-                        data-aos-delay={index * 100}>
+                    <Slider.Slide key={index}>
                         <div className="client-image-wrapper">
                             <Image
                                 src={`/clients/${name}.webp`}

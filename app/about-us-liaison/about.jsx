@@ -23,10 +23,10 @@ export default function AboutUsLiaisonPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">About Us</h1>
+                    <h1>About Us</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -53,17 +53,17 @@ export default function AboutUsLiaisonPage() {
       </div>
       <section className="container py-5">
         <div className="row justify-content-center text-center px-2">
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+          <div className="section-title">
             <h3>We help you navigate the complexities of licence acquisitions <br/> and 
             take away the burden of uncertainty and time constraints. </h3>
           </div>
          <div className="content-text">
           <div className="row justify-content-center align-items-center">
             <div className="col-lg-6 col-sm-12">
-              <h4 data-aos="fade-right" data-aos-duration="600" data-aos-delay="300">
+              <h4>
                 From Consultation to Corporate Leadership: Two Decades of Regulatory Excellence
               </h4>
-              <p data-aos="fade-right" data-aos-duration="600" data-aos-delay="400">
+              <p>
                 At Liaison Bank, we believe that regulatory hurdles should never stand in the way of innovation. 
                 Our primary mission is to simplify the complex world of government permits and licensing, enabling you to direct 
                 your attention solely to your core business endeavors. Whether you are a budding startup or an established 
@@ -71,7 +71,7 @@ export default function AboutUsLiaisonPage() {
                 are met with precision and speed. By streamlining the licensing process, we allow your team to focus on growth 
                 and strategy rather than paperwork.
               </p>
-              <p data-aos="fade-right" data-aos-duration="600" data-aos-delay="400">
+              <p>
                 Our foundation is built on nearly two decades of industry expertise. What began in 2007 as 
                 Mr. Mahadev Biradar Consulting has evolved through years of dedicated service into the versatile and experienced
                 entity known today as Liaison Bank. By 2026, we have cemented our reputation as a leading organization in the 
@@ -82,9 +82,9 @@ export default function AboutUsLiaisonPage() {
               </p>
 
 
-              {/* <h4 data-aos="fade-right" data-aos-duration="600" data-aos-delay="300">
+              {/* <h4  "300">
                 This enables you to direct your attention solely to your business endeavours.</h4>  
-              <p  data-aos="fade-right" data-aos-duration="600" data-aos-delay="500">
+              <p   "500">
                 Liaison Bank was founded in 2007 as Mr. Mahadev Biradar Consulting. Cut to 2024, we have evolved into a versatile 
                 and experienced entity as Liaison Bank. In the realm of licensing and liaison services, 
                 we stand out as a leading organization, boasting an extensive workforce of highly quality.</p> */}
@@ -97,8 +97,7 @@ export default function AboutUsLiaisonPage() {
                 height={0}
                 sizes="100vw"
                 style={{ width: "100%", height: "auto" }}
-                priority
-                data-aos="fade-left" data-aos-duration="600" data-aos-delay="600"
+                priority                
               />
             </div>
           </div>
@@ -113,11 +112,11 @@ export default function AboutUsLiaisonPage() {
                 sizes="75vw"
                 style={{ width: "75%", height: "auto" }}
                 priority
-                data-aos="fade-right" data-aos-duration="600" data-aos-delay="600"
+                
               />
             </div>
             <div className="col-lg-6 col-sm-12">
-              <div className="our-story-text" data-aos="fade-left" data-aos-duration="600" data-aos-delay="300">
+              <div className="our-story-text">
                 
                 <h3>Our Story</h3>  
                 <p >
@@ -134,7 +133,7 @@ export default function AboutUsLiaisonPage() {
             </div>           
           </div>
           <div className="row justify-content-center align-items-center py-4 third">
-            <div className="col-lg-6 col-sm-12"  data-aos="fade-right" data-aos-duration="600" data-aos-delay="300">
+            <div className="col-lg-6 col-sm-12">
               <div className="our-commitment-text" >
                 <h3>Our Commitment</h3>  
                 <p >
@@ -156,15 +155,14 @@ export default function AboutUsLiaisonPage() {
                 height={0}
                 sizes="75vw"
                 style={{ width: "75%", height: "500px" }}
-                priority
-                data-aos="fade-left" data-aos-duration="600" data-aos-delay="600"
+                priority                
               />
             </div>
           </div>
 
         </div>
         <div className="team-content pt-4">
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+          <div className="section-title">
             <h3>Our Team </h3>
           </div>
             <TeamSwiper />

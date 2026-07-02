@@ -196,17 +196,13 @@ export default function PressReleaseLiaisonbankPage() {
                 <p>Loading...</p>
               ) : (
                 <div>
-                 <p
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="200"
-                    className="d-block px-3 py-2 border border-success rounded-pill bg-success-subtle text-success fw-semibold text-center text-capitalize"
+                 <p className="d-block px-3 py-2 border border-success rounded-pill bg-success-subtle text-success fw-semibold text-center text-capitalize"
                   >
                     Status: {dbStatus?.status}
                   </p>
-                  {/* <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+                  {/* <p>
                     Database: {dbStatus?.database}</p>
-                  <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+                  <p>
                     Version: {dbStatus?.version}</p> */}
                 </div>
               )}
@@ -223,10 +219,6 @@ export default function PressReleaseLiaisonbankPage() {
                 {visibleData.map((post, index) => (
                   <div
                     key={post.id}
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay={index * 100}
                   >
                     <div className="card h-100 shadow-sm border-0">
                       <Link href={`/press-release-liaison-bank/${post.slug}`}>

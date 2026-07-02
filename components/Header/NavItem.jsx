@@ -35,22 +35,13 @@ export default function NavItem({
         <Link
           href={link.href}
           className="nav-link"
-          data-aos="fade-left"
-          data-aos-delay={index * 100}
-          data-aos-duration="800"
           onClick={() => handleNavigation(link.href)}
         >
           <NavText text={link.name} />
         </Link>
       ) : (
-        <span
-          className="nav-link cursor-pointer flex items-center gap-1"
-          data-aos="fade-left"
-          data-aos-delay={index * 100}
-          data-aos-duration="800"
-        >
+        <span className="nav-link cursor-pointer flex items-center gap-1">
           <NavText text={link.name} />
-
           {(hasMegaMenu || hasProjects) && (
             <ChevronDown
               size={16}

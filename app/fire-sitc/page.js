@@ -18,10 +18,10 @@ export default function CeosDeskPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1 data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">Fire (SITC)</h1>
+                    <h1>Fire (SITC)</h1>
 
                     <nav aria-label="breadcrumb" className="page-breadcrumb">
-                      <ol className="breadcrumb justify-content-center" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                      <ol className="breadcrumb justify-content-center"  >
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i className="bi bi-house-door me-1" aria-hidden="true"></i>
@@ -49,12 +49,12 @@ export default function CeosDeskPage() {
       <section className="container py-5">
          <div className="row justify-content-center text-center">
           <div>
-            <p  data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+            <p>
               Fire SITC (Supply, Installation, Testing, and Commissioning) services are essential for creating a safe and 
               compliant environment where fire risks are effectively managed. These services ensure that <b>fire protection 
               systems</b> are properly installed, fully functional, and aligned with required safety regulations.
             </p>
-            <p className="pt-4"  data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+            <p className="pt-4">
               Fire safety is not just a precaution, it is a critical requirement for any building or facility. 
               Our <b>Fire SITC services</b> focus on setting up robust fire protection systems, <b>fire alarm systems, fire fighting equipment, 
               and fire safety infrastructure</b> that comply with <b>government fire safety regulations and Fire NOC</b> requirements. 
@@ -63,10 +63,10 @@ export default function CeosDeskPage() {
               certification support, and long-term reliability.
             </p>
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="500">
+          <div className="section-title">
             <h3>Overview </h3>
           </div>
-          <div className="container table-responsive py-2" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+          <div className="container table-responsive py-2">
             <table className="mx-auto table table-bordered table-hover mx-auto w-100 w-md-75" >
               <thead className="thead-dark">
                 <tr>
@@ -98,11 +98,11 @@ export default function CeosDeskPage() {
               </tbody>
             </table>
           </div>
-          <div className="section-title" data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+          <div className="section-title">
             <h3>Conclusion </h3>
           </div>
           <div >
-            <p data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+            <p>
               A well-implemented <b>Fire SITC system</b> is fundamental to safeguarding lives, property, and business continuity. 
               With <b>Liaison Bank’s Fire SITC services</b>, clients can ensure accurate installation, proper system validation, and 
               seamless compliance with fire safety norms. Our structured execution of <b>fire system installation, testing, 

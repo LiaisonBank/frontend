@@ -16,19 +16,12 @@ export default function ServiceContent({ activeIndex }) {
                         <p
                             key={i}
                             className="mb-3"
-                            data-aos="fade-left"
-                            data-aos-duration="600"
-                            data-aos-delay={400 + i * 150} // stagger effect 🔥
                         >
                             {para}
                         </p>
                         ))
                     ) : (
-                        <p
-                        data-aos="fade-left"
-                        data-aos-duration="600"
-                        data-aos-delay="400"
-                        >
+                        <p>
                         {service.content}
                         </p>
                     )}

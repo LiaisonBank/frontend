@@ -33,11 +33,7 @@ export default function CertificateScroller() {
       <div className="certificate-track">
 
         {certificates.map((item, index) => (
-          <div className="certificate-item" key={index}
-            data-aos="fade-up"
-            data-aos-duration="600"
-            data-aos-delay={index * 100}
-            data-aos-once="true">
+          <div className="certificate-item" key={index}>
             <a
               href={item.src}
               data-fancybox="certificates"

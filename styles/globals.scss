@@ -7464,17 +7464,57 @@ $whstapp-color: #25D366;
       &:nth-child(1) {
         top: 9px;
         transform: rotate(135deg);
-        background: white;
+        // background: white;
       }
       &:nth-child(2) {
         opacity: 1;
         top: 9px;
         transform: rotate(-135deg);
-        background: white;
+        // background: white;
       }
     }
     }
   }
+  #myNav.menu-open {
+    top: calc(100dvw - 90dvw);
+    > .overflow-y-auto {
+      background-color: #000;
+      transform: 0.5s;
+      .overlay-content {
+        text-align: center;
+        width: 100%;
+        position: relative;
+        top: 2%;
+        ul{
+        &.mobilesubmenu{
+          margin: 0;
+          padding: 0;
+          text-align: left;
+          li{
+            padding: 0.5rem 0;
+            div > span {
+              font-size: 1.5rem;
+              display: block;
+              color: white;
+            }
+            div > button {
+              font-size: 2rem;
+              display: block;
+              color: white;
+            }
+            a{
+              font-size: 1.5rem;
+              display: block;
+              color: white;
+            }
+          }
+        }
+      }
+      }
+      
+    }
+  }
+  
  .overlay {
     height: 100%;
     width: 0;

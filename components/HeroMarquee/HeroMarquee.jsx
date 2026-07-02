@@ -13,76 +13,120 @@ import slides from "./slides";
 
 const TYPING_SPEED = 80;
 const HOLD_AFTER_TYPING = 2000;
+const MIN_SWIPE_DISTANCE = 50;
 
 export default function HeroSlider() {
-  const [isMobile, setIsMobile] = useState(false);
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-  const sliderRef = useRef(null);
-  const MIN_SWIPE_DISTANCE = 50;
-  const trackRef = useRef(null);
-  const contentRefs = useRef([]);
-  const autoplayRef = useRef(null);
-  const typingRef = useRef(null);
-  const isAnimating = useRef(false);
-
   const totalSlides = slides.length;
 
-  const [currentSlide, setCurrentSlide] =
-    useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const [typedTitles, setTypedTitles] =
-    useState(() =>
-      slides.map((slide) => slide.title)
-    );
+  const [typedTitles, setTypedTitles] = useState(() =>
+    slides.map(() => "")
+  );
+
+  const sliderRef = useRef(null);
+  const trackRef = useRef(null);
+  const contentRefs = useRef([]);
+
+  const autoplayRef = useRef(null);
+  const typingRef = useRef(null);
+
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const isAnimating = useRef(false);
+
+  /* -----------------------------
+      Helpers
+  ------------------------------ */
 
   const stopTimers = useCallback(() => {
-    if (autoplayRef.current) {
-      clearTimeout(autoplayRef.current);
-      autoplayRef.current = null;
-    }
-
     if (typingRef.current) {
       clearTimeout(typingRef.current);
       typingRef.current = null;
     }
+
+    if (autoplayRef.current) {
+      clearTimeout(autoplayRef.current);
+      autoplayRef.current = null;
+    }
   }, []);
 
-  const animateContent = useCallback(
+  
+  /* -----------------------------
+      Navigation
+  ------------------------------ */
+
+  const changeSlide = useCallback(
     (index) => {
-      const content =
-        contentRefs.current[index];
+      if (isAnimating.current) return;
 
-      if (!content) return;
+      stopTimers();
 
-      gsap.killTweensOf(content);
+      const next =
+        (index + totalSlides) % totalSlides;
 
-      gsap.fromTo(
-        content,
-        {
-          opacity: 0,
-          x: -120,
-        },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 1,
-          ease: "expo.out",
-        }
-      );
+      setCurrentSlide(next);
     },
-    []
+    [stopTimers, totalSlides]
   );
 
+  const nextSlide = useCallback(() => {
+    changeSlide(currentSlide + 1);
+  }, [changeSlide, currentSlide]);
+
+  const prevSlide = useCallback(() => {
+    changeSlide(currentSlide - 1);
+  }, [changeSlide, currentSlide]);
+
+  const goToSlide = useCallback(
+    (index) => {
+      if (index === currentSlide) return;
+      changeSlide(index);
+    },
+    [changeSlide, currentSlide]
+  );
+
+  /* -----------------------------
+      Content Animation
+  ------------------------------ */
+
+  const animateContent = useCallback((index) => {
+    const element = contentRefs.current[index];
+
+    if (!element) return;
+
+    gsap.killTweensOf(element);
+
+    gsap.fromTo(
+      element,
+      {
+        opacity: 0,
+        x: -120,
+      },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: "expo.out",
+      }
+    );
+  }, []);
+
+  /* -----------------------------
+      Typing Animation
+  ------------------------------ */
+
   const startTyping = useCallback(
-    (title, slideIndex) => {
+    (title, index) => {
       stopTimers();
 
       let charIndex = 0;
 
       setTypedTitles((prev) => {
         const next = [...prev];
-        next[slideIndex] = "";
+        next[index] = "";
         return next;
       });
 
@@ -91,32 +135,19 @@ export default function HeroSlider() {
 
         setTypedTitles((prev) => {
           const next = [...prev];
-          next[slideIndex] = title.slice(
-            0,
-            charIndex
-          );
+          next[index] = title.slice(0, charIndex);
           return next;
         });
 
         if (charIndex < title.length) {
-          typingRef.current =
-            setTimeout(
-              type,
-              TYPING_SPEED
-            );
+          typingRef.current = setTimeout(
+            type,
+            TYPING_SPEED
+          );
         } else {
-          typingRef.current = null;
-
-          autoplayRef.current =
-            setTimeout(() => {
-              setCurrentSlide(
-                (prev) =>
-                  prev >=
-                  totalSlides - 1
-                    ? 0
-                    : prev + 1
-              );
-            }, HOLD_AFTER_TYPING);
+          autoplayRef.current = setTimeout(() => {
+            changeSlide(currentSlide + 1);
+          }, HOLD_AFTER_TYPING);
         }
       };
 
@@ -125,58 +156,23 @@ export default function HeroSlider() {
         TYPING_SPEED
       );
     },
-    [stopTimers, totalSlides]
-  );
-
-  const goToSlide = useCallback(
-    (index) => {
-      if (
-        index === currentSlide ||
-        isAnimating.current
-      ) {
-        return;
-      }
-
-      stopTimers();
-      setCurrentSlide(index);
-    },
     [currentSlide, stopTimers]
   );
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) =>
-      prev === 0 ? slides.length - 1 : prev - 1
-    );
-  };
-
-  // const nextSlide = useCallback(() => {
-  //   setCurrentSlide((prev) =>
-  //     prev >= totalSlides - 1
-  //       ? 0
-  //       : prev + 1
-  //   );
-  // }, [totalSlides]);
-
-  // const prevSlide = useCallback(() => {
-  //   setCurrentSlide((prev) =>
-  //     prev <= 0
-  //       ? totalSlides - 1
-  //       : prev - 1
-  //   );
-  // }, [totalSlides]);
+  /* -----------------------------
+      Track Animation
+  ------------------------------ */
 
   useEffect(() => {
     if (!trackRef.current) return;
 
     isAnimating.current = true;
 
+    gsap.killTweensOf(trackRef.current);
+
     gsap.to(trackRef.current, {
       xPercent: -(currentSlide * 100),
-      duration: 1.2,
+      duration: 1,
       ease: "power3.inOut",
 
       onComplete: () => {
@@ -196,251 +192,257 @@ export default function HeroSlider() {
     startTyping,
   ]);
 
-  const handleTouchStart =
-    useCallback((e) => {
-      touchStartX.current =
-        e.touches[0].clientX;
-    }, []);
+  /* -----------------------------
+      Touch Events
+  ------------------------------ */
 
-  const handleTouchMove = (e) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
+  const handleTouchStart = useCallback((e) => {
+    touchStartX.current =
+      e.touches[0].clientX;
+  }, []);
 
-  const handleTouchEnd = useCallback((e) => {
-      const touchEnd = e.changedTouches[0].clientX;
-      const distance = touchStartX.current - touchEnd;
+  const handleTouchMove = useCallback((e) => {
+    touchEndX.current =
+      e.touches[0].clientX;
+  }, []);
 
-      if (Math.abs(distance) < MIN_SWIPE_DISTANCE || isAnimating.current ) {return;}
+  const handleTouchEnd = useCallback(() => {
+    if (isAnimating.current) return;
 
-      if (distance > 0) {
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
-        nextSlide();
-      } else {
-        setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-        prevSlide();
-      }
-    },
-    [nextSlide, prevSlide]
-  );
+    const distance =
+      touchStartX.current -
+      touchEndX.current;
+
+    if (
+      Math.abs(distance) <
+      MIN_SWIPE_DISTANCE
+    )
+      return;
+
+    if (distance > 0) {
+      nextSlide();
+    } else {
+      prevSlide();
+    }
+  }, [nextSlide, prevSlide]);
+
+  /* -----------------------------
+      Keyboard
+  ------------------------------ */
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (isAnimating.current)
-        return;
+    const onKeyDown = (e) => {
+      if (isAnimating.current) return;
 
-      if (e.key === "ArrowRight") {
+      if (e.key === "ArrowRight")
         nextSlide();
-      }
 
-      if (e.key === "ArrowLeft") {
+      if (e.key === "ArrowLeft")
         prevSlide();
-      }
     };
 
     window.addEventListener(
       "keydown",
-      handleKeyDown
+      onKeyDown
     );
 
-    return () => {
+    return () =>
       window.removeEventListener(
         "keydown",
-        handleKeyDown
+        onKeyDown
       );
-    };
   }, [nextSlide, prevSlide]);
 
-  useEffect(() => {
-    return () => {
-      stopTimers();
-
-      gsap.killTweensOf(
-        trackRef.current
-      );
-
-      contentRefs.current.forEach(
-        (el) => {
-          if (el) {
-            gsap.killTweensOf(el);
-          }
-        }
-      );
-    };
-  }, [stopTimers]);
-  
-  useEffect(() => {
-    const checkScreen = () => {
-      setIsMobile(window.innerWidth <= 768); // or 991 for iPad
-    };
-
-    checkScreen();
-    window.addEventListener("resize", checkScreen);
-
-    return () => window.removeEventListener("resize", checkScreen);
-  }, []);
+  /* -----------------------------
+      Mouse Wheel
+  ------------------------------ */
 
   useEffect(() => {
     const slider = sliderRef.current;
 
     if (!slider) return;
 
-    let isScrolling = false;
+    let locked = false;
 
-    const handleWheel = (e) => {
-      if (window.innerWidth <= 991) return; // Disable on mobile/iPad
+    const onWheel = (e) => {
+      if (window.innerWidth <= 991) return;
 
       e.preventDefault();
 
-      if (isScrolling) return;
-      isScrolling = true;
+      if (locked) return;
+
+      locked = true;
 
       if (e.deltaY > 0) {
-        nextSlide(); // Your next slide function
+        nextSlide();
       } else {
-        prevSlide(); // Your previous slide function
+        prevSlide();
       }
 
       setTimeout(() => {
-        isScrolling = false;
-      }, 700); // Match your slide transition
+        locked = false;
+      }, 1000);
     };
 
-    slider.addEventListener("wheel", handleWheel, {
-      passive: false,
-    });
+    slider.addEventListener(
+      "wheel",
+      onWheel,
+      {
+        passive: false,
+      }
+    );
 
-    return () => {
-      slider.removeEventListener("wheel", handleWheel);
+    return () =>
+      slider.removeEventListener(
+        "wheel",
+        onWheel
+      );
+  }, [nextSlide, prevSlide]);
+
+  /* -----------------------------
+      Responsive Images
+  ------------------------------ */
+
+  useEffect(() => {
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth <= 768);
     };
+
+    checkScreen();
+
+    window.addEventListener(
+      "resize",
+      checkScreen
+    );
+
+    return () =>
+      window.removeEventListener(
+        "resize",
+        checkScreen
+      );
   }, []);
 
-  return (
-    <section className={styles.hero}>
+  /* -----------------------------
+      Cleanup
+  ------------------------------ */
+
+  useEffect(() => {
+    return () => {
+      stopTimers();
+
+      gsap.killTweensOf(trackRef.current);
+
+      contentRefs.current.forEach((el) => {
+        if (el) gsap.killTweensOf(el);
+      });
+    };
+  }, [stopTimers]);
+return (
+  <section
+    ref={sliderRef}
+    className={styles.hero}
+  >
+    <div
+      className={styles.viewport}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <div
-        className={styles.viewport}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        ref={trackRef}
+        className={styles.track}
       >
-        <div
-          ref={trackRef}
-          className={styles.track}
-        >
-          {slides.map(
-            (slide, index) => (
-              <div
-                key={index}
-                className={
-                  styles.slide
-                }
-              >
-                {slide.type ===
-                "video" ? (
-                  <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className={
-                      styles.media
-                    }
-                  >
-                    <source
-                      src={
-                        slide.media
-                      }
-                      type="video/mp4"
-                    />
-                  </video>
-                ) : (
-                  <Image
-                    src={isMobile ? slide.mobileImage : slide.image}
-                    alt={slide.title}
-                    fill
-                    priority={
-                      index === 0
-                    }
-                    sizes="100vw"
-                    className={
-                      styles.media
-                    }
-                  />
-                )}
+        {slides.map((slide, index) => {
+          const isActive =
+            currentSlide === index;
 
-                <div
-                  className={
-                    styles.overlay
-                  }
-                />
-
-                <div
-                  className={
-                    styles.contentMask
-                  }
+          return (
+            <div
+              key={index}
+              className={styles.slide}
+            >
+              {slide.type === "video" ? (
+                <video
+                  className={styles.media}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
                 >
-                  <div
-                    className={
-                      styles.content
-                    }
-                    ref={(el) => {
-                      contentRefs.current[
-                        index
-                      ] = el;
-                    }}
-                  >
-                    <h2>
-                      {
-                        typedTitles[
-                          index
-                        ]
-                      }
+                  <source
+                    src={slide.media}
+                    type="video/mp4"
+                  />
+                </video>
+              ) : (
+                <Image
+                  src={
+                    isMobile
+                      ? slide.mobileImage
+                      : slide.image
+                  }
+                  alt={slide.title}
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  className={styles.media}
+                />
+              )}
 
-                      {currentSlide ===
-                        index && (
-                        <span
-                          className={
-                            styles.cursor
-                          }
-                        >
-                          |
-                        </span>
-                      )}
-                    </h2>
+              <div className={styles.overlay} />
 
-                    <p>
-                      {
-                        slide.subtitle
-                      }
-                    </p>
-                  </div>
+              <div className={styles.contentMask}>
+                <div
+                  className={styles.content}
+                  ref={(el) => {
+                    contentRefs.current[index] =
+                      el;
+                  }}
+                >
+                  <h2>
+                    {typedTitles[index]}
+                    {isActive && (
+                      <span
+                        className={styles.cursor}
+                      >
+                        |
+                      </span>
+                    )}
+                  </h2>
+
+                  <p>{slide.subtitle}</p>
                 </div>
               </div>
-            )
-          )}
-        </div>
+            </div>
+          );
+        })}
       </div>
+    </div>
 
-      <div
-        className={ styles.pagination}
-      >
-        {slides.map((_, index) => (
+    <div className={styles.pagination}>
+      {slides.map((_, index) => {
+        const isActive =
+          currentSlide === index;
+
+        return (
           <button
             key={index}
             type="button"
+            aria-label={`Go to slide ${
+              index + 1
+            }`}
             onClick={() =>
               goToSlide(index)
             }
             className={`${styles.dot} ${
-              currentSlide === index
+              isActive
                 ? styles.activeDot
                 : ""
             }`}
-            aria-label={`Go to slide ${
-              index + 1
-            }`}
           />
-        ))}
-      </div>
-    </section>
-  );
+        );
+      })}
+    </div>
+  </section>
+);
 }

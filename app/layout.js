@@ -12,7 +12,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 // import Cursor from "@/components/Cursor";
 
-import AOSProvider from "@/components/AOSProvider";
+// import AOSProvider from "@/components/AOSProvider";
 import ReduxProvider from "@/components/ReduxProvider";
 import ChatBot from "@/components/ChatBot/page";
 import LenisProvider from "@/components/LenisProvider";
@@ -288,7 +288,7 @@ export default function RootLayout({ children }) {
         <LenisProvider />
         <ReduxProvider>
          <IntroLoader />
-          <AOSProvider>
+          {/* <AOSProvider> */}
             
             {/* ========================================= */}
             {/* GLOBAL UTILITIES */}
@@ -326,7 +326,7 @@ export default function RootLayout({ children }) {
               <ChatBot />
             </div> */}
             
-          </AOSProvider>
+          {/* </AOSProvider> */}
         </ReduxProvider>
         {/* <script defer src="https://india.kenyt.ai/botapp/ChatbotUI/dist/js/bot-loader.js" type="text/javascript" data-bot="114528775"></script> */}
       </body>

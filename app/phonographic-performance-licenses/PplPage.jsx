@@ -35,11 +35,7 @@ export default function Page() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1
-                      data-aos="fade-up"
-                      data-aos-duration="600"
-                      data-aos-delay="100"
-                    >
+                    <h1>
                       Phonographic Performance Licenses
                     </h1>
 
@@ -47,12 +43,7 @@ export default function Page() {
                       aria-label="breadcrumb"
                       className="page-breadcrumb"
                     >
-                      <ol
-                        className="breadcrumb justify-content-center"
-                        data-aos="fade-up"
-                        data-aos-duration="1000"
-                        data-aos-delay="200"
-                      >
+                      <ol>
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i
@@ -85,47 +76,28 @@ export default function Page() {
           <div className="row justify-content-center text-center">
             <div className="col-lg-10">
               <div
-                className="section-title"
-                data-aos="fade-up"
-                data-aos-duration="600"
-                data-aos-delay="100"
-              >
+                className="section-title">
                 <h2 className="fw-bold">
                   PPL Music License Services in India
                 </h2>
-                <h5 className="mt-3"
-                data-aos="fade-up"
-                data-aos-duration="600"
-                data-aos-delay="200">
+                <h5 className="mt-3">
                   Professional Assistance for Commercial Music Licensing, Copyright Compliance & Public Performance Permissions
                 </h5>
               </div>
-                <p className="pt-3" data-aos="fade-up"
-                data-aos-duration="600"
-                data-aos-delay="300">
+                <p className="pt-3">
                     From restaurants and cafés to hotels, retail outlets, gyms, salons, and large-scale events, music has become an essential part of creating engaging customer experiences. However, using copyrighted sound recordings in commercial spaces requires proper authorization under Indian copyright regulations. 
                     A PPL License ensures businesses can legally play recorded music for public performance while maintaining smooth operational compliance. 
                 </p> 
-                <p className="pt-3" data-aos="fade-up"
-                data-aos-duration="600"
-                data-aos-delay="400">
+                <p className="pt-3">
                     At Liaison Bank, we simplify the complexities of music licensing through structured guidance, streamlined documentation support, and reliable licensing coordination tailored for modern businesses and entertainment spaces. Our goal is to help brands, venues, and commercial establishments navigate PPL licensing requirements with clarity, efficiency, and confidence. 
                 </p>
               <div
                 className="d-flex flex-wrap justify-content-center gap-3 mt-4"
-                data-aos="fade-up"
-                data-aos-duration="600"
-                data-aos-delay="300"
               >
-                <h2 className="mt-3"
-                data-aos="fade-up"
-                data-aos-duration="600"
-                data-aos-delay="200">
+                <h2 className="mt-3">
                 Need Help with PPL Music Licensing?                 
                 </h2>
-                <p className="pt-1" data-aos="fade-up"
-                data-aos-duration="600"
-                data-aos-delay="400">
+                <p className="pt-1">
                     Ensure smooth and compliant music usage for your business, venue, or event with professional PPL licensing guidance tailored to your commercial requirements. 
                 </p>
                 <Link
@@ -152,19 +124,11 @@ export default function Page() {
                 <div className="row">
                 <div className="d-flex flex-wrap justify-content-center gap-3 mt-4">
 
-                    <h2
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="100"
-                    >
+                    <h2>
                     What is a PPL License?
                     </h2>
 
-                    <p
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="200"
-                    >
+                    <p>
                     A PPL License (Phonographic Performance Limited License) is a
                     legal music license required for playing recorded music in
                     public or commercial spaces. It grants permission to use
@@ -172,11 +136,7 @@ export default function Page() {
                     holders represented by PPL India.
                     </p>
 
-                    <p
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="300"
-                    >
+                    <p>
                     Any business or establishment that uses music for customer
                     entertainment, ambience, promotions, fitness sessions, live
                     screenings, public performances, or events may require a valid
@@ -186,11 +146,7 @@ export default function Page() {
                 </div>
                 <div>
                     
-                    <p
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="400"
-                    >
+                    <p>
                     This includes:
                     </p>
                     
@@ -201,9 +157,6 @@ export default function Page() {
       {/* Card 1 */}
       <div
         className="col-12 col-sm-6 col-md-4 col-lg"
-        data-aos="fade-up"
-        data-aos-duration="600"
-        data-aos-delay="100"
       >
         <div
           className="card h-100 border-0 shadow-sm"
@@ -217,11 +170,7 @@ export default function Page() {
 
       {/* Card 2 */}
       <div
-        className="col-12 col-sm-6 col-md-4 col-lg"
-        data-aos="fade-up"
-        data-aos-duration="600"
-        data-aos-delay="200"
-      >
+        className="col-12 col-sm-6 col-md-4 col-lg">
         <div
           className="card h-100 border-0 shadow-sm"
           style={{ borderRadius: "10px" }}
@@ -234,11 +183,7 @@ export default function Page() {
 
       {/* Card 3 */}
       <div
-        className="col-12 col-sm-6 col-md-4 col-lg"
-        data-aos="fade-up"
-        data-aos-duration="600"
-        data-aos-delay="300"
-      >
+        className="col-12 col-sm-6 col-md-4 col-lg">
         <div
           className="card h-100 border-0 shadow-sm"
           style={{ borderRadius: "10px" }}
@@ -253,11 +198,7 @@ export default function Page() {
 
       {/* Card 4 */}
       <div
-        className="col-12 col-sm-6 col-md-4 col-lg"
-        data-aos="fade-up"
-        data-aos-duration="600"
-        data-aos-delay="400"
-      >
+        className="col-12 col-sm-6 col-md-4 col-lg">
         <div
           className="card h-100 border-0 shadow-sm"
           style={{ borderRadius: "10px" }}
@@ -270,11 +211,7 @@ export default function Page() {
 
       {/* Card 5 */}
       <div
-        className="col-12 col-sm-6 col-md-4 col-lg"
-        data-aos="fade-up"
-        data-aos-duration="600"
-        data-aos-delay="500"
-      >
+        className="col-12 col-sm-6 col-md-4 col-lg">
         <div
           className="card h-100 border-0 shadow-sm"
           style={{ borderRadius: "10px" }}
@@ -291,11 +228,7 @@ export default function Page() {
 
       {/* Card 6 */}
       <div
-        className="col-12 col-sm-6 col-md-4 col-lg"
-        data-aos="fade-up"
-        data-aos-duration="600"
-        data-aos-delay="600"
-      >
+        className="col-12 col-sm-6 col-md-4 col-lg">
         <div
           className="card h-100 border-0 shadow-sm"
           style={{ borderRadius: "10px" }}
@@ -308,11 +241,7 @@ export default function Page() {
 
       {/* Card 7 */}
       <div
-        className="col-12 col-sm-6 col-md-4 col-lg"
-        data-aos="fade-up"
-        data-aos-duration="600"
-        data-aos-delay="700"
-      >
+        className="col-12 col-sm-6 col-md-4 col-lg">
         <div
           className="card h-100 border-0 shadow-sm"
           style={{ borderRadius: "10px" }}
@@ -327,11 +256,7 @@ export default function Page() {
 
       {/* Card 8 */}
       <div
-        className="col-12 col-sm-6 col-md-4 col-lg"
-        data-aos="fade-up"
-        data-aos-duration="600"
-        data-aos-delay="800"
-      >
+        className="col-12 col-sm-6 col-md-4 col-lg" >
         <div
           className="card h-100 border-0 shadow-sm"
           style={{ borderRadius: "10px" }}
@@ -346,11 +271,7 @@ export default function Page() {
 
       {/* Card 9 */}
       <div
-        className="col-12 col-sm-6 col-md-4 col-lg"
-        data-aos="fade-up"
-        data-aos-duration="600"
-        data-aos-delay="900"
-      >
+        className="col-12 col-sm-6 col-md-4 col-lg">
         <div
           className="card h-100 border-0 shadow-sm"
           style={{ borderRadius: "10px" }}
@@ -365,11 +286,7 @@ export default function Page() {
 
       {/* Card 10 */}
       <div
-        className="col-12 col-sm-6 col-md-4 col-lg"
-        data-aos="fade-up"
-        data-aos-duration="600"
-        data-aos-delay="1000"
-      >
+        className="col-12 col-sm-6 col-md-4 col-lg" >
         <div
           className="card h-100 border-0 shadow-sm"
           style={{ borderRadius: "10px" }}
@@ -392,19 +309,11 @@ export default function Page() {
                 <div className="row">
                 <div className="d-flex flex-wrap justify-content-center gap-3 mt-4">
 
-                    <h2
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="600"
-                    >
+                    <h2>
                     Why is a PPL Music License Important?
                     </h2>
 
-                    <p
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="700"
-                    >
+                    <p >
                     Obtaining a PPL license is not only a legal requirement but
                     also an important step toward running a compliant and
                     professional business. Commercial use of copyrighted music
@@ -412,19 +321,11 @@ export default function Page() {
                     claims, legal notices, penalties, or disruption of operations.
                     </p>
 
-                    <p
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="800"
-                    >
+                    <p>
                     A valid PPL license helps businesses:
                     </p>
 
-                    <ul
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="900"
-                    >
+                    <ul>
                     <li>Legally play copyrighted music in commercial premises</li>
                     <li>Maintain compliance with Indian copyright laws</li>
                     <li>Avoid legal risks and penalties</li>
@@ -438,11 +339,7 @@ export default function Page() {
                     </li>
                     </ul>
 
-                    <p
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="1000"
-                    >
+                    <p>
                     As businesses increasingly use music to create engaging
                     customer environments, proper music licensing has become a
                     crucial operational requirement across multiple industries.
@@ -460,20 +357,12 @@ export default function Page() {
                 <div className="d-flex flex-wrap justify-content-center gap-3 mt-4">
 
                     <h2
-                    className="mb-3"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="100"
-                    >
+                    className="mb-3">
                     Our PPL License Services
                     </h2>
 
                     <p
-                    className="mb-0"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="200"
-                    >
+                    className="mb-0">
                     At Liaison Bank, we provide complete assistance for obtaining
                     and managing PPL music licenses for different commercial
                     requirements.
@@ -484,11 +373,7 @@ export default function Page() {
 
                 <div className="row g-4">
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="300"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">PPL License Consultation</h3>
@@ -502,11 +387,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="400"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">Documentation Assistance</h3>
@@ -520,11 +401,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="500"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">Application Support</h3>
@@ -537,11 +414,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="600"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">
@@ -557,11 +430,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="700"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">
@@ -577,11 +446,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="800"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">
@@ -597,11 +462,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="900"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">
@@ -626,11 +487,7 @@ export default function Page() {
                 <div className="d-flex flex-wrap justify-content-center gap-3 mt-4">
 
                     <h2
-                    className="mb-3"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="100"
-                    >
+                    className="mb-3">
                     Industries That Commonly Require PPL Licenses
                     </h2>
 
@@ -640,11 +497,7 @@ export default function Page() {
                 <div className="row g-4">
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="200"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">Restaurants & Cafés</h3>
@@ -658,11 +511,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="300"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">
@@ -678,11 +527,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="400"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">
@@ -697,11 +542,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="500"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">Fitness Centers & Gyms</h3>
@@ -715,11 +556,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="600"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">
@@ -734,11 +571,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="700"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">
@@ -765,11 +598,7 @@ export default function Page() {
                 <div className="d-flex flex-wrap justify-content-center gap-3 mt-4">
 
                     <h2
-                    className="mb-3"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="800"
-                    >
+                    className="mb-3">
                     Why Choose Liaison Bank for PPL Licensing?
                     </h2>
 
@@ -779,11 +608,7 @@ export default function Page() {
                 <div className="row g-4">
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="900"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">Industry-Focused Expertise</h3>
@@ -796,11 +621,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="1000"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">Simplified Process</h3>
@@ -813,11 +634,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="1100"
-                >
+                    className="col-lg-4 col-md-6" >
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">End-to-End Assistance</h3>
@@ -830,11 +647,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="1200"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">
@@ -850,11 +663,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="1300"
-                >
+                    className="col-lg-4 col-md-6" >
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">
@@ -870,11 +679,7 @@ export default function Page() {
                 </div>
 
                 <div
-                    className="col-lg-4 col-md-6"
-                    data-aos="fade-up"
-                    data-aos-duration="600"
-                    data-aos-delay="1400"
-                >
+                    className="col-lg-4 col-md-6">
                     <div className="card h-100 border-0 shadow-sm">
                     <div className="card-body">
                         <h3 className="h5 mb-3">

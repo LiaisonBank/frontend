@@ -102,7 +102,7 @@ export default function HeroSection() {
                             </span>
                         ))}
                     </h1>
-                    <div className="global-serach-wrapper" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
+                    <div className="global-serach-wrapper">
                         <div className="search-box" onClick={openPopup}>
                             <div className="search-icon">
                                 <Image   src="/search-icon.png"
@@ -132,10 +132,10 @@ export default function HeroSection() {
                             <div className="mic-action-div d-none"><Image src="/mic.png" width={30} height={30} alt="Office Time" /></div>
                         </div>
                     </div>
-                    <div className="hero-cards" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+                    <div className="hero-cards">
                         <ul className="hero-cards--items">
                            
-                            <li className="hero-card" data-aos="flip-up" data-aos-duration="600" data-aos-delay="600">
+                            <li className="hero-card">
                                 <a className="hero-card-link" href="">
                                 <div className="hero-cards--img"> 
                                     {/* 🪪  */}
@@ -145,7 +145,7 @@ export default function HeroSection() {
                                     <span>Licensing</span>
                                 </div></a>
                             </li>
-                            <li className="hero-card" data-aos="flip-up" data-aos-duration="600" data-aos-delay="600">
+                            <li className="hero-card">
                                 <a className="hero-card-link" href="">
                                 <div className="hero-cards--img"> 
                                     {/* ⚖️   */}
@@ -154,21 +154,21 @@ export default function HeroSection() {
                                     <span>Liaisoning</span>
                                 </div></a>
                             </li>
-                            <li className="hero-card" data-aos="flip-down" data-aos-duration="600" data-aos-delay="600">
+                            <li className="hero-card">
                                 <a className="hero-card-link" href="/electrical-sitc">
                                 <div className="hero-cards--img"> ⚡ </div>
                                 <div className="hero-cards--label">
                                     <span>Electrical</span>
                                 </div></a>
                             </li>
-                             <li className="hero-card" data-aos="flip-down" data-aos-duration="600" data-aos-delay="800">
+                             <li className="hero-card">
                                 <a className="hero-card-link" href="/electrical-sitc">
                                 <div className="hero-cards--img"> 🧯 </div>
                                 <div className="hero-cards--label">
                                     <span>Fire (SITC)</span>
                                 </div></a>
                             </li>
-                            <li className="hero-card" data-aos="flip-down" data-aos-duration="600" data-aos-delay="800">
+                            <li className="hero-card">
                                 <a className="hero-card-link" href="/electrical-sitc">
                                 <div className="hero-cards--img ml-2"> 
                                     {/* 🛢️  */}
@@ -178,7 +178,7 @@ export default function HeroSection() {
                                 </div></a>
                             </li>
                            
-                             <li className="hero-card " data-aos="flip-up" data-aos-duration="600" data-aos-delay="800">
+                             <li className="hero-card ">
                                 <a className="hero-card-link" href="/phonographic-performance-licenses"><div className="hero-cards--img ml-2"> 
                                     <Image src="/icon/ppl.webp" width={30} height={30} alt="Office Time" /> 
                                 </div>
@@ -188,14 +188,14 @@ export default function HeroSection() {
                             </li>
                         </ul>
                     </div>
-                    {/* <div className="hero-desc" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+                    {/* <div className="hero-desc">
                         <h3> Streameline Your License Acquisitions</h3>
                     </div> */}
 
                 </div>
 
                 {/* RIGHT IMAGE */}
-                <div className="hero-image" data-aos="fade-left">
+                <div className="hero-image">
                     <div className="services-orbit d-none">
                         <div className="orbit-ring"></div>
 

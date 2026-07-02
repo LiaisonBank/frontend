@@ -42,13 +42,10 @@ export default function FAQSection() {
 
     return (
       <div
-        key={realIndex}
-        className="faq-items bg-white mb-1 overflow-hidden"
-        data-aos="fade-up"
-        data-aos-delay={realIndex * 100}
-        data-aos-duration="800"
-        onMouseEnter={() => openAccordion(realIndex)}
-      >
+          key={realIndex}
+          className="faq-items bg-white mb-1 overflow-hidden"
+          onMouseEnter={() => openAccordion(realIndex)}
+        >
         <button
           className="w-full text-left p-3 flex justify-between items-center"
         >
