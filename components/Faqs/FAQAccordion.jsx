@@ -76,7 +76,7 @@ export default function FAQSection() {
             isOpen ? "max-h-96" : "max-h-0"
           }`}
         >
-          <div className="px-4 pb-4 text-gray-600">
+          <div className="px-4 pt-4 pb-4 text-gray-600">
             {item.answer}
           </div>
         </div>
