@@ -32,7 +32,7 @@ const slides = [
   },
   {
     title: "Integrated Licensing & Compliance Solutions ",
-    image: "/images/home/Jayesh.png",
+    image: "/images/home/jayesh.png",
     category: "Motion",
   },
 ];
