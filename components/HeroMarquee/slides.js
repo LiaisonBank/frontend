@@ -4,11 +4,11 @@ const slides = [
   //   image: "/images/home/allservices.pdf",
   //   category: "Branding",
   // },
-  {
-    title: "Electrical Execution, Compliance & Maintenance Services",
-    image: "/images/home/ElectricalCompliance.webp",
-    mobileImage: "/images/home/mobile/ElectricalCompliance.webp",
-    category: "Branding",
+ {
+    title: "PIPED NATURAL GAS (PNG) SERVICES & REGULATORY COMPLIANCE",
+    image: "/images/home/Hunan.png",
+    mobileImage: "/images/home/mobile/Hunan.png",
+    category: "Motion",
   },
   {
     // title: "PAN-India Equipment Solutions For Construction & Infrastructure Projects",
@@ -30,16 +30,16 @@ const slides = [
     category: "Motion",
   },
   {
-    title: "PIPED NATURAL GAS (PNG) SERVICES & REGULATORY COMPLIANCE",
-    image: "/images/home/Hunan.png",
-    mobileImage: "/images/home/mobile/Hunan.png",
-    category: "Motion",
-  },
-  {
     title: "Integrated Licensing & Compliance Solutions ",
     image: "/images/home/jayesh.png",
     mobileImage: "/images/home/mobile/jayesh.png",
     category: "Motion",
+  },
+  {
+    title: "Electrical Execution, Compliance & Maintenance Services",
+    image: "/images/home/ElectricalCompliance.webp",
+    mobileImage: "/images/home/mobile/ElectricalCompliance.webp",
+    category: "Branding",
   },
 ];
 

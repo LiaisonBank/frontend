@@ -15,14 +15,16 @@ const TYPING_SPEED = 80;
 const HOLD_AFTER_TYPING = 2000;
 
 export default function HeroSlider() {
-    const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const sliderRef = useRef(null);
+  const MIN_SWIPE_DISTANCE = 50;
   const trackRef = useRef(null);
   const contentRefs = useRef([]);
   const autoplayRef = useRef(null);
   const typingRef = useRef(null);
   const isAnimating = useRef(false);
-
-  const touchStartX = useRef(0);
 
   const totalSlides = slides.length;
 
@@ -141,21 +143,31 @@ export default function HeroSlider() {
     [currentSlide, stopTimers]
   );
 
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) =>
-      prev >= totalSlides - 1
-        ? 0
-        : prev + 1
-    );
-  }, [totalSlides]);
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
 
-  const prevSlide = useCallback(() => {
+  const prevSlide = () => {
     setCurrentSlide((prev) =>
-      prev <= 0
-        ? totalSlides - 1
-        : prev - 1
+      prev === 0 ? slides.length - 1 : prev - 1
     );
-  }, [totalSlides]);
+  };
+
+  // const nextSlide = useCallback(() => {
+  //   setCurrentSlide((prev) =>
+  //     prev >= totalSlides - 1
+  //       ? 0
+  //       : prev + 1
+  //   );
+  // }, [totalSlides]);
+
+  // const prevSlide = useCallback(() => {
+  //   setCurrentSlide((prev) =>
+  //     prev <= 0
+  //       ? totalSlides - 1
+  //       : prev - 1
+  //   );
+  // }, [totalSlides]);
 
   useEffect(() => {
     if (!trackRef.current) return;
@@ -190,25 +202,21 @@ export default function HeroSlider() {
         e.touches[0].clientX;
     }, []);
 
-  const handleTouchEnd = useCallback(
-    (e) => {
-      const touchEnd =
-        e.changedTouches[0].clientX;
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
 
-      const distance =
-        touchStartX.current -
-        touchEnd;
+  const handleTouchEnd = useCallback((e) => {
+      const touchEnd = e.changedTouches[0].clientX;
+      const distance = touchStartX.current - touchEnd;
 
-      if (
-        Math.abs(distance) < 50 ||
-        isAnimating.current
-      ) {
-        return;
-      }
+      if (Math.abs(distance) < MIN_SWIPE_DISTANCE || isAnimating.current ) {return;}
 
       if (distance > 0) {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
         nextSlide();
       } else {
+        setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
         prevSlide();
       }
     },
@@ -271,11 +279,47 @@ export default function HeroSlider() {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
+  useEffect(() => {
+    const slider = sliderRef.current;
+
+    if (!slider) return;
+
+    let isScrolling = false;
+
+    const handleWheel = (e) => {
+      if (window.innerWidth <= 991) return; // Disable on mobile/iPad
+
+      e.preventDefault();
+
+      if (isScrolling) return;
+      isScrolling = true;
+
+      if (e.deltaY > 0) {
+        nextSlide(); // Your next slide function
+      } else {
+        prevSlide(); // Your previous slide function
+      }
+
+      setTimeout(() => {
+        isScrolling = false;
+      }, 700); // Match your slide transition
+    };
+
+    slider.addEventListener("wheel", handleWheel, {
+      passive: false,
+    });
+
+    return () => {
+      slider.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
+
   return (
     <section className={styles.hero}>
       <div
         className={styles.viewport}
         onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
         <div
@@ -377,9 +421,7 @@ export default function HeroSlider() {
       </div>
 
       <div
-        className={
-          styles.pagination
-        }
+        className={ styles.pagination}
       >
         {slides.map((_, index) => (
           <button

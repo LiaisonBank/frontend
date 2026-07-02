@@ -111,7 +111,7 @@ const Home = () => {
             />
           </div> */}
           <div className="row">
-            <div className="col-12 col-md-12 col-lg-6 p-4 d-flex justify-content-end letbanner" data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
+            <div className="col-12 col-md-12 col-lg-6 p-4 d-flex justify-content-end leftbanner" data-aos="fade-right" data-aos-duration="600" data-aos-delay="100">
               <Image
                 src={welcomeImg}
                 alt="Welcome to Liaison Bank Digital Banking Platform"

@@ -2670,6 +2670,11 @@ section.ceo-message{
         }
       }
     }
+    .leftbanner {
+      img{
+        border-radius: 20px;
+      }
+    }
     img{
       filter:brightness(1.1);
       // -webkit-border-radius: 20px;
@@ -4030,8 +4035,9 @@ section.ourclients {
         }
       }
     }
-    .faq-items{
+    .faq-items{ 
       border-bottom:lightgray solid 1px;
+
       &:has(.max-h-96) > button {
         // background-color: $border-top-color_1;   
         background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
