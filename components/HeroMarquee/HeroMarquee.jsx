@@ -15,6 +15,7 @@ const TYPING_SPEED = 80;
 const HOLD_AFTER_TYPING = 2000;
 
 export default function HeroSlider() {
+    const [isMobile, setIsMobile] = useState(false);
   const trackRef = useRef(null);
   const contentRefs = useRef([]);
   const autoplayRef = useRef(null);
@@ -258,6 +259,17 @@ export default function HeroSlider() {
       );
     };
   }, [stopTimers]);
+  
+  useEffect(() => {
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth <= 768); // or 991 for iPad
+    };
+
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
 
   return (
     <section className={styles.hero}>
