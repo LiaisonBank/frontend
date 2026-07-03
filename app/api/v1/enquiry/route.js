@@ -4,7 +4,8 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const response = await fetch(
-      "https://liaisonbank.frappe.cloud/api/method/create_enquiry",
+      // "https://liaisonbank.frappe.cloud/api/method/create_enquiry",
+       `${process.env.ERP_URL}/api/method/create_enquiry`,
       {
         method: "POST",
         headers: {

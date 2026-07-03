@@ -360,8 +360,6 @@ const handleDiscard = () => {
             {loading ? "Submitting..." : "Submit Application"}
           </button>
       </div>
-      
-
     </form>
   );
 }

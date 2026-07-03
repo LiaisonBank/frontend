@@ -69,7 +69,7 @@ export default function AwardP() {
         <div className="row g-4" ref={galleryRef}>
           {certificateList.slice(0, 8).map((certificate, index) => (
             <div
-              className="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 mx-auto"
+              className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mx-auto"
               key={certificate.src}
             >
               <article className="certificate-card">
