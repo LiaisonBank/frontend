@@ -13,16 +13,15 @@ import Footer from "@/components/Footer";
 // import Cursor from "@/components/Cursor";
 
 // import AOSProvider from "@/components/AOSProvider";
-import ReduxProvider from "@/components/ReduxProvider";
+import ReduxProvider from "@/store/ReduxProvider";
 import ChatBot from "@/components/ChatBot/page";
 import LenisProvider from "@/components/LenisProvider";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "@flaticon/flaticon-uicons/css/all/all.css";
 import "@fontsource/josefin-sans";
 import "@/styles/globals.scss";
-
-
 
 
 // ======================================================
@@ -313,7 +312,7 @@ export default function RootLayout({ children }) {
             {/* MAIN CONTENT */}
             {/* ========================================= */}
 
-            <main className="flex-grow"  style={{ minHeight: "calc(100vh - 350px)" }}>
+            <main className="page-wrapper flex-grow">
               {children}
             </main>
 

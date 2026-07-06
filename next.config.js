@@ -5,8 +5,16 @@ const nextConfig = {
 
   // ✅ Image optimization config
   images: {
-    // domains: ["picsum.photos"],
-    formats: ['image/webp'],
+      formats: ["image/avif", "image/webp"],
+
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "backend.liaisonbank.com",
+        port: "",
+        pathname: "/uploads/**",
+      },
+    ],
   },
 
   // ✅ Security headers
@@ -17,7 +25,8 @@ const nextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'self' https://liaisonbank.frappe.cloud;",
+            value:
+              "frame-ancestors 'self' https://liaisonbank.frappe.cloud;",
           },
           {
             key: "X-Frame-Options",
@@ -49,3 +58,4 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+

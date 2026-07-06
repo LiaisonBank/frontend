@@ -120,7 +120,7 @@ export default function AboutUsLiaisonPage() {
                 
                 <h3>Our Story</h3>  
                 <p >
-                Founded in 2017 as DBRE India and officially established as Liaison Bank in 2019, our journey began with a clear vision - to simplify business licensing services, regulatory approvals, and compliance management in India. Headquartered in Mumbai, Liaison Bank office is strategically located at Plot 466, New Apollo CHSL, 14th Road, Khar West, beside Blue Tokai Cafe, enabling us to stay closely connected with key regulatory authorities and business hubs.
+                Founded in 2007 as DBRE India and officially established as Liaison Bank in 2019, our journey began with a clear vision - to simplify business licensing services, regulatory approvals, and compliance management in India. Headquartered in Mumbai, Liaison Bank office is strategically located at Plot 466, New Apollo CHSL, 14th Road, Khar West, beside Blue Tokai Cafe, enabling us to stay closely connected with key regulatory authorities and business hubs.
                 </p>
                 <p >
                 Over the years, Liaison Bank has evolved into a trusted partner for companies seeking seamless support with licenses, permits, and government liaison services across India. Our team comprises experienced architects, interior designers, project managers, and safety supervisors who work collaboratively to manage complex business licensing, documentation, and compliance requirements.

@@ -7,6 +7,8 @@ import { testimonials } from "@/lib/data/testimonialList";
 export default function TestimonialSlider() {
   const [itemsPerView, setItemsPerView] = useState(1);
   const [curSlide, setCurSlide] = useState(0);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
   const intervalRef = useRef(null);
 
@@ -75,12 +77,43 @@ export default function TestimonialSlider() {
       document.removeEventListener("visibilitychange", handleVisibility);
   }, [startAutoplay]);
 
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = e.touches[0].clientX;
+
+    // Pause autoplay while swiping
+    stopAutoplay();
+  };
   /* ---------------- RENDER ---------------- */
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+  const distance = touchStartX.current - touchEndX.current;
+  const threshold = 50;
+
+  if (Math.abs(distance) < threshold) {
+    startAutoplay();
+    return;
+  }
+
+  if (distance > 0) {
+    nextSlide();
+  } else {
+    prevSlide();
+  }
+
+  startAutoplay();
+};
 
   return (
     <section className="testimonial-section">
       <div
         className="slider"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         onMouseEnter={stopAutoplay}
         onMouseLeave={startAutoplay}
       >
@@ -158,7 +191,7 @@ export default function TestimonialSlider() {
             onClick={prevSlide}
             aria-label="Previous testimonial"
           >
-            ←
+            {/* ← */}<i className="bi bi-arrow-left"></i>
           </button>
 
           <button
@@ -166,7 +199,7 @@ export default function TestimonialSlider() {
             onClick={nextSlide}
             aria-label="Next testimonial"
           >
-            →
+            {/* → */}<i className="bi bi-arrow-right"></i>
           </button>
         </div>
     </section>

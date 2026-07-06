@@ -97,27 +97,6 @@ export default function PressReleaseLiaisonbankPage({
     return filteredData.slice(0, visibleCount);
   }, [filteredData, visibleCount]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch("/api/v1/backend/db-test");
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const data = await res.json();
-        setDbStatus(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-    // if (loading) return <p>Loading...</p>;
   return (
     <>
       {/* PAGE HEADER */}
