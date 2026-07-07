@@ -1554,9 +1554,10 @@ header {
             z-index: 9999;   
             .mega-menu-inner{
               padding: 1rem;
-              a{
+              button{
+                text-align: left;
                 color:gray !important;
-                // font-weight:600;
+                font-weight:600;
                 font-size: var(--font-size);
               }
             }
@@ -1566,6 +1567,7 @@ header {
           position: relative;
           // font-weight:600;
           span {
+            text-align: left;
             display: flex;
             align-items: center;
             font-size: var(--menu-font-sizefont-size);

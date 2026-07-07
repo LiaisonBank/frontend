@@ -28,6 +28,7 @@ const Home = () => {
     // This object disables the thumbnails entirely
     Thumbs: false,
   });
+  
 
   return (
     <>
