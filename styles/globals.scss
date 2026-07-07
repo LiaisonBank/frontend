@@ -1705,6 +1705,9 @@ header {
             display: flex;
             justify-content: space-between;
             position:relative;
+            button {
+              text-align: left;
+            }
             a{
               padding: 0;
               margin: 0;
