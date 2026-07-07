@@ -3912,6 +3912,11 @@ body:has(.has-single-submenu:hover) .menu-overlay {
         padding: 10px;
         box-sizing: border-box; 
        .testimonial-text {
+        display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 4;
+            overflow: hidden;
+            text-overflow: ellipsis;
           @media (max-width: 1023px) {
             display: -webkit-box;
             -webkit-box-orient: vertical;
