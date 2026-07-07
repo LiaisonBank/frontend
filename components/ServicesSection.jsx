@@ -9,14 +9,14 @@ export default function ServicesSection() {
 
     return (
         <>
-           <div>
+           <div className="services-wrapper">
                 <ServiceList
                     activeIndex={activeIndex}
                     onChange={setActiveIndex}
                 />
             </div>
 
-            <div>
+            <div className="services-right d-none d-xl-block">
                 <ServiceContent activeIndex={activeIndex} />
             </div>
         </>

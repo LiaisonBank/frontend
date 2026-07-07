@@ -32,6 +32,12 @@ export default function IntroLoader() {
           y: "-42vh",
           scale: 0.68,
         });
+      } else if (width >= 992 && width <= 1024) {
+        setPosition({
+          x: "-43vw",
+          y: "-45vh",
+          scale: 0.68,
+        });
       } else if (width >= 768 && width <= 991) {
         setPosition({
           x: "-40.6vw",

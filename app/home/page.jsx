@@ -126,15 +126,14 @@ const Home = () => {
             <div className="col-12 col-md-12 col-lg-6 p-4">
               <div className='section-title'>
                 {/* <h6>Welcome to, Liaison Bank  </h6> */}
-                <h3>Your Partner in Bank
-                  <span className='theme-color'>Licensing</span> and
-                  <span className='theme-color'>Liaisoning</span>
+                <h3>Your Partner in Bank&nbsp;                    
+                  <span className='theme-color'>Licensing</span> and <span className='theme-color'>Liaisoning</span>
                 </h3>
               </div>
               <div className='home-abt'>
                 <p>Your trusted partner for seamless bank licensing and liaisoning services.
-We simplify complex regulatory processes with expert guidance and industry expertise.
-Helping financial institutions achieve compliance and operational success.</p>
+                We simplify complex regulatory processes with expert guidance and industry expertise.
+                Helping financial institutions achieve compliance and operational success.</p>
                 <p>Bridging the gap between the complicated regulatory frameworks and your business goals, we act as an interface for all your statutory requirements. As your dedicated licensing and liaisoning partner, we specialize in managing the intricate legalities and bureaucratic uncertainties that often stall business momentum. Our expertise ensures smoother operations, allowing you to channelize your energy into core priorities and other important business objectives.</p>
                 <p>We commit to deliver a seamless, and reliable framework that offers absolute clarity and operational confidence. By taking care of the complexities of industrial licensing, permits, and government liaisoning, we transform a traditionally slow process into a smooth, efficient experience. While we handle the administrative hurdles, you stay empowered to focus on strategic growth and achieving your business milestones with the certainty that your legal standing is in expert hands.</p>
                 {/* <p>By entrusting us with your regulatory approvals and government relations, you accelerate the transition between policy and progress.</p> */}

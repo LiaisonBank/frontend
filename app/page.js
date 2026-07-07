@@ -1,4 +1,4 @@
-import HomeClient from "./home/page";
+import HomePage from "./home/page";
 
 export const metadata = {
   title: "Liaison Bank | Business Licensing & Government Liaison Services Mumbai",
@@ -95,5 +95,5 @@ export const metadata = {
 };
 
 export default function Home() {
-  return <HomeClient />;
+  return <HomePage />;
 }

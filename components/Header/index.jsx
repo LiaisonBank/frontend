@@ -17,29 +17,15 @@ import NavText from "@/components/NavReusable/NavText";
 
 
 export default function Header() {
+  const router = useRouter();
   const pathname = usePathname();
   const [isSticky, setIsSticky] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [openSubmenu, setOpenSubmenu] = useState(null); // Mobile SUbmenu
-  const [isScrolled, setIsScrolled] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
 
     
   const handleMegaScroll = (e) => {
     e.stopPropagation();
-  };
-  const handleNavigation = (href) => {
-    setActiveMegaMenu(null);
-    setIsOpen(false);
-    setOpenSubmenu(null);
-    
-    if (pathname === href) {
-     window.location.reload();
-     return;
-    }
-
-    router.push(href);
   };
   const [openMenus, setOpenMenus] = useState({});
 
@@ -52,49 +38,46 @@ export default function Header() {
   const renderMenu = (items, level = 0) => {
   return (
     <ul className={level > 0 ? "px-4" : "mobilesubmenu row"}>
-      {items.map((item) => {
-        const children =
-          item.submenu ||
-          item.projects ||
-          item.items ||
-          item.children;
+    {items.map((item) => {
+      const children =
+        item.submenu ||
+        item.projects ||
+        item.items ||
+        item.children;
 
-        const menuKey = `${level}-${item.name}`;
+      const menuKey = `${level}-${item.name}`;
 
-        return (
-          <li key={menuKey}>
-            <div className="flex items-center justify-between">
-              {item.href ? (
-                <Link
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className="flex-1"
-                >
-                  {item.name}
-                </Link>
-              ) : (
-                <span className="flex-1">
-                  {item.name}
-                </span>
-              )}
+      return (
+        <li key={menuKey}>
+          <div
+            className="flex items-center justify-between cursor-pointer"
+            onClick={() => {
+              if (children) {
+                toggleMenu(menuKey);
+              } else if (item.href) {
+                setIsOpen(false);
+                router.push(item.href);
+              }
+            }}
+          >
+            <span className="flex-1">
+              {item.name}
+            </span>
 
-              {children && (
-                <button
-                  onClick={() => toggleMenu(menuKey)}
-                  className="ml-2"
-                >
-                  {openMenus[menuKey] ? "-" : "+"}
-                </button>
-              )}
-            </div>
+            {children && (
+              <span className="ml-2 text-lg font-medium">
+                {openMenus[menuKey] ? "-" : "+"}
+              </span>
+            )}
+          </div>
 
-            {children &&
-              openMenus[menuKey] &&
-              renderMenu(children, level + 1)}
-          </li>
-        );
-      })}
-    </ul>
+          {children &&
+            openMenus[menuKey] &&
+            renderMenu(children, level + 1)}
+        </li>
+      );
+    })}
+  </ul>
   );
 };
   return (
@@ -106,13 +89,6 @@ export default function Header() {
             {/* LOGO: Left to Right Animation */}
             <div>
               <Link href="/" onClick={() => setIsOpen(false)} className='d-flex align-items-center '>
-                {/* <Image
-                  src={logoScrolled}
-                  width={160}
-                  title="Liaisonbank"
-                  alt="Liaisonbank"
-                  priority
-                /> */}
                  <Image
                   src={logo}
                   width={68}
@@ -135,32 +111,31 @@ export default function Header() {
 
             <div className="menu xl:flex">
               <ul className="flex space-x-8">
-                {navLinks.map((link, index) => {
-                  const singleSubmenu = link.projects && link.projects.length > 0;
-                  const hasSubmenu = link.submenu && link.submenu.length > 2;
+                {navLinks.map((link) => {
+                  const singleSubmenu =
+                    link.projects && link.projects.length > 0;
+                  const hasSubmenu =
+                    link.submenu && link.submenu.length > 2;
+
                   return (
                     <li
                       key={link.name}
-                       className={`
+                      className={`
                         ${hasSubmenu ? "has-submenu" : ""}
                         ${singleSubmenu ? "has-single-submenu" : ""}
                       `}
                       onMouseEnter={() => setActiveMegaMenu(link.name)}
                       onMouseLeave={() => setActiveMegaMenu(null)}
-                      // onMouseEnter={() => hasSubmenu && setMenuOpen(true)}
-                      // onMouseLeave={() => hasSubmenu && setMenuOpen(false)}
                     >
+                      {/* Main Navigation */}
                       {link.href ? (
-                       <Link
-                          href={link.href}
-                          
-                           onClick={(e) => {
-                            handleNavigation(link.href);
-                          }}
-                          className="nav-link"
+                        <button
+                          type="button"
+                          className="nav-link bg-transparent border-0 p-0 cursor-pointer"
+                          onClick={() => router.push(link.href)}
                         >
                           <NavText text={link.name} />
-                        </Link>
+                        </button>
                       ) : (
                         <span className="nav-link cursor-pointer flex items-center gap-1">
                           <NavText text={link.name} />
@@ -172,126 +147,207 @@ export default function Header() {
                           )}
                         </span>
                       )}
+
+                      {/* ========================= */}
+                      {/* Single Submenu */}
+                      {/* ========================= */}
                       {singleSubmenu && (
                         <div
-                          // className={`mega-menu ${menuOpen ? "active" : ""}`}
-                          className={`mega-menu ${activeMegaMenu === link.name ? "active" : ""  }`}
+                          className={`mega-menu ${
+                            activeMegaMenu === link.name ? "active" : ""
+                          }`}
                           onWheel={handleMegaScroll}
                           onTouchMove={(e) => e.stopPropagation()}
                           onScroll={(e) => e.stopPropagation()}
                         >
                           <div className="mega-menu-inner container">
                             {link.projects?.map((project) => (
-                              <Link
+                              <button
                                 key={project.href}
-                                href={project.href}
+                                type="button"
                                 title={project.title}
-                                className="mega-menu-item"
+                                className="mega-menu-item bg-transparent border-0 cursor-pointer"
+                                onClick={() => router.push(project.href)}
                               >
                                 {project.name}
-                              </Link>
+                              </button>
                             ))}
                           </div>
                         </div>
                       )}
+
+                      {/* ========================= */}
+                      {/* Mega Menu */}
+                      {/* ========================= */}
                       {hasSubmenu && (
-                        <div className={`mega-menu ${menuOpen ? "active" : ""}`}
+                        <div
+                          className={`mega-menu ${
+                            activeMegaMenu === link.name ? "active" : ""
+                          }`}
                           onWheel={handleMegaScroll}
                           onTouchMove={(e) => e.stopPropagation()}
-                          onScroll={(e) => e.stopPropagation()} // 🔥 extra safety
-                          >
+                          onScroll={(e) => e.stopPropagation()}
+                        >
                           <div className="mega-menu-inner container">
-
                             {/* TOP CARDS */}
                             <div className="mega-top">
                               {link.submenu
                                 .filter((sub) => sub.items)
                                 .map((sub) => {
                                   const isLargeList = sub.items.length > 4;
+
                                   return (
-                                    <div key={sub.name} className="mega-card">
+                                    <div
+                                      key={sub.name}
+                                      className="mega-card"
+                                    >
                                       <h4 className="mega-title">
-                                        <Link href={sub.href || "#"}>{sub.name}</Link> 
-                                        <Link
-                                          href={sub.pdf}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="pdf-download"
+                                        <button
+                                          type="button"
+                                          className="bg-transparent border-0 p-0 cursor-pointer"
+                                          onClick={() =>
+                                            router.push(sub.href || "/")
+                                          }
                                         >
-                                          <Image
-                                            src={pdfIcon}
-                                            alt="Download PDF"
-                                            width={16}
-                                            height={16}
-                                          />
-                                        </Link>
+                                          {sub.name}
+                                        </button>
+
+                                        {sub.pdf && (
+                                          <a
+                                            href={sub.pdf}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="pdf-download"
+                                          >
+                                            <Image
+                                              src={pdfIcon}
+                                              alt="Download PDF"
+                                              width={16}
+                                              height={16}
+                                            />
+                                          </a>
+                                        )}
                                       </h4>
-                                      <ul className={`mega-section ${isLargeList ? "has-more" : ""}`}>
-                                          {sub?.items?.map((item, index) => (
-                                            <li
-                                              key={item.name || index}
-                                              className={`mega-item ${item.children ? "has-child" : ""}`}
+
+                                      <ul
+                                        className={`mega-section ${
+                                          isLargeList ? "has-more" : ""
+                                        }`}
+                                      >
+                                        {sub.items?.map((item, index) => (
+                                          <li
+                                            key={item.name || index}
+                                            className={`mega-item ${
+                                              item.children
+                                                ? "has-child"
+                                                : ""
+                                            }`}
+                                          >
+                                            <button
+                                              type="button"
+                                              className="mega-link bg-transparent border-0 cursor-pointer"
+                                              onClick={() =>
+                                                router.push(
+                                                  item.href || "/"
+                                                )
+                                              }
                                             >
-                                                <Link href={item?.href || "#"} className="mega-link">
-                                                  <span>{item?.name}</span>
-                                                </Link>
+                                              <span>{item.name}</span>
+                                            </button>
 
-                                                {/* {item?.pdf && (
-                                                  <a
-                                                    href={item.pdf}
-                                                    download
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="pdf-download"
-                                                  >
-                                                    <Image src={pdfIcon} alt="Download PDF" width={16} height={16} />
-                                                  </a>
-                                                )} */}
+                                            {/* Second Level */}
+                                            {item.children && (
+                                              <ul className="mega-submenu">
+                                                {item.children.map(
+                                                  (child, i) => (
+                                                    <li
+                                                      key={i}
+                                                      className={`mega-item ${
+                                                        child.children
+                                                          ? "has-child2"
+                                                          : ""
+                                                      }`}
+                                                    >
+                                                      <button
+                                                        type="button"
+                                                        className="bg-transparent border-0 cursor-pointer"
+                                                        onClick={() =>
+                                                          router.push(
+                                                            child.href ||
+                                                              "/"
+                                                          )
+                                                        }
+                                                      >
+                                                        {child.name}
+                                                      </button>
 
-                                              {/* SUBMENU */}
-                                              {item?.children && (
-                                                <ul className="mega-submenu">
-                                                  {item.children.map((child, i) => (
-                                                    <li key={i} 
-                                                    className={`mega-item ${child?.children ? "has-child2" : ""}`}>
-                                                      <Link href={child.href || "#"} >{child.name}</Link>
-                                                        {/* THIRD LEVEL CHILDREN */}
-                                                        {child?.children && (
-                                                          <ul className="mega-submenu-level2">
-                                                            {child.children.map((subChild, j) => (
+                                                      {/* Third Level */}
+                                                      {child.children && (
+                                                        <ul className="mega-submenu-level2">
+                                                          {child.children.map(
+                                                            (
+                                                              subChild,
+                                                              j
+                                                            ) => (
                                                               <li key={j}>
-                                                                <Link href={subChild?.href || "#"}>
-                                                                  {subChild?.name}
-                                                                </Link>
+                                                                <button
+                                                                  type="button"
+                                                                  className="bg-transparent border-0 cursor-pointer"
+                                                                  onClick={() =>
+                                                                    router.push(
+                                                                      subChild.href ||
+                                                                        "/"
+                                                                    )
+                                                                  }
+                                                                >
+                                                                  {
+                                                                    subChild.name
+                                                                  }
+                                                                </button>
                                                               </li>
-                                                            ))}
-                                                          </ul>
-                                                        )}
+                                                            )
+                                                          )}
+                                                        </ul>
+                                                      )}
                                                     </li>
-                                                  ))}
-                                                </ul>
-                                              )}
-                                            </li>
-                                          ))}
+                                                  )
+                                                )}
+                                              </ul>
+                                            )}
+                                          </li>
+                                        ))}
                                       </ul>
                                     </div>
-                                  )
+                                  );
                                 })}
                             </div>
 
-                            {/* BOTTOM GRID */}
+                            {/* ========================= */}
+                            {/* Bottom Grid */}
+                            {/* ========================= */}
                             <div className="mega-bottom">
                               {link.submenu
                                 .filter((sub) => !sub.items)
                                 .map((sub) => (
-                                  <div key={sub.name} className="mega-bottom-item">
-                                    <Link href={sub.href || "#"} className="mega-bottom-link">
+                                  <div
+                                    key={sub.name}
+                                    className="mega-bottom-item"
+                                  >
+                                    <button
+                                      type="button"
+                                      className="mega-bottom-link bg-transparent border-0 cursor-pointer"
+                                      onClick={() =>
+                                        router.push(sub.href || "/")
+                                      }
+                                    >
                                       {sub.name}
-                                    </Link>
+                                    </button>
+
                                     {sub.pdf && (
                                       <a
                                         href={sub.pdf}
                                         target="_blank"
+                                        rel="noopener noreferrer"
                                         className="pdf-download"
                                       >
                                         <Image
@@ -302,16 +358,14 @@ export default function Header() {
                                         />
                                       </a>
                                     )}
-
                                   </div>
                                 ))}
                             </div>
-
                           </div>
                         </div>
                       )}
                     </li>
-                  )
+                  );
                 })}
               </ul>
             </div>
@@ -331,7 +385,7 @@ export default function Header() {
         <div  id="myNav" className={`fixed top-0 right-0 h-screen w-full  shadow-xl transition-transform duration-300 
          ${isOpen ? "menu-open translate-x-0" : "translate-x-full"}`}
       >
-  <div className="overflow-y-auto w-full h-full">
+          <div className="overflow-y-auto w-full h-full">
             <div className="overlay-content container ">
                {renderMenu(navLinks)}
                
