@@ -168,6 +168,18 @@ export default async function PressReleaseDetailPage({  params,}) {
                     __html: post.content,
                     }}
                 />
+                {/* Content Image */}
+                {post.content_image && (
+                  <div className="content-image mb-4 text-center">
+                    <Image
+                      src={getImageUrl(post.content_image.trim())}
+                      alt={`${post.title} Content Image`}
+                      fill
+                      className="content-img img-fluid rounded"
+                    />
+                  </div>
+                )}
+
 
               {/* SEO */}
 

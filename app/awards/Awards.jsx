@@ -1,57 +1,44 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from 'next/link'
+import Link from "next/link";
 
 import Image from "next/image";
 import { Fancybox } from "@fancyapps/ui";
 
 import { certificateList } from "@/lib/data/certificateList";
-import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
-
+import useBodyClass from "@/components/useBodyClass"; // Adjust path as needed
 
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 export default function AwardPage() {
-useBodyClass('awards-recognition');
-   const galleryRef = useRef(null);
+  useBodyClass("awards-recognition");
+  const galleryRef = useRef(null);
 
   useEffect(() => {
     const container = galleryRef.current;
 
     if (!container) return;
 
-    Fancybox.bind(
-      container,
-      '[data-fancybox="certificates"]',
-      {
-        animated: true,
+    Fancybox.bind(container, '[data-fancybox="certificates"]', {
+      animated: true,
 
-        Carousel: {
-          infinite: true,
-        },
+      Carousel: {
+        infinite: true,
+      },
 
-        Thumbs: {
-          autoStart: false,
-        },
+      Thumbs: {
+        autoStart: false,
+      },
 
-        Toolbar: {
-          display: {
-            left: [],
-            middle: [
-              "zoomIn",
-              "zoomOut",
-              "toggle1to1",
-            ],
-            right: [
-              "slideshow",
-              "fullscreen",
-              "close",
-            ],
-          },
+      Toolbar: {
+        display: {
+          left: [],
+          middle: ["zoomIn", "zoomOut", "toggle1to1"],
+          right: ["slideshow", "fullscreen", "close"],
         },
-      }
-    );
+      },
+    });
 
     return () => {
       Fancybox.unbind(container);
@@ -79,7 +66,10 @@ useBodyClass('awards-recognition');
                       <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
-                            <i className="bi bi-house-door me-1" aria-hidden="true"></i>
+                            <i
+                              className="bi bi-house-door me-1"
+                              aria-hidden="true"
+                            ></i>
                             Home
                           </Link>
                         </li>
@@ -92,7 +82,6 @@ useBodyClass('awards-recognition');
                         </li>
                       </ol>
                     </nav>
-
                   </div>
                 </div>
               </div>
@@ -101,55 +90,46 @@ useBodyClass('awards-recognition');
           {/* <PageTitleWaveLeft /> */}
         </div>
       </div>
-    <section
-      className="certificate-section py-5"
-      aria-labelledby="certificates-heading"
-    >
-      <div className="container">
-        <div
-          className="row g-4"
-          ref={galleryRef}
-        >
-         {certificateList
-            .map((certificate) => (
-                <div
-                className="col-6 col-md-4 col-lg-3"
-                key={certificate.src}
+      <section
+        className="certificate-section"
+        aria-labelledby="certificates-heading"
+      >
+        <div className="container">
+          <div className="certificate-masonry" ref={galleryRef}>
+            {certificateList.map((certificate) => (
+              <article className="certificate-card" key={certificate.src}>
+                <a
+                  href={certificate.src}
+                  data-fancybox="certificates"
+                  data-caption={certificate.caption}
+                  className="certificate-link"
+                  aria-label={`Open ${certificate.caption}`}
                 >
-                <article className="certificate-card h-100">
-                    <a
-                    href={certificate.src}
-                    data-fancybox="certificates"
-                    data-caption={certificate.caption}
-                    className="certificate-link"
-                    aria-label={`Open ${certificate.caption}`}
-                    >
-                    <div className="certificate-image-wrapper">
-                        <Image
-                        src={certificate.src}
-                        alt={certificate.caption}
-                        width={600}
-                        height={850}
-                        className="certificate-image"
-                        loading="lazy"
-                        sizes="
-                            (max-width: 576px) 50vw,
-                            (max-width: 991px) 33vw,
-                            25vw
-                        "
-                        />
-                    </div>
-
-                    <div className="certificate-caption">
-                        {certificate.caption}
-                    </div>
-                    </a>
-                </article>
-                </div>
+                  <div className="certificate-image-wrapper">
+                    <Image
+                      src={certificate.src}
+                      alt={certificate.caption}
+                      width={700}
+                      height={1000}
+                      className="certificate-image"
+                      loading="lazy"
+                      sizes="
+                        (max-width:576px) 100vw,
+                        (max-width:768px) 50vw,
+                        (max-width:1200px) 33vw,
+                        25vw
+                      "
+                    />
+                  </div>
+                  <div className="certificate-caption">
+                    {certificate.caption}
+                  </div>
+                </a>
+              </article>
             ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
     </>
   );
 }

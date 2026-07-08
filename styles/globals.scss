@@ -3741,7 +3741,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
         display: inline-block;
         padding: 0.5rem;
         i{
-          font-size: 2rem;
+          font-size: 2.5rem;
         }
         @media (max-width:1024px) {
           display:none;
@@ -4026,7 +4026,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   }
 
   .slider-container {
-    padding: 25px 0;
+    // padding: 25px 0;
     overflow: visible !important;
   }
 
@@ -6395,128 +6395,94 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   }
 }
 
+// =======================================================
+// Awards & Certifications
+// Pinterest Masonry Layout
+// =======================================================
+
 .awards-recognition {
-  position:relative;
+
   .certificate-section {
-    overflow: hidden;
-    width: 100%;  
-    padding:0;
-    background: transparent;
-    position: relative;
-    z-index: 19;
-    z-index: inherit;
-    .certificate-track {
-      display: flex;
-      gap: 20px;
-      width: max-content;
-      animation: certificateScroll 35s linear infinite;
-    }
-    .certificate-img-wrapper {
-      overflow: hidden;
-      border-radius: 10px;
+    padding: 80px 0;
+
+    .certificate-masonry {
+      column-count: 4;
+      column-gap: 24px;
+
+      @media (max-width: 1199px) {
+        column-count: 3;
+      }
+
+      @media (max-width: 767px) {
+        column-count: 2;
+      }
+
+      @media (max-width: 480px) {
+        column-count: 1;
+      }
     }
 
-    .certificate-img {
-      // filter:grayscale(1);
-      transition: transform 0.4s ease;
-    }
-
-    .certificate-item:hover .certificate-img {
-      transform: scale(1.05);
-    }
-    .certificate-item {
-    flex: 0 0 auto;
-    width: 400px;
-
-    .certificate-img-wrapper {
+    .certificate-card {
+      break-inside: avoid;
+      margin-bottom: 24px;
+      display: inline-block;
       width: 100%;
-      height: 220px; // fixed height
+      border-radius: 18px;
       overflow: hidden;
-      border-radius: 10px;
-      
-      .certificate-img {
-        width: 100%;
-        height: 100%;
-        //  filter:grayscale(1);
-        object-fit: contain; // keeps full certificate visible
-        transition: transform 0.4s ease;
-        
-        &:hover {
-          transform: scale(1.05);
+      // background: #fff;
+      box-shadow:
+        0 10px 35px rgba(0, 0, 0, .08);
+      transition:
+        transform .35s ease,
+        box-shadow .35s ease;
+
+      &:hover {
+        transform: translateY(-8px);
+
+        box-shadow:
+          0 18px 45px rgba(0,0,0,.15);
+
+        .certificate-image {
+          transform: scale(1.06);
+        }
+
+        .certificate-caption {
+          color: #808080;
         }
       }
     }
-  }
-  }
-  .certificate-card {
-    height: 100%;
-        position: relative;
-        overflow: hidden;
-        border-radius: 15px;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px); /* The Glass Effect */
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        h3{
-          font-size: 1rem;
-          color: white;
-          padding: 1rem;
-        }
+
+    .certificate-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .certificate-image-wrapper {
+      position: relative;
+      overflow: hidden;
+      // background: #fff;
+    }
+
+    .certificate-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: transform .6s ease;
+    }
+
     .certificate-caption {
-      text-align: center;
-      margin-top: 12px;
-      font-size: 1.2rem;
+      padding: 0.5rem;
+      font-size: 1.1rem;
       font-weight: 600;
-      line-height: 1.4;
-      color: $primary-color;
-    }
-  }
-
-  .certificate-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .certificate-image-wrapper {
-    overflow: hidden;
-    border-radius: 12px;
-    background: #f5f5f5;
-  }
-
-  .certificate-image {
-    width: 100%;
-    height: max-content;
-    // object-fit: cover;
-
-    transition:
-      transform 0.4s ease,
-      filter 0.4s ease;
-  }
-
-  .certificate-link:hover .certificate-image {
-    transform: scale(1.05);
-  }
-
-  @media (max-width: 991px) {
-    .certificate-image {
-      height: 260px;
-    }
-  }
-
-  @media (max-width: 767px) {
-    .certificate-image {
-      height: 200px;
-    }
-
-    .certificate-caption {
-      font-size: 14px;
+      line-height: 1.5;
+      text-align: center;
+      color: #808080;
+      transition: color .3s ease;
     }
   }
 }
+
 .pressrelease{
   position: relative;
   .category-filter{
@@ -6525,19 +6491,20 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   }
   .press-grid {
     position: relative;
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(320px, 1fr)
-  );
-  gap: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    // grid-template-columns: repeat(
+    //   auto-fit,
+    //   minmax(320px, 1fr)
+    // );
+    gap: 2rem;
   .image-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-}
-.press-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .press-card {
     background: #fff;
     border-radius: 16px;
     overflow: hidden;
@@ -6574,6 +6541,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     align-items: center;
     justify-content: space-between;
     // flex-flow: column;
+    text-align: left;
     height:auto !important;
   }
 
@@ -6722,7 +6690,16 @@ body:has(.has-single-submenu:hover) .menu-overlay {
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-   
+    .content-image {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3; // Change as needed
+      overflow: hidden;
+      border-radius: 0.5rem;
+      img{
+        object-fit: contain; // or contain
+      }
+    } 
   }
   .recentpost {
     .sticky-top{

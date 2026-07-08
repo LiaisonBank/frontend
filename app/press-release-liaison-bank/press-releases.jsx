@@ -9,10 +9,7 @@ import pressReleaseData from "@/lib/data/pressReleaseData";
 import PressReleaseCard from "./PressReleaseCard";
 import { section } from "framer-motion/client";
 
-
-export default function PressReleaseLiaisonbankPage({
-  pressReleases,
-}) {
+export default function PressReleaseLiaisonbankPage({ pressReleases }) {
   useBodyClass("pressrelease");
   const itemsPerPage = 6;
   const ITEMS_PER_LOAD = 6;
@@ -25,7 +22,6 @@ export default function PressReleaseLiaisonbankPage({
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
   const [dbStatus, setDbStatus] = useState(null);
   const [loading, setLoading] = useState(true);
-
 
   // Category Options
   const categoryOptions = useMemo(() => {
@@ -97,6 +93,32 @@ export default function PressReleaseLiaisonbankPage({
     return filteredData.slice(0, visibleCount);
   }, [filteredData, visibleCount]);
 
+  const filteredPressReleases = useMemo(() => {
+  return pressReleases.filter((item) => {
+    // Search
+    const search = searchTerm.trim().toLowerCase();
+
+    const matchesSearch =
+      !search ||
+      item.title?.toLowerCase().includes(search) ||
+      item.category?.toLowerCase().includes(search) ||
+      item.year?.toString().includes(search);
+
+    // Category
+    const matchesCategory =
+      category === "All" || item.category === category;
+
+    // Year
+    const matchesYear =
+      year === "All" || item.year?.toString() === year.toString();
+
+    return matchesSearch && matchesCategory && matchesYear;
+  });
+}, [pressReleases, searchTerm, category, year]);
+
+  const visiblePressReleases = useMemo(() => {
+  return filteredPressReleases.slice(0, visibleCount);
+}, [filteredPressReleases, visibleCount]);
   return (
     <>
       {/* PAGE HEADER */}
@@ -116,117 +138,116 @@ export default function PressReleaseLiaisonbankPage({
         </div>
       </div>
 
-        {/* FILTERS */}
-        <section className="py-4 border-bottom">
-            <div className="container">
-            <div className="row g-3">
-                {/* Search */}
-                <div className="col-lg-6">
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search by title, category or year..."
-                    value={searchTerm}
-                    onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setVisibleCount(ITEMS_PER_LOAD);
-                    }}
-                />
-                </div>
-
-                {/* Category */}
-                <div className="col-lg-3">
-                <Select
-                    instanceId="category-select"
-                    inputId="category-select"
-                    classNamePrefix="react-select"
-                    options={categoryOptions}
-                    value={categoryOptions.find(
-                    (option) => option.value === category,
-                    )}
-                    onChange={(option) => {
-                    setCategory(option?.value ?? "All");
-                    setVisibleCount(ITEMS_PER_LOAD);
-                    }}
-                    isSearchable={false}
-                />
-                </div>
-
-                {/* Year */}
-                <div className="col-lg-3">
-                <Select
-                    instanceId="year-select"
-                    inputId="year-select"
-                    classNamePrefix="react-select"
-                    options={yearOptions}
-                    value={yearOptions.find((option) => option.value === year)}
-                    onChange={(option) => {
-                    setYear(option?.value ?? "All");
-                    setVisibleCount(ITEMS_PER_LOAD);
-                    }}
-                    isSearchable={false}
-                />
-                </div>
+      {/* FILTERS */}
+      <section className="py-4 border-bottom">
+        <div className="container">
+          <div className="row g-3">
+            {/* Search */}
+            <div className="col-lg-6">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search by title, category or year..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setVisibleCount(ITEMS_PER_LOAD);
+                }}
+              />
             </div>
+
+            {/* Category */}
+            <div className="col-lg-3">
+              <Select
+                instanceId="category-select"
+                inputId="category-select"
+                classNamePrefix="react-select"
+                options={categoryOptions}
+                value={categoryOptions.find(
+                  (option) => option.value === category,
+                )}
+                onChange={(option) => {
+                  setCategory(option?.value ?? "All");
+                  setVisibleCount(ITEMS_PER_LOAD);
+                }}
+                isSearchable={false}
+              />
             </div>
-        </section>
-        {/* GRID */}
-        <section className="container py-5">
-        <div className="press-grid">
-              <h1 className="display-6 display-md-4 text-center">We are Updating...</h1>
-            {/* {pressReleases.map((item) => (
-            <PressReleaseCard
+
+            {/* Year */}
+            <div className="col-lg-3">
+              <Select
+                instanceId="year-select"
+                inputId="year-select"
+                classNamePrefix="react-select"
+                options={yearOptions}
+                value={yearOptions.find((option) => option.value === year)}
+                onChange={(option) => {
+                  setYear(option?.value ?? "All");
+                  setVisibleCount(ITEMS_PER_LOAD);
+                }}
+                isSearchable={false}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* GRID */}
+      <section className="container py-5">
+        {filteredPressReleases.length === 0 ? (
+          <div className="text-center py-5">
+            <h4>No press releases found.</h4>
+            <p>Try changing your search or filters.</p>
+          </div>
+        ) : (
+          <div className="press-grid">
+            {visiblePressReleases.map((item) => (
+              <PressReleaseCard
                 key={item.id}
                 item={item}
-            />
-            ))} */}
-        </div>
-        </section>
-
+              />
+            ))}
+          </div>
+        )}
+      </section>
 
       <section className="press-release-content py-5 d-none">
         <div className="container">
           <div className="row">
-            <div className="col-6 mx-auto">
+            <div className="col-4 mx-auto">
               {loading ? (
                 <p>Loading...</p>
               ) : (
                 <div>
-                 <p className="d-block px-3 py-2 border border-success rounded-pill bg-success-subtle text-success fw-semibold text-center text-capitalize"
-                  >
+                  <p className="d-block px-3 py-2 border border-success rounded-pill bg-success-subtle text-success fw-semibold text-center text-capitalize">
                     Status: {dbStatus?.status}
-                    Data: {pressReleases.length > 0 ? "Available" : "Not Available"}
+                    Data:{" "}
+                    {pressReleases.length > 0 ? "Available" : "Not Available"}
                     DataLength: {pressReleases.length}
                   </p>
-                   {pressReleases?.map((release) => (
+                  {pressReleases?.map((release) => (
                     <article key={release.id} className="press-card">
-                        <h2>{release.title}</h2>
-
-                        <p>{release.category}</p>
-
-                        <p>{release.excerpt}</p>
+                      <h2>{release.title}</h2>
+                      <p>{release.category}</p>
+                      <p>{release.excerpt}</p>
                     </article>
-                    ))}
-                  <p>
-                    Database: {dbStatus?.database}</p>
-                  <p>
-                    Version: {dbStatus?.version}</p>
+                  ))}
+                  <p>Database: {dbStatus?.database}</p>
+                  <p>Version: {dbStatus?.version}</p>
                 </div>
               )}
-              </div></div>
-              </div>
+            </div>
+          </div>
+        </div>
       </section>
-      
+
       <section className="press-release-content py-5 d-none" ref={sectionRef}>
         <div className="container" ref={listingRef}>
-          <div className="row g-4">          
-
+          <div className="row g-4">
             {visibleData.length > 0 ? (
               <>
                 {visibleData.map((post, index) => (
-                  <div
-                    key={post.id}
-                  >
+                  <div key={post.id}>
                     <div className="card h-100 shadow-sm border-0">
                       <Link href={`/press-release-liaison-bank/${post.slug}`}>
                         <Image
@@ -357,8 +378,6 @@ export default function PressReleaseLiaisonbankPage({
           </div>
         </div>
       </section>
-        
-
     </>
   );
 }

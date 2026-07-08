@@ -5,7 +5,7 @@ import { clientImageName } from "@/lib/data/clientImageList";
 const ClientScroller = () => {
     // const loopClients = [...clientImageName, ...clientImageName];
     return (
-        <div className="slider-container py-10 bg-white">
+        <div className="slider-container  bg-white">
             <Slider
                 width="250px"
                 duration={100}

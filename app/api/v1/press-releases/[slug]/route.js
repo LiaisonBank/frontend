@@ -7,6 +7,7 @@ export async function GET(request, { params }) {
     );
 
     const data = await response.json();
+    console.log("API RESPONSE---->", response)
 
     return NextResponse.json(data, {
       status: response.status,
