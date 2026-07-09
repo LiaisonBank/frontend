@@ -1,35 +1,55 @@
-import Slider from 'react-infinite-logo-slider'
+"use client";
+
+import { Splide, SplideSlide } from "@splidejs/react-splide";
+import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
+import "@splidejs/react-splide/css";
 import Image from "next/image";
 import { clientImageName } from "@/lib/data/clientImageList";
 
 const ClientScroller = () => {
-    // const loopClients = [...clientImageName, ...clientImageName];
-    return (
-        <div className="slider-container  bg-white">
-            <Slider
-                width="250px"
-                duration={100}
-                pauseOnHover={true}
-                blurBorders={false}
-                blurBorderColor="#fff"
-                direction="right"   // ✅ KEY CHANGE
-            >
-                {clientImageName.map((name, index) => (
-                    <Slider.Slide key={index}>
-                        <div className="client-image-wrapper">
-                            <Image
-                                src={`/clients/${name}.webp`}
-                                width={175}
-                                height={125}
-                                alt={name}
-                                loading="lazy"
-                            />
-                        </div>
-                    </Slider.Slide>
-                ))}
-            </Slider>
-        </div>
-    );
+  return (
+    <Splide
+      options={{
+        type: "loop",
+        drag: false,
+        arrows: false,
+        pagination: false,
+        perPage: 5,
+        gap: "2rem",
+        autoWidth: true,
+        autoScroll: {
+          speed: 1,
+          pauseOnHover: true,
+          pauseOnFocus: false,
+        },
+        breakpoints: {
+          992: {
+            perPage: 4,
+          },
+          768: {
+            perPage: 3,
+          },
+          576: {
+            perPage: 2,
+          },
+        },
+      }}
+      extensions={{ AutoScroll }}
+    >
+      {clientImageName.map((name, index) => (
+        <SplideSlide key={index}>
+          <div className="client-image-wrapper">
+            <Image
+              src={`/clients/${name}.webp`}
+              alt={name}
+              width={175}
+              height={125}
+            />
+          </div>
+        </SplideSlide>
+      ))}
+    </Splide>
+  );
 };
 
 export default ClientScroller;
