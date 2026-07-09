@@ -26,11 +26,11 @@ function TeamCard({ member, onClick }) {
         </div>
 
         <div className="mt-4 pb-4">
-          <h5 className="text-lg font-semibold text-gray-900 member-name">
+          <h4 className="text-xl font-semibold text-gray-900 member-name">
             {member.name}
-          </h5>
+          </h4>
 
-          <p className="text-sm text-center text-gray-500 member-designation">
+          <p className="text-lg text-center text-gray-500 member-designation">
             {member.designation}
           </p>
         </div>
@@ -128,33 +128,23 @@ export default function TeamSection() {
   return (
     <section className="w-full py-8">
       {/* Mobile */}
-      <div className="block md:hidden">
+      <div className="block md:hidden mobile-view">
         <Swiper
-          modules={[Autoplay, Pagination, A11y]}
+          modules={[Autoplay, A11y]}
           slidesPerView={1}
           spaceBetween={16}
-          pagination={{
-            clickable: true,
-          }}
           grabCursor={true}
           touchRatio={1}
           touchAngle={45}
           resistance={true}
           resistanceRatio={0.85}
           speed={500}
-           breakpoints={{
-            0: {
-              autoplay: {
-                delay: 3000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: false,
-              },
-            },
-            1024: {
-              autoplay: false,
-            },
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: false,
           }}
-          className="pb-10 team-swiper"
+          className="team-swiper"
         >
           {teamData.map((member, index) => (
             <SwiperSlide key={index}>
@@ -168,7 +158,7 @@ export default function TeamSection() {
       </div>
 
       {/* Desktop */}
-      <div className="team-card hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="team-card hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {teamData.map((member, index) => (
           <TeamCard
             key={index}

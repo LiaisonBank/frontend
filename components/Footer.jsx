@@ -83,8 +83,9 @@ export default function Footer() {
 
             <p className="mb-3 address">
               Plot 466, New Apollo CHSL,<br/>
-              Beside Blue Tokai Coffee, 14th Road,<br/>
-              Khar West, Mumbai-400052.
+              Beside Blue Tokai Coffee,<br/>  
+              14th Road, Khar West, <br/>
+              Mumbai-400052.
             </p>
 
             <div className="mb-3 flex items-center gap-2 tell">

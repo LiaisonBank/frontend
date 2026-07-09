@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
 import "@splidejs/react-splide/css";
@@ -7,6 +8,12 @@ import Image from "next/image";
 import { clientImageName } from "@/lib/data/clientImageList";
 
 const ClientScroller = () => {
+  const pathname = usePathname();
+
+  const images =
+    pathname === "/"
+      ? clientImageName.slice(0, 19)
+      : clientImageName;
   return (
     <Splide
       options={{
@@ -36,7 +43,7 @@ const ClientScroller = () => {
       }}
       extensions={{ AutoScroll }}
     >
-      {clientImageName.map((name, index) => (
+      {images.map((name, index) => (
         <SplideSlide key={index}>
           <div className="client-image-wrapper">
             <Image

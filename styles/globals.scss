@@ -4012,17 +4012,17 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     display: flex;
     align-items: center;
     justify-content: center;
-
+    overflow: visible;
     .client-image {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       transition: transform 0.4s ease;
     }
 
-    &:hover .client-image {
-      transform: scale(1.2);
-    }
+    // &:hover .client-image {
+    //   transform: scale(1.2);
+    // }
   }
 
   .slider-container {
@@ -6204,7 +6204,32 @@ body:has(.has-single-submenu:hover) .menu-overlay {
           z-index: 2;
         }
       }
+    .mobile-view {
+      .swiper {
+        h4 {
+          &.member-name {
+            font-size: calc(1.5rem + 1vw);
+            line-height: 2rem;
+            margin:0;
+            padding:0;
+             background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
+            -webkit-text-fill-color: #0000;
+            background-clip: border-box;
+            -webkit-background-clip: text;
+          }
+        }
+        p {
+          &.member-designation {
+            font-size: calc(1.1rem + 1vw);
+            line-height: normal;
+            margin:0;
+            padding:0.5rem 0;
+          }
+        }
+      }
+    }
     .team-card {
+      
       .member-image{
         img{
           transition: all 0.3s ease-out;
@@ -6344,7 +6369,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   .team-swiper {
     position: relative;
     overflow: visible;
-    padding-bottom: 40px; // Space below card for pagination
+    // padding-bottom: 40px; // Space below card for pagination
 
     .swiper-wrapper {
       align-items: stretch;
@@ -6993,37 +7018,35 @@ footer {
       grid-template-columns: 1fr;
     }
   }
-  h4 {
-    color: white;
-    font-size: 1.4rem;
-    // font-weight: 600;
-    // background: linear-gradient(
-    //   115deg,
-    //   var(--themeht-primary-color),
-    //   var(--themeht-secondary-color)
-    // );
-    // background: linear-gradient(
-    //   115deg,
-    //   var(--themeht-primary-color),
-    //   var(--themeht-secondary-color)
-    // );
-    // background-clip: border-box;
-    // -webkit-background-clip: text;
-    // -webkit-text-fill-color: transparent;
-  }
-  ul {
-    position: relative;
-    // z-index: 1;
-    li {
-      padding-bottom: 0.5rem;
-      a {
-        position: relative;
-        // z-index: 99;
-        color: white;
-        text-decoration: none;
+    h4 {
+      color: white;  
+      @media screen and (max-width:912px) {
+        font-size: 1.4rem;
       }
     }
-  }
+  
+    p {
+      @media screen and (max-width:912px) {
+        font-size: 1.3rem;
+      }
+      }
+  
+    ul {
+      position: relative;
+        // z-index: 1;
+      li {
+        padding-bottom: 0.5rem;
+          a {
+          position: relative;
+            @media screen and (max-width:912px) {
+            font-size: 1.3rem;
+          }
+            // z-index: 99;
+          color: white;
+          text-decoration: none;
+        }
+      }
+    }
   a {
     text-decoration: none;
     color: white;
@@ -7404,6 +7427,22 @@ div:where(.swal2-container){
   }
 }
 
+.orientation-blocker {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(
+      115deg,
+      var(--themeht-primary-color),
+      var(--themeht-secondary-color)
+    );
+    color: var(--police-blue);
+  .orientation-card {
+    text-align: center;
+    place-content: center;
+    height: 100vh;
+    display: grid;
+  }
+}
 
 @keyframes modalFade {
 	from {
@@ -7946,7 +7985,7 @@ $whstapp-color: #25D366;
     justify-content: center;
     bottom: 0;
     background:$primary-color;
-    z-index: 9;
+    z-index: 20;
     a{
       margin:0;
       padding: 0;

@@ -7,6 +7,7 @@ import {
 import Script from "next/script";
 import IntroLoader from "@/components/GlobalLoader/IntroLoader";
 import DisableZoom from "@/components/DisableZoom";
+import OrientationBlocker from "@/components/OrientationBlocker";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -271,7 +272,7 @@ export default function RootLayout({ children }) {
         {/* ========================================= */}
         {/* ORGANIZATION STRUCTURED DATA */}
         {/* ========================================= */}
-
+        <OrientationBlocker>
         <Script
           id="organization-schema"
           type="application/ld+json"
@@ -328,6 +329,7 @@ export default function RootLayout({ children }) {
           {/* </AOSProvider> */}
         </ReduxProvider>
         {/* <script defer src="https://india.kenyt.ai/botapp/ChatbotUI/dist/js/bot-loader.js" type="text/javascript" data-bot="114528775"></script> */}
+        </OrientationBlocker>
       </body>
     </html>
   );
