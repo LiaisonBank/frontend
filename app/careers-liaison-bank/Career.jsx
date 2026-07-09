@@ -58,7 +58,7 @@ export default function CareersLiaisonPage() {
               <address className="themeht-btn primary-btn">
                 <p>Contact HR</p>
                 <p>Email: <Link href="mailto:hr@liaisonbank.com">hr@liaisonbank.com</Link></p>
-                <p>Phone: <Link href="tel:+91 82684 32177">+91 82684 32177</Link> / <Link href="tel:+91 93217 09265">+91 93217 09265</Link></p>
+                <p>Phone: <Link href="tel:+91 90821 24632">+91 90821 24632</Link>  </p>
               </address>
             </div>
             <div className="col-12 col-md-6">
