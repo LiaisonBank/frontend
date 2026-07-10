@@ -2539,9 +2539,13 @@ body:has(.has-single-submenu:hover) .menu-overlay {
         @media screen and (min-width: 1360px) and (max-width: 1399px) {
           left: 65%;
         }
-
+        @media screen and (width: 1280px) {
+          /* Your CSS rules here */
+          left: auto;
+          right: 30%; // Adjust as needed
+        }
         /* 1180 × 820 devices */
-        @media screen and (min-width: 1180px) and (max-width: 1359px) {
+        @media screen and (min-width: 1180px) and (max-width: 1279px) {
           left: 32%; // Adjust as needed
         }
 
