@@ -12,7 +12,7 @@ const slides = [
   },
   {
     // title: "PAN-India Equipment Solutions For Construction & Infrastructure Projects",
-    title: "Sales Head for Liaisoning, Licensing & Regulatory Compliance Services",
+    title: "Liaisoning, Licensing & Regulatory Compliance Services",
     image: "/images/home/Sonali.webp",
     mobileImage: "/images/home/mobile/Sonali.webp",
     category: "Design",
