@@ -6,13 +6,12 @@ export default function OrientationBlocker({ children }) {
   const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
-    const checkOrientation = () => {
-      const shouldBlock = window.matchMedia(
-        "(max-width: 900px) and (orientation: landscape)"
-      ).matches;
-      
-      setIsBlocked(shouldBlock);
-    };
+   const checkOrientation = () => {
+    const isMobile = window.innerWidth <= 768;
+    const isLandscape = window.innerWidth > window.innerHeight;
+
+    setIsBlocked(isMobile && isLandscape);
+  };
     // const checkOrientation = () => {
     //   const isLandscape = window.matchMedia("(orientation: landscape)").matches;
     //   const isPhone = window.innerWidth <= 767;

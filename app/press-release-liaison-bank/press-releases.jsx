@@ -193,7 +193,7 @@ export default function PressReleaseLiaisonbankPage({ pressReleases }) {
         </div>
       </section>
       {/* GRID */}
-      <section className="container py-5">
+      <section className="container py-5 not-fount-pr">
         {filteredPressReleases.length === 0 ? (
           <div className="text-center py-5">
             <h4>No press releases found.</h4>

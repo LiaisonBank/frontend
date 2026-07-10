@@ -117,7 +117,7 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="max-w-7xl mx-auto border-t border-white-100 pt-4 pb-5 text-center text-md mb-5">
+        <div className="max-w-7xl mx-auto border-t border-white-100 py-4 text-center text-md copyrights">
           © 2026 Liaison Bank | All Rights Reserved
         </div>
       </footer>
