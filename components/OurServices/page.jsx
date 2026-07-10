@@ -29,37 +29,40 @@ const services = [
 export default function ServicesSlider() {
   return (
     <Splide
-        options={{
-            type: "loop",
-            drag: "free",
-            focus: "center",
+      options={{
+        type: "loop",
+        drag: "free",
+        focus: "center",
 
-            arrows: true,
-            pagination: false,
+        arrows: true,
+        pagination: false,
 
+        perPage: 2,
+        gap: "20px",
+        autoWidth: true,
+
+        autoScroll: {
+          speed: 0.8,
+          pauseOnHover: true,
+          pauseOnFocus: false,
+        },
+
+        breakpoints: {
+          991: {
+            perPage: 4,
+            autoWidth: false,
+          },
+          768: {
             perPage: 2,
-            gap: "20px",
-
-            autoWidth: true,
-
-            autoScroll: {
-            speed: 0.8,
-            pauseOnHover: true,
-            pauseOnFocus: false,
-            },
-
-            breakpoints: {
-            991: {
-                perPage: 2,
-                autoWidth: false,
-            },
-            576: {
-                perPage: 1,
-                autoWidth: false,
-            },
-            },
-        }}
-        extensions={{ AutoScroll }}
+            autoWidth: false,
+          },
+          576: {
+            perPage: 1,
+            autoWidth: false,
+          },
+        },
+      }}
+      extensions={{ AutoScroll }}
     >
       {services.map((service) => (
         <SplideSlide key={service.id}>
@@ -68,7 +71,7 @@ export default function ServicesSlider() {
               <Image
                 src={service.img}
                 alt={service.title}
-                width={500}
+                width={400}
                 height={250}
                 className="service-image"
               />
