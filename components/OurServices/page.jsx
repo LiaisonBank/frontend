@@ -37,12 +37,12 @@ export default function ServicesSlider() {
         arrows: true,
         pagination: false,
 
-        perPage: 2,
-        gap: "20px",
+        perPage: 3,
+        gap: "10px",
         autoWidth: true,
 
         autoScroll: {
-          speed: 0.8,
+          speed: 1,
           pauseOnHover: true,
           pauseOnFocus: false,
         },

@@ -2880,9 +2880,11 @@ body:has(.has-single-submenu:hover) .menu-overlay {
         width: 325px;
         @media screen and (max-width: 912px) {
           width: 100%;
+           width: 275px;
         }
         @media screen and (max-width: 768px) {
           width: 75%;
+           width: 200px;
         }
      .service-card {
         position: relative;
