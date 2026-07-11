@@ -3237,8 +3237,11 @@ body:has(.has-single-submenu:hover) .menu-overlay {
             align-items: flex-start;
             border-radius: 10px;
             &.active{
-            background: white;
-            color:black;
+            background: linear-gradient(#ef7f1a 5.85%, #be2a2a 186.4%);
+            width: 100%;
+            padding: 1rem;
+            border-radius: 1rem;
+            color: wheat;
            }
           }
         }
