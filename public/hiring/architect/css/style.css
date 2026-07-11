@@ -83,29 +83,16 @@ a.register {
     color: #fceee7;
     cursor: pointer;
 }
-button.swal2-confirm:hover{
-    color: white !important;
 
+a.register:hover {
+    color: white;
 }
 
-a.register:hover  {
-    color: white !important;
-}
-.swal2-confirm{
+.btn {
     display: inline-block;
     padding: 16px 38px;
     border-radius: 50px;
-    background: #ffc83d !important;
-    color: #111;
-    font-weight: 700;
-    text-decoration: none;
-    transition: .35s;
-}
-.btn  {
-    display: inline-block;
-    padding: 16px 38px;
-    border-radius: 50px;
-    background: #ffc83d !important;
+    background: #ffc83d;
     color: #111;
     font-weight: 700;
     text-decoration: none;
@@ -224,7 +211,7 @@ border-radius:25px; */
     color: white;
 }
 
-.card:hover div.icon {
+.card:hover .icon {
     color: white;
     background: whitesmoke;
 }
