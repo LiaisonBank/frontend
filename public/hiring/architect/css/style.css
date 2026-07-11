@@ -77,7 +77,10 @@ p {
     color: #808080;
     line-height: 1.8;
 }
-
+button.swal2-confirm.swal2-styled
+ {
+    background: linear-gradient(-360deg, #ff6004, #fe9e30) !important;
+}
 a.register {
     background: linear-gradient(-360deg, #ff6004, #fe9e30);
     color: #fceee7;
