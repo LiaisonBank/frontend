@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 
 export default function OrientationBlocker({ children }) {
-  const [isBlocked, setIsBlocked] = useState(false);
+    const [isBlocked, setIsBlocked] = useState(false);
 
-  useEffect(() => {
-   const checkOrientation = () => {
-    const isMobile = window.innerWidth <= 768;
-    const isLandscape = window.innerWidth > window.innerHeight;
+    useEffect(() => {
+      const checkOrientation = () => {
+      const isMobile = window.innerWidth <= 768;
+      const isLandscape = window.innerWidth > window.innerHeight;
 
-    setIsBlocked(isMobile && isLandscape);
-  };
+      setIsBlocked(isMobile && isLandscape);
+    };
     // const checkOrientation = () => {
     //   const isLandscape = window.matchMedia("(orientation: landscape)").matches;
     //   const isPhone = window.innerWidth <= 767;
