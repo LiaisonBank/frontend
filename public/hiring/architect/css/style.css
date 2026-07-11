@@ -92,7 +92,7 @@ a.register:hover  {
     color: white !important;
 }
 .swal2-confirm{
- display: inline-block;
+    display: inline-block;
     padding: 16px 38px;
     border-radius: 50px;
     background: #ffc83d !important;
