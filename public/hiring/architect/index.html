@@ -1,656 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Internship for Architect | LiaisonBank</title>
-<meta name="description"
-content="Campus Hiring Drive for Architecture Students. Internship, Part-Time, Full-Time and Flexible Opportunities at LiaisonBank.">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-html{
-scroll-behavior:smooth;
-}
-
-body{
-/* 
-background:
-linear-gradient(135deg,#06142b,#0b2242,#102d59); */
-background: white;
-color:#333;
-overflow-x:hidden;
-}
-header{
-    margin: 0;
-    padding: auto;
-}
-header:before{
-    content:"";
-    position:absolute;
-    width:650px;
-    height:650px;
-    background:#FFB10022;
-    border-radius:50%;
-    top:-250px;
-    left:-150px;
-    filter:blur(70px);
-}
-header:after{
-    content:"";
-    position:absolute;
-    width:650px;
-    height:650px;
-    background:#FFB10022;
-    border-radius:50%;
-    bottom:-250px;
-    right:-150px;
-    filter:blur(70px);
-}
-.one-page-title {
-   padding:1rem 8%; 
-}
-.one-page-title h1 {
-    text-transform: uppercase;
-    text-align: center;
-
-}
-section{
-    padding:45px 8%;
-}
-
-.container{
-
-max-width:1300px;
-margin:auto;
-}
-
-h2{
-
-font-size:42px;
-margin-bottom:20px;
-font-weight:700;
-}
-
-p{
-color:#808080;
-line-height:1.8;
-}
-a.register{
-    background: linear-gradient(-360deg, #ff6004, #fe9e30);
-    color: #fceee7;
-    cursor: pointer;
-}
-a.register:hover{
-    color:white;
-}
-.btn{
-    display:inline-block;
-    padding:16px 38px;
-    border-radius:50px;
-    background:#ffc83d;
-    color:#111;
-    font-weight:700;
-    text-decoration:none;
-    transition:.35s;
-}
-
-
-.btn:hover{
-    transform:translateY(-4px);
-    /* box-shadow:0 15px 40px rgba(255,177,0,.35); */
-    box-shadow:
-    0 8px 20px rgba(255, 96, 4, 0.25),
-    0 15px 40px rgba(254, 158, 48, 0.2);
-}
-
-.hero{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    position:relative;
-    overflow:hidden;
-}
-
-/* .hero:before{
-    content:"";
-    position:absolute;
-    width:650px;
-    height:650px;
-    background:#FFB10022;
-    border-radius:50%;
-    top:-250px;
-    right:-150px;
-    filter:blur(70px);
-} */
-
-.hero-content{
-    display:grid;
-    grid-template-columns:1fr 480px;
-    gap:70px;
-    align-items:center;
-    position:relative;
-    z-index:2;
-}
-
-.hero h1{
-
-font-size:68px;
-line-height:1.1;
-margin-bottom:25px;
-}
-
-.hero span{
-    color:#ef7f1a;
-}
-
-.hero p{
-
-font-size:18px;
-margin-bottom:35px;
-}
-
-.hero-card{
-
-/* background:rgba(255,255,255,.08);
-
-border:1px solid rgba(255,255,255,.12);
-
-backdrop-filter:blur(18px);
-
-border-radius:25px; */
-
-padding:35px;
-}
-
-.hero-card h3{
-
-margin-bottom:20px;
-font-size:26px;
-}
-
-.hero-card ul{
-
-list-style:none;
-}
-
-.hero-card li{
-
-padding:12px 0;
-
-border-bottom:1px solid rgba(255,255,255,.08);
-
-}
-
-.grid{
-
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:28px;
-margin-top:50px;
-}
-
-.card{
-
-background:rgba(255,255,255,.06);
-
-padding:35px;
-
-border-radius:22px;
-
-border:1px solid #ef7f1a;
-
-transition:.4s;
-}
-
-.card:hover{
-
-transform:translateY(-10px);
-
-background:#ffffff12;
-
-}
-
-.card h3{
-
-margin:20px 0;
-}
-
-.icon{
-
-width:70px;
-height:70px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:18px;
-background:#ffc83d;
-font-size:34px;
-}
-
-.timeline{
-
-margin-top:60px;
-position:relative;
-}
-
-.timeline:before{
-
-content:"";
-position:absolute;
-left:28px;
-top:0;
-bottom:0;
-width:4px;
-background:#ef7f1a;
-
-}
-
-.step{
-
-position:relative;
-padding-left:90px;
-margin-bottom:50px;
-}
-
-.step:before{
-
-content:"";
-position:absolute;
-left:14px;
-top:1rem;
-width:30px;
-height:30px;
-background:#fff;
-border:4px solid #ef7f1a;
-border-radius:50%;
-
-}
-
-.step h3{
-
-margin-bottom:10px;
-}
-
-.highlight{
-
-background:linear-gradient(-360deg,#808080,#ef7f1a);
-padding:80px 8%;
-color:#111;
-text-align:center;
-}
-
-.highlight h2{
-
-color:white;
-}
-
-.highlight p{
-
-color:white;
-max-width:850px;
-margin:auto;
-margin-bottom:35px;
-}
-
-footer{
-
-padding:35px;
-text-align:center;
-background:#808080;
-color:white;
-}
-
-@media(max-width:980px){
-
-.hero-content{
-
-grid-template-columns:1fr;
-
-}
-
-.hero{
-
-padding-top:100px;
-}
-
-.hero h1{
-
-font-size:48px;
-
-}
-
-h2{
-
-font-size:34px;
-
-}
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship for Architect | LiaisonBank</title>
+    <meta name="description"
+        content="Campus Hiring Drive for Architecture Students. Internship, Part-Time, Full-Time and Flexible Opportunities at LiaisonBank.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link fref="https://liaisonbank.vercel.app/hiring/architect/css/style.css" rel="stylesheet"/>
+  
 </head>
 
 <body>
-<header>
-    <div class="container">
-        <div class="one-page-title">
-            <h1>Internship for Architect</h1>
+    <header>
+        <div class="container">
+            <div class="one-page-title">
+                <h1>Internship for Architect</h1>
+            </div>
         </div>
-    </div>
-</header>
-<section class="hero">
+    </header>
+    <section class="hero">
 
-<div class="container hero-content">
+        <div class="container hero-content">
 
-<div>
+            <div>
 
-<h1>
-Build Your Career with
-<span>LiaisonBank</span>
-</h1>
+                <h1>
+                    Build Your Career with
+                    <span>LiaisonBank</span>
+                </h1>
 
-<p>
+                <p>
 
-LiaisonBank is visiting colleges to connect with passionate Architecture students ready to gain practical industry experience through internships, part-time, full-time and flexible work opportunities.
+                    LiaisonBank is visiting colleges to connect with passionate Architecture students ready to gain
+                    practical industry experience through internships, part-time, full-time and flexible work
+                    opportunities.
 
-</p>
+                </p>
 
-<a onclick="openApplicationForm()" class="btn register">
-Register Now
-</a>
+                <a onclick="openApplicationForm()" class="btn register">
+                    Register Now
+                </a>
 
-</div>
+            </div>
 
-<div class="hero-card">
+            <div class="hero-card">
 
-<h3>
-Campus Opportunities
-</h3>
+                <h3>
+                    Campus Opportunities
+                </h3>
 
-<ul>
+                <ul>
 
-<li>✔ Internship</li>
+                    <li>✔ Internship</li>
 
-<li>✔ Part-Time Position</li>
+                    <li>✔ Part-Time Position</li>
 
-<li>✔ Full-Time Position</li>
+                    <li>✔ Full-Time Position</li>
 
-<li>✔ Flexible 22 Hours / Week</li>
+                    <li>✔ Flexible 22 Hours / Week</li>
 
-<li>✔ Live Industry Projects</li>
+                    <li>✔ Live Industry Projects</li>
 
-<li>✔ Career Growth</li>
+                    <li>✔ Career Growth</li>
 
-</ul>
+                </ul>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-</section>
+    </section>
 
-<section>
+    <section>
 
-<div class="container">
+        <div class="container">
+            <h2>Opportunities Available</h2>
 
-<h2>
-Opportunities Available
-</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="icon">🎓</div>
+                    <h3>Internship</h3>
+                    <p>Gain practical exposure while completing your studies.</p>
+                </div>
 
-<div class="grid">
+                <div class="card">
+                    <div class="icon">💼</div>
+                    <h3>Part-Time</h3>
+                    <p>Flexible schedules designed around your academic commitments.</p>
+                </div>
 
-<div class="card">
+                <div class="card">
+                    <div class="icon">🏢</div>
+                    <h3>Full-Time</h3>
+                    <p>Launch your professional career with industry experts.</p>
+                </div>
 
-<div class="icon">🎓</div>
+                <div class="card">
+                    <div class="icon">⏰</div>
+                    <h3>22 Hours / Week</h3>
+                    <p>Perfect for students looking for flexible industry experience.</p>
+                </div>
+            </div>
+        </div>
 
-<h3>Internship</h3>
+    </section>
 
-<p>
-Gain practical exposure while completing your studies.
-</p>
+    <section>
 
-</div>
+        <div class="container">
 
-<div class="card">
+            <h2>
+                Who Can Apply?
+            </h2>
 
-<div class="icon">💼</div>
+            <div class="grid">
 
-<h3>Part-Time</h3>
+                <div class="card">
 
-<p>
-Flexible schedules designed around your academic commitments.
-</p>
+                    <h3>B.Arch Students</h3>
 
-</div>
+                    <p>
+                        Currently pursuing Bachelor of Architecture.
+                    </p>
 
-<div class="card">
+                </div>
 
-<div class="icon">🏢</div>
+                <div class="card">
 
-<h3>Full-Time</h3>
+                    <h3>M.Arch Students</h3>
 
-<p>
-Launch your professional career with industry experts.
-</p>
+                    <p>
+                        Postgraduate students interested in professional experience.
+                    </p>
 
-</div>
+                </div>
 
-<div class="card">
+                <div class="card">
 
-<div class="icon">⏰</div>
+                    <h3>Fresh Graduates</h3>
 
-<h3>22 Hours / Week</h3>
+                    <p>
+                        Ready to begin a rewarding career in architecture.
+                    </p>
 
-<p>
-Perfect for students looking for flexible industry experience.
-</p>
+                </div>
 
-</div>
+                <div class="card">
 
-</div>
+                    <h3>Creative Thinkers</h3>
 
-</div>
+                    <p>
+                        Passionate about planning, design, documentation and teamwork.
+                    </p>
 
-</section>
+                </div>
 
-<section>
+            </div>
 
-<div class="container">
+        </div>
 
-<h2>
-Who Can Apply?
-</h2>
+    </section>
 
-<div class="grid">
+    <section>
 
-<div class="card">
+        <div class="container">
 
-<h3>B.Arch Students</h3>
+            <h2>
+                What You'll Gain
+            </h2>
 
-<p>
-Currently pursuing Bachelor of Architecture.
-</p>
+            <div class="grid">
 
-</div>
+                <div class="card">
+                    <h3>Industry Exposure</h3>
+                    <p>Work alongside experienced architects on real projects.</p>
+                </div>
 
-<div class="card">
+                <div class="card">
+                    <h3>Mentorship</h3>
+                    <p>Learn from professionals who guide your growth.</p>
+                </div>
 
-<h3>M.Arch Students</h3>
+                <div class="card">
+                    <h3>Live Projects</h3>
+                    <p>Participate in ongoing commercial and residential developments.</p>
+                </div>
 
-<p>
-Postgraduate students interested in professional experience.
-</p>
+                <div class="card">
+                    <h3>Career Opportunities</h3>
+                    <p>Outstanding performers may receive permanent employment offers.</p>
+                </div>
 
-</div>
+            </div>
 
-<div class="card">
+        </div>
 
-<h3>Fresh Graduates</h3>
+    </section>
 
-<p>
-Ready to begin a rewarding career in architecture.
-</p>
+    <section>
 
-</div>
+        <div class="container">
 
-<div class="card">
+            <h2>
+                Campus Recruitment Process
+            </h2>
 
-<h3>Creative Thinkers</h3>
+            <div class="timeline">
 
-<p>
-Passionate about planning, design, documentation and teamwork.
-</p>
+                <div class="step">
+                    <h3>Registration</h3>
+                    <p>Complete your registration and submit your profile.</p>
+                </div>
 
-</div>
+                <div class="step">
+                    <h3>Portfolio & Resume Review</h3>
+                    <p>Our hiring team evaluates your work and achievements.</p>
+                </div>
 
-</div>
+                <div class="step">
+                    <h3>Technical Interaction</h3>
+                    <p>Discuss your architectural knowledge and project experience.</p>
+                </div>
 
-</div>
+                <div class="step">
+                    <h3>Personal Interview</h3>
+                    <p>Meet with our leadership and hiring managers.</p>
+                </div>
 
-</section>
+                <div class="step">
+                    <h3>Offer Discussion</h3>
+                    <p>Selected candidates receive internship or employment offers.</p>
+                </div>
 
-<section>
+            </div>
 
-<div class="container">
+        </div>
 
-<h2>
-What You'll Gain
-</h2>
+    </section>
 
-<div class="grid">
+    <section class="highlight" id="apply">
 
-<div class="card">
-<h3>Industry Exposure</h3>
-<p>Work alongside experienced architects on real projects.</p>
-</div>
+        <div class="container">
 
-<div class="card">
-<h3>Mentorship</h3>
-<p>Learn from professionals who guide your growth.</p>
-</div>
+            <h2>
+                Ready to Build Your Future?
+            </h2>
 
-<div class="card">
-<h3>Live Projects</h3>
-<p>Participate in ongoing commercial and residential developments.</p>
-</div>
+            <p>
 
-<div class="card">
-<h3>Career Opportunities</h3>
-<p>Outstanding performers may receive permanent employment offers.</p>
-</div>
+                Bring your updated resume, portfolio, enthusiasm, and creativity.
+                Join LiaisonBank and contribute to projects that shape tomorrow's infrastructure.
 
-</div>
+            </p>
 
-</div>
+            <a href="#" class="btn register">
+                Apply Now
+            </a>
 
-</section>
+        </div>
 
-<section>
+    </section>
 
-<div class="container">
+    <footer>
 
-<h2>
-Campus Recruitment Process
-</h2>
+        © 2026 LiaisonBank • Campus Hiring Drive • Build the Future Together
 
-<div class="timeline">
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lenis@1.3.11/dist/lenis.min.js"></script>
+    <script>
+        const lenis = new Lenis({
+            duration: 1.5,
+            smoothWheel: true,
+            touchMultiplier: 2
+        });
 
-<div class="step">
-<h3>Registration</h3>
-<p>Complete your registration and submit your profile.</p>
-</div>
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
 
-<div class="step">
-<h3>Portfolio & Resume Review</h3>
-<p>Our hiring team evaluates your work and achievements.</p>
-</div>
+        function openApplicationForm() {
 
-<div class="step">
-<h3>Technical Interaction</h3>
-<p>Discuss your architectural knowledge and project experience.</p>
-</div>
+            Swal.fire({
+                title: '<h3 class="mb-3">Job Application</h3>',
+                width: 700,
+                showCancelButton: true,
+                confirmButtonText: 'Submit Application',
+                cancelButtonText: 'Cancel',
+                focusConfirm: false,
 
-<div class="step">
-<h3>Personal Interview</h3>
-<p>Meet with our leadership and hiring managers.</p>
-</div>
-
-<div class="step">
-<h3>Offer Discussion</h3>
-<p>Selected candidates receive internship or employment offers.</p>
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<section class="highlight" id="apply">
-
-<div class="container">
-
-<h2>
-Ready to Build Your Future?
-</h2>
-
-<p>
-
-Bring your updated resume, portfolio, enthusiasm, and creativity.
-Join LiaisonBank and contribute to projects that shape tomorrow's infrastructure.
-
-</p>
-
-<a href="#" class="btn register">
-Apply Now
-</a>
-
-</div>
-
-</section>
-
-<footer>
-
-© 2026 LiaisonBank • Campus Hiring Drive • Build the Future Together
-
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://unpkg.com/lenis@1.3.11/dist/lenis.min.js"></script>
-<script>
-const lenis = new Lenis({
-  duration: 1.5,
-  smoothWheel: true,
-  touchMultiplier: 2
-});
-
-function raf(time) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
-}
-requestAnimationFrame(raf);
-
-function openApplicationForm() {
-
-    Swal.fire({
-        title: '<h3 class="mb-3">Job Application</h3>',
-        width: 700,
-        showCancelButton: true,
-        confirmButtonText: 'Submit Application',
-        cancelButtonText: 'Cancel',
-        focusConfirm: false,
-
-        html: `
+                html: `
         <div class="container-fluid text-start">
 
             <div class="row g-3">
@@ -709,138 +354,139 @@ function openApplicationForm() {
         </div>
         `,
 
-        preConfirm: () => {
+                preConfirm: () => {
 
-            const name = document.getElementById("appName").value.trim();
-            const email = document.getElementById("appEmail").value.trim();
-            const mobile = document.getElementById("appMobile").value.trim();
-            const address = document.getElementById("appAddress").value.trim();
-            const resume = document.getElementById("appResume").files[0];
+                    const name = document.getElementById("appName").value.trim();
+                    const email = document.getElementById("appEmail").value.trim();
+                    const mobile = document.getElementById("appMobile").value.trim();
+                    const address = document.getElementById("appAddress").value.trim();
+                    const resume = document.getElementById("appResume").files[0];
 
-            // Regular Expressions
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    // Regular Expressions
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            // Indian Mobile (Starts 6-9 & 10 digits)
-            const mobileRegex = /^[6-9]\d{9}$/;
+                    // Indian Mobile (Starts 6-9 & 10 digits)
+                    const mobileRegex = /^[6-9]\d{9}$/;
 
-            if (name === "") {
-                Swal.showValidationMessage("Please enter your Full Name.");
-                return false;
-            }
+                    if (name === "") {
+                        Swal.showValidationMessage("Please enter your Full Name.");
+                        return false;
+                    }
 
-            if (name.length < 3) {
-                Swal.showValidationMessage("Name must be at least 3 characters.");
-                return false;
-            }
+                    if (name.length < 3) {
+                        Swal.showValidationMessage("Name must be at least 3 characters.");
+                        return false;
+                    }
 
-            if (!emailRegex.test(email)) {
-                Swal.showValidationMessage("Please enter a valid Email Address.");
-                return false;
-            }
+                    if (!emailRegex.test(email)) {
+                        Swal.showValidationMessage("Please enter a valid Email Address.");
+                        return false;
+                    }
 
-            if (!mobileRegex.test(mobile)) {
-                Swal.showValidationMessage("Please enter a valid Indian Mobile Number.");
-                return false;
-            }
+                    if (!mobileRegex.test(mobile)) {
+                        Swal.showValidationMessage("Please enter a valid Indian Mobile Number.");
+                        return false;
+                    }
 
-            if (address === "") {
-                Swal.showValidationMessage("Please enter your Address.");
-                return false;
-            }
+                    if (address === "") {
+                        Swal.showValidationMessage("Please enter your Address.");
+                        return false;
+                    }
 
-            if (!resume) {
-                Swal.showValidationMessage("Please upload your Resume.");
-                return false;
-            }
+                    if (!resume) {
+                        Swal.showValidationMessage("Please upload your Resume.");
+                        return false;
+                    }
 
-            // Validate Resume Extension
-            const allowedExtensions = [
-                "pdf",
-                "doc",
-                "docx"
-            ];
+                    // Validate Resume Extension
+                    const allowedExtensions = [
+                        "pdf",
+                        "doc",
+                        "docx"
+                    ];
 
-            const extension = resume.name.split(".").pop().toLowerCase();
+                    const extension = resume.name.split(".").pop().toLowerCase();
 
-            if (!allowedExtensions.includes(extension)) {
-                Swal.showValidationMessage(
-                    "Only PDF, DOC and DOCX files are allowed."
-                );
-                return false;
-            }
+                    if (!allowedExtensions.includes(extension)) {
+                        Swal.showValidationMessage(
+                            "Only PDF, DOC and DOCX files are allowed."
+                        );
+                        return false;
+                    }
 
-            // Max File Size 5MB
-            if (resume.size > 5 * 1024 * 1024) {
-                Swal.showValidationMessage(
-                    "Resume size should not exceed 5 MB."
-                );
-                return false;
-            }
+                    // Max File Size 5MB
+                    if (resume.size > 5 * 1024 * 1024) {
+                        Swal.showValidationMessage(
+                            "Resume size should not exceed 5 MB."
+                        );
+                        return false;
+                    }
 
-            return {
-                name,
-                email,
-                mobile,
-                address,
-                resume
-            };
+                    return {
+                        name,
+                        email,
+                        mobile,
+                        address,
+                        resume
+                    };
+                }
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    const data = result.value;
+
+                    console.clear();
+
+                    console.log("========== APPLICATION ==========");
+                    console.log("Name :", data.name);
+                    console.log("Email :", data.email);
+                    console.log("Mobile :", data.mobile);
+                    console.log("Address :", data.address);
+
+                    console.log("Resume Details");
+                    console.log("----------------------------");
+                    console.log("File Name :", data.resume.name);
+                    console.log("File Type :", data.resume.type);
+                    console.log("File Size :", (data.resume.size / 1024).toFixed(2) + " KB");
+                    console.log(data.resume);
+
+                    // Ready for API
+                    const formData = new FormData();
+                    formData.append("name", data.name);
+                    formData.append("email", data.email);
+                    formData.append("mobile", data.mobile);
+                    formData.append("address", data.address);
+                    formData.append("resume", data.resume);
+
+                    console.log("FormData Ready:", formData);
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Application Submitted",
+                        text: "Thank you! Your application has been submitted successfully."
+                    });
+
+                    // Example API
+                    /*
+                    fetch('/api/apply', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    */
+                }
+
+            });
         }
 
-    }).then((result) => {
-
-        if (result.isConfirmed) {
-
-            const data = result.value;
-
-            console.clear();
-
-            console.log("========== APPLICATION ==========");
-            console.log("Name :", data.name);
-            console.log("Email :", data.email);
-            console.log("Mobile :", data.mobile);
-            console.log("Address :", data.address);
-
-            console.log("Resume Details");
-            console.log("----------------------------");
-            console.log("File Name :", data.resume.name);
-            console.log("File Type :", data.resume.type);
-            console.log("File Size :", (data.resume.size / 1024).toFixed(2) + " KB");
-            console.log(data.resume);
-
-            // Ready for API
-            const formData = new FormData();
-            formData.append("name", data.name);
-            formData.append("email", data.email);
-            formData.append("mobile", data.mobile);
-            formData.append("address", data.address);
-            formData.append("resume", data.resume);
-
-            console.log("FormData Ready:", formData);
-
-            Swal.fire({
-                icon: "success",
-                title: "Application Submitted",
-                text: "Thank you! Your application has been submitted successfully."
-            });
-
-            // Example API
-            /*
-            fetch('/api/apply', {
-                method: 'POST',
-                body: formData
-            });
-            */
-        }
-
-    });
-}
-
-// Allow Only Numbers in Mobile Field
-document.addEventListener("input", function (e) {
-    if (e.target.id === "appMobile") {
-        e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
-    }
-});
-</script>
+        // Allow Only Numbers in Mobile Field
+        document.addEventListener("input", function (e) {
+            if (e.target.id === "appMobile") {
+                e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+            }
+        });
+    </script>
 </body>
+
 </html>
