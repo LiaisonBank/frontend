@@ -211,8 +211,9 @@ border-radius:25px; */
     color: white;
 }
 
-.card:hover .icon {
+.card:hover div.icon {
     color: white;
+    background: whitesmoke;
 }
 
 .card:hover p {

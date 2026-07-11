@@ -257,7 +257,7 @@
 
             </p>
 
-            <a href="#" class="btn register">
+            <a onclick="openApplicationForm()" class="btn register">
                 Apply Now
             </a>
 
@@ -287,66 +287,53 @@
 
         function openApplicationForm() {
 
-            Swal.fire({
-                title: '<h3 class="mb-3">Job Application</h3>',
-                width: 700,
-                showCancelButton: true,
-                confirmButtonText: 'Submit Application',
-                cancelButtonText: 'Cancel',
-                focusConfirm: false,
+    Swal.fire({
+        title: '<h3 class="mb-3">Job Application</h3>',
+        width: 750,
+        showCancelButton: true,
+        confirmButtonText: "Submit Application",
+        cancelButtonText: "Cancel",
+        focusConfirm: false,
 
-                html: `
+        html: `
         <div class="container-fluid text-start">
 
             <div class="row g-3">
 
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
-                    <input
-                        type="text"
-                        id="appName"
-                        class="form-control"
-                        placeholder="Enter Full Name">
+                    <input type="text" id="appName" class="form-control" placeholder="Enter Full Name">
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Email Address <span class="text-danger">*</span></label>
-                    <input
-                        type="email"
-                        id="appEmail"
-                        class="form-control"
-                        placeholder="Enter Email Address">
+                    <input type="email" id="appEmail" class="form-control" placeholder="Enter Email Address">
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Mobile Number <span class="text-danger">*</span></label>
-                    <input
-                        type="tel"
-                        id="appMobile"
-                        class="form-control"
-                        maxlength="10"
-                        placeholder="Enter 10 Digit Mobile Number">
+                    <input type="tel" id="appMobile" class="form-control" maxlength="10" placeholder="Enter Mobile Number">
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Upload Resume <span class="text-danger">*</span></label>
-                    <input
-                        type="file"
-                        id="appResume"
-                        class="form-control"
-                        accept=".pdf,.doc,.docx">
-                    <small class="text-muted">
-                        Allowed: PDF, DOC, DOCX
-                    </small>
+                    <label class="form-label fw-semibold">Resume <span class="text-danger">*</span></label>
+                    <input type="file" id="appResume" class="form-control" accept=".pdf,.doc,.docx">
+                    <small class="text-muted">PDF, DOC, DOCX (Max 5 MB)</small>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Upload Portfolio</label>
+                    <input type="file" id="appPortfolio" class="form-control" accept=".pdf,.doc,.docx">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Portfolio Link</label>
+                    <input type="url" id="appPortfolioLink" class="form-control" placeholder="https://yourportfolio.com">
                 </div>
 
                 <div class="col-12">
                     <label class="form-label fw-semibold">Address <span class="text-danger">*</span></label>
-                    <textarea
-                        id="appAddress"
-                        class="form-control"
-                        rows="3"
-                        placeholder="Enter Complete Address"></textarea>
+                    <textarea id="appAddress" class="form-control" rows="3" placeholder="Enter Complete Address"></textarea>
                 </div>
 
             </div>
@@ -354,138 +341,208 @@
         </div>
         `,
 
-                preConfirm: () => {
+        didOpen: () => {
 
-                    const name = document.getElementById("appName").value.trim();
-                    const email = document.getElementById("appEmail").value.trim();
-                    const mobile = document.getElementById("appMobile").value.trim();
-                    const address = document.getElementById("appAddress").value.trim();
-                    const resume = document.getElementById("appResume").files[0];
+            const mobile = document.getElementById("appMobile");
+            const portfolioFile = document.getElementById("appPortfolio");
+            const portfolioLink = document.getElementById("appPortfolioLink");
 
-                    // Regular Expressions
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            // Only Numbers
+            mobile.addEventListener("input", function () {
+                this.value = this.value.replace(/\D/g, "").slice(0, 10);
+            });
 
-                    // Indian Mobile (Starts 6-9 & 10 digits)
-                    const mobileRegex = /^[6-9]\d{9}$/;
+            // Upload -> Disable Link
+            portfolioFile.addEventListener("change", function () {
 
-                    if (name === "") {
-                        Swal.showValidationMessage("Please enter your Full Name.");
-                        return false;
-                    }
-
-                    if (name.length < 3) {
-                        Swal.showValidationMessage("Name must be at least 3 characters.");
-                        return false;
-                    }
-
-                    if (!emailRegex.test(email)) {
-                        Swal.showValidationMessage("Please enter a valid Email Address.");
-                        return false;
-                    }
-
-                    if (!mobileRegex.test(mobile)) {
-                        Swal.showValidationMessage("Please enter a valid Indian Mobile Number.");
-                        return false;
-                    }
-
-                    if (address === "") {
-                        Swal.showValidationMessage("Please enter your Address.");
-                        return false;
-                    }
-
-                    if (!resume) {
-                        Swal.showValidationMessage("Please upload your Resume.");
-                        return false;
-                    }
-
-                    // Validate Resume Extension
-                    const allowedExtensions = [
-                        "pdf",
-                        "doc",
-                        "docx"
-                    ];
-
-                    const extension = resume.name.split(".").pop().toLowerCase();
-
-                    if (!allowedExtensions.includes(extension)) {
-                        Swal.showValidationMessage(
-                            "Only PDF, DOC and DOCX files are allowed."
-                        );
-                        return false;
-                    }
-
-                    // Max File Size 5MB
-                    if (resume.size > 5 * 1024 * 1024) {
-                        Swal.showValidationMessage(
-                            "Resume size should not exceed 5 MB."
-                        );
-                        return false;
-                    }
-
-                    return {
-                        name,
-                        email,
-                        mobile,
-                        address,
-                        resume
-                    };
-                }
-
-            }).then((result) => {
-
-                if (result.isConfirmed) {
-
-                    const data = result.value;
-
-                    console.clear();
-
-                    console.log("========== APPLICATION ==========");
-                    console.log("Name :", data.name);
-                    console.log("Email :", data.email);
-                    console.log("Mobile :", data.mobile);
-                    console.log("Address :", data.address);
-
-                    console.log("Resume Details");
-                    console.log("----------------------------");
-                    console.log("File Name :", data.resume.name);
-                    console.log("File Type :", data.resume.type);
-                    console.log("File Size :", (data.resume.size / 1024).toFixed(2) + " KB");
-                    console.log(data.resume);
-
-                    // Ready for API
-                    const formData = new FormData();
-                    formData.append("name", data.name);
-                    formData.append("email", data.email);
-                    formData.append("mobile", data.mobile);
-                    formData.append("address", data.address);
-                    formData.append("resume", data.resume);
-
-                    console.log("FormData Ready:", formData);
-
-                    Swal.fire({
-                        icon: "success",
-                        title: "Application Submitted",
-                        text: "Thank you! Your application has been submitted successfully."
-                    });
-
-                    // Example API
-                    /*
-                    fetch('/api/apply', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    */
+                if (this.files.length > 0) {
+                    portfolioLink.value = "";
+                    portfolioLink.disabled = true;
+                } else {
+                    portfolioLink.disabled = false;
                 }
 
             });
+
+            // Link -> Disable Upload
+            portfolioLink.addEventListener("input", function () {
+
+                if (this.value.trim() !== "") {
+                    portfolioFile.value = "";
+                    portfolioFile.disabled = true;
+                } else {
+                    portfolioFile.disabled = false;
+                }
+
+            });
+
+        },
+
+        preConfirm: () => {
+
+            const name = document.getElementById("appName").value.trim();
+            const email = document.getElementById("appEmail").value.trim();
+            const mobile = document.getElementById("appMobile").value.trim();
+            const address = document.getElementById("appAddress").value.trim();
+
+            const resume = document.getElementById("appResume").files[0];
+
+            const portfolio = document.getElementById("appPortfolio").files[0];
+
+            const portfolioLink = document
+                .getElementById("appPortfolioLink")
+                .value
+                .trim();
+
+            // Regex
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const mobileRegex = /^[6-9]\d{9}$/;
+            const urlRegex = /^(https?:\/\/)([\w-]+\.)+[\w-]+(\/.*)?$/i;
+
+            // Name
+            if (!name) {
+                Swal.showValidationMessage("Please enter Full Name.");
+                return false;
+            }
+
+            if (name.length < 3) {
+                Swal.showValidationMessage("Full Name must contain at least 3 characters.");
+                return false;
+            }
+
+            // Email
+            if (!emailRegex.test(email)) {
+                Swal.showValidationMessage("Please enter a valid Email.");
+                return false;
+            }
+
+            // Mobile
+            if (!mobileRegex.test(mobile)) {
+                Swal.showValidationMessage("Please enter a valid Indian Mobile Number.");
+                return false;
+            }
+
+            // Address
+            if (!address) {
+                Swal.showValidationMessage("Please enter Address.");
+                return false;
+            }
+
+            // Resume
+            if (!resume) {
+                Swal.showValidationMessage("Please upload Resume.");
+                return false;
+            }
+
+            const allowed = ["pdf", "doc", "docx"];
+
+            const resumeExt = resume.name.split(".").pop().toLowerCase();
+
+            if (!allowed.includes(resumeExt)) {
+                Swal.showValidationMessage("Resume must be PDF, DOC or DOCX.");
+                return false;
+            }
+
+            if (resume.size > 5 * 1024 * 1024) {
+                Swal.showValidationMessage("Resume size should not exceed 5 MB.");
+                return false;
+            }
+
+            // Portfolio (Either Upload OR Link)
+            if (!portfolio && portfolioLink === "") {
+                Swal.showValidationMessage("Upload Portfolio or provide Portfolio Link.");
+                return false;
+            }
+
+            if (portfolio) {
+
+                const portfolioExt = portfolio.name.split(".").pop().toLowerCase();
+
+                if (!allowed.includes(portfolioExt)) {
+                    Swal.showValidationMessage("Portfolio must be PDF, DOC or DOCX.");
+                    return false;
+                }
+
+                if (portfolio.size > 5 * 1024 * 1024) {
+                    Swal.showValidationMessage("Portfolio size should not exceed 5 MB.");
+                    return false;
+                }
+
+            }
+
+            if (portfolioLink && !urlRegex.test(portfolioLink)) {
+                Swal.showValidationMessage("Please enter a valid Portfolio URL.");
+                return false;
+            }
+
+            return {
+                name,
+                email,
+                mobile,
+                address,
+                resume,
+                portfolio,
+                portfolioLink
+            };
+
         }
 
-        // Allow Only Numbers in Mobile Field
-        document.addEventListener("input", function (e) {
-            if (e.target.id === "appMobile") {
-                e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
-            }
+    }).then((result) => {
+
+        if (!result.isConfirmed) return;
+
+        const data = result.value;
+
+        console.clear();
+
+        console.log("========== APPLICATION ==========");
+        console.log("Name :", data.name);
+        console.log("Email :", data.email);
+        console.log("Mobile :", data.mobile);
+        console.log("Address :", data.address);
+
+        console.log("Resume :", data.resume);
+
+        if (data.portfolio) {
+            console.log("Portfolio File :", data.portfolio);
+        }
+
+        if (data.portfolioLink) {
+            console.log("Portfolio Link :", data.portfolioLink);
+        }
+
+        const formData = new FormData();
+
+        formData.append("name", data.name);
+        formData.append("email", data.email);
+        formData.append("mobile", data.mobile);
+        formData.append("address", data.address);
+        formData.append("resume", data.resume);
+
+        if (data.portfolio) {
+            formData.append("portfolio", data.portfolio);
+        }
+
+        if (data.portfolioLink) {
+            formData.append("portfolioLink", data.portfolioLink);
+        }
+
+        console.log(formData);
+
+        Swal.fire({
+            icon: "success",
+            title: "Application Submitted",
+            text: "Thank you! Your application has been submitted successfully."
         });
+
+        // fetch('/api/apply',{
+        //     method:'POST',
+        //     body:formData
+        // });
+
+    });
+
+}
     </script>
 </body>
 
