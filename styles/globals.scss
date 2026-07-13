@@ -3236,12 +3236,14 @@ body:has(.has-single-submenu:hover) .menu-overlay {
           &.accordion-item{
             align-items: flex-start;
             border-radius: 10px;
-            &.active{
-            background: linear-gradient(#ef7f1a 5.85%, #be2a2a 186.4%);
-            width: 100%;
-            padding: 1rem;
-            border-radius: 1rem;
-            color: wheat;
+            &.active {
+              .service-title{
+              background: linear-gradient(#ef7f1a 5.85%, #be2a2a 186.4%);
+              width: 100%;
+              padding: 1rem;
+              border-radius: 1rem;
+              color: wheat;
+            }
            }
           }
         }
@@ -3302,7 +3304,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
           &.active {
             color: white;
             // background:$primary-color1;
-            background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+            // background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
             transition: all 0.2s linear;
           }
         }
