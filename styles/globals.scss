@@ -2886,7 +2886,127 @@ body:has(.has-single-submenu:hover) .menu-overlay {
           width: 75%;
            width: 200px;
         }
-     .service-card {
+        .service-card {
+          position: relative;
+          overflow: hidden;
+          cursor: pointer;
+          border-radius: 16px;
+
+          .service-img {
+            overflow: hidden;
+
+            .service-image {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              transition: transform 0.6s ease;
+              display: block;
+                /* Default */
+              transform: scale(1.1);
+              opacity: 1;
+
+              transition:
+                  transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.5s ease;
+            }
+          }
+
+          .service-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+            // background: linear-gradient(
+            //   to top,
+            //   rgba(0, 0, 0, 0.85) 10%,
+            //   rgba(0, 0, 0, 0.45) 45%,
+            //   transparent 75%
+            // );
+
+            h5 {
+              font-size:1rem;
+              position: absolute;
+              top:1rem;
+              color: black;
+              margin: 0;
+              transform: translateY(4rem);
+              transition: transform 0.45s ease;
+               background: rgba(255, 255, 255, 0.1);
+              backdrop-filter: blur(10px); /* The Glass Effect */
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              transition: transform 0.6s ease, box-shadow 0.3s ease;
+            }
+
+            p,
+            span {
+              color: #fff;
+              opacity: 0;
+              transform: translateY(20px);
+              transition: all 0.45s ease;
+            }
+
+            p {
+              margin: 0.75rem 0;
+              line-height: 1.6;
+            }
+
+            span {
+              display: inline-flex;
+              align-items: center;
+              font-weight: 600;
+              transition-delay: 0.1s;
+            }
+            .service-content {
+              transform: translateY(0);
+              transition: transform 0.5s ease;
+
+              p,
+              span {
+                opacity: 0;
+                transition: all 0.4s ease;
+              }
+              p{
+                transform: translatex(16px);
+              }
+              span {
+                transform: translateY(16px);  
+              }
+            }
+          }
+
+          &:hover {
+            .service-overlay{
+              background: radial-gradient(circle, #e5e7eb 0%, #9ca3af 100%);
+            }
+            .service-image {
+              // transform: scale(1.06);
+              transform: scale(0.9);   /* Scale down */
+              opacity: 0;              /* Fade out */
+            }
+
+            .service-overlay {
+              h5 {
+                background:none;
+                border:none;
+                backdrop-filter: fblur(0);
+                transform: translateY(-160px);
+              }
+              p{
+                color:#000;
+                opacity: 1;
+                transform: translateX(0);
+              }
+              span {
+                color:#000;
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+          }
+        }
+     .service-card9 {
         position: relative;
         overflow: hidden;
         border-radius: 15px;
@@ -2898,6 +3018,10 @@ body:has(.has-single-submenu:hover) .menu-overlay {
         color: inherit;
         display: block;
         h3{
+          content: '';
+          margin:0 auto;
+          padding: 0.8rem;
+          position:absolute;
           font-size: 1rem;
           color: white;
           padding: 1rem;
