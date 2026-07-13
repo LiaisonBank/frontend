@@ -3214,7 +3214,18 @@ body:has(.has-single-submenu:hover) .menu-overlay {
       grid-template-columns: 0.5fr 1fr;
       gap: 40px;
       align-items: stretch;
-      @media (max-width: 1199px) {
+      
+      @media only screen and (min-width: 1199px) {
+        .service-list{
+          .accordion-item  {
+            &.active {
+                background: linear-gradient(#ef7f1a 5.85%, #be2a2a 186.4%);
+              color: white;
+            }
+          }
+        }
+      }
+      @media only screen and (max-width: 1199px) {
         grid-template-columns: 1fr;
       }
       .service-title {
@@ -7472,6 +7483,22 @@ div:where(.swal2-container){
     height: 100vh;
     display: grid;
   }
+}
+
+/* Exact Portrait */
+@media screen
+  and (width: 2080px)
+  and (height: 2784px)
+  and (orientation: portrait) {
+  /* Styles */
+}
+
+/* Exact Landscape */
+@media screen
+  and (width: 2784px)
+  and (height: 2080px)
+  and (orientation: landscape) {
+  /* Styles */
 }
 
 @keyframes modalFade {
