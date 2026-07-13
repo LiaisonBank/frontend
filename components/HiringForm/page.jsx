@@ -340,7 +340,7 @@ const handleDiscard = () => {
         />
 
         <p className="mt-3 text-sm text-gray-500">
-          Max File Limit Size Max 5 MB
+          Please ensure the file size does not exceed 5 MB
         </p>
 
         {resume && (
