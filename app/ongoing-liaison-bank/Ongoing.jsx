@@ -58,7 +58,9 @@ export default function OngoingLiaisonbankPage() {
       <section className="container py-5">
         <div className="row justify-content-center text-center">
           <div className="section-title">
-            <h3>Ongoing <AnimatedCounter endValue={23} />+ Projects </h3>
+            <h3>Ongoing 
+              {/* <AnimatedCounter endValue={23} /> */}
+              + Projects </h3>
           </div>
         </div>
         <div className="project-grid">
