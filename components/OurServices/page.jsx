@@ -16,6 +16,7 @@ import "@splidejs/react-splide/css/core";
 export default function ServicesSlider() {
   return (
     <Splide
+      className="services-slider"
       options={{
         type: "loop",
         perPage: 4,

@@ -3221,6 +3221,40 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     
   }
 
+.services-slider {
+  position: relative;
+
+  .splide__arrows {
+    position: absolute;
+    top: -20px;
+    right: 55px;
+    display: flex;
+    gap: 12px;
+    z-index: 20;
+  }
+
+  .splide__arrow {
+    position: static;
+    transform: none;
+    width: 30px;
+    height: 30px;
+    background: #a9a498;
+    border-radius: 50%;
+    opacity: 1;
+
+    svg {
+      width: 22px;
+      height: 22px;
+      fill: #111;
+    }
+
+    &:hover {
+      opacity: 1;
+      background: #ef7f1a;
+    }
+  }
+}
+
   section.weprovide {
     .section-title {
       // text-align:center;
