@@ -59,7 +59,7 @@ export default function CompletedLiaisonbankPage() {
       <section className="container py-5">
         <div className="row justify-content-center text-center">
            <div className="section-title">
-              <h3>Completed  
+              <h3>Completed  &nbsp;
                 {/* <AnimatedCounter endValue={125} /> */}
                  Projects </h3>
             </div>
