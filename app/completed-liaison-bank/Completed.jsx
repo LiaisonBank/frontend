@@ -61,7 +61,7 @@ export default function CompletedLiaisonbankPage() {
            <div className="section-title">
               <h3>Completed  
                 {/* <AnimatedCounter endValue={125} /> */}
-                + Projects </h3>
+                 Projects </h3>
             </div>
           <div className="project-grid">
             {chunks.map((chunk, index) => (

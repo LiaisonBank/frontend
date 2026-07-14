@@ -60,7 +60,7 @@ export default function OngoingLiaisonbankPage() {
           <div className="section-title">
             <h3>Ongoing 
               {/* <AnimatedCounter endValue={23} /> */}
-              + Projects </h3>
+              Projects </h3>
           </div>
         </div>
         <div className="project-grid">
