@@ -120,6 +120,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto border-t border-white-100 py-4 text-center text-md copyrights">
           © 2026 Liaison Bank | All Rights Reserved
         </div>
+        <ChatBot/>
       </footer>
 
       {/* Utilities */}
@@ -152,26 +153,28 @@ export default function Footer() {
         <div className="sticky-icon-below-1024">
           <div className="container-fluid mx-auto">
             <div className="row">
-              <div className="col-4 callnow p-2">
+              <div className="col-3 callnow p-2">
                 <a href="tel:+919769458515" target="_blank">
                   <i className="fi fi-sr-phone-flip" ></i> Call Now
                 </a>
               </div>
-              <div className="col-4 enquire open-form p-2">
+              <div className="col-3 enquire open-form p-2">
                 <a onClick={() => setOpen(true)}>
                   <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
                 </a>
               </div>
-              <div className="col-4 whatsapp p-2 d-flex align-items-center justify-content-center">
+              <div className="col-3 whatsapp p-2 d-flex align-items-center justify-content-center">
                 <a className="hiring open-form text-right" onClick={() => setHiringOpen(true)}>
                  <PersonPlusFill size={36} color="white" /> &nbsp;We are Hiring 
                 </a>
-                {/* <a>
-                  <ChatBot/> Whats App 
-                </a> */}
                 {/* <a href="https://wa.me/919324577378" target="_blank" rel="noopener noreferrer">
                   <i className="fi fi-brands-whatsapp"></i> WhatsApp
                 </a> */}
+              </div>
+              <div className="col-3 whatsapp p-2 d-flex align-items-center justify-content-center">
+                <a>
+                  <ChatBot/>
+                </a>
               </div>
             </div>
           </div>
