@@ -4558,6 +4558,10 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     margin-left: 5px;
     display: flex;
     text-align: left;
+       flex:1;
+    min-width:0;          /* Important */
+    white-space:normal;
+    overflow-wrap:break-word;
   }
   table{
     @media (max-width: 1024px){
@@ -4761,6 +4765,10 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     margin-left: 5px;
     color:black;
     font-weight: 600;
+    flex:1;
+    min-width:0;          /* Important */
+    white-space:normal;
+    overflow-wrap:break-word;
   }
 
   .project-grid1{
