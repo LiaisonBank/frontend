@@ -4521,7 +4521,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
           align-items: center;
           padding: 10px 0;
           transition: color 0.4s ease;
-          font-weight: 600;
+          // font-weight: 600;
            img{
             // background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
             // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
@@ -4658,7 +4658,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
       overflow: hidden; 
       transition: all 0.4s ease-in-out;
       // z-index: 1;
-      font-weight: 600;
+      // font-weight: 600;
       // Base white background
       &:before {
         content: "";
@@ -4763,8 +4763,6 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   .item-name {
     flex: 1;
     margin-left: 5px;
-    color:black;
-    font-weight: 600;
     flex:1;
     min-width:0;          /* Important */
     white-space:normal;
