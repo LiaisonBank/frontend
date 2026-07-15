@@ -3766,6 +3766,55 @@ body:has(.has-single-submenu:hover) .menu-overlay {
       }
     }
 
+    /* Shuffle Card Animation */
+    @keyframes cardShuffle {
+      0% {
+        opacity: 0;
+        transform: translateY(80px) rotateZ(var(--rotation, 0deg)) scale(0.8);
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) rotateZ(0deg) scale(1);
+      }
+    }
+
+    .certificate-item-wrapper {
+      --rotation: 0deg;
+      
+      &.animate {
+        animation: cardShuffle 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+
+      /* Random rotation for each card */
+      &:nth-child(1) {
+        --rotation: -5deg;
+      }
+      &:nth-child(2) {
+        --rotation: 3deg;
+      }
+      &:nth-child(3) {
+        --rotation: -4deg;
+      }
+      &:nth-child(4) {
+        --rotation: 2deg;
+      }
+      &:nth-child(5) {
+        --rotation: -3deg;
+      }
+      &:nth-child(6) {
+        --rotation: 4deg;
+      }
+      &:nth-child(7) {
+        --rotation: -2deg;
+      }
+      &:nth-child(8) {
+        --rotation: 3deg;
+      }
+    }
+
     .slider-container {
       width: 100%;
 
@@ -4146,10 +4195,23 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   
   section.ourclients {
   min-height: 180px;
+   .splide {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .splide__track {
+    width: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
 
   .section-title {
     margin: 0;
-    padding: 1rem 0;
+    padding:  0;
     background-color: #fff;
     text-align: center;
 

@@ -132,7 +132,7 @@ const Home = () => {
                 </h3>
               </div>
               <div className='home-abt'>
-                <p>Your trusted partner for seamless bank licensing and liaisoning services.
+                <p>Your trusted partner for seamless bank licensing and liaisoning services and png, fire etc.
                 We simplify complex regulatory processes with expert guidance and industry expertise.
                 Helping financial institutions achieve compliance and operational success.</p>
                 <p>Bridging the gap between the complicated regulatory frameworks and your business goals, we act as an interface for all your statutory requirements. As your dedicated licensing and liaisoning partner, we specialize in managing the intricate legalities and bureaucratic uncertainties that often stall business momentum. Our expertise ensures smoother operations, allowing you to channelize your energy into core priorities and other important business objectives.</p>

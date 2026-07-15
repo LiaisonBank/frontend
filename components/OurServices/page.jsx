@@ -27,7 +27,7 @@ export default function ServicesSlider() {
         pagination: false,
 
         autoplay: true,
-        interval: 800,
+        interval: 900,
         speed: 600,
         pauseOnHover: true,
         pauseOnFocus: false,

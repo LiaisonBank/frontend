@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from 'next/link'
 
 import Image from "next/image";
@@ -12,6 +12,7 @@ import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 export default function AwardP() {
    const galleryRef = useRef(null);
+   const [animateCards, setAnimateCards] = useState(false);
 
   useEffect(() => {
     const container = galleryRef.current;
@@ -56,6 +57,28 @@ export default function AwardP() {
     };
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setAnimateCards(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (galleryRef.current) {
+      observer.observe(galleryRef.current);
+    }
+
+    return () => {
+      if (galleryRef.current) {
+        observer.unobserve(galleryRef.current);
+      }
+    };
+  }, []);
+
   if (!certificateList?.length) {
     return null;
   }
@@ -69,8 +92,11 @@ export default function AwardP() {
         <div className="row g-4" ref={galleryRef}>
           {certificateList.slice(0, 8).map((certificate, index) => (
             <div
-              className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mx-auto"
+              className={`col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mx-auto certificate-item-wrapper ${animateCards ? 'animate' : ''}`}
               key={certificate.src}
+              style={{
+                animationDelay: animateCards ? `${index * 0.1}s` : '0s',
+              }}
             >
               <article className="certificate-card">
                 <a
