@@ -2977,35 +2977,35 @@ body:has(.has-single-submenu:hover) .menu-overlay {
             }
           }
 
-          &:hover {
-            .service-overlay{
-              background: radial-gradient(circle, #e5e7eb 0%, #9ca3af 100%);
-            }
-            .service-image {
-              // transform: scale(1.06);
-              transform: scale(0.9);   /* Scale down */
-              opacity: 0;              /* Fade out */
-            }
+          // &:hover {
+          //   .service-overlay{
+          //     background: radial-gradient(circle, #e5e7eb 0%, #9ca3af 100%);
+          //   }
+          //   .service-image {
+          //     // transform: scale(1.06);
+          //     transform: scale(0.9);   /* Scale down */
+          //     opacity: 0;              /* Fade out */
+          //   }
 
-            .service-overlay {
-              h5 {
-                background:none;
-                border:none;
-                backdrop-filter: fblur(0);
-                transform: translateY(-160px);
-              }
-              p{
-                color:#000;
-                opacity: 1;
-                transform: translateX(0);
-              }
-              span {
-                color:#000;
-                opacity: 1;
-                transform: translateY(0);
-              }
-            }
-          }
+          //   .service-overlay {
+          //     h5 {
+          //       background:none;
+          //       border:none;
+          //       backdrop-filter: fblur(0);
+          //       transform: translateY(-160px);
+          //     }
+          //     p{
+          //       color:#000;
+          //       opacity: 1;
+          //       transform: translateX(0);
+          //     }
+          //     span {
+          //       color:#000;
+          //       opacity: 1;
+          //       transform: translateY(0);
+          //     }
+          //   }
+          // }
         }
      .service-card9 {
         position: relative;
