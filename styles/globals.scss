@@ -4195,10 +4195,23 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   
   section.ourclients {
   min-height: 180px;
+   .splide {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .splide__track {
+    width: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
 
   .section-title {
     margin: 0;
-    padding: 1rem 0;
+    padding:  0;
     background-color: #fff;
     text-align: center;
 

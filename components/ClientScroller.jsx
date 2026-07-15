@@ -18,12 +18,14 @@ const ClientScroller = () => {
     <Splide
       options={{
         type: "loop",
-        drag: false,
+        drag: true,
         arrows: false,
         pagination: false,
         perPage: 5,
         gap: "2rem",
         autoWidth: true,
+        padding: 0,
+        margin: 0,
         autoScroll: {
           speed: 1,
           pauseOnHover: true,
