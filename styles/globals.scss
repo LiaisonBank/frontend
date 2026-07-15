@@ -3766,6 +3766,55 @@ body:has(.has-single-submenu:hover) .menu-overlay {
       }
     }
 
+    /* Shuffle Card Animation */
+    @keyframes cardShuffle {
+      0% {
+        opacity: 0;
+        transform: translateY(80px) rotateZ(var(--rotation, 0deg)) scale(0.8);
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) rotateZ(0deg) scale(1);
+      }
+    }
+
+    .certificate-item-wrapper {
+      --rotation: 0deg;
+      
+      &.animate {
+        animation: cardShuffle 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+
+      /* Random rotation for each card */
+      &:nth-child(1) {
+        --rotation: -5deg;
+      }
+      &:nth-child(2) {
+        --rotation: 3deg;
+      }
+      &:nth-child(3) {
+        --rotation: -4deg;
+      }
+      &:nth-child(4) {
+        --rotation: 2deg;
+      }
+      &:nth-child(5) {
+        --rotation: -3deg;
+      }
+      &:nth-child(6) {
+        --rotation: 4deg;
+      }
+      &:nth-child(7) {
+        --rotation: -2deg;
+      }
+      &:nth-child(8) {
+        --rotation: 3deg;
+      }
+    }
+
     .slider-container {
       width: 100%;
 
@@ -4521,7 +4570,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
           align-items: center;
           padding: 10px 0;
           transition: color 0.4s ease;
-          font-weight: 600;
+          // font-weight: 600;
            img{
             // background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
             // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
@@ -4558,6 +4607,10 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     margin-left: 5px;
     display: flex;
     text-align: left;
+       flex:1;
+    min-width:0;          /* Important */
+    white-space:normal;
+    overflow-wrap:break-word;
   }
   table{
     @media (max-width: 1024px){
@@ -4654,7 +4707,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
       overflow: hidden; 
       transition: all 0.4s ease-in-out;
       // z-index: 1;
-      font-weight: 600;
+      // font-weight: 600;
       // Base white background
       &:before {
         content: "";
@@ -4759,8 +4812,10 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   .item-name {
     flex: 1;
     margin-left: 5px;
-    color:black;
-    font-weight: 600;
+    flex:1;
+    min-width:0;          /* Important */
+    white-space:normal;
+    overflow-wrap:break-word;
   }
 
   .project-grid1{
