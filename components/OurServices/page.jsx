@@ -16,6 +16,7 @@ import "@splidejs/react-splide/css/core";
 export default function ServicesSlider() {
   return (
     <Splide
+      className="services-slider"
       options={{
         type: "loop",
         perPage: 4,
@@ -26,7 +27,7 @@ export default function ServicesSlider() {
         pagination: false,
 
         autoplay: true,
-        interval: 800,
+        interval: 900,
         speed: 600,
         pauseOnHover: true,
         pauseOnFocus: false,

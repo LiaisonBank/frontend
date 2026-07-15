@@ -5,11 +5,39 @@ import { faqData } from "@/lib/data/faqData";
 
 export default function FAQSection() {
   const [openItems, setOpenItems] = useState([]);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    // Detect if device supports touch
+    const checkTouchDevice = () => {
+      setIsTouchDevice(
+        () => (
+          !!window.matchMedia("(pointer:coarse)").matches ||
+          !!window.matchMedia("(hover:none)").matches
+        )
+      );
+    };
+
+    checkTouchDevice();
+    window.addEventListener("resize", checkTouchDevice);
+
+    return () => {
+      window.removeEventListener("resize", checkTouchDevice);
+    };
+  }, []);
 
   const openAccordion = (index) => {
     setOpenItems((prev) =>
       prev.includes(index) ? prev : [...prev, index]
+    );
+  };
+
+  const toggleAccordion = (index) => {
+    setOpenItems((prev) =>
+      prev.includes(index) 
+        ? prev.filter(item => item !== index)
+        : [...prev, index]
     );
   };
 
@@ -47,7 +75,8 @@ export default function FAQSection() {
           onMouseEnter={() => openAccordion(realIndex)}
         >
         <button
-          className="w-full text-left p-3 flex justify-between items-center"
+          onClick={() => toggleAccordion(realIndex)}
+          className="w-full text-left p-3 flex justify-between items-center hover:bg-gray-50"
         >
           <span>{item.question}</span>
 
