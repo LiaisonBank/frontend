@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 import Image from "next/image";
@@ -14,6 +14,8 @@ import "@fancyapps/ui/dist/fancybox/fancybox.css";
 export default function AwardPage() {
   useBodyClass("awards-recognition");
   const galleryRef = useRef(null);
+  const [animateCards, setAnimateCards] = useState(false);
+  
 
   useEffect(() => {
     const container = galleryRef.current;
@@ -43,6 +45,28 @@ export default function AwardPage() {
     return () => {
       Fancybox.unbind(container);
       Fancybox.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setAnimateCards(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (galleryRef.current) {
+      observer.observe(galleryRef.current);
+    }
+
+    return () => {
+      if (galleryRef.current) {
+        observer.unobserve(galleryRef.current);
+      }
     };
   }, []);
 
@@ -97,7 +121,7 @@ export default function AwardPage() {
         <div className="container">
           <div className="certificate-masonry" ref={galleryRef}>
             {certificateList.map((certificate) => (
-              <article className="certificate-card" key={certificate.src}>
+              <article className={`certificate-card  certificate-item-wrapper ${animateCards ? 'animate' : ''}`} key={certificate.src}>
                 <a
                   href={certificate.src}
                   data-fancybox="certificates"

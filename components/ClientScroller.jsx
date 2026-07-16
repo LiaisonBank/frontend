@@ -47,7 +47,7 @@ const ClientScroller = () => {
     >
       {images.map((name, index) => (
         <SplideSlide key={index}>
-          <div className="client-image-wrapper">
+          <div className="client-image-wrapper py-3">
             <Image
               src={`/clients/${name}.webp`}
               alt={name}

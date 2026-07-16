@@ -22,20 +22,20 @@ export default function ServicesSlider() {
         perPage: 4,
         perMove: 1,
         gap: "20px",
-
         arrows: true,
         pagination: false,
-
         autoplay: true,
         interval: 900,
         speed: 600,
         pauseOnHover: true,
         pauseOnFocus: false,
         resetProgress: false,
-
         breakpoints: {
-          991: {
+          1024: {
             perPage: 3,
+          },
+          991: {
+            perPage: 2,
           },
           768: {
             perPage: 2,
@@ -61,8 +61,8 @@ export default function ServicesSlider() {
             <div className="service-overlay">
               <div className="service-content">
                 <h5>{service.title}</h5>
-                <p>Innovative planning and sustainable design solutions.</p>
-                <span>Learn More →</span>
+                <p>Counsel of Architect Registered with {service.title}</p>
+                {/* <span>Learn More →</span> */}
               </div>
             </div>
           </div>

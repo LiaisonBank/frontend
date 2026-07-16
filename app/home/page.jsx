@@ -210,8 +210,8 @@ const Home = () => {
 
 
       <section className="ourclients">
-        <div className="container-fluid mx-auto px-0 pt-5 bg-white">
-          <div className="section-title">
+        <div className="container-fluid mx-auto px-0 pt-5 pb-4 bg-white">
+          <div className="section-title pb-3">
             <h3>Our Latest Clients</h3>
           </div>
           <div>
@@ -222,7 +222,7 @@ const Home = () => {
 
       <section className="clientfeedback pb-5">
         <div className="container-fluid mx-auto px-0 bg-white">
-          <div className="section-title">
+          <div className="section-title pt-3">
             <h3>What Clients Say</h3>
           </div>
           <TestimonialSlider  />

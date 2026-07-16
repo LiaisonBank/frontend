@@ -131,7 +131,7 @@ export default function AwardP() {
           ))}
         </div>
         <div className="col-8  mx-auto text-center d-flex align-items-center justify-content-center">
-            <Link href="/awards" scroll={true} className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4">
+            <Link href="/awards" scroll={true}  className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4">
             View More &nbsp;&nbsp;&nbsp;
             <svg
                 xmlns="http://www.w3.org/2000/svg"
