@@ -2490,7 +2490,11 @@ body:has(.has-single-submenu:hover) .menu-overlay {
         }
       }
     }
-    .quote-text {
+
+/* ============================================
+   CEO Message Section
+   ============================================ */ 
+     .quote-text {
     font-size: 3rem;
     line-height: 1.4;
 
@@ -2560,6 +2564,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
         }
       }
     }
+
     .ceo-name{
       margin:0;
       padding:0.5rem 0;
@@ -2586,6 +2591,10 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     }
 
   }
+
+/* ============================================
+   Welcome Section
+   ============================================ */  
 
   section.welcome {
     .smallObject {
@@ -3255,6 +3264,9 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   }
 }
 
+/* ============================================
+   We Provide Section
+   ============================================ */
   section.weprovide {
     .section-title {
       // text-align:center;
@@ -3522,6 +3534,10 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     }
   }
   
+
+  /*==========================================================
+  AWARDS & CERTIFICATION SECTION
+  ==========================================================*/
   section.awardscertification {
     // background-color: $main-bg-color;
     // position: relative;
@@ -3897,6 +3913,10 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     }
   }
 
+
+/*==========================================================
+CLIENT FEEDBACK SECTION
+==========================================================*/
   section.clientfeedback {
     position: relative;
     margin: 0;
@@ -4193,6 +4213,9 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     }
   }
   
+/*==========================================================
+OUR CLIENTS SECTION
+==========================================================*/
   section.ourclients {
   min-height: 180px;
    .splide {
@@ -4301,6 +4324,9 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   }
   }
 
+/*==========================================================
+FAQS SECTION
+==========================================================*/
   section.faqs {
     .section-title {
       // text-align:center;
@@ -4371,6 +4397,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     }
   }
 }
+
 // Individual Page START
 .client{
   .section-title {
