@@ -1,18 +1,63 @@
-/* ==========================================================
-   1024px and below (Tablet & Mobile)
-   ========================================================== */
+/* ==========================================================================
+   Responsive Styles
+   ========================================================================== */
+@media (hover: hover) and (pointer: fine) {
+  .flip-service-card:hover .flip-service-wrapper {
+    transform: rotateY(180deg);
+  }
+}
+.flip-service-card.is-flipped .flip-service-wrapper {
+  transform: rotateY(180deg);
+}
+/* ==========================================================================
+   1024px & Below (Tablet + Mobile)
+   ========================================================================== */
 @media screen and (max-width: 1024px) {
-
-  /* Global */
+  /* ------------------------------------------------------------------------
+     Global
+     ------------------------------------------------------------------------ */
   html,
   body {
-    overflow-y: auto !important;
     height: auto !important;
+    overflow-y: auto !important;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Navigation */
+  /* ------------------------------------------------------------------------
+     Navigation
+     ------------------------------------------------------------------------ */
+       .hamburger {
+        display: block;
+        z-index: 50;
+        top: 2rem;
+        right: 5rem;
+
+        span {
+        &:nth-child(1) {
+            top: 0;
+        }
+        }
+
+        &.active {
+        margin: 0;
+
+        span {
+            &:nth-child(1) {
+            top: 9px;
+            transform: rotate(135deg);
+            background: #fff;
+            }
+
+            &:nth-child(2) {
+            top: 9px;
+            opacity: 1;
+            transform: rotate(-135deg);
+            background: #fff;
+            }
+        }
+        }
+    }
   .menu {
     display: none;
   }
@@ -20,8 +65,6 @@
   .menu-button {
     display: block;
   }
-
- 
 
   #myNav.menu-open {
     top: calc(100dvw - 90dvw);
@@ -36,34 +79,32 @@
         width: 100%;
         text-align: center;
 
-        ul {
-          &.mobilesubmenu {
-            margin: 0;
-            padding: 0;
-            text-align: left;
+        .mobilesubmenu {
+          margin: 0;
+          padding: 0;
+          text-align: left;
 
-            li {
-              padding: 0.5rem 0;
+          li {
+            padding: 0.5rem 0;
 
-              div {
-                > span {
-                  display: block;
-                  font-size: 1.5rem;
-                  color: #fff;
-                }
-
-                > button {
-                  display: block;
-                  font-size: 2rem;
-                  color: #fff;
-                }
-              }
-
-              a {
+            div {
+              > span {
                 display: block;
                 font-size: 1.5rem;
                 color: #fff;
               }
+
+              > button {
+                display: block;
+                font-size: 2rem;
+                color: #fff;
+              }
+            }
+
+            a {
+              display: block;
+              font-size: 1.5rem;
+              color: #fff;
             }
           }
         }
@@ -71,7 +112,9 @@
     }
   }
 
-  /* Utility */
+  /* ------------------------------------------------------------------------
+     Utilities
+     ------------------------------------------------------------------------ */
   .comingsoontitle {
     display: none;
   }
@@ -80,7 +123,9 @@
     display: inline-block;
   }
 
-  /* Sticky Icons */
+  /* ------------------------------------------------------------------------
+     Sticky Action Bar
+     ------------------------------------------------------------------------ */
   .sticky-icon {
     display: none;
   }
@@ -114,22 +159,33 @@
     }
   }
 
-  /* Marquee */
+  /* ------------------------------------------------------------------------
+     Marquee
+     ------------------------------------------------------------------------ */
   .marquee-branch {
     display: flex;
   }
 }
 
+/* ==========================================================================
+   992px & Below
+   ========================================================================== */
+@media screen and (max-width: 992px) {
+  .hero-buttons {
+    justify-content: center;
+  }
 
-/* ==========================================================
-   912px and below
-   ========================================================== */
+  .hero-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   912px & Below
+   ========================================================================== */
 @media screen and (max-width: 912px) {
-
-  .welcome {
-    .letbanner {
-      padding: 0 !important;
-    }
+  .welcome .letbanner {
+    padding: 0 !important;
   }
 
   .scroll-top {
@@ -137,7 +193,6 @@
   }
 
   .marquee-branch {
-    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -149,63 +204,55 @@
   }
 }
 
-
-/* ==========================================================
-   768px and below (Mobile)
-   ========================================================== */
+/* ==========================================================================
+   768px & Below (Mobile)
+   ========================================================================== */
 @media screen and (max-width: 768px) {
-
-  /* Typography */
-  .section-title {
-    h3 {
-      font-size: 1.5rem !important;
-    }
+  /* ------------------------------------------------------------------------
+     Typography
+     ------------------------------------------------------------------------ */
+  .section-title h3 {
+    font-size: 1.5rem !important;
   }
 
   h1 {
     font-size: 24px;
   }
 
-  /* Scroll Button */
+  /* ------------------------------------------------------------------------
+     Scroll To Top
+     ------------------------------------------------------------------------ */
   .scroll-top {
     right: 20px;
     bottom: 100px;
   }
 
-  /* Waves */
-  .waves {
+  /* ------------------------------------------------------------------------
+     Waves
+     ------------------------------------------------------------------------ */
+  .waves,
+  .home .waves {
     height: 40px;
     min-height: 40px;
   }
 
-  .content {
+  .content,
+  .home .content {
     height: 30vh;
   }
 
-  .home {
-
-    .waves {
-      height: 40px;
-      min-height: 40px;
-    }
-
-    .content {
-      height: 30vh;
-    }
-  }
-
-  /* Marquee */
+  /* ------------------------------------------------------------------------
+     Marquee
+     ------------------------------------------------------------------------ */
   .marquee-branch {
-
-    .arrow {
-
-      .arrow-right {
-        display: none;
-      }
+    .arrow-right {
+      display: none;
     }
   }
 
-  /* Modal */
+  /* ------------------------------------------------------------------------
+     Modal
+     ------------------------------------------------------------------------ */
   .modal-overlay {
     padding: 16px;
 
@@ -226,14 +273,11 @@
   }
 }
 
-
-/* ==========================================================
+/* ==========================================================================
    Small Height Devices
-   ========================================================== */
+   ========================================================================== */
 @media screen and (max-height: 450px) {
-
   .overlay {
-
     a {
       font-size: 20px;
     }
@@ -247,37 +291,17 @@
     }
   }
 }
-@media (max-width: 992px) {
-    .hero-buttons {
-    justify-content: center;
-    }
 
-    .hero-features {
-    grid-template-columns: 1fr;
-    }
-}
-
-/* ==========================================================
-   iPad Pro 13" Portrait
-   ========================================================== */
-@media screen
-  and (width: 2080px)
-  and (height: 2784px)
-  and (orientation: portrait) {
-
+/* ==========================================================================
+   iPad Pro 13" Portrait (2752 × 2064 CSS pixels)
+   ========================================================================== */
+@media screen and (width: 2080px) and (height: 2784px) and (orientation: portrait) {
   /* Custom styles */
-
 }
 
-
-/* ==========================================================
+/* ==========================================================================
    iPad Pro 13" Landscape
-   ========================================================== */
-@media screen
-  and (width: 2784px)
-  and (height: 2080px)
-  and (orientation: landscape) {
-
+   ========================================================================== */
+@media screen and (width: 2784px) and (height: 2080px) and (orientation: landscape) {
   /* Custom styles */
-
 }
