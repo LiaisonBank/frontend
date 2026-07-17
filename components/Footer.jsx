@@ -188,7 +188,7 @@ export default function Footer() {
         title="Enquiry Form"
         width="600px"
       >
-        <EnquiryForm  onClose={() => setOpen(false)} />
+        <EnquiryForm  formSource="Enquire Now"  onClose={() => setOpen(false)} />
       </Modal>
 
       {/* Hiring Modal */}

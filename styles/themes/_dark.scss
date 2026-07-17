@@ -1,0 +1,159 @@
+
+[data-theme="dark"] {
+  --primary: #4da3ff;
+  --background: #111;
+  --text: #ffffff;
+}
+.dark {
+  --blue: #fff;
+  --police-blue: #ff8133;
+  --slate-grey: #fff;
+  --cultured-white: #fff;
+  --page-bkg: #000;
+  --cultured-grey: #000;
+  --light-silver: #373737;
+  --pastels-peach: #373737;
+  --pastels-amber: #ff8133;
+  --gradient-radial-orange: none;
+  --gradient-shadow-blue: none;
+  --gradient-shadow-orange: none;
+  --gradient-shadow-first-fold-orange: none;
+  --gradient-orange-header: none;
+  --rgba-transparent: #000;
+  --box-shadow: none;
+  --card-shadow-hover: none;
+  --pumpkin: #000;
+  --cmp-card-color: #373737;
+  --gradient-dark-orange-header: transparent;
+  --gradient-dark-orange-header-mob: transparent;
+  --gradient-dark-orange-header-mob-after: transparent;
+  --gradient-dark-orange-header-img-none: transparent;
+  --gradient-dark-orange-header-img-none-after: transparent;
+  --card-image-gradient: transparent;
+  --blue-gradient: linear-gradient(
+    90deg,
+    #03035c,
+    #0e1551 33.5%,
+    #232790 67.5%,
+    #000
+  );
+  --black-gradient: linear-gradient(
+    90deg,
+    #060709 0.01%,
+    #050709 33.5%,
+    #050709 67.5%,
+    #acadaf
+  );
+  --red-gradient: linear-gradient(
+    90deg,
+    #3a1311 0.01%,
+    #b52531 33.5%,
+    #5e0809 67.5%,
+    #000
+  );
+  --light-gradient-radial-orange: none;
+  --pumpkin-gradient: radial-gradient(
+    94.65% 113.74% at 28.57% 25%,
+    #fca379 0%,
+    #e65511 100%
+  );
+  --black-radial-gradient: radial-gradient(
+    71.64% 86.25% at 31.25% 28.44%,
+    #373737 0%,
+    #000 100%
+  );
+  --black-25: rgba(0, 0, 0, 0.25);
+  --gray-aluminium: #7d8287;
+  --racing-green: #00502e;
+  --chocolate-orange: #db5e10;
+  --white-opacity: rgba(0, 0, 0, 0.65);
+  --white-opacity-25: hsla(0, 0%, 100%, 0.25);
+  --close-btn-shadow: none;
+  --surface-light-grey: #f5f5f5;
+  --light-border-stroke: #eaebeb;
+  --de-saturated-blue: #36425d;
+  --home-hero-gradient: none;
+  --cmp-effect-shadow: none;
+  --greyish-blue: #e9edf1;
+  --entry-point-box-shadow-hover: none;
+  --banner-card-box-shadow: none;
+  --banner-card-box-shadow-hover: none;
+  --grey-card-box-shadow-hover: none;
+  --hero-search-box-shadow: none;
+  --light-white-bg: #f7f8f8;
+  --some-thing-else: none;
+  --nebula-cyan-blue: none;
+  --tooltip-gradient: none;
+  --sub-nav: none;
+  --anch-box-shadow: none;
+  --date-picker-shadow: none;
+  --arrow-hover: none;
+  --text-shadow: 0.55px 0.55px rgba(0, 0, 0, 0.1);
+  --dark-white: #fff;
+  --dark-white-secondary: #e0e5eb;
+  --dark-white-tertiary: #161616;
+  --dark-white-quaternary: #b3b3b3;
+  --dark-black: #000;
+  --dark-onyx-grey: #373737;
+  --dark-mortar: #595959;
+  --dark-nero: #262626;
+  --dark-nero-v2: #1f1f1f;
+  --dark-dark-orange: #ff8133;
+  --dark-nav-color: grey;
+  --dark-filter-orange: brightness(0) saturate(100%) invert(67%) sepia(46%)
+    saturate(3890%) hue-rotate(336deg) brightness(100%) contrast(101%);
+  --dark-filter-black: brightness(0) saturate(100%) invert(0%) sepia(100%)
+    saturate(0%) hue-rotate(28deg) brightness(95%) contrast(105%);
+  --dark-filter-white: brightness(0) saturate(100%) invert(100%) sepia(0%)
+    saturate(7496%) hue-rotate(253deg) brightness(105%) contrast(101%);
+  --dark-filter-pumpkin: brightness(0) saturate(100%) invert(59%) sepia(37%)
+    saturate(5516%) hue-rotate(349deg) brightness(97%) contrast(93%);
+  --dark-filter-rust: brightness(0) saturate(100%) invert(36%) sepia(100%)
+    saturate(625%) hue-rotate(349deg) brightness(96%) contrast(97%);
+  --dark-filter-orange-rust: brightness(0) saturate(100%) invert(39%) sepia(58%)
+    saturate(6025%) hue-rotate(18deg) brightness(99%) contrast(86%);
+  --dark-gradient-radial-orange: radial-gradient(
+    145.57% 174.93% at 35.08% 32.5%,
+    #f36421 0%,
+    #ffd6c3 100%
+  );
+  --dark-blue-gradient: linear-gradient(
+    90deg,
+    #03035c,
+    #0e1551 33.5%,
+    #232790 67.5%,
+    #000
+  );
+  --dark-black-gradient: linear-gradient(
+    90deg,
+    #060709 0.01%,
+    #050709 33.5%,
+    #050709 67.5%,
+    #acadaf
+  );
+  --dark-red-gradient: linear-gradient(
+    90deg,
+    #3a1311 0.01%,
+    #b52531 33.5%,
+    #5e0809 67.5%,
+    #000
+  );
+  --dark-notification: #2285f4;
+  --dark-pumpkin: #ef6f1f;
+  --dark-orange-button: #ff7500;
+  --dark-orange-v1: #ff7300;
+  --dark-orange-v2: #ff7400;
+  --dark-orange-v3: #f46824;
+  --dark-rusty-orange: #ca5a12;
+  --dark-nav-trans: rgba(0, 0, 0, 0.5);
+  --dark-dim-gray: #717171;
+  --dark-EerieBlack: #1f1f1f;
+  --dark-night-rider: #2e2e2e;
+  --dep-sub-gradient-plam-burnt: none;
+  --tab-bg-grey: #f1f3f3;
+  --dark-rgba-9: rgba(0, 0, 0, 0.9);
+  --transparent: transparent;
+  --btn-box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  --calender-box-shadow: 0 1px 14.8px 0 hsla(0, 0%, 56%, 0.25);
+  --grey-border-stroke: #e0e0e0;
+}

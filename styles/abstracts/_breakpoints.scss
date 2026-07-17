@@ -1,0 +1,283 @@
+/* ==========================================================
+   1024px and below (Tablet & Mobile)
+   ========================================================== */
+@media screen and (max-width: 1024px) {
+
+  /* Global */
+  html,
+  body {
+    overflow-y: auto !important;
+    height: auto !important;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Navigation */
+  .menu {
+    display: none;
+  }
+
+  .menu-button {
+    display: block;
+  }
+
+ 
+
+  #myNav.menu-open {
+    top: calc(100dvw - 90dvw);
+
+    > .overflow-y-auto {
+      background: #000;
+      transition: 0.5s;
+
+      .overlay-content {
+        position: relative;
+        top: 10%;
+        width: 100%;
+        text-align: center;
+
+        ul {
+          &.mobilesubmenu {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+
+            li {
+              padding: 0.5rem 0;
+
+              div {
+                > span {
+                  display: block;
+                  font-size: 1.5rem;
+                  color: #fff;
+                }
+
+                > button {
+                  display: block;
+                  font-size: 2rem;
+                  color: #fff;
+                }
+              }
+
+              a {
+                display: block;
+                font-size: 1.5rem;
+                color: #fff;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* Utility */
+  .comingsoontitle {
+    display: none;
+  }
+
+  .location {
+    display: inline-block;
+  }
+
+  /* Sticky Icons */
+  .sticky-icon {
+    display: none;
+  }
+
+  .sticky-icon-below-1024 {
+    position: fixed;
+    bottom: 0;
+    z-index: 20;
+
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+    background: $primary-color;
+
+    a {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      margin: 0;
+      padding: 0;
+
+      color: #fff !important;
+      text-align: center;
+
+      i {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  /* Marquee */
+  .marquee-branch {
+    display: flex;
+  }
+}
+
+
+/* ==========================================================
+   912px and below
+   ========================================================== */
+@media screen and (max-width: 912px) {
+
+  .welcome {
+    .letbanner {
+      padding: 0 !important;
+    }
+  }
+
+  .scroll-top {
+    bottom: 65px;
+  }
+
+  .marquee-branch {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    p {
+      padding: 0;
+      text-align: center;
+    }
+  }
+}
+
+
+/* ==========================================================
+   768px and below (Mobile)
+   ========================================================== */
+@media screen and (max-width: 768px) {
+
+  /* Typography */
+  .section-title {
+    h3 {
+      font-size: 1.5rem !important;
+    }
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  /* Scroll Button */
+  .scroll-top {
+    right: 20px;
+    bottom: 100px;
+  }
+
+  /* Waves */
+  .waves {
+    height: 40px;
+    min-height: 40px;
+  }
+
+  .content {
+    height: 30vh;
+  }
+
+  .home {
+
+    .waves {
+      height: 40px;
+      min-height: 40px;
+    }
+
+    .content {
+      height: 30vh;
+    }
+  }
+
+  /* Marquee */
+  .marquee-branch {
+
+    .arrow {
+
+      .arrow-right {
+        display: none;
+      }
+    }
+  }
+
+  /* Modal */
+  .modal-overlay {
+    padding: 16px;
+
+    .modal-container {
+      width: 100%;
+      max-width: 100% !important;
+      max-height: calc(100vh - 32px);
+      border-radius: 10px;
+
+      .modal-header {
+        padding: 16px 18px;
+      }
+
+      .modal-body {
+        padding: 18px;
+      }
+    }
+  }
+}
+
+
+/* ==========================================================
+   Small Height Devices
+   ========================================================== */
+@media screen and (max-height: 450px) {
+
+  .overlay {
+
+    a {
+      font-size: 20px;
+    }
+
+    .closebtn {
+      top: 15px;
+      right: 35px;
+
+      font-size: 40px;
+      color: #fff;
+    }
+  }
+}
+@media (max-width: 992px) {
+    .hero-buttons {
+    justify-content: center;
+    }
+
+    .hero-features {
+    grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================
+   iPad Pro 13" Portrait
+   ========================================================== */
+@media screen
+  and (width: 2080px)
+  and (height: 2784px)
+  and (orientation: portrait) {
+
+  /* Custom styles */
+
+}
+
+
+/* ==========================================================
+   iPad Pro 13" Landscape
+   ========================================================== */
+@media screen
+  and (width: 2784px)
+  and (height: 2080px)
+  and (orientation: landscape) {
+
+  /* Custom styles */
+
+}

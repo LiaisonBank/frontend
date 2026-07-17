@@ -38,7 +38,7 @@ const barlow = Barlow({
   preload: true,
 });
 
-const siteUrl =
+const siteUrl = 
   process.env.NEXT_PUBLIC_SITE_URL || "https://liaisonbank.com";
 
 

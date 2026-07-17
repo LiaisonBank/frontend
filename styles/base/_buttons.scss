@@ -1,0 +1,50 @@
+.themeht-btn {
+  transform: perspective(1px) translateZ(0);
+  position: relative;
+  overflow: hidden;
+  // z-index: 9;
+  // padding: 10px 10px 10px 30px;
+  display: inline-block;
+  border-radius: 100px;
+  border: none;
+  color: var(--light-orange);
+  font-family: var(--font-family);
+  font-weight: 500;
+  text-decoration: none;
+  &.primary-btn {
+    // background:$secodary-bg-color;
+    background: linear-gradient(
+      115deg,
+      var(--themeht-primary-color),
+      var(--themeht-secondary-color)
+    );
+    color: var(--light-orange);
+    &:before {
+      // content: "";
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+      bottom: 0;
+      background: linear-gradient(
+        115deg,
+        var(--themeht-primary2-color),
+        var(--themeht-secondary2-color)
+      );
+      clip-path: polygon(50% 0, 50% 0, 50% 50%, 50% 100%, 50% 100%, 50% 50%);
+      opacity: 1;
+      transition: 0.6s;
+      z-index: -1;
+    }
+    &:hover:before {
+      clip-path: polygon(
+        25% -70%,
+        75% -70%,
+        120% 50%,
+        75% 170%,
+        25% 170%,
+        -20% 50%
+      );
+    }
+  }
+}

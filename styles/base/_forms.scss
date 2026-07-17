@@ -1,0 +1,148 @@
+
+
+button[type=submit] {
+    color: rgb(255, 255, 255);
+    text-transform: uppercase;
+    background: rgb(38, 38, 38);
+    border: none;
+    height: 54px;
+    padding: 0px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    width: 10rem;
+}
+input {
+	&::placeholder {
+		color: transparent;
+	}
+}
+textarea {
+	&::placeholder {
+		color: transparent;
+	}
+}
+.error-message {
+	background: red;
+	color: white;
+	font-size: 0.85em;
+	margin-top: 4px;
+}
+
+form {
+  width: 100%;
+}
+
+label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: $text-color;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  background: $white;
+  color: $text-color;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color .3s ease, box-shadow .3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, .15);
+  }
+
+  &:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+    opacity: .7;
+  }
+}
+
+textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #999;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  margin-right: .5rem;
+}
+
+select {
+  cursor: pointer;
+}
+
+div:where(.swal2-container){
+  z-index: 10000 !important;
+}
+.form-control:focus{
+  border-color:none;
+  box-shadow: none;
+}
+.react-tel-input .selected-flag:hover, .react-tel-input .selected-flag:focus,
+.react-tel-input .flag-dropdown.open .selected-flag {
+  background-color: transparent;
+}
+.react-tel-input .country-list .search {
+  background-color:white;
+}
+
+
+.country-list{
+  border: 1px solid grey;
+  overflow-y: inherit;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  // .search-box{
+  //   width: calc(100vh - 80%) !important;
+  // }
+}
+.suggestions-box{
+  max-width: 600px;
+  margin:0 auto;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-flow: wrap;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(20%) scaleX(1);
+  position: absolute;
+  top: 25%;
+  display: grid;
+  grid-template-columns:  repeat(3, 1fr);
+  gap: 5px;
+
+  /* Tablet: 2 columns at 600px+ */
+  @media (min-width: 600px) {
+      grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Desktop: 4 columns at 1024px+ */
+  @media (min-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);
+  }
+  button{
+    margin: 0 0.2rem;
+    &.suggestion-chip{
+      background: $page-header;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      }
+  }
+}

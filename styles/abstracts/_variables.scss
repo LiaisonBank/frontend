@@ -1,0 +1,41 @@
+@use "tailwindcss";
+
+@font-face {
+  font-family: "LTC Broadway W00 Regular";
+  src: url("/fonts/LTC-Broadway/0be5c6995ec8d7d39979fdc933877a59.eot");
+  src: url("/fonts/LTC-Broadway/0be5c6995ec8d7d39979fdc933877a59.eot?#iefix") format("embedded-opentype"),
+       url("/fonts/LTC-Broadway/0be5c6995ec8d7d39979fdc933877a59.woff2") format("woff2"),
+       url("/fonts/LTC-Broadway/0be5c6995ec8d7d39979fdc933877a59.woff") format("woff"),
+       url("/fonts/LTC-Broadway/0be5c6995ec8d7d39979fdc933877a59.ttf") format("truetype"),
+       url("/fonts/LTC-Broadway/0be5c6995ec8d7d39979fdc933877a59.svg#LTC Broadway W00 Regular") format("svg");
+
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+$white: #fff;
+$whstapp-color: #25D366;
+$border-top-color_1: #ff6004;
+$border-right-color_1: #ef7f1a;
+$home-bg-color:#f6f3ef;
+$primary-color: #262626;
+$heading-color:#808080;
+$main-bg-color: #808080;
+$text-color:#808080;
+$secodary-bg-color:#262626;
+$page-header:#808080;
+$border-color:#777;
+$primary-color1: #ef7f1a;
+$base-color:#919191;
+$text-color1:#808080;
+$bg-secodary-theme-color: #000229;
+// $font-family:"Josefin Sans", sans-serif;
+$font-family:"Roboto", Helvetica, Arial, Verdana, sans-serif;
+$break-sm: 768px;
+$break-lg: 992px;
+$break-xl: 1200px;
+
+$color-white: #fff;
+$color-border: #ccc;
+$color-light: #f1f1f1;
+$color-dark: #000;

@@ -24,7 +24,7 @@ export async function POST(request) {
 
     const controller = new AbortController();
 
-    const timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {d
       controller.abort();
     }, REQUEST_TIMEOUT);
 
