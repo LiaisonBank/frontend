@@ -9,6 +9,15 @@
     transform: translate3d(-100%, 0, 0);
   }
 }
+@keyframes certificateMarquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
 
 @keyframes orbitRotate {
   from {
