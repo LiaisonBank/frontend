@@ -2,13 +2,13 @@
 
 /* ===== Container ===== */
 .sitemap-container {
-  max-width: 1200px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
   min-height: 100vh;
   padding:50px 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #fafafa88;
+  background: #70721388;
 }
 
 /* ===== Hero Section ===== */
@@ -27,6 +27,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 1.5rem;
+  background: #ffffff7e;
 }
 
 .sitemap-hero-left {
