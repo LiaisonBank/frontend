@@ -5,19 +5,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { importantLinks } from "../lib/data/menus.js";
-import logoScrolled from "@/assets/images/logo_grey2.png";
+import logoScrolled from "@/assets/images/logo_grey.webp";
 import Modal from "@/components/ModalDialog/Modal";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import EnquiryForm from "@/components/EnquiryForm/page.jsx";
 import HiringForm from "@/components/HiringForm/page.jsx";
-import { PersonPlusFill, TelephoneFill, PencilFill } from 'react-bootstrap-icons';
+import { 
+  PersonPlusFill, 
+  TelephoneFill, 
+  PencilFill,
+  GeoAltFill,
+  EnvelopeFill,
+  ClockFill
+} from 'react-bootstrap-icons';
 import "@/styles/_footer.scss";
 
 export default function Footer() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [hiringOpen, setHiringOpen] = useState(false);
-  
+
   const [activeButton, setActiveButton] = useState(null);
 
   const scrollToTop = () => {
@@ -33,7 +40,13 @@ export default function Footer() {
   return (
     <>
       <footer className="footer">
+        <div className="footer-sort">
+          <div className="footer-connect-box">
+            <h1>Connect, Comply & Grow ! </h1>
+          </div>
+        </div>
         <div className="footer-container">
+
           <div className="footer-grid">
             <div className="footer-brand">
               <Link href="/" onClick={scrollToTop}>
@@ -54,25 +67,35 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <h4 className="footer-title">Contact</h4>
-              <div className="footer-contact">
-                <p className="footer-address">Plot 466, New Apollo CHSL,<br />Khar West, Mumbai-400052</p>
-                <p className="footer-phone">
-                  <a href="tel:+919769458515">+91 97694 58515</a>
-                  <span className="footer-sep">/</span>
-                  <a href="tel:+919324577378">9136066910</a>
-                </p>
-                <a href="mailto:ceo.desk@liaisonbank.com" className="footer-email">ceo.desk@liaisonbank.com</a>
-                <p className="footer-time">Mon – Sat : 8:00am – 5:00pm</p>
-              </div>
+              <h4 className="footer-title-for-contact">Contact</h4>
+             <div className="footer-contact">
+  <div className="contact-item">
+    <GeoAltFill size={16} className="contact-icon" />
+    <span className="contact-text">
+     Plot 466, New Apollo CHSL, Beside Blue Tokai Cafe, 14th Road, Khar West, Mumbai-400052.
+    </span>
+  </div>
+  <div className="contact-item">
+    <TelephoneFill size={16} className="contact-icon" />
+    <span className="contact-text">
+      <a href="tel:+919769458515"> +91 97694 58515</a>
+      <span className="footer-sep">/</span>
+      <a href="tel:+919324577378">9136066910</a>
+    </span>
+  </div>
+  <div className="contact-item">
+    <EnvelopeFill size={16} className="contact-icon" />
+    <a href="mailto:ceo.desk@liaisonbank.com" className="contact-text">
+      ceo.desk@liaisonbank.com
+    </a>
+  </div>
+  <div className="contact-item">
+    <ClockFill size={16} className="contact-icon" />
+    <span className="contact-text">Mon – Sat : 8:00am – 5:00pm</span>
+  </div>
+</div>
             </div>
-            <div>
-              <h4 className="footer-title">Connect</h4>
-              <div className="footer-buttons">
-                <button onClick={() => setOpen(true)} className="btn-enquire">Enquire Now</button>
-                <button onClick={() => setHiringOpen(true)} className="btn-hiring">We&apos;re Hiring</button>
-              </div>
-            </div>
+
           </div>
           <div className="footer-bottom">
             <p>© {currentYear} Liaison Bank. All rights reserved.</p>
@@ -89,7 +112,7 @@ export default function Footer() {
 
       {!hideOnSitemap && (
         <div className="floating-wrapper">
-          <button 
+          <button
             className={`float-pill float-call ${activeButton === 'call' ? 'expanded' : ''}`}
             onMouseEnter={() => setActiveButton('call')}
             onMouseLeave={() => setActiveButton(null)}
@@ -99,7 +122,7 @@ export default function Footer() {
             <TelephoneFill size={20} className="float-icon" />
           </button>
 
-          <button 
+          <button
             className={`float-pill float-add ${activeButton === 'hiring' ? 'expanded' : ''}`}
             onMouseEnter={() => setActiveButton('hiring')}
             onMouseLeave={() => setActiveButton(null)}
@@ -109,7 +132,7 @@ export default function Footer() {
             <PersonPlusFill size={24} className="float-icon" />
           </button>
 
-          <button 
+          <button
             className={`float-pill float-edit ${activeButton === 'enquire' ? 'expanded' : ''}`}
             onMouseEnter={() => setActiveButton('enquire')}
             onMouseLeave={() => setActiveButton(null)}
