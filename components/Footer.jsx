@@ -1,26 +1,31 @@
 "use client";
 
-import { useState  } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { importantLinks } from "../lib/data/menus.js";
-import logoScrolled from "@/assets/images/logo.png";
-import hiring from "@/assets/images/hiring.png";
+import logoScrolled from "@/assets/images/logo_grey.webp";
 import Modal from "@/components/ModalDialog/Modal";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import EnquiryForm from "@/components/EnquiryForm/page.jsx";
 import HiringForm from "@/components/HiringForm/page.jsx";
-import ChatBot from "./ChatBot/ChatBot.jsx";
-import { PersonPlus, PersonPlusFill, Briefcase, PersonWorkspace } from 'react-bootstrap-icons';
+import { 
+  PersonPlusFill, 
+  TelephoneFill, 
+  PencilFill,
+  GeoAltFill,
+  EnvelopeFill,
+  ClockFill
+} from 'react-bootstrap-icons';
+import "@/styles/_footer.scss";
 
 export default function Footer() {
   const pathname = usePathname();
-  const [showIcons, setShowIcons] = useState(false);
-  const [isActive, setIsActive] = useState(false);
-  const closePopup = () => setIsActive(false);
-  const [open, setOpen] = useState(false); // Enquiry
-  const [hiringOpen, setHiringOpen] = useState(false); // Hiring
+  const [open, setOpen] = useState(false);
+  const [hiringOpen, setHiringOpen] = useState(false);
+
+  const [activeButton, setActiveButton] = useState(null);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -28,179 +33,138 @@ export default function Footer() {
       behavior: "smooth",
     });
   };
-   // Hide ONLY on sitemap page
+
   const hideOnSitemap = pathname === "/sitemap";
-  // if (hideOnSitemap) return null; // 🔥 clean unmount (best performance)
-  
+  const currentYear = new Date().getFullYear();
+
   return (
     <>
-      <footer className="text-white px-2 py-2 font-sans text-md">
-        <div className="foo-column max-w-7xl mx-auto px-4 py-10 flex flex-wrap items-center justify-between gap-10">
-          
-          {/* Logo & About */}
-          <div className="flex flex-col max-w-xs flex-1 min-w-[200px]">
-            <Link href="/"  onClick={scrollToTop}>
-           <Image
-            src={logoScrolled}
-            alt="Liaisonbank"
-            title="Liaisonbank"
-            width={300}        // Numeric value only
-            height={80}        // Best practice: provide an actual height to prevent layout shift
-            className="h-auto w-auto" // Use CSS to maintain aspect ratio if needed
-            
-            // Performance Optimization
-            priority={true}    // Logos in headers should load immediately, not lazy-load
-            quality={75}       // Fine-tune compression
-            
-            // Animation (Ensure AOS is initialized in a useEffect)
-          /></Link>
-            <p className="mt-4 leading-relaxed">
-              Liaison Bank, established in 2007 and headquartered in Mumbai, is a
-              specialized consultancy firm providing end-to-end licensing,
-              regulatory compliance, and project liaisoning services.
-            </p>
-          </div>
-
-          {/* Important Links */}
-          <div className="flex flex-col max-w-xs flex-1 min-w-[200px]">
-            <h4 className="text-yellow-400 font-semibold mb-4 text-base">
-              Important Links
-            </h4>
-            <ul className="space-y-2">
-              {importantLinks.map((link, index) => (
-                <li key={link.name}>
-                  <Link href={link.href}>{link.name}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div className="flex flex-col max-w-xs flex-1 min-w-[200px] q-uick">
-            <h4 className="text-yellow-400 font-semibold mb-4 text-base">
-              Quick Contacts
-            </h4>
-
-            <p className="mb-3 address">
-              Plot 466, New Apollo CHSL,<br/>
-              Beside Blue Tokai Coffee,<br/>  
-              14th Road, Khar West, <br/>
-              Mumbai-400052.
-            </p>
-
-            <div className="mb-3 flex items-center gap-2 tell">
-              {/* <Image src="/phone.png" width={25} height={25} alt="Call" /> */}
-              <Image src="/phone-call-white-icon.png" width={30} height={30} alt="Call" />
-               <Link href="tel:+91 91364 43852" > (+91) &nbsp; 97694 58515</Link> &nbsp;
-              /&nbsp;<Link href="tel:+91 93245 77378" >  93245 77378</Link>
-            </div>
-
-            <div className="mb-3 flex items-center gap-2 email">
-              <Image 
-              src="/Gmail_Logo_White_512px.png" 
-              alt="Email" 
-              width={0}   // Required prop, but overridden by style
-              height={0}  // Required prop, but overridden by style
-              sizes="100vw"
-              style={{ width: '25px', height: '25px' }} 
-            />&nbsp;
-              <a href="mailto:ceo.desk@liaisonbank.com" target="_blank">
-                ceo.desk@liaisonbank.com
-              </a>
-            </div>
-
-            <div className="mb-3 flex items-center gap-1">
-              <Image src="/clock.png" width={30} height={30} alt="Office Time" style={{"marginLeft": "-0.3rem"}} />&nbsp;&nbsp;
-              <span>Mon – Sat : 8:00am to 5:00pm</span>
-            </div>
+      <footer className="footer">
+        <div className="footer-sort">
+          <div className="footer-connect-box">
+            <h1>Connect, Comply & Grow ! </h1>
           </div>
         </div>
+        <div className="footer-container">
 
-        {/* Copyright */}
-        <div className="max-w-7xl mx-auto border-t border-white-100 py-4 text-center text-md copyrights">
-          © 2026 Liaison Bank | All Rights Reserved
+          <div className="footer-grid">
+            <div className="footer-brand">
+              <Link href="/" onClick={scrollToTop}>
+                <Image src={logoScrolled} alt="Liaisonbank" title="Liaisonbank" width={200} height={56} priority className="footer-logo" />
+              </Link>
+              <p className="footer-text">
+                Established in 2017-2019 as DBRE Proprietary the firm became DBRE Private Limited in 2019 and rebranded as Liaison Bank in 2023 Headquartered in Mumbai Liaison Bank provides end-to-end licensing, regulatory compliance, and project liaisoning services, helping businesses navigate regulatory requirements efficiently.
+              </p>
+            </div>
+            <div>
+              <h4 className="footer-title">Quick Links</h4>
+              <ul className="footer-links">
+                {importantLinks.map((link) => (
+                  <li key={link.name}>
+                    <Link href={link.href} className="footer-link read-more-btn">{link.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="footer-title-for-contact">Contact</h4>
+             <div className="footer-contact">
+  <div className="contact-item">
+    <GeoAltFill size={16} className="contact-icon" />
+    <span className="contact-text">
+     Plot 466, New Apollo CHSL, Beside Blue Tokai Cafe, 14th Road, Khar West, Mumbai-400052.
+    </span>
+  </div>
+  <div className="contact-item">
+    <TelephoneFill size={16} className="contact-icon" />
+    <span className="contact-text">
+      <a href="tel:+919769458515"> +91 97694 58515</a>
+      <span className="footer-sep">/</span>
+      <a href="tel:+919324577378">9136066910</a>
+    </span>
+  </div>
+  <div className="contact-item">
+    <EnvelopeFill size={16} className="contact-icon" />
+    <a href="mailto:ceo.desk@liaisonbank.com" className="contact-text">
+      ceo.desk@liaisonbank.com
+    </a>
+  </div>
+  <div className="contact-item">
+    <ClockFill size={16} className="contact-icon" />
+    <span className="contact-text">Mon – Sat : 8:00am – 5:00pm</span>
+  </div>
+</div>
+            </div>
+
+          </div>
+          <div className="footer-bottom">
+            <p>© {currentYear} Liaison Bank. All rights reserved.</p>
+            <div className="footer-legal">
+              <Link href="/privacy">Privacy</Link>
+              <span>|</span>
+              <Link href="/terms">Terms</Link>
+            </div>
+          </div>
         </div>
       </footer>
 
-      {/* Utilities */}
       <ScrollToTopButton />
-  
-      {/* Sticky CTA */}
-        <div key={pathname} id="sticky-icon"  className={`sticky-icon ${showIcons ? "show" : ""} ${
-        hideOnSitemap ? "d-none" : ""
-      }`}
-      onMouseEnter={() => setShowIcons(true)}
-      onMouseLeave={() => setShowIcons(false)}>
-          <div>
-            <a href="tel:+919769458515" target="_blank" className="callnow" >
-              +91 97694 58515 <i className="fi fi-sr-phone-flip" ></i> &nbsp;
-            </a>
-          </div>
-        <div>
-          <a className="hiring open-form text-right" onClick={() => setHiringOpen(true)}>
-             We are Hiring &nbsp;  &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-             <PersonPlusFill size={30} color="white" /> &nbsp;&nbsp;
-          </a>
-        </div>
-        <div>
-          <a className="enquire open-form" onClick={() => setOpen(true)}>
-            Enquire Now <i className="fi fi-sr-attribution-pencil" ></i>
-          </a>
-        </div>
-        </div>
-              {/* {Sticky CTA from 1024 to below} */}
-        <div className="sticky-icon-below-1024">
-          <div className="container-fluid mx-auto">
-            <div className="row">
-              <div className="col-4 callnow p-2">
-                <a href="tel:+919769458515" target="_blank">
-                  <i className="fi fi-sr-phone-flip" ></i> Call Now
-                </a>
-              </div>
-              <div className="col-4 enquire open-form p-2">
-                <a onClick={() => setOpen(true)}>
-                  <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
-                </a>
-              </div>
-              <div className="col-4 whatsapp p-2 d-flex align-items-center justify-content-center">
-                <a className="hiring open-form text-right" onClick={() => setHiringOpen(true)}>
-                 <PersonPlusFill size={36} color="white" /> &nbsp;We are Hiring 
-                </a>
-                {/* <a>
-                  <ChatBot/> Whats App 
-                </a> */}
-                {/* <a href="https://wa.me/919324577378" target="_blank" rel="noopener noreferrer">
-                  <i className="fi fi-brands-whatsapp"></i> WhatsApp
-                </a> */}
-              </div>
-            </div>
-          </div>
 
-          
-          
-        
+      {!hideOnSitemap && (
+        <div className="floating-wrapper">
+          <button
+            className={`float-pill float-call ${activeButton === 'call' ? 'expanded' : ''}`}
+            onMouseEnter={() => setActiveButton('call')}
+            onMouseLeave={() => setActiveButton(null)}
+            onClick={() => window.location.href = 'tel:+919769458515'}
+          >
+            <span className="float-text">+91 97694 58515</span>
+            <TelephoneFill size={20} className="float-icon" />
+          </button>
 
+          <button
+            className={`float-pill float-add ${activeButton === 'hiring' ? 'expanded' : ''}`}
+            onMouseEnter={() => setActiveButton('hiring')}
+            onMouseLeave={() => setActiveButton(null)}
+            onClick={() => setHiringOpen(true)}
+          >
+            <span className="float-text">We&apos;re Hiring</span>
+            <PersonPlusFill size={24} className="float-icon" />
+          </button>
+
+          <button
+            className={`float-pill float-edit ${activeButton === 'enquire' ? 'expanded' : ''}`}
+            onMouseEnter={() => setActiveButton('enquire')}
+            onMouseLeave={() => setActiveButton(null)}
+            onClick={() => setOpen(true)}
+          >
+            <span className="float-text">Enquire Now</span>
+            <PencilFill size={20} className="float-icon" />
+          </button>
         </div>
-       {/* Enquiry Modal */}             
-      <Modal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Enquiry Form"
-        width="600px"
-      >
-        <EnquiryForm  formSource="Enquire Now"  onClose={() => setOpen(false)} />
+      )}
+
+      {!hideOnSitemap && (
+        <div className="mobile-bar">
+          <a href="tel:+919769458515" className="mob-btn mob-call">
+            <TelephoneFill size={18} />Call
+          </a>
+          <button onClick={() => setOpen(true)} className="mob-btn mob-enquire">
+            <PencilFill size={18} />Enquire
+          </button>
+          <button onClick={() => setHiringOpen(true)} className="mob-btn mob-hiring">
+            <PersonPlusFill size={18} />Hiring
+          </button>
+        </div>
+      )}
+
+      <Modal isOpen={open} onClose={() => setOpen(false)} title="Enquiry Form" width="600px">
+        <EnquiryForm onClose={() => setOpen(false)} />
       </Modal>
-
-      {/* Hiring Modal */}
-      <Modal
-        isOpen={hiringOpen}
-        onClose={() => setHiringOpen(false)}
-        title="We're Hiring"
-        width="600px"
-      >
-        {/* Replace with your Hiring Form component */}
+      <Modal isOpen={hiringOpen} onClose={() => setHiringOpen(false)} title="We're Hiring" width="600px">
         <HiringForm />
       </Modal>
+
     </>
   );
 }

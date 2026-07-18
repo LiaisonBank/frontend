@@ -13,6 +13,7 @@ import pdfIcon from "@/public/pdf_icon.png";
 import { ChevronDown } from 'react-bootstrap-icons';
 import NewLauncb from "@/components/NewLaunch";
 import NavText from "@/components/NavReusable/NavText";
+import { useModal } from "@/context/ModalContext";
 
 
 
@@ -22,7 +23,7 @@ export default function Header() {
   const [isSticky, setIsSticky] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
-
+  const { setServiceModalOpen } = useModal();
     
   const handleMegaScroll = (e) => {
     e.stopPropagation();
@@ -128,25 +129,34 @@ export default function Header() {
                       onMouseLeave={() => setActiveMegaMenu(null)}
                     >
                       {/* Main Navigation */}
-                      {link.href ? (
-                        <button
-                          type="button"
-                          className="nav-link bg-transparent border-0 p-0 cursor-pointer"
-                          onClick={() => router.push(link.href)}
-                        >
-                          <NavText text={link.name} />
-                        </button>
-                      ) : (
-                        <span className="nav-link cursor-pointer flex items-center gap-1">
-                          <NavText text={link.name} />
-                          {(hasSubmenu || singleSubmenu) && (
-                            <ChevronDown
-                              size={16}
-                              className="nav-arrow"
-                            />
-                          )}
-                        </span>
-                      )}
+                    {link.name === "Our Services" ? (
+  <button
+    type="button"
+    className="nav-link bg-transparent border-0 p-0 cursor-pointer flex items-center gap-1"
+    onClick={() => setServiceModalOpen(true)}
+  >
+    <NavText text={link.name} />
+    <ChevronDown size={16} className="nav-arrow" />
+  </button>
+) : link.href ? (
+  <button
+    type="button"
+    className="nav-link bg-transparent border-0 p-0 cursor-pointer"
+    onClick={() => router.push(link.href)}
+  >
+    <NavText text={link.name} />
+  </button>
+) : (
+  <span className="nav-link cursor-pointer flex items-center gap-1">
+    <NavText text={link.name} />
+    {(hasSubmenu || singleSubmenu) && (
+      <ChevronDown
+        size={16}
+        className="nav-arrow"
+      />
+    )}
+  </span>
+)}
 
                       {/* ========================= */}
                       {/* Single Submenu */}

@@ -22,19 +22,22 @@ export default function ServicesSlider() {
       options={{
         type: "loop",
         perPage: 4,
+        perMove: 1, // Slides one item at a time
         gap: "20px",
         arrows: true,
         pagination: false,
         autoplay: true,
         interval: 3000,
+        
+
         breakpoints: {
-          1200: {
+          1199: {
             perPage: 3,
           },
           991: {
             perPage: 2,
           },
-          576: {
+          767: {
             perPage: 1,
           },
         },
@@ -71,13 +74,8 @@ export default function ServicesSlider() {
               <div className="flip-service-back">
                 <div className="flip-service-content">
                   <h4>{service.title}</h4>
-
-                  <p>
-                    Counsel of Architect Registered with &nbsp;
-                    {service.title}
-                  </p>
-
-                  <button>Learn More</button>
+                  <p>{service.desc}</p>
+                  {/* <button>Learn More</button> */}
                 </div>
               </div>
             </div>
