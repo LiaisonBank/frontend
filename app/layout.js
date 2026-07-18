@@ -8,7 +8,8 @@ import Script from "next/script";
 import IntroLoader from "@/components/GlobalLoader/IntroLoader";
 import DisableZoom from "@/components/DisableZoom";
 import OrientationBlocker from "@/components/OrientationBlocker";
-
+import { ModalProvider } from "@/context/ModalContext";
+import ServicesModal from "@/components/ServicesModal/page";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 // import Cursor from "@/components/Cursor";
@@ -287,6 +288,8 @@ export default function RootLayout({ children }) {
         {/* ========================================= */}
         <LenisProvider />
         <ReduxProvider>
+            <ModalProvider>
+
          <IntroLoader />
           {/* <AOSProvider> */}
             
@@ -327,6 +330,9 @@ export default function RootLayout({ children }) {
             </div> */}
             
           {/* </AOSProvider> */}
+          <ServicesModal />
+            </ModalProvider>
+
         </ReduxProvider>
         {/* <script defer src="https://india.kenyt.ai/botapp/ChatbotUI/dist/js/bot-loader.js" type="text/javascript" data-bot="114528775"></script> */}
         </OrientationBlocker>

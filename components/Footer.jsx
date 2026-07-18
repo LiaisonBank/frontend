@@ -1,26 +1,23 @@
 "use client";
 
-import { useState  } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { importantLinks } from "../lib/data/menus.js";
-import logoScrolled from "@/assets/images/logo.png";
-import hiring from "@/assets/images/hiring.png";
+import logoScrolled from "@/assets/images/logo_grey2.png";
 import Modal from "@/components/ModalDialog/Modal";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import EnquiryForm from "@/components/EnquiryForm/page.jsx";
 import HiringForm from "@/components/HiringForm/page.jsx";
-import ChatBot from "./ChatBot/ChatBot.jsx";
-import { PersonPlus, PersonPlusFill, Briefcase, PersonWorkspace } from 'react-bootstrap-icons';
+import { PersonPlusFill, TelephoneFill, PencilFill } from 'react-bootstrap-icons';
 
 export default function Footer() {
   const pathname = usePathname();
-  const [showIcons, setShowIcons] = useState(false);
-  const [isActive, setIsActive] = useState(false);
-  const closePopup = () => setIsActive(false);
-  const [open, setOpen] = useState(false); // Enquiry
-  const [hiringOpen, setHiringOpen] = useState(false); // Hiring
+  const [open, setOpen] = useState(false);
+  const [hiringOpen, setHiringOpen] = useState(false);
+  
+  const [activeButton, setActiveButton] = useState(null);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -28,179 +25,197 @@ export default function Footer() {
       behavior: "smooth",
     });
   };
-   // Hide ONLY on sitemap page
+
   const hideOnSitemap = pathname === "/sitemap";
-  // if (hideOnSitemap) return null; // 🔥 clean unmount (best performance)
-  
+  const currentYear = new Date().getFullYear();
+
   return (
     <>
-      <footer className="text-white px-2 py-2 font-sans text-md">
-        <div className="foo-column max-w-7xl mx-auto px-4 py-10 flex flex-wrap items-center justify-between gap-10">
-          
-          {/* Logo & About */}
-          <div className="flex flex-col max-w-xs flex-1 min-w-[200px]">
-            <Link href="/"  onClick={scrollToTop}>
-           <Image
-            src={logoScrolled}
-            alt="Liaisonbank"
-            title="Liaisonbank"
-            width={300}        // Numeric value only
-            height={80}        // Best practice: provide an actual height to prevent layout shift
-            className="h-auto w-auto" // Use CSS to maintain aspect ratio if needed
-            
-            // Performance Optimization
-            priority={true}    // Logos in headers should load immediately, not lazy-load
-            quality={75}       // Fine-tune compression
-            
-            // Animation (Ensure AOS is initialized in a useEffect)
-          /></Link>
-            <p className="mt-4 leading-relaxed">
-              Liaison Bank, established in 2007 and headquartered in Mumbai, is a
-              specialized consultancy firm providing end-to-end licensing,
-              regulatory compliance, and project liaisoning services.
-            </p>
-          </div>
-
-          {/* Important Links */}
-          <div className="flex flex-col max-w-xs flex-1 min-w-[200px]">
-            <h4 className="text-yellow-400 font-semibold mb-4 text-base">
-              Important Links
-            </h4>
-            <ul className="space-y-2">
-              {importantLinks.map((link, index) => (
-                <li key={link.name}>
-                  <Link href={link.href}>{link.name}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div className="flex flex-col max-w-xs flex-1 min-w-[200px] q-uick">
-            <h4 className="text-yellow-400 font-semibold mb-4 text-base">
-              Quick Contacts
-            </h4>
-
-            <p className="mb-3 address">
-              Plot 466, New Apollo CHSL,<br/>
-              Beside Blue Tokai Coffee,<br/>  
-              14th Road, Khar West, <br/>
-              Mumbai-400052.
-            </p>
-
-            <div className="mb-3 flex items-center gap-2 tell">
-              {/* <Image src="/phone.png" width={25} height={25} alt="Call" /> */}
-              <Image src="/phone-call-white-icon.png" width={30} height={30} alt="Call" />
-               <Link href="tel:+91 91364 43852" > (+91) &nbsp; 97694 58515</Link> &nbsp;
-              /&nbsp;<Link href="tel:+91 93245 77378" >  93245 77378</Link>
+      <footer className="footer">
+        <div className="footer-container">
+          <div className="footer-grid">
+            <div className="footer-brand">
+              <Link href="/" onClick={scrollToTop}>
+                <Image src={logoScrolled} alt="Liaisonbank" title="Liaisonbank" width={200} height={56} priority className="footer-logo" />
+              </Link>
+              <p className="footer-text">
+                Established in 2017-2019 as DBRE Proprietary the firm became DBRE Private Limited in 2019 and rebranded as Liaison Bank in 2023 Headquartered in Mumbai Liaison Bank provides end-to-end licensing, regulatory compliance, and project liaisoning services, helping businesses navigate regulatory requirements efficiently.
+              </p>
             </div>
-
-            <div className="mb-3 flex items-center gap-2 email">
-              <Image 
-              src="/Gmail_Logo_White_512px.png" 
-              alt="Email" 
-              width={0}   // Required prop, but overridden by style
-              height={0}  // Required prop, but overridden by style
-              sizes="100vw"
-              style={{ width: '25px', height: '25px' }} 
-            />&nbsp;
-              <a href="mailto:ceo.desk@liaisonbank.com" target="_blank">
-                ceo.desk@liaisonbank.com
-              </a>
+            <div>
+              <h4 className="footer-title">Quick Links</h4>
+              <ul className="footer-links">
+                {importantLinks.map((link) => (
+                  <li key={link.name}>
+                    <Link href={link.href} className="footer-link">{link.name}</Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-
-            <div className="mb-3 flex items-center gap-1">
-              <Image src="/clock.png" width={30} height={30} alt="Office Time" style={{"marginLeft": "-0.3rem"}} />&nbsp;&nbsp;
-              <span>Mon – Sat : 8:00am to 5:00pm</span>
+            <div>
+              <h4 className="footer-title">Contact</h4>
+              <div className="footer-contact">
+                <p className="footer-address">Plot 466, New Apollo CHSL,<br />Khar West, Mumbai-400052</p>
+                <p className="footer-phone">
+                  <a href="tel:+919769458515">+91 97694 58515</a>
+                  <span className="footer-sep">/</span>
+                  <a href="tel:+919324577378">9136066910</a>
+                </p>
+                <a href="mailto:ceo.desk@liaisonbank.com" className="footer-email">ceo.desk@liaisonbank.com</a>
+                <p className="footer-time">Mon – Sat : 8:00am – 5:00pm</p>
+              </div>
+            </div>
+            <div>
+              <h4 className="footer-title">Connect</h4>
+              <div className="footer-buttons">
+                <button onClick={() => setOpen(true)} className="btn-enquire">Enquire Now</button>
+                <button onClick={() => setHiringOpen(true)} className="btn-hiring">We&apos;re Hiring</button>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Copyright */}
-        <div className="max-w-7xl mx-auto border-t border-white-100 py-4 text-center text-md copyrights">
-          © 2026 Liaison Bank | All Rights Reserved
+          <div className="footer-bottom">
+            <p>© {currentYear} Liaison Bank. All rights reserved.</p>
+            <div className="footer-legal">
+              <Link href="/privacy">Privacy</Link>
+              <span>|</span>
+              <Link href="/terms">Terms</Link>
+            </div>
+          </div>
         </div>
       </footer>
 
-      {/* Utilities */}
       <ScrollToTopButton />
-  
-      {/* Sticky CTA */}
-        <div key={pathname} id="sticky-icon"  className={`sticky-icon ${showIcons ? "show" : ""} ${
-        hideOnSitemap ? "d-none" : ""
-      }`}
-      onMouseEnter={() => setShowIcons(true)}
-      onMouseLeave={() => setShowIcons(false)}>
-          <div>
-            <a href="tel:+919769458515" target="_blank" className="callnow" >
-              +91 97694 58515 <i className="fi fi-sr-phone-flip" ></i> &nbsp;
-            </a>
-          </div>
-        <div>
-          <a className="hiring open-form text-right" onClick={() => setHiringOpen(true)}>
-             We are Hiring &nbsp;  &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-             <PersonPlusFill size={30} color="white" /> &nbsp;&nbsp;
-          </a>
-        </div>
-        <div>
-          <a className="enquire open-form" onClick={() => setOpen(true)}>
-            Enquire Now <i className="fi fi-sr-attribution-pencil" ></i>
-          </a>
-        </div>
-        </div>
-              {/* {Sticky CTA from 1024 to below} */}
-        <div className="sticky-icon-below-1024">
-          <div className="container-fluid mx-auto">
-            <div className="row">
-              <div className="col-4 callnow p-2">
-                <a href="tel:+919769458515" target="_blank">
-                  <i className="fi fi-sr-phone-flip" ></i> Call Now
-                </a>
-              </div>
-              <div className="col-4 enquire open-form p-2">
-                <a onClick={() => setOpen(true)}>
-                  <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
-                </a>
-              </div>
-              <div className="col-4 whatsapp p-2 d-flex align-items-center justify-content-center">
-                <a className="hiring open-form text-right" onClick={() => setHiringOpen(true)}>
-                 <PersonPlusFill size={36} color="white" /> &nbsp;We are Hiring 
-                </a>
-                {/* <a>
-                  <ChatBot/> Whats App 
-                </a> */}
-                {/* <a href="https://wa.me/919324577378" target="_blank" rel="noopener noreferrer">
-                  <i className="fi fi-brands-whatsapp"></i> WhatsApp
-                </a> */}
-              </div>
-            </div>
-          </div>
 
-          
-          
-        
+      {!hideOnSitemap && (
+        <div className="floating-wrapper">
+          <button 
+            className={`float-pill float-call ${activeButton === 'call' ? 'expanded' : ''}`}
+            onMouseEnter={() => setActiveButton('call')}
+            onMouseLeave={() => setActiveButton(null)}
+            onClick={() => window.location.href = 'tel:+919769458515'}
+          >
+            <span className="float-text">+91 97694 58515</span>
+            <TelephoneFill size={20} className="float-icon" />
+          </button>
 
+          <button 
+            className={`float-pill float-add ${activeButton === 'hiring' ? 'expanded' : ''}`}
+            onMouseEnter={() => setActiveButton('hiring')}
+            onMouseLeave={() => setActiveButton(null)}
+            onClick={() => setHiringOpen(true)}
+          >
+            <span className="float-text">We&apos;re Hiring</span>
+            <PersonPlusFill size={24} className="float-icon" />
+          </button>
+
+          <button 
+            className={`float-pill float-edit ${activeButton === 'enquire' ? 'expanded' : ''}`}
+            onMouseEnter={() => setActiveButton('enquire')}
+            onMouseLeave={() => setActiveButton(null)}
+            onClick={() => setOpen(true)}
+          >
+            <span className="float-text">Enquire Now</span>
+            <PencilFill size={20} className="float-icon" />
+          </button>
         </div>
-       {/* Enquiry Modal */}             
-      <Modal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Enquiry Form"
-        width="600px"
-      >
-        <EnquiryForm  formSource="Enquire Now"  onClose={() => setOpen(false)} />
+      )}
+
+      {!hideOnSitemap && (
+        <div className="mobile-bar">
+          <a href="tel:+919769458515" className="mob-btn mob-call">
+            <TelephoneFill size={18} />Call
+          </a>
+          <button onClick={() => setOpen(true)} className="mob-btn mob-enquire">
+            <PencilFill size={18} />Enquire
+          </button>
+          <button onClick={() => setHiringOpen(true)} className="mob-btn mob-hiring">
+            <PersonPlusFill size={18} />Hiring
+          </button>
+        </div>
+      )}
+
+      <Modal isOpen={open} onClose={() => setOpen(false)} title="Enquiry Form" width="600px">
+        <EnquiryForm onClose={() => setOpen(false)} />
       </Modal>
-
-      {/* Hiring Modal */}
-      <Modal
-        isOpen={hiringOpen}
-        onClose={() => setHiringOpen(false)}
-        title="We're Hiring"
-        width="600px"
-      >
-        {/* Replace with your Hiring Form component */}
+      <Modal isOpen={hiringOpen} onClose={() => setHiringOpen(false)} title="We're Hiring" width="600px">
         <HiringForm />
       </Modal>
+
+      <style jsx>{`
+        .footer { background: #f8fafc78; color: #0f172a; padding: 50px 20px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-top: 1px solid #e2e8f0; }
+        .footer-container { max-width: 1200px; margin: 0 auto; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1.5fr 1.2fr; gap: 40px; padding-bottom: 30px; border-bottom: 1px solid #e2e8f0; }
+        .footer-brand { display: flex; flex-direction: column; gap: 14px; }
+        .footer-logo { height: auto; width: 200px; display: block; }
+        .footer-text { color: #334155; font-size: 14px; line-height: 1.8; margin: 0; max-width: 400px; }
+        .footer-title { color: #e18c1d; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin: 0 0 20px 0; position: relative; padding-bottom: 10px; }
+        .footer-title::after { content: ''; position: absolute; bottom: 0; left: 0; width: 30px; height: 3px; background: #e18c1d; border-radius: 2px; }
+        .footer-links { list-style: none; padding: 0; margin: 8px 0 0 0; display: flex; flex-direction: column; gap: 10px; }
+        .footer-link { color: #475569; text-decoration: none; font-size: 14px; transition: all 0.2s; display: inline-block; }
+        .footer-link:hover { color: #e18c1d; transform: translateX(4px); }
+        .footer-contact { display: flex; flex-direction: column; gap: 8px; color: #475569; font-size: 14px; line-height: 1.6; margin-top: 4px; }
+        .footer-address { margin: 0; line-height: 1.8; color: #475569; }
+        .footer-phone { margin: 0; }
+        .footer-phone a { color: #475569; text-decoration: none; transition: color 0.2s; }
+        .footer-phone a:hover { color: #e18c1d; }
+        .footer-sep { color: #cbd5e1; margin: 0 6px; }
+        .footer-email { color: #475569; text-decoration: none; transition: color 0.2s; display: inline-block; }
+        .footer-email:hover { color: #e18c1d; }
+        .footer-time { margin: 0; color: #94a3b8; font-size: 13px; }
+        .footer-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+        .btn-enquire, .btn-hiring { padding: 12px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.25s; width: 100%; font-family: inherit; letter-spacing: 0.3px; }
+        .btn-enquire { background: #e18c1d; color: #ffffff; }
+        .btn-enquire:hover { background: #be123c; transform: translateY(-2px); box-shadow: 0 4px 20px rgba(225, 29, 72, 0.25); }
+        .btn-hiring { background: transparent; color: #e11d48; border: 2px solid #e11d48; }
+        .btn-hiring:hover { background: #e11d48; color: #ffffff; transform: translateY(-2px); }
+        .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; font-size: 13px; color: #94a3b8; flex-wrap: wrap; gap: 10px; }
+        .footer-bottom p { margin: 0; }
+        .footer-legal { display: flex; align-items: center; gap: 10px; }
+        .footer-legal a { color: #94a3b8; text-decoration: none; transition: color 0.2s; }
+        .footer-legal a:hover { color: #e11d48; }
+        .footer-legal span { color: #cbd5e1; }
+
+        /* ===== FLOATING BUTTONS ===== */
+        .floating-wrapper { position: fixed; bottom: 120px; left: -10px; z-index: 50; display: flex; flex-direction: column; gap: 12px; }
+        .float-pill { display: flex; align-items: center; justify-content: flex-end; flex-direction: row; gap: 0px; background: #1a1a1a; color: #ffffff; border: none; border-radius: 50px; padding: 14px; width: 52px; height: 52px; text-decoration: none; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: box-shadow 0.3s ease, transform 0.3s ease; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); overflow: hidden; position: relative; }
+        .float-pill:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); }
+        .float-icon { flex-shrink: 0; }
+        .float-text { opacity: 0; white-space: nowrap; width: 0; overflow: hidden; transform: translateX(20px); margin-right: 0; }
+
+        /* ===== THE ROLLING TIRE ANIMATION (FIXED TEXT DIRECTION) ===== */
+        @keyframes rollOut {
+          0% { opacity: 0; width: 0; transform: translateX(20px) rotateY(0deg); }
+          50% { opacity: 0.5; width: auto; transform: translateX(10px) rotateY(-90deg); }
+          100% { opacity: 1; width: auto; transform: translateX(0) rotateY(-360deg); } /* Changed to -360deg to fix the reversal */
+        }
+
+        .float-pill.expanded { width: auto; padding: 14px 24px 14px 18px; }
+        .float-pill.expanded .float-text { margin-right: 14px; animation: rollOut 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+        /* ===== MOBILE BAR ===== */
+        .mobile-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; background: #ffffff; border-top: 1px solid #e2e8f0; padding: 8px 0; grid-template-columns: repeat(3, 1fr); box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04); }
+        .mob-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; color: #475569; text-decoration: none; border: none; background: transparent; cursor: pointer; font-family: inherit; font-size: 11px; font-weight: 500; transition: all 0.2s; letter-spacing: 0.3px; gap: 4px; }
+        .mob-call { color: #22c55e; }
+        .mob-enquire { color: #e18c1d; }
+        .mob-hiring { color: #e11d48; }
+        .mob-btn:hover { transform: scale(1.05); }
+
+        @media (max-width: 1024px) {
+          .footer-grid { grid-template-columns: 1fr 1fr; gap: 35px; }
+          .footer-brand { grid-column: 1 / -1; }
+          .footer-text { max-width: 100%; }
+          .floating-wrapper { display: none; }
+          .mobile-bar { display: grid; }
+        }
+        @media (max-width: 640px) {
+          .footer { padding: 30px 16px 80px; }
+          .footer-grid { grid-template-columns: 1fr; gap: 30px; padding-bottom: 25px; }
+          .footer-logo { width: 160px; }
+          .footer-bottom { flex-direction: column; text-align: center; }
+          .footer-legal { justify-content: center; }
+          .btn-enquire, .btn-hiring { padding: 14px; }
+        }
+      `}</style>
     </>
   );
 }
