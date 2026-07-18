@@ -167,6 +167,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+
       <section className="ourservices">
         <div className="container mx-auto py-5 service-list">
           <div className="section-title">
@@ -179,7 +180,6 @@ const Home = () => {
         </div>
       </section>
       
-
       <section className="weprovide">
         <div className="container mx-auto  py-5 bg-white">
           <div className="section-title">
@@ -208,7 +208,6 @@ const Home = () => {
         </div>
       </section>
 
-
       <section className="ourclients">
         <div className="container-fluid mx-auto px-0 pt-5 pb-4 bg-white">
           <div className="section-title pb-3">
@@ -216,6 +215,54 @@ const Home = () => {
           </div>
           <div>
             <ClientScroller />
+          </div>
+        </div>
+      </section>
+      
+      <section className="licensing d-none">
+        <div className="container-fluid px-0">
+          <div className="row g-0 align-items-stretch">
+
+            {/* Left Content */}
+            <div className="col-lg-6">
+              <div className="licensing-content">
+                <h2>
+                  How can we assist you
+                  <br />
+                  today?
+                </h2>
+
+                <p>
+                  Learn more about our core areas of expertise by selecting
+                  your topic of interest:
+                </p>
+
+                <div className="licensing-selects">
+                  <select>
+                    <option>Capabilities</option>
+                    <option>Licensing</option>
+                    <option>Compliance</option>
+                  </select>
+
+                  <select>
+                    <option>Industries</option>
+                    <option>Banking</option>
+                    <option>Insurance</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Image */}
+            <div className="col-lg-6">
+              <div className="licensing-image">
+                {/* <img
+                  src="/images/licensing/licensing-banner.jpg"
+                  alt="Licensing"
+                /> */}
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -228,9 +275,6 @@ const Home = () => {
           <TestimonialSlider  />
         </div>
       </section>
-
-      
-
 
       <section className="faqs">
         <div className="container mx-auto  py-4 bg-white">

@@ -9,6 +9,70 @@
 .flip-service-card.is-flipped .flip-service-wrapper {
   transform: rotateY(180deg);
 }
+
+/* ==========================
+      Tablet
+    ========================== */
+
+    @media (max-width: 991px) {
+      section.licensing {
+        .row {
+          min-height: auto;
+        }
+
+        .licensing-content {
+          padding: 60px 40px;
+
+          h2 {
+            font-size: 48px;
+          }
+
+          p {
+            font-size: 20px;
+          }
+
+          .licensing-selects {
+            flex-direction: column;
+
+            select {
+              width: 100%;
+            }
+          }
+        }
+
+        .licensing-image img {
+          min-height: 450px;
+        }
+      }
+    }
+
+    /* ==========================
+      Mobile
+    ========================== */
+
+    @media (max-width: 767px) {
+      section.licensing {
+        .row {
+          flex-direction: column-reverse;
+        }
+
+        .licensing-content {
+          padding: 40px 24px;
+
+          h2 {
+            font-size: 38px;
+          }
+
+          p {
+            font-size: 18px;
+          }
+        }
+
+        .licensing-image img {
+          min-height: 300px;
+        }
+      }
+    }
 /* ==========================================================================
    1024px & Below (Tablet + Mobile)
    ========================================================================== */
