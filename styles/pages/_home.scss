@@ -363,7 +363,7 @@
 
   section.ceo-message{
     position: relative;
-    background:var(--baby-orange);
+    // background:var(--baby-orange);
     @media only screen and (max-width: 1023px) { 
     > div > div {
         display: flex;
@@ -371,76 +371,6 @@
         overflow: hidden;
         .image img {
           width: 60rem; 
-        }
-      }
-    }
-    .quote-text {
-    font-size: 3rem;
-    line-height: 1.4;
-
-    .quote-open,
-    .quote-close {
-      font-size: 1.2em;
-      display: inline;
-      vertical-align: baseline;
-    }
-
-    .quote-open {
-      margin-right: 0.2em;
-    }
-
-    .quote-close {
-      margin-left: 0.2em;
-    }
-  }
-    .quote{
-      padding: 0.5rem 0;
-      position: relative;
-      overflow: visible;
-      p{
-        position:relative;
-        font-size: 2.4rem;
-        @media only screen and (max-width:991px){
-          font-size:1.8rem;
-          padding: 2rem 0;
-        }
-      }
-      .top{
-        display: inline-block;
-        position: absolute;
-        left: -3rem;
-        @media only screen and (max-width:991px){
-          top: 0;
-          left: auto;
-        }
-      }
-      .bottom {
-        display: inline-block;
-        position: absolute;
-        left: 22%;
-
-        /* 1366px devices */
-        @media screen and (min-width: 1360px) and (max-width: 1399px) {
-          left: 65%;
-        }
-        @media screen and (width: 1280px) {
-          /* Your CSS rules here */
-          left: auto;
-          right: 30%; // Adjust as needed
-        }
-        /* 1180 × 820 devices */
-        @media screen and (min-width: 1180px) and (max-width: 1279px) {
-          left: 32%; // Adjust as needed
-        }
-
-        /* Tablets */
-        @media screen and (min-width: 992px) and (max-width: 1179px) {
-          left: 32%;
-        }
-
-        /* Mobile */
-        @media screen and (max-width: 991px) {
-          left: auto;
         }
       }
     }
@@ -452,13 +382,12 @@
         padding: 0;
         margin: 0;
         background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
-      -webkit-text-fill-color: #0000;
-      background-clip: border-box;
-      -webkit-background-clip: text;
-      @media only screen and (max-width:768){
-          font-size: 3rem;
-        }
-      
+        -webkit-text-fill-color: #0000;
+        background-clip: border-box;
+        -webkit-background-clip: text;
+        @media only screen and (max-width:768){
+            font-size: 3rem;
+          }
       }
       .author-desc{
         font-size:1.8rem;
@@ -466,6 +395,40 @@
         padding: 0;
         color: var(--dark-black); 
         padding-left:0.2rem; 
+        padding-bottom:1rem; 
+      }
+      p{
+        margin-bottom:6px;
+        padding: .1rem 0 0 0.2rem;
+      }
+      button{
+        padding: .1rem 0 0 0.2rem;
+      }
+      .read-more-btn {
+        position: relative;
+        display: inline-block;
+        color: #000;
+        text-decoration: none;
+        font-weight: 600;
+        padding-bottom: 4px;
+        &:hover{
+          color:var(--themeht-primary-color);
+        }
+      }
+
+      .read-more-btn::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+        background: var(--themeht-primary-color);
+        transition: width 0.35s ease;
+      }
+
+      .read-more-btn:hover::after {
+        width: 100%;
       }
     }
 

@@ -61,7 +61,7 @@ export default function Footer() {
               <ul className="footer-links">
                 {importantLinks.map((link) => (
                   <li key={link.name}>
-                    <Link href={link.href} className="footer-link">{link.name}</Link>
+                    <Link href={link.href} className="footer-link read-more-btn">{link.name}</Link>
                   </li>
                 ))}
               </ul>

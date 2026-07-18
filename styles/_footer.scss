@@ -177,9 +177,34 @@ font-weight: 400;
 .footer-link:hover {
   color: #000;          
   font-weight: 700;     
-  transform: translateX(4px);
+  // transform: translateX(4px);
 }
+ .read-more-btn {
+        position: relative;
+        display: inline-block;
+        color: #000;
+        text-decoration: none;
+        font-weight: 600;
+        padding-bottom: 4px;
+        &:hover{
+          color:#e18c1d;
+        }
+      }
 
+      .read-more-btn::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+        background: #e18c1d;
+        transition: width 0.35s ease;
+      }
+
+      .read-more-btn:hover::after {
+        width: 100%;
+      }
 /* ===== Contact Section with Icons ===== */
 .footer-contact {
   display: flex;

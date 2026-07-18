@@ -2,22 +2,54 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-
 import Image from "next/image";
 import { Fancybox } from "@fancyapps/ui";
 
 import { certificateList } from "@/lib/data/certificateList";
-import useBodyClass from "@/components/useBodyClass"; // Adjust path as needed
+import useBodyClass from "@/components/useBodyClass";
 
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
+/**
+ * Fisher-Yates Shuffle
+ * Returns a new shuffled array without mutating the original array.
+ */
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
+};
+
 export default function AwardPage() {
   useBodyClass("awards-recognition");
-  const galleryRef = useRef(null);
-  const [animateCards, setAnimateCards] = useState(false);
-  
 
+  const galleryRef = useRef(null);
+
+  const [animateCards, setAnimateCards] = useState(false);
+  const [certificates, setCertificates] = useState([]);
+  const [mounted, setMounted] = useState(false);
+
+  /**
+   * Shuffle only after hydration.
+   * Prevents SSR hydration mismatch.
+   */
   useEffect(() => {
+    setCertificates(shuffleArray(certificateList));
+    setMounted(true);
+  }, []);
+
+  /**
+   * Fancybox
+   */
+  useEffect(() => {
+    if (!mounted) return;
+
     const container = galleryRef.current;
 
     if (!container) return;
@@ -46,31 +78,46 @@ export default function AwardPage() {
       Fancybox.unbind(container);
       Fancybox.close();
     };
-  }, []);
+  }, [mounted]);
 
+  /**
+   * Animate cards on scroll
+   */
   useEffect(() => {
+    if (!mounted) return;
+
+    const container = galleryRef.current;
+
+    if (!container) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setAnimateCards(true);
-          observer.unobserve(entry.target);
+          observer.disconnect();
         }
       },
-      { threshold: 0.3 }
+      {
+        threshold: 0.3,
+      }
     );
 
-    if (galleryRef.current) {
-      observer.observe(galleryRef.current);
-    }
+    observer.observe(container);
 
-    return () => {
-      if (galleryRef.current) {
-        observer.unobserve(galleryRef.current);
-      }
-    };
-  }, []);
+    return () => observer.disconnect();
+  }, [mounted]);
 
-  if (!certificateList?.length) {
+  /**
+   * Prevent hydration mismatch
+   */
+  if (!mounted) {
+    return null;
+  }
+
+  /**
+   * Empty state
+   */
+  if (!certificates.length) {
     return null;
   }
 
@@ -78,7 +125,6 @@ export default function AwardPage() {
     <>
       <div className="page-header">
         <div className="inner-header">
-          {/* <PageTitleWave /> */}
           <div className="page-title">
             <div className="container">
               <div className="row justify-content-center text-center">
@@ -86,14 +132,17 @@ export default function AwardPage() {
                   <div className="theme-breadcrumb-box">
                     <h1>Awards and Certifications</h1>
 
-                    <nav aria-label="breadcrumb" className="page-breadcrumb">
+                    <nav
+                      aria-label="breadcrumb"
+                      className="page-breadcrumb"
+                    >
                       <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
                             <i
                               className="bi bi-house-door me-1"
                               aria-hidden="true"
-                            ></i>
+                            />
                             Home
                           </Link>
                         </li>
@@ -102,7 +151,7 @@ export default function AwardPage() {
                           className="breadcrumb-item active"
                           aria-current="page"
                         >
-                          Awards & Certifications
+                          Awards &amp; Certifications
                         </li>
                       </ol>
                     </nav>
@@ -111,17 +160,25 @@ export default function AwardPage() {
               </div>
             </div>
           </div>
-          {/* <PageTitleWaveLeft /> */}
         </div>
       </div>
+
       <section
         className="certificate-section"
         aria-labelledby="certificates-heading"
       >
         <div className="container">
-          <div className="certificate-masonry" ref={galleryRef}>
-            {certificateList.map((certificate) => (
-              <article className={`certificate-card  certificate-item-wrapper ${animateCards ? 'animate' : ''}`} key={certificate.src}>
+          <div
+            className="certificate-masonry"
+            ref={galleryRef}
+          >
+            {certificates.map((certificate, index) => (
+              <article
+                key={`${certificate.src}-${index}`}
+                className={`certificate-card certificate-item-wrapper ${
+                  animateCards ? "animate" : ""
+                }`}
+              >
                 <a
                   href={certificate.src}
                   data-fancybox="certificates"
@@ -145,6 +202,7 @@ export default function AwardPage() {
                       "
                     />
                   </div>
+
                   <div className="certificate-caption">
                     {certificate.caption}
                   </div>

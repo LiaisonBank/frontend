@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from 'next/link'
 import Image from 'next/image'
 import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
@@ -7,7 +8,7 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 
 // import smallLogo from "@/assets/images/shape-small-1-1.png"
 import welcomeImg from "@/assets/images/mahadev_Rupali_Arvind.webp"
-import devaImg from "@/assets/images/devaBirader.webp"
+import devaImg from "@/assets/images/ceo.png"
 import ServicesSection from "@/components/ServicesSection";
 import ClientScroller from "@/components/ClientScroller"
 import useFancybox from '@/components/useFancybox';
@@ -23,6 +24,9 @@ import HeroSlider from '@/components/HeroSection/HeroSlider';
 import OrbitServices from '@/components/HeroSection/OrbitServices';
 
 const Home = () => {
+  
+    const [expanded, setExpanded] = useState(false);
+    
   useBodyClass('home');
   const fancyboxRef = useFancybox({
     // This object disables the thumbnails entirely
@@ -51,10 +55,10 @@ const Home = () => {
           />
         </div> */}
       </div>
-      <section className="pt-2 bg-aliceblue ceo-message">
-        <div className="container mx-auto pt-2">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className='aling-items-center mx-auto image'>
+      <section className="bg-aliceblue ceo-message">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end">
+               <div className="lg:col-span-1">
                   <Image
                     src={devaImg}
                     width={375}
@@ -67,34 +71,83 @@ const Home = () => {
                     priority
                   />
               </div>
-              <div className=' mt-2 mesg'>
-                <div className='quote'>
-                  <p>
-                    <span className="quote-close">
-                       <Image
-                        src="/images/top-left-quote.webp"
-                        width={40}
-                        height={40}
-                        alt="Closing quote"
-                        className="quote-close top"
-                      />
-                    </span>
-                        It&apos;s not about waiting for things to fall into place, it&lsquo;s about what you make of yourself.
-                    <Image
-                      src="/images/bottom-right-quote.webp"
-                      width={40}
-                      height={40}
-                      alt="Closing quote"
-                      className="quote-close bottom"
-                    />
-                  </p>
-                </div>
-                <div className='col-auto ceo-name'>
-                  <h1 className="author-title" aria-label="Deva Biradar">Deva Biradar</h1>
-                  <p className="author-desc">Chief Executive Officer</p>
-                </div>
+              <div className="lg:col-span-2 ceo-name">
+                <h2 className='author-title'>Deva Biradar</h2>
+                <h6 className='author-desc'>Chief Executive Officer</h6>
+                 <p>
+                  Mahadev Biradar is the Founder and Chief Executive Officer of Liaison
+                  Bank, providing strategic leadership and driving the company’s vision in
+                  government licensing, liaisoning, and regulatory compliance.
+                </p>
+                <p>
+                  Born and brought up in a small town in Wagalgaon, Karnataka, he faced
+                  numerous failures and rejections in various cities. He came to Bombay in
+                  1999 with a vision to achieve something meaningful and make his parents
+                  proud. He started his journey as a waiter with a smile, carrying one
+                  motto: to always give his best. Later, he entered the real estate
+                  industry, where he gained valuable knowledge in enhancing the worth and
+                  value of properties. Through this experience, he built relationships
+                  with many people and entered the field of liaisoning.
+                </p>
+                <p>
+                  In 2017, he founded a company named DBRE India, transforming his
+                  entrepreneurial vision into a business venture focused on delivering
+                  innovative solutions and creating sustainable value for clients.
+                  DBRE gave him the platform to strengthen his entrepreneurial
+                  journey. He expanded his expertise into PNG fabrication and
+                  installation, firefighting system installation, testing and
+                  certification, electrical audits, licensing, and liaisoning with
+                  various government regulatory bodies.
+                </p>
 
-              </div>
+                <p>
+                  Mahadev’s entrepreneurial journey reflects resilience, continuous
+                  learning, and a commitment to excellence. Although his education was
+                  primarily gained through practical experience rather than
+                  traditional higher studies, he transformed determination,
+                  discipline, and hands-on knowledge into a thriving enterprise built
+                  on trust and long-term partnerships.
+                </p>
+        
+                <p>
+                  From serving his very first client to building relationships with
+                  leading organizations, Mahadev has remained committed to delivering
+                  dependable compliance solutions with professionalism, integrity, and
+                  efficiency. His leadership philosophy is centered on creating
+                  lasting business relationships through transparency, service
+                  excellence, and consistent execution.
+                </p>
+                {expanded && (
+                    <>
+                    <p>
+                      Wherever he goes, he leaves his mark. He is well known as Deva
+                      Biradar. Under his leadership, the company has expanded its
+                      operations across India and registered in Singapore, aiming to
+                      connect international markets with seamless compliance solutions.
+                      Originally from Karnataka, Mahadev developed his professional roots
+                      in Mumbai, where he continues to drive the company’s global vision
+                      and commitment to service excellence.
+                    </p>
+                  </>
+                )}
+                <div className="flex justify-between items-center">
+                 <button
+                    type="button"
+                    className="read-more-btn"
+                    onClick={() => setExpanded(!expanded)}
+                  >
+                    {expanded ? "Read Less" : "Read More"}
+                  </button> &nbsp;
+                  <Link href="https://mumbaimirror.indiatimes.com/mumbai/other/waiters-mumbai-dreams-turn-concrete/articleshow/16001427.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="read-more-btn"
+                >
+                  Read the Mumbai Mirror Article
+                </Link>
+                </div>
+             
+          </div>
           </div>
         </div>
       </section>
