@@ -1,25 +1,25 @@
-// app/sitemap/page.jsx - Premium Dashboard Sitemap
+// app/sitemap/page.jsx - Professional Sitemap
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import "./SitemapDiagram.css";
 
-// ===== Simple SVG Icons =====
+// ===== SVG Icons =====
 const Icons = {
   Home: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
     </svg>
   ),
   About: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
       <circle cx="12" cy="7" r="4"/>
     </svg>
   ),
   Clients: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
       <circle cx="9" cy="7" r="4"/>
       <path d="M23 21v-2a4 4 0 00-3-3.87"/>
@@ -27,26 +27,26 @@ const Icons = {
     </svg>
   ),
   Projects: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
       <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
     </svg>
   ),
   Services: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M12 2L2 7l10 5 10-5-10-5z"/>
       <path d="M2 17l10 5 10-5"/>
       <path d="M2 12l10 5 10-5"/>
     </svg>
   ),
   Careers: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
       <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
     </svg>
   ),
   Press: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M4 4h16v16H4z"/>
       <path d="M8 8h8v2H8z"/>
       <path d="M8 12h6v2H8z"/>
@@ -54,42 +54,42 @@ const Icons = {
     </svg>
   ),
   Contact: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
     </svg>
   ),
   AMC: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M12 2L2 7l10 5 10-5-10-5z"/>
       <path d="M2 17l10 5 10-5"/>
       <path d="M2 12l10 5 10-5"/>
     </svg>
   ),
   Licensing: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M12 2L2 7l10 5 10-5-10-5z"/>
       <path d="M2 17l10 5 10-5"/>
       <path d="M2 12l10 5 10-5"/>
     </svg>
   ),
   Liaisoning: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"/>
     </svg>
   ),
   Electrical: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
     </svg>
   ),
   Fire: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M12 2c-3 4-7 8-7 12a7 7 0 0014 0c0-4-4-8-7-12z"/>
       <path d="M12 9c-1.5 2-2.5 4-2.5 6a2.5 2.5 0 005 0c0-2-1-4-2.5-6z"/>
     </svg>
   ),
   PNG: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <circle cx="12" cy="12" r="10"/>
       <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
       <line x1="9" y1="9" x2="9.01" y2="9"/>
@@ -97,25 +97,25 @@ const Icons = {
     </svg>
   ),
   ESD: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
     </svg>
   ),
   Group: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
       <circle cx="12" cy="7" r="4"/>
     </svg>
   ),
   Default: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M4 4h16v16H4z"/>
       <path d="M8 8h8v8H8z"/>
     </svg>
   ),
   Stats: {
     Sections: () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <rect x="3" y="3" width="7" height="7"/>
         <rect x="14" y="3" width="7" height="7"/>
         <rect x="3" y="14" width="7" height="7"/>
@@ -123,16 +123,15 @@ const Icons = {
       </svg>
     ),
     Pages: () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
         <polyline points="14 2 14 8 20 8"/>
         <line x1="16" y1="13" x2="8" y2="13"/>
         <line x1="16" y1="17" x2="8" y2="17"/>
-        <polyline points="10 9 9 9 8 9"/>
       </svg>
     ),
     Links: () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
         <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
       </svg>
@@ -219,6 +218,12 @@ const NAV_LINKS = [
                   { name: "Building & Factory NOC", href: "/contact-us-liaison-bank" },
                   { name: "Fire Compliance certificate", href: "/contact-us-liaison-bank" },
                   { name: "MOH License", href: "/contact-us-liaison-bank" },
+                  { name: "Sign Board License", href: "/contact-us-liaison-bank" },
+                  { name: "Open space Serving License", href: "/contact-us-liaison-bank" },
+                  { name: "FL III License", href: "/contact-us-liaison-bank" },
+                  { name: "Premises License", href: "/contact-us-liaison-bank" },
+                  { name: "PPL License", href: "/contact-us-liaison-bank" },
+                  { name: "Novex License", href: "/contact-us-liaison-bank" },
                 ]
               },
             ]
@@ -235,6 +240,13 @@ const NAV_LINKS = [
                   { name: "Fire NOC", href: "/contact-us-liaison-bank" },
                   { name: "PCPNDT", href: "/contact-us-liaison-bank" },
                   { name: "MTP registration", href: "/contact-us-liaison-bank" },
+                  { name: "Electrical audit certificate", href: "/contact-us-liaison-bank" },
+                  { name: "Structural audit", href: "/contact-us-liaison-bank" },
+                  { name: "Board sign", href: "/contact-us-liaison-bank" },
+                  { name: "Weather shed permission", href: "/contact-us-liaison-bank" },
+                  { name: "Change of user for clinics", href: "/contact-us-liaison-bank" },
+                  { name: "Change of user for nursing home", href: "/contact-us-liaison-bank" },
+                  { name: "NABH Certification", href: "/contact-us-liaison-bank" },
                 ]
               }
             ]
@@ -249,6 +261,8 @@ const NAV_LINKS = [
                   { name: "Shop & establishment", href: "/contact-us-liaison-bank" },
                   { name: "Building & factory NOC", href: "/contact-us-liaison-bank" },
                   { name: "Fire compliance certificate", href: "/contact-us-liaison-bank" },
+                  { name: "MOH license eating house", href: "/contact-us-liaison-bank" },
+                  { name: "Sign board license", href: "/contact-us-liaison-bank" },
                 ]
               }
             ]
@@ -331,20 +345,38 @@ const NAV_LINKS = [
             ]
           },
           {
+            name: "S.L.R",
+            children: [
+              { name: "Property Card Area Name Change", href: "/contact-us-liaison-bank" },
+              { name: "Property Card Area Correction", href: "/contact-us-liaison-bank" },
+            ]
+          },
+          { name: "D.D.L.R", href: "/contact-us-liaison-bank" },
+          {
             name: "Mumbai Fire Department",
             children: [
               { name: "Fire NOC Approval and Completion", href: "/contact-us-liaison-bank" },
               { name: "Fire NOC for Regularization", href: "/contact-us-liaison-bank" },
+              { name: "Fire NOC for Additional Alteration", href: "/contact-us-liaison-bank" },
             ]
           },
           { name: "Coastal Regulation Zone (CRZ)", href: "/contact-us-liaison-bank" },
           { name: "Mumbai Airport Authority of India (MAAI)", href: "/contact-us-liaison-bank" },
+          { name: "R.&.F.M", href: "/contact-us-liaison-bank" },
+          { name: "C.O.M", href: "/contact-us-liaison-bank" },
+          { name: "N.V.M", href: "/contact-us-liaison-bank" },
+          { name: "A.P.M", href: "/contact-us-liaison-bank" },
+          { name: "M.I.D.C.M", href: "/contact-us-liaison-bank" },
+          { name: "I.D.C", href: "/contact-us-liaison-bank" },
+          { name: "P.W.D", href: "/contact-us-liaison-bank" },
+          { name: "D.M", href: "/contact-us-liaison-bank" },
           {
             name: "Adani Power",
             children: [
               { name: "Name Change", href: "/contact-us-liaison-bank" },
               { name: "Residential to Commercial", href: "/contact-us-liaison-bank" },
               { name: "KW Load Increase", href: "/contact-us-liaison-bank" },
+              { name: "Changeover TATA to Adani", href: "/contact-us-liaison-bank" },
               { name: "New Meter Connection", href: "/contact-us-liaison-bank" },
             ]
           },
@@ -354,6 +386,7 @@ const NAV_LINKS = [
               { name: "Name Change", href: "/contact-us-liaison-bank" },
               { name: "Residential to Commercial", href: "/contact-us-liaison-bank" },
               { name: "KW Load Increase", href: "/contact-us-liaison-bank" },
+              { name: "Changeover Adani to TATA", href: "/contact-us-liaison-bank" },
               { name: "New Meter Connection", href: "/contact-us-liaison-bank" },
             ]
           },
@@ -363,6 +396,7 @@ const NAV_LINKS = [
               { name: "Name Change", href: "/contact-us-liaison-bank" },
               { name: "Residential to Commercial", href: "/contact-us-liaison-bank" },
               { name: "KW Load Increase", href: "/contact-us-liaison-bank" },
+              { name: "Changeover Adani to Tata", href: "/contact-us-liaison-bank" },
               { name: "New Meter Connection", href: "/contact-us-liaison-bank" },
             ]
           }
@@ -373,6 +407,8 @@ const NAV_LINKS = [
       { name: "PNG (SITC)", href: "/contact-us-liaison-bank" },
       { name: "Equipment Solution Department (ESD)", href: "/contact-us-liaison-bank" },
       { name: "Group Profile", href: "/group-profile" },
+      { name: "Integrated Licensing & Compliance Solutions (ILCS)", href: "/contact-us-liaison-bank" },
+      { name: "Integrated Liaisoning, Approvals & Compliance Solutions (ILACS)", href: "/contact-us-liaison-bank" },
     ]
   },
   { name: "Careers", href: "/careers-liaison-bank/" },
@@ -407,7 +443,8 @@ const countPages = (nodes) => {
 // ===== Main Component =====
 export default function SitemapPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode, setViewMode] = useState("list");
+  const [expandedItems, setExpandedItems] = useState({});
 
   // Memoized calculations
   const totalPages = useMemo(() => countPages(NAV_LINKS), []);
@@ -437,6 +474,14 @@ export default function SitemapPage() {
     [searchTerm, filterItems]
   );
 
+  // Toggle expand
+  const toggleExpand = (key) => {
+    setExpandedItems(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
   // Stats data
   const stats = [
     { label: 'Main Sections', value: totalSections, icon: Icons.Stats.Sections },
@@ -452,6 +497,52 @@ export default function SitemapPage() {
         <IconComponent />
       </span>
     );
+  };
+
+  const renderTreeItems = (items, level = 0, parentKey = '') => {
+    return items.map((item, index) => {
+      const children = getChildren(item);
+      const key = `${parentKey}-${index}`;
+      const hasChildren = children.length > 0;
+      const IconComponent = getIcon(item.name);
+      const isExpanded = expandedItems[key];
+
+      if (!item.href && !hasChildren) return null;
+
+      return (
+        <div key={key} className={`tree-item level-${level}`}>
+          <div className="tree-item-content">
+            <div className="tree-item-left">
+              {hasChildren && (
+                <button 
+                  className="tree-toggle"
+                  onClick={() => toggleExpand(key)}
+                  aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                >
+                  {isExpanded ? '−' : '+'}
+                </button>
+              )}
+              {renderIcon(IconComponent, "tree-icon")}
+              {item.href ? (
+                <Link href={item.href} className="tree-link">
+                  {item.name}
+                </Link>
+              ) : (
+                <span className="tree-label">{item.name}</span>
+              )}
+              {hasChildren && (
+                <span className="tree-count">{children.length}</span>
+              )}
+            </div>
+          </div>
+          {hasChildren && isExpanded && (
+            <div className="tree-children">
+              {renderTreeItems(children, level + 1, key)}
+            </div>
+          )}
+        </div>
+      );
+    });
   };
 
   const renderGridView = () => (
@@ -598,6 +689,54 @@ export default function SitemapPage() {
     </div>
   );
 
+  const renderTreeView = () => (
+    <div className="sitemap-tree">
+      <div className="tree-container">
+        {filteredNavLinks.map((section, index) => {
+          const children = getChildren(section);
+          const IconComponent = getIcon(section.name);
+          const key = `root-${index}`;
+          const isExpanded = expandedItems[key];
+          const hasChildren = children.length > 0;
+
+          return (
+            <div key={key} className="tree-root">
+              <div className="tree-root-content">
+                <div className="tree-root-left">
+                  {hasChildren && (
+                    <button 
+                      className="tree-toggle root-toggle"
+                      onClick={() => toggleExpand(key)}
+                      aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                    >
+                      {isExpanded ? '−' : '+'}
+                    </button>
+                  )}
+                  {renderIcon(IconComponent, "tree-icon root-icon")}
+                  {section.href ? (
+                    <Link href={section.href} className="tree-link root-link">
+                      {section.name}
+                    </Link>
+                  ) : (
+                    <span className="tree-label root-label">{section.name}</span>
+                  )}
+                  {hasChildren && (
+                    <span className="tree-count root-count">{children.length}</span>
+                  )}
+                </div>
+              </div>
+              {hasChildren && isExpanded && (
+                <div className="tree-children root-children">
+                  {renderTreeItems(children, 1, key)}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   // ===== Main Render =====
   return (
     <div className="sitemap-container">
@@ -617,14 +756,14 @@ export default function SitemapPage() {
           <div className="sitemap-hero-controls">
             {/* View Toggle */}
             <div className="sitemap-view-toggle">
-              {['grid', 'list', 'compact'].map((mode) => (
+              {[ 'list', 'compact', 'tree'].map((mode) => (
                 <button
                   key={mode}
                   onClick={() => setViewMode(mode)}
                   className={`sitemap-view-btn ${viewMode === mode ? 'active' : ''}`}
                   aria-label={`Switch to ${mode} view`}
                 >
-                  {mode === 'grid' ? '📊' : mode === 'list' ? '📋' : '📌'} {mode}
+                  {mode === 'grid' ? '📊' : mode === 'list' ? '📋' : mode === 'compact' ? '📌' : '🌳'} {mode}
                 </button>
               ))}
             </div>
@@ -675,15 +814,9 @@ export default function SitemapPage() {
       {viewMode === 'grid' && renderGridView()}
       {viewMode === 'list' && renderListView()}
       {viewMode === 'compact' && renderCompactView()}
+      {viewMode === 'tree' && renderTreeView()}
 
-      {/* Footer */}
-      <div className="sitemap-footer">
-        {searchTerm ? (
-          `🔍 Showing ${filteredNavLinks.length} of ${totalSections} sections`
-        ) : (
-          '📋 Complete site structure • Click any link to navigate'
-        )}
-      </div>
+    
     </div>
   );
 }
