@@ -73,7 +73,7 @@ const Home = () => {
               </div>
               <div className="lg:col-span-2 ceo-name">
                 <h2 className='author-title'>Deva Biradar</h2>
-                <h6 className='author-desc'>Chief Executive Officer</h6>
+                <h6 className='author-desc'>Founder & CEO</h6>
                  <p>
                   Mahadev Biradar is the Founder and Chief Executive Officer of Liaison
                   Bank, providing strategic leadership and driving the company’s vision in
