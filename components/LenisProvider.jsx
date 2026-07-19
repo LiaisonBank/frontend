@@ -50,17 +50,29 @@ export default function LenisProvider() {
     };
   }, []);
 
-  // Scroll to top on every route change
-  useEffect(() => {
-    if (!lenisRef.current) return;
+    // Scroll to top on every route change
+    useEffect(() => {
+    const scrollToTop = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          lenisRef.current?.scrollTo(0, {
+            immediate: true,
+            force: true,
+          });
 
-    requestAnimationFrame(() => {
-      lenisRef.current.scrollTo(0, {
-        immediate: true,
-        force: true,
+          window.scrollTo(0, 0);
+        });
       });
-    });
-  }, [pathname]);
+    };
 
-  return null;
+    // Initial load
+    scrollToTop();
+
+    // Mobile browsers / BFCache
+    window.addEventListener("pageshow", scrollToTop);
+
+    return () => {
+      window.removeEventListener("pageshow", scrollToTop);
+    };
+  }, []);
 }

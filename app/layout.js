@@ -254,7 +254,14 @@ export default function RootLayout({ children }) {
               __html: JSON.stringify(organizationSchema),
             }}
           />
-
+          <Script id="scroll-reset" strategy="beforeInteractive">
+            {`
+              if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+              }
+              window.scrollTo(0, 0);
+            `}
+          </Script>
           <AppProviders>{children}</AppProviders>
         </OrientationBlocker>
       </body>
