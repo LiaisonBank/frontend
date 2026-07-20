@@ -790,7 +790,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-
+    position:relative;
     display: flex;
     flex-direction: column;
 
@@ -800,14 +800,25 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     animation: modalFade 0.25s ease;
 
     .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
+      // display: flex;
+      // align-items: center;
+      // justify-content: space-between;
+      display:block;
       padding: 18px 24px;
       border-bottom: 1px solid #e5e5e5;
 
       flex-shrink: 0;
+      h3{
+        text-align: center;
+        display: block;
+        margin: 0;
+        padding: 0;
+      }
+      button.modal-close {
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+      }
     }
 
     .modal-body {

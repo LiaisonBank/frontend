@@ -12,9 +12,8 @@ import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 /**
  * Fisher-Yates Shuffle
- * Returns a new shuffled array without mutating the original array.
  */
-const shuffleArray = (array) => {
+function shuffleArray(array) {
   const shuffled = [...array];
 
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -24,7 +23,7 @@ const shuffleArray = (array) => {
   }
 
   return shuffled;
-};
+}
 
 export default function AwardPage() {
   useBodyClass("awards-recognition");
@@ -32,29 +31,40 @@ export default function AwardPage() {
   const galleryRef = useRef(null);
 
   const [animateCards, setAnimateCards] = useState(false);
-  const [certificates, setCertificates] = useState([]);
-  const [mounted, setMounted] = useState(false);
 
   /**
-   * Shuffle only after hydration.
-   * Prevents SSR hydration mismatch.
+   * Initial data for SSR.
+   * Prevents hydration mismatch.
+   */
+  const [certificates, setCertificates] = useState(certificateList);
+
+  /**
+   * Shuffle after hydration.
    */
   useEffect(() => {
-    setCertificates(shuffleArray(certificateList));
-    setMounted(true);
+    const raf = requestAnimationFrame(() => {
+      setCertificates(shuffleArray(certificateList));
+    });
+
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  /**
+   * Always start from top.
+   */
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+    });
   }, []);
 
   /**
    * Fancybox
    */
   useEffect(() => {
-    if (!mounted) return;
+    if (!galleryRef.current) return;
 
-    const container = galleryRef.current;
-
-    if (!container) return;
-
-    Fancybox.bind(container, '[data-fancybox="certificates"]', {
+    Fancybox.bind(galleryRef.current, '[data-fancybox="certificates"]', {
       animated: true,
 
       Carousel: {
@@ -75,51 +85,33 @@ export default function AwardPage() {
     });
 
     return () => {
-      Fancybox.unbind(container);
+      Fancybox.unbind(galleryRef.current);
       Fancybox.close();
     };
-  }, [mounted]);
+  }, []);
 
   /**
-   * Animate cards on scroll
+   * Card animation
    */
   useEffect(() => {
-    if (!mounted) return;
-
-    const container = galleryRef.current;
-
-    if (!container) return;
+    if (!galleryRef.current) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setAnimateCards(true);
-          observer.disconnect();
-        }
+        if (!entry.isIntersecting) return;
+
+        setAnimateCards(true);
+        observer.disconnect();
       },
       {
-        threshold: 0.3,
+        threshold: 0.25,
       }
     );
 
-    observer.observe(container);
+    observer.observe(galleryRef.current);
 
     return () => observer.disconnect();
-  }, [mounted]);
-
-  /**
-   * Prevent hydration mismatch
-   */
-  if (!mounted) {
-    return null;
-  }
-
-  /**
-   * Empty state
-   */
-  if (!certificates.length) {
-    return null;
-  }
+  }, []);
 
   return (
     <>
@@ -139,10 +131,7 @@ export default function AwardPage() {
                       <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
-                            <i
-                              className="bi bi-house-door me-1"
-                              aria-hidden="true"
-                            />
+                            <i className="bi bi-house-door me-1" />
                             Home
                           </Link>
                         </li>
@@ -169,8 +158,8 @@ export default function AwardPage() {
       >
         <div className="container">
           <div
-            className="certificate-masonry"
             ref={galleryRef}
+            className="certificate-masonry"
           >
             {certificates.map((certificate, index) => (
               <article
@@ -194,12 +183,10 @@ export default function AwardPage() {
                       height={1000}
                       className="certificate-image"
                       loading="lazy"
-                      sizes="
-                        (max-width:576px) 100vw,
-                        (max-width:768px) 50vw,
-                        (max-width:1200px) 33vw,
-                        25vw
-                      "
+                      sizes="(max-width:576px) 100vw,
+                             (max-width:768px) 50vw,
+                             (max-width:1200px) 33vw,
+                             25vw"
                     />
                   </div>
 
