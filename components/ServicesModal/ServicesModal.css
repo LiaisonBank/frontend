@@ -5,18 +5,18 @@
 ======================================== */
 .services-modal-overlay {
   position: fixed;
-  top: 70px;      /* height of navbar */
+  top: 70px;
   left: 0;
   right: 0;
   bottom: 0;
-
+  z-index: 9999;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Start from the top */
+  align-items: flex-start;
   padding-top: 0;
-  z-index: 99;
   background: rgba(0,0,0,0.5);
   backdrop-filter: blur(4px);
+  overflow: hidden;
 }
 
 @keyframes fadeIn {
@@ -29,20 +29,21 @@
 }
 
 /* ========================================
-   MODAL
+   MODAL - Full screen
 ======================================== */
 .services-modal {
-  background: #ffffffba;
-  width: 95%;
-  max-width: 1400px;
-  height:60vh;
-  max-height: 800px;
-  border-radius: 16px;
+  background: #ffffff;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  border-radius: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
   animation: slideUp 0.3s ease;
+  position: relative;
 }
 
 @keyframes slideUp {
@@ -59,20 +60,34 @@
 /* ========================================
    HEADER
 ======================================== */
+/* ========================================
+   HEADER
+======================================== */
 .services-modal-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end; /* Align close button to the right */
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e5e7ebdf;
+  border-bottom: 1px solid #e5e7eb;
   flex-shrink: 0;
+  background: #ffffff;
+  z-index: 10;
+  position: sticky;
+  top: 0;
+  position: relative;
 }
 
 .services-modal-title {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #e18c1d;
   margin: 0;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
 }
 
 .services-modal-close {
@@ -87,10 +102,11 @@
   cursor: pointer;
   border-radius: 8px;
   transition: all 0.2s ease;
+  position: relative;
+  z-index: 2;
 }
-
 .services-modal-close:hover {
-  background: #ffffffba;
+  background: #f3f4f6;
   color: #1a1a2e;
 }
 
@@ -101,6 +117,11 @@
   display: flex;
   flex: 1;
   overflow: hidden;
+  background: #fafafa;
+  min-height: 0;
+  height: 100%;
+  position: relative;
+  font-size: 18px;
 }
 
 /* ========================================
@@ -111,7 +132,20 @@
   min-width: 200px;
   border-right: 1px solid #e5e7eb;
   overflow-y: auto;
+  overflow-x: hidden;
   flex-shrink: 0;
+  background: #ffffff;
+  height: 100%;
+  position: relative;
+  /* Firefox scrollbar */
+  scrollbar-width: auto;
+  scrollbar-color: #c1c7cd #f1f1f1;
+  /* Ensure it can receive scroll events */
+  touch-action: pan-y;
+}
+
+.services-left-panel:hover {
+  scrollbar-color: #9ca3af #f1f1f1;
 }
 
 .services-section-list {
@@ -133,6 +167,7 @@
   font-weight: 500;
   color: #4a4a5e;
   position: relative;
+  font-size: 18px;
 }
 
 .services-section-btn:hover {
@@ -142,7 +177,7 @@
 
 .services-section-btn.active {
   background: #eef2f6;
-  color: #0052a1;
+  color: #f97316;
   font-weight: 600;
 }
 
@@ -153,7 +188,7 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: orange;
+  background: #f97316;
 }
 
 .services-section-name {
@@ -183,7 +218,20 @@
   min-width: 200px;
   border-right: 1px solid #e5e7eb;
   overflow-y: auto;
+  overflow-x: hidden;
   flex-shrink: 0;
+  background: #ffffff;
+  height: 100%;
+  position: relative;
+  /* Firefox scrollbar */
+  scrollbar-width: auto;
+  scrollbar-color: #c1c7cd #f1f1f1;
+  /* Ensure it can receive scroll events */
+  touch-action: pan-y;
+}
+
+.services-center-panel:hover {
+  scrollbar-color: #9ca3af #f1f1f1;
 }
 
 .services-category-list {
@@ -204,6 +252,7 @@
   font-size: 13px;
   color: #4a4a5e;
   position: relative;
+  font-size: 18px;
 }
 
 .services-category-btn:hover {
@@ -213,7 +262,7 @@
 
 .services-category-btn.active {
   background: #eef2f6;
-  color: #0052a1;
+  color: #f97316;
   font-weight: 500;
 }
 
@@ -224,7 +273,7 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: orange;
+  background: #f97316;
 }
 
 .services-category-name {
@@ -252,8 +301,20 @@
 .services-right-panel {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 24px 28px;
-  backdrop-filter: blur(4px);
+  background: #fafafa;
+  height: 100%;
+  position: relative;
+  /* Firefox scrollbar */
+  scrollbar-width: auto;
+  scrollbar-color: #c1c7cd #f1f1f1;
+  /* Ensure it can receive scroll events */
+  touch-action: pan-y;
+}
+
+.services-right-panel:hover {
+  scrollbar-color: #9ca3af #f1f1f1;
 }
 
 .services-details {
@@ -399,31 +460,107 @@
 }
 
 /* ========================================
-   SCROLLBAR STYLING
+   SCROLLBAR STYLING - FULLY FUNCTIONAL WITH BUTTONS
 ======================================== */
+/* WebKit browsers (Chrome, Safari, Edge) */
 .services-left-panel::-webkit-scrollbar,
 .services-center-panel::-webkit-scrollbar,
 .services-right-panel::-webkit-scrollbar {
-  width: 4px;
+  width: 12px;
+  height: 12px;
 }
 
 .services-left-panel::-webkit-scrollbar-track,
 .services-center-panel::-webkit-scrollbar-track,
 .services-right-panel::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f1f1f1;
+  border-radius: 0;
+  border: none;
 }
 
 .services-left-panel::-webkit-scrollbar-thumb,
 .services-center-panel::-webkit-scrollbar-thumb,
 .services-right-panel::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 2px;
+  background: #c1c7cd;
+  border-radius: 0;
+  border: none;
+  min-height: 40px;
+  min-width: 40px;
+  transition: background 0.2s ease;
 }
 
+/* Scrollbar buttons (up/down arrows) */
+.services-left-panel::-webkit-scrollbar-button,
+.services-center-panel::-webkit-scrollbar-button,
+.services-right-panel::-webkit-scrollbar-button {
+  background: #e5e7eb;
+  height: 16px;
+  width: 16px;
+  display: block;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.services-left-panel::-webkit-scrollbar-button:hover,
+.services-center-panel::-webkit-scrollbar-button:hover,
+.services-right-panel::-webkit-scrollbar-button:hover {
+  background: #d1d5db;
+}
+
+.services-left-panel::-webkit-scrollbar-button:active,
+.services-center-panel::-webkit-scrollbar-button:active,
+.services-right-panel::-webkit-scrollbar-button:active {
+  background: #9ca3af;
+}
+
+/* Scrollbar button - up */
+.services-left-panel::-webkit-scrollbar-button:decrement,
+.services-center-panel::-webkit-scrollbar-button:decrement,
+.services-right-panel::-webkit-scrollbar-button:decrement {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M4 1L7 5H1L4 1z' fill='%236b7280'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.services-left-panel::-webkit-scrollbar-button:decrement:hover,
+.services-center-panel::-webkit-scrollbar-button:decrement:hover,
+.services-right-panel::-webkit-scrollbar-button:decrement:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M4 1L7 5H1L4 1z' fill='%234b5563'/%3E%3C/svg%3E");
+}
+
+/* Scrollbar button - down */
+.services-left-panel::-webkit-scrollbar-button:increment,
+.services-center-panel::-webkit-scrollbar-button:increment,
+.services-right-panel::-webkit-scrollbar-button:increment {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M4 7L1 3H7L4 7z' fill='%236b7280'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.services-left-panel::-webkit-scrollbar-button:increment:hover,
+.services-center-panel::-webkit-scrollbar-button:increment:hover,
+.services-right-panel::-webkit-scrollbar-button:increment:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M4 7L1 3H7L4 7z' fill='%234b5563'/%3E%3C/svg%3E");
+}
+
+/* Hover states for thumb */
 .services-left-panel::-webkit-scrollbar-thumb:hover,
 .services-center-panel::-webkit-scrollbar-thumb:hover,
 .services-right-panel::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
+}
+
+.services-left-panel::-webkit-scrollbar-thumb:active,
+.services-center-panel::-webkit-scrollbar-thumb:active,
+.services-right-panel::-webkit-scrollbar-thumb:active {
+  background: #6b7280;
+}
+
+/* Corner */
+.services-left-panel::-webkit-scrollbar-corner,
+.services-center-panel::-webkit-scrollbar-corner,
+.services-right-panel::-webkit-scrollbar-corner {
+  background: #f1f1f1;
 }
 
 /* ========================================
@@ -442,13 +579,6 @@
 }
 
 @media (max-width: 768px) {
-  .services-modal {
-    width: 100%;
-    height: 100vh;
-    max-height: 100vh;
-    border-radius: 0;
-  }
-
   .services-modal-body {
     flex-direction: column;
   }
@@ -459,6 +589,9 @@
     max-height: 200px;
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: auto;
   }
 
   .services-center-panel {
@@ -467,11 +600,16 @@
     max-height: 200px;
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: auto;
   }
 
   .services-right-panel {
     flex: 1;
     padding: 16px;
+    height: auto;
+    min-height: 200px;
   }
 
   .services-section-list {
@@ -479,6 +617,12 @@
     overflow-x: auto;
     padding: 8px 12px;
     gap: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .services-section-list::-webkit-scrollbar {
+    display: none;
   }
 
   .services-section-btn {
@@ -502,6 +646,12 @@
     overflow-x: auto;
     padding: 8px 12px;
     gap: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .services-category-list::-webkit-scrollbar {
+    display: none;
   }
 
   .services-category-btn {
@@ -530,6 +680,28 @@
 
   .service-child-children {
     padding-left: 16px;
+  }
+
+  /* Mobile scrollbar - with buttons */
+  .services-left-panel::-webkit-scrollbar,
+  .services-center-panel::-webkit-scrollbar,
+  .services-right-panel::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .services-left-panel::-webkit-scrollbar-button,
+  .services-center-panel::-webkit-scrollbar-button,
+  .services-right-panel::-webkit-scrollbar-button {
+    height: 12px;
+    width: 12px;
+  }
+
+  .services-left-panel::-webkit-scrollbar-thumb,
+  .services-center-panel::-webkit-scrollbar-thumb,
+  .services-right-panel::-webkit-scrollbar-thumb {
+    min-height: 30px;
+    min-width: 30px;
   }
 }
 
