@@ -299,7 +299,7 @@ export default function ServicesModal() {
     <div className="services-modal-overlay">
       <div className="services-modal" ref={modalRef}>
         {/* Header */}
-        <div className="services-modal-header">
+        {/* <div className="services-modal-header">
           <h2 className="services-modal-title">Our Services</h2>
           <button 
             className="services-modal-close"
@@ -308,9 +308,16 @@ export default function ServicesModal() {
           >
             <X size={24} />
           </button>
-        </div>
+        </div> */}
 
         <div className="services-modal-body">
+           <button 
+            className="services-modal-close"
+            onClick={() => setServiceModalOpen(false)}
+            aria-label="Close modal"
+          >
+            <X size={24} />
+          </button>
           {/* Left Panel - Sections */}
           <div className="services-left-panel">
             <div className="services-section-list">

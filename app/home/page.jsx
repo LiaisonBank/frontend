@@ -7,8 +7,9 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 // import Waves from "@/components/waves";
 
 // import smallLogo from "@/assets/images/shape-small-1-1.png"
+// import licensingImg from "./images/web-assets.bcg.webp";
 import welcomeImg from "@/assets/images/mahadev_Rupali_Arvind.webp"
-import devaImg from "@/assets/images/ceo.png"
+import devaImg from "@/assets/images/ceo.jpg"
 import ServicesSection from "@/components/ServicesSection";
 import ClientScroller from "@/components/ClientScroller"
 import useFancybox from '@/components/useFancybox';
@@ -55,7 +56,7 @@ const Home = () => {
           />
         </div> */}
       </div>
-      <section className="bg-aliceblue ceo-message">
+      <section className="bg-aliceblue ceo-message ">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end">
                <div className="lg:col-span-1">
@@ -272,7 +273,7 @@ const Home = () => {
         </div>
       </section>
       
-      <section className="licensing d-none">
+      <section className="assistance d-none">
         <div className="container-fluid px-0">
           <div className="row g-0 align-items-stretch">
 
@@ -280,24 +281,20 @@ const Home = () => {
             <div className="col-lg-6">
               <div className="licensing-content">
                 <h2>
-                  How can we assist you
-                  <br />
-                  today?
+                  Need Licensing Assistance?
                 </h2>
-
                 <p>
-                  Learn more about our core areas of expertise by selecting
-                  your topic of interest:
+                 Choose a licensing category to learn how LiaisonBank can help you secure, renew, and manage your business 
+                 licenses with confidence and compliance.
                 </p>
-
                 <div className="licensing-selects">
-                  <select>
+                  <select id="lb-license">
                     <option>Capabilities</option>
                     <option>Licensing</option>
                     <option>Compliance</option>
                   </select>
 
-                  <select>
+                  <select id="lb-servicetype">
                     <option>Industries</option>
                     <option>Banking</option>
                     <option>Insurance</option>
@@ -313,6 +310,13 @@ const Home = () => {
                   src="/images/licensing/licensing-banner.jpg"
                   alt="Licensing"
                 /> */}
+                <Image 
+                  src="/images/web-assets.bcg.webp"
+                  alt="Licensing"
+                  width={1920}
+                  height={1080}
+                  className="service-license"
+                />
               </div>
             </div>
 

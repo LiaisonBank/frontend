@@ -330,7 +330,7 @@ export default function ServicesModal() {
                 {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
               </span>
             )}
-            {child.pdf && (
+            {/* {child.pdf && (
               <a 
                 href={child.pdf} 
                 target="_blank" 
@@ -340,7 +340,7 @@ export default function ServicesModal() {
               >
                 <FileText size={14} />
               </a>
-            )}
+            )} */}
           </div>
           {hasChildren && isExpanded && (
             <div className="service-child-children">
@@ -354,20 +354,15 @@ export default function ServicesModal() {
 
   return (
     <div className="services-modal-overlay">
-      <div className="services-modal" ref={modalRef}>
-        {/* Header */}
-        <div className="services-modal-header">
-          <h2 className="services-modal-title">Our Services</h2>
-          <button 
+      <div className={`services-modal ${serviceModalOpen ? "active" : ""}`} ref={modalRef}>
+        <div className="services-modal-body">
+           <button 
             className="services-modal-close"
             onClick={() => setServiceModalOpen(false)}
             aria-label="Close modal"
           >
             <X size={24} />
           </button>
-        </div>
-
-        <div className="services-modal-body">
           {/* Left Panel - Sections */}
           <div className="services-left-panel" ref={leftPanelRef}>
             <div className="services-section-list">

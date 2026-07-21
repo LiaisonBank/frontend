@@ -7,7 +7,7 @@ import Select from "react-select";
 import useBodyClass from "@/components/useBodyClass";
 import pressReleaseData from "@/lib/data/pressReleaseData";
 import PressReleaseCard from "./PressReleaseCard";
-import { section } from "framer-motion/client";
+
 
 export default function PressReleaseLiaisonbankPage({ pressReleases }) {
   useBodyClass("pressrelease");

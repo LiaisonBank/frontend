@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { importantLinks } from "../lib/data/menus.js";
-import logoScrolled from "@/assets/images/logo_grey.webp";
+import logoScrolled from "@/assets/images/logo_grey.png";
 import Modal from "@/components/ModalDialog/Modal";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import EnquiryForm from "@/components/EnquiryForm/page.jsx";
