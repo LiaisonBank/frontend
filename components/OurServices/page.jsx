@@ -73,7 +73,7 @@ export default function ServicesSlider() {
               {/* Back */}
               <div className="flip-service-back">
                 <div className="flip-service-content">
-                  <h4>{service.title}</h4>
+                  {/* <h4>{service.title}</h4> */}
                   <p>{service.desc}</p>
                   {/* <button>Learn More</button> */}
                 </div>

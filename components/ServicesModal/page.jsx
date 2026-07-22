@@ -208,7 +208,6 @@ export default function ServicesModal() {
     { name: "Equipment Solution Department", href: "/contact-us-liaison-bank", title: "Equipment Solution Department", alt: "( ESD )", pdf: "/pdf/EEBP.pdf" },
     { name: "Group Profile", href: "/group-profile", title: "Group Profile", alt: "( ESD )", pdf: "" },
   ];
-
   
   const [selectedSection, setSelectedSection] = useState(servicesData[0]);
   const [selectedCategory, setSelectedCategory] = useState(servicesData[0]?.items?.[0] || null);

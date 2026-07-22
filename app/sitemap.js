@@ -67,12 +67,12 @@ const routes = [
     changeFrequency: "monthly",
   },
   {
-    path: "/privacy-policy",
+    path: "/legal/privacy-policy",
     priority: 0.3,
     changeFrequency: "yearly",
   },
   {
-    path: "/terms-of-service",
+    path: "/legal/terms-of-service",
     priority: 0.3,
     changeFrequency: "yearly",
   },
