@@ -75,7 +75,7 @@ font-weight: 400;
   grid-template-columns: 2fr 1.2fr 1.8fr;
   gap: 60px;
   padding-top: 20px;
-  padding-bottom: 15px; 
+  // padding-bottom: 15px; 
   border-bottom: 1px solid #e2e8f0; 
 }
 
@@ -185,7 +185,6 @@ font-weight: 400;
         color: #000;
         text-decoration: none;
         font-weight: 600;
-        padding-bottom: 4px;
         &:hover{
           color:#e18c1d;
         }

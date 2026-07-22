@@ -41,7 +41,7 @@ footer {
       position: relative;
         // z-index: 1;
       li {
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.2rem;
           a {
           position: relative;
             @media screen and (max-width:912px) {
@@ -81,7 +81,7 @@ footer {
   position: fixed;
   bottom: 1rem;
   right: 0.2rem;
-  // z-index: 600;
+  z-index: 600;
   opacity: 0;
   visibility: hidden;
   transition: all 0.8s ease-in-out;

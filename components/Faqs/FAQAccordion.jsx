@@ -72,7 +72,7 @@ export default function FAQSection() {
       <div
           key={realIndex}
           className="faq-items bg-white mb-1 overflow-hidden"
-          onMouseEnter={() => openAccordion(realIndex)}
+          // onMouseEnter={() => openAccordion(realIndex)}
         >
         <button
           onClick={() => toggleAccordion(realIndex)}

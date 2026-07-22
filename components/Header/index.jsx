@@ -78,7 +78,7 @@ export default function Header() {
         </li>
       );
     })}
-  </ul>
+    </ul>
   );
 };
   return (
@@ -130,33 +130,33 @@ export default function Header() {
                     >
                       {/* Main Navigation */}
                     {link.name === "Our Services" ? (
-  <button
-    type="button"
-    className="nav-link bg-transparent border-0 p-0 cursor-pointer flex items-center gap-1"
-    onClick={() => setServiceModalOpen(true)}
-  >
-    <NavText text={link.name} />
-    <ChevronDown size={16} className="nav-arrow" />
-  </button>
-) : link.href ? (
-  <button
-    type="button"
-    className="nav-link bg-transparent border-0 p-0 cursor-pointer"
-    onClick={() => router.push(link.href)}
-  >
-    <NavText text={link.name} />
-  </button>
-) : (
-  <span className="nav-link cursor-pointer flex items-center gap-1">
-    <NavText text={link.name} />
-    {(hasSubmenu || singleSubmenu) && (
-      <ChevronDown
-        size={16}
-        className="nav-arrow"
-      />
-    )}
-  </span>
-)}
+                        <button
+                          type="button"
+                          className="nav-link bg-transparent border-0 p-0 cursor-pointer flex items-center gap-1"
+                          onClick={() => setServiceModalOpen(true)}
+                        >
+                          <NavText text={link.name} />
+                          <ChevronDown size={16} className="nav-arrow" />
+                        </button>
+                      ) : link.href ? (
+                        <button
+                          type="button"
+                          className="nav-link bg-transparent border-0 p-0 cursor-pointer"
+                          onClick={() => router.push(link.href)}
+                        >
+                          <NavText text={link.name} />
+                        </button>
+                      ) : (
+                        <span className="nav-link cursor-pointer flex items-center gap-1">
+                          <NavText text={link.name} />
+                          {(hasSubmenu || singleSubmenu) && (
+                            <ChevronDown
+                              size={16}
+                              className="nav-arrow"
+                            />
+                          )}
+                        </span>
+                      )}
 
                       {/* ========================= */}
                       {/* Single Submenu */}

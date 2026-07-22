@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useModal } from "@/context/ModalContext";
 import { ChevronRight, ChevronDown, FileText, X } from "lucide-react";
 import "./ServicesModal.css";
@@ -11,8 +10,11 @@ export default function ServicesModal() {
   const router = useRouter();
   const { serviceModalOpen, setServiceModalOpen } = useModal();
   const modalRef = useRef(null);
+  const leftPanelRef = useRef(null);
+  const centerPanelRef = useRef(null);
+  const rightPanelRef = useRef(null);
 
-  // Import the services data
+  // ... (keep your servicesData array exactly as it is)
   const servicesData = [
     {
       name: "AMC",
@@ -206,7 +208,7 @@ export default function ServicesModal() {
     { name: "Equipment Solution Department", href: "/contact-us-liaison-bank", title: "Equipment Solution Department", alt: "( ESD )", pdf: "/pdf/EEBP.pdf" },
     { name: "Group Profile", href: "/group-profile", title: "Group Profile", alt: "( ESD )", pdf: "" },
   ];
-
+  
   const [selectedSection, setSelectedSection] = useState(servicesData[0]);
   const [selectedCategory, setSelectedCategory] = useState(servicesData[0]?.items?.[0] || null);
   const [expandedItems, setExpandedItems] = useState({});
@@ -220,6 +222,31 @@ export default function ServicesModal() {
     return () => window.removeEventListener('keydown', handleEsc);
   }, [setServiceModalOpen]);
 
+  // Prevent body scroll when modal is open - SIMPLIFIED VERSION
+  useEffect(() => {
+    if (serviceModalOpen) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+      
+      // Prevent scrolling on body
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      
+      return () => {
+        // Restore scrolling when modal closes
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        
+        // Restore scroll position
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [serviceModalOpen]);
+
   // Close on click outside
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -232,6 +259,35 @@ export default function ServicesModal() {
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [serviceModalOpen, setServiceModalOpen]);
+
+  // FIX: Ensure mouse wheel scrolling works on all panels
+  useEffect(() => {
+    if (!serviceModalOpen) return;
+
+    const handleWheel = (e) => {
+      // Allow natural scroll on panels
+      e.stopPropagation();
+    };
+
+    const panels = [leftPanelRef.current, centerPanelRef.current, rightPanelRef.current];
+    
+    panels.forEach(panel => {
+      if (panel) {
+        panel.addEventListener('wheel', handleWheel, { passive: true });
+        // Ensure panel can receive scroll events
+        panel.style.overflowY = 'auto';
+        panel.style.overflowX = 'hidden';
+      }
+    });
+
+    return () => {
+      panels.forEach(panel => {
+        if (panel) {
+          panel.removeEventListener('wheel', handleWheel);
+        }
+      });
+    };
+  }, [serviceModalOpen]);
 
   if (!serviceModalOpen) return null;
 
@@ -273,7 +329,7 @@ export default function ServicesModal() {
                 {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
               </span>
             )}
-            {child.pdf && (
+            {/* {child.pdf && (
               <a 
                 href={child.pdf} 
                 target="_blank" 
@@ -283,7 +339,7 @@ export default function ServicesModal() {
               >
                 <FileText size={14} />
               </a>
-            )}
+            )} */}
           </div>
           {hasChildren && isExpanded && (
             <div className="service-child-children">
@@ -297,22 +353,17 @@ export default function ServicesModal() {
 
   return (
     <div className="services-modal-overlay">
-      <div className="services-modal" ref={modalRef}>
-        {/* Header */}
-        <div className="services-modal-header">
-          <h2 className="services-modal-title">Our Services</h2>
-          <button 
+      <div className={`services-modal ${serviceModalOpen ? "active" : ""}`} ref={modalRef}>
+        <div className="services-modal-body">
+           <button 
             className="services-modal-close"
             onClick={() => setServiceModalOpen(false)}
             aria-label="Close modal"
           >
             <X size={24} />
           </button>
-        </div>
-
-        <div className="services-modal-body">
           {/* Left Panel - Sections */}
-          <div className="services-left-panel">
+          <div className="services-left-panel" ref={leftPanelRef}>
             <div className="services-section-list">
               {servicesData.map((section) => (
                 <button
@@ -341,7 +392,7 @@ export default function ServicesModal() {
           </div>
 
           {/* Center Panel - Categories */}
-          <div className="services-center-panel">
+          <div className="services-center-panel" ref={centerPanelRef}>
             <div className="services-category-list">
               {selectedSection?.items?.map((item) => (
                 <button
@@ -367,7 +418,7 @@ export default function ServicesModal() {
           </div>
 
           {/* Right Panel - Details */}
-          <div className="services-right-panel">
+          <div className="services-right-panel" ref={rightPanelRef}>
             {selectedCategory ? (
               <div className="services-details">
                 <h3 className="services-details-title">{selectedCategory.name}</h3>
