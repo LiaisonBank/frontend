@@ -9,7 +9,7 @@ import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 // import smallLogo from "@/assets/images/shape-small-1-1.png"
 // import licensingImg from "./images/web-assets.bcg.webp";
 import welcomeImg from "@/assets/images/mahadev_Rupali_Arvind.webp"
-import devaImg from "@/assets/images/ceo.jpg"
+import devaImg from "@/assets/images/ceo.png"
 import ServicesSection from "@/components/ServicesSection";
 import ClientScroller from "@/components/ClientScroller"
 import useFancybox from '@/components/useFancybox';
@@ -56,7 +56,7 @@ const Home = () => {
           />
         </div> */}
       </div>
-      <section className="bg-aliceblue ceo-message ">
+      <section className="ceo-message ">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end">
                <div className="lg:col-span-1">
@@ -223,12 +223,12 @@ const Home = () => {
       </section>
 
       <section className="ourservices">
-        <div className="container mx-auto py-5 service-list">
+        <div className="mx-auto py-5 service-list">
           <div className="section-title">
             <h3>Licensing and Liaisoning</h3>
             <h5>We bring our services to multiple sectors and create customised solutions for diverse set of business needs.</h5>
           </div>
-          <div className='col-12 mx-auto'>
+          <div className='mx-auto'>
             <OurServices/>
           </div>
         </div>
@@ -247,13 +247,13 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="awardscertification">
-        <div className="container-fluid mx-auto py-5">
+      <section className="awardscertification px-0">
+        <div className="container-fluid mx-auto py-5 px-0">
           <div className="section-title">
             <h3>Awards & Certifications</h3>
           </div>
 
-          <div ref={fancyboxRef} className="row  pt-5 d-flex align-items-center">
+          <div ref={fancyboxRef} className="d-flex align-items-center px-0 mx-0">
             {/* <div className="col-lg-2 col-md-2 col-sm-6 col-6"> */}
             <CertificateGallery />
             {/* <CertificateScroller /> */}

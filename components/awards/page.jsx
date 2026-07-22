@@ -62,7 +62,7 @@ export default function AwardP() {
 
   return (
     <section className="certificate-section">
-      <div className="container">
+      <div className="m-0 p-0">
         <div ref={galleryRef}>
           <Swiper
            onSwiper={(swiper) => {
@@ -89,7 +89,7 @@ export default function AwardP() {
                 spaceBetween: 24,
               },
               1200: {
-                slidesPerView: 4,
+                slidesPerView: 5,
                 spaceBetween: 24,
               },
             }}
