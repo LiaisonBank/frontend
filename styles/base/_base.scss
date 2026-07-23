@@ -597,6 +597,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
       border-radius: 50%;
       margin-left: 20px;
       transition: all 0.5s;
+      // font-size: 1.5rem;
       &.fa-whatsapp:before {
         font-size: 1.5rem;
       }
@@ -610,6 +611,12 @@ body:has(.has-single-submenu:hover) .menu-overlay {
 .callnow {
   // background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
   background: $secodary-bg-color;
+}
+.hiring {
+    i {
+      font-size: 1.2rem;
+      padding-right: .2rem;
+    }
 }
 .hiring-form{
   input#resume {
