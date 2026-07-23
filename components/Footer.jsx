@@ -122,9 +122,9 @@ export default function Footer() {
           <div className="footer-bottom">
             <p>© {currentYear} Liaison Bank. All rights reserved.</p>
             <div className="footer-legal">
-              <Link href="/privacy">Privacy</Link>
+              <Link href="/legal/privacy-policy">Privacy</Link>
               <span>|</span>
-              <Link href="/terms">Terms</Link>
+              <Link href="/legal/terms-and-conditions">Terms</Link>
             </div>
           </div>
         </div>

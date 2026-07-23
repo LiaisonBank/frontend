@@ -76,49 +76,22 @@ const Home = () => {
                 <h2 className='author-title'>Deva Biradar</h2>
                 <h6 className='author-desc'>Founder & CEO</h6>
                  <p>
-                  Mahadev Biradar is the Founder and Chief Executive Officer of Liaison
-                  Bank, providing strategic leadership and driving the company’s vision in
-                  government licensing, liaisoning, and regulatory compliance.
+                  Mahadev Biradar is the Founder and Chief Executive Officer of Liaison Bank, providing strategic leadership in government liaisoning, licensing, and regulatory compliance.
                 </p>
                 <p>
-                  Born and brought up in a small town in Wagalgaon, Karnataka, he faced
-                  numerous failures and rejections in various cities. He came to Bombay in
-                  1999 with a vision to achieve something meaningful and make his parents
-                  proud. He started his journey as a waiter with a smile, carrying one
-                  motto: to always give his best. Later, he entered the real estate
-                  industry, where he gained valuable knowledge in enhancing the worth and
-                  value of properties. Through this experience, he built relationships
-                  with many people and entered the field of liaisoning.
+                  Born and brought up in Wagalgaon, Karnataka, he faced numerous failures and rejections across various cities. He came to Bombay in 2005 to make his parents proud. He started as a waiter, guided by one motto: to always give his best. Later entering real estate, he gained valuable property knowledge, built strong relationships, and entered liaisoning.
                 </p>
                 <p>
-                  In 2017, he founded a company named DBRE India, transforming his
-                  entrepreneurial vision into a business venture focused on delivering
-                  innovative solutions and creating sustainable value for clients.
-                  DBRE gave him the platform to strengthen his entrepreneurial
-                  journey. He expanded his expertise into PNG fabrication and
-                  installation, firefighting system installation, testing and
-                  certification, electrical audits, licensing, and liaisoning with
-                  various government regulatory bodies.
+                  In 2017, he founded DBRE India to deliver innovative solutions and sustainable value. DBRE expanded his expertise into PNG fabrication, firefighting system installation, testing, certification, electrical audits, and government regulatory licensing.
                 </p>
 
-                <p>
-                  Mahadev’s entrepreneurial journey reflects resilience, continuous
-                  learning, and a commitment to excellence. Although his education was
-                  primarily gained through practical experience rather than
-                  traditional higher studies, he transformed determination,
-                  discipline, and hands-on knowledge into a thriving enterprise built
-                  on trust and long-term partnerships.
+                <p>Mahadev’s journey reflects resilience and continuous learning. Though educated primarily through practical experience rather than traditional higher studies, he transformed determination, discipline, and hands-on knowledge into a thriving enterprise built on trust.
                 </p>
         
                 <p>
-                  From serving his very first client to building relationships with
-                  leading organizations, Mahadev has remained committed to delivering
-                  dependable compliance solutions with professionalism, integrity, and
-                  efficiency. His leadership philosophy is centered on creating
-                  lasting business relationships through transparency, service
-                  excellence, and consistent execution.
+                 Known as Deva Biradar, he leaves his mark wherever he goes. Under his leadership, the company expanded across India and registered in Singapore to connect international markets. Originally from Karnataka, He developed his professional roots in Mumbai, where he continues driving the company’s global vision.
                 </p>
-                {expanded && (
+                {/* {expanded && (
                     <>
                     <p>
                       Wherever he goes, he leaves his mark. He is well known as Deva
@@ -130,11 +103,11 @@ const Home = () => {
                       and commitment to service excellence.
                     </p>
                   </>
-                )}
+                )} */}
                 <div className="flex justify-between items-center">
                  <button
                     type="button"
-                    className="read-more-btn"
+                    className="read-more-btn hidden"
                     onClick={() => setExpanded(!expanded)}
                   >
                     {expanded ? "Read Less" : "Read More"}
