@@ -27,7 +27,7 @@ export default function ServicesSlider() {
         arrows: true,
         pagination: false,
         autoplay: true,
-        interval: 3000,
+        interval: 2000,
         
 
         breakpoints: {
