@@ -76,49 +76,22 @@ const Home = () => {
                 <h2 className='author-title'>Deva Biradar</h2>
                 <h6 className='author-desc'>Founder & CEO</h6>
                  <p>
-                  Mahadev Biradar is the Founder and Chief Executive Officer of Liaison
-                  Bank, providing strategic leadership and driving the company’s vision in
-                  government licensing, liaisoning, and regulatory compliance.
+                  Mahadev Biradar is the Founder and Chief Executive Officer of Liaison Bank, providing strategic leadership in government liaisoning, licensing, and regulatory compliance.
                 </p>
                 <p>
-                  Born and brought up in a small town in Wagalgaon, Karnataka, he faced
-                  numerous failures and rejections in various cities. He came to Bombay in
-                  1999 with a vision to achieve something meaningful and make his parents
-                  proud. He started his journey as a waiter with a smile, carrying one
-                  motto: to always give his best. Later, he entered the real estate
-                  industry, where he gained valuable knowledge in enhancing the worth and
-                  value of properties. Through this experience, he built relationships
-                  with many people and entered the field of liaisoning.
+                  Born and brought up in Wagalgaon, Karnataka, he faced numerous failures and rejections across various cities. He came to Bombay in 2005 to make his parents proud. He started as a waiter, guided by one motto: to always give his best. Later entering real estate, he gained valuable property knowledge, built strong relationships, and entered liaisoning.
                 </p>
                 <p>
-                  In 2017, he founded a company named DBRE India, transforming his
-                  entrepreneurial vision into a business venture focused on delivering
-                  innovative solutions and creating sustainable value for clients.
-                  DBRE gave him the platform to strengthen his entrepreneurial
-                  journey. He expanded his expertise into PNG fabrication and
-                  installation, firefighting system installation, testing and
-                  certification, electrical audits, licensing, and liaisoning with
-                  various government regulatory bodies.
+                  In 2017, he founded DBRE India to deliver innovative solutions and sustainable value. DBRE expanded his expertise into PNG fabrication, firefighting system installation, testing, certification, electrical audits, and government regulatory licensing.
                 </p>
 
-                <p>
-                  Mahadev’s entrepreneurial journey reflects resilience, continuous
-                  learning, and a commitment to excellence. Although his education was
-                  primarily gained through practical experience rather than
-                  traditional higher studies, he transformed determination,
-                  discipline, and hands-on knowledge into a thriving enterprise built
-                  on trust and long-term partnerships.
+                <p>Mahadev’s journey reflects resilience and continuous learning. Though educated primarily through practical experience rather than traditional higher studies, he transformed determination, discipline, and hands-on knowledge into a thriving enterprise built on trust.
                 </p>
         
                 <p>
-                  From serving his very first client to building relationships with
-                  leading organizations, Mahadev has remained committed to delivering
-                  dependable compliance solutions with professionalism, integrity, and
-                  efficiency. His leadership philosophy is centered on creating
-                  lasting business relationships through transparency, service
-                  excellence, and consistent execution.
+                 Known as Deva Biradar, he leaves his mark wherever he goes. Under his leadership, the company expanded across India and registered in Singapore to connect international markets. Originally from Karnataka, He developed his professional roots in Mumbai, where he continues driving the company’s global vision.
                 </p>
-                {expanded && (
+                {/* {expanded && (
                     <>
                     <p>
                       Wherever he goes, he leaves his mark. He is well known as Deva
@@ -130,11 +103,11 @@ const Home = () => {
                       and commitment to service excellence.
                     </p>
                   </>
-                )}
+                )} */}
                 <div className="flex justify-between items-center">
                  <button
                     type="button"
-                    className="read-more-btn"
+                    className="read-more-btn hidden"
                     onClick={() => setExpanded(!expanded)}
                   >
                     {expanded ? "Read Less" : "Read More"}
@@ -189,8 +162,8 @@ const Home = () => {
                 <p>Your trusted partner for seamless bank licensing and liaisoning services and png, fire etc.
                 We simplify complex regulatory processes with expert guidance and industry expertise.
                 Helping financial institutions achieve compliance and operational success.</p>
-                <p>Bridging the gap between the complicated regulatory frameworks and your business goals, we act as an interface for all your statutory requirements. As your dedicated licensing and liaisoning partner, we specialize in managing the intricate legalities and bureaucratic uncertainties that often stall business momentum. Our expertise ensures smoother operations, allowing you to channelize your energy into core priorities and other important business objectives.</p>
-                <p>We commit to deliver a seamless, and reliable framework that offers absolute clarity and operational confidence. By taking care of the complexities of industrial licensing, permits, and government liaisoning, we transform a traditionally slow process into a smooth, efficient experience. While we handle the administrative hurdles, you stay empowered to focus on strategic growth and achieving your business milestones with the certainty that your legal standing is in expert hands.</p>
+                <p>Bridging the gap between the complicated regulatory frameworks and your business goals, we act as an interface for all your statutory requirements. As your dedicated liaisoning and licensing  partner, we specialize in managing the intricate legalities and bureaucratic uncertainties that often stall business momentum. Our expertise ensures smoother operations, allowing you to channelize your energy into core priorities and other important business objectives.</p>
+                <p>We commit to deliver a seamless, and reliable framework that offers absolute clarity and operational confidence. By taking care of the government liaisoning and complexities of industrial licensing, permits, we transform a traditionally slow process into a smooth, efficient experience. While we handle the administrative hurdles, you stay empowered to focus on strategic growth and achieving your business milestones with the certainty that your legal standing is in expert hands.</p>
                 {/* <p>By entrusting us with your regulatory approvals and government relations, you accelerate the transition between policy and progress.</p> */}
                 {/* <h2 className="text-xl font-semibold mb-2">Column 2</h2> */}
                 {/* <p>We take care of the intricacies and uncertainties, allowing you to redirect your energy towards your core priorities and business objectives. This ensures a smoother and more efficient experience, providing you with the peace of mind to concentrate on what matters most to your success.</p>

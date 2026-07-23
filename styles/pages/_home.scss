@@ -413,6 +413,9 @@
         text-decoration: none;
         font-weight: 600;
         padding-bottom: 4px;
+        &.hidden{
+          visibility: hidden;
+        }
         &:hover{
           color:var(--themeht-primary-color);
         }
@@ -1301,6 +1304,8 @@
     padding-left: 8.5rem;
       @media screen and (max-width: 1024px) {
         padding-bottom:2rem;
+         padding-left: 1rem;
+         padding-right: 1rem;
       }
     .splide__arrows {
       position: absolute;
@@ -1501,6 +1506,9 @@
       .mobile-service-content {
         padding: 20px 15px 10px;
         animation: slideDown .35s ease;
+         @media only screen and (max-width: 1190px) {
+          padding: 20px 0px 10px;
+         }
       }
 
       @media only screen and (max-width: 1190px) {
@@ -1511,13 +1519,14 @@
           &.accordion-item{
             align-items: flex-start;
             border-radius: 10px;
+            padding: 0;
             &.active {
               .service-title{
               background: linear-gradient(#ef7f1a 5.85%, #be2a2a 186.4%);
               width: 100%;
               padding: 1rem;
               border-radius: 1rem;
-              color: wheat;
+              color: white;
             }
            }
           }
