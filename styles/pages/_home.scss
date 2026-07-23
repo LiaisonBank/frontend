@@ -459,6 +459,10 @@
         text-align: left;
         line-height: auto;
         display: block;
+            background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
+    -webkit-text-fill-color: #0000;
+    background-clip: border-box;
+    -webkit-background-clip: text;
         .theme-color {
           // padding: 0 0.5rem;
           font-weight: 600;
@@ -1021,6 +1025,10 @@
         text-transform: uppercase;
         margin-bottom: 1rem;
         background:$secodary-bg-color;
+            background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
+    -webkit-text-fill-color: #0000;
+    background-clip: border-box;
+    -webkit-background-clip: text;
         // background: linear-gradient(
         //   115deg,
         //   var(--themeht-primary-color),
@@ -1362,6 +1370,10 @@
         text-transform: uppercase;
         margin-bottom: 1rem;
         background:$secodary-bg-color;
+        background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
+        -webkit-text-fill-color: #0000;
+        background-clip: border-box;
+        -webkit-background-clip: text;
         // background: linear-gradient(
         //   115deg,
         //   var(--themeht-primary-color),
