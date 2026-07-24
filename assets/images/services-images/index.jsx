@@ -1,5 +1,6 @@
 import bmcImg from "./bmc.webp";
 import fireImg from "./fire.webp";
+import mfsImg from "./mfs.webp";
 import kdmcImg from "./kdmc.webp";
 import mglImg from "./mgl.webp";
 import mhadaImg from "./mhada.webp";
@@ -17,6 +18,7 @@ import vvmcImg from "./vvmc.webp";
 export {
   bmcImg,
   fireImg,
+  mfsImg,
   kdmcImg,
   mglImg,
   nmmcImg,

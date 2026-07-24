@@ -4,12 +4,12 @@ const slides = [
   //   image: "/images/home/allservices.pdf",
   //   category: "Branding",
   // },
- {
-    title: "Piped Natural Gas (PNG) Services & Regulatory Compliance",
-    image: "/images/home/Hunan.webp",
-    mobileImage: "/images/home/mobile/Hunan.webp",
-    category: "Motion",
-  },
+//  {
+//     title: "Piped Natural Gas (PNG) Services & Regulatory Compliance",
+//     image: "/images/home/Hunan.webp",
+//     mobileImage: "/images/home/mobile/Hunan.webp",
+//     category: "Motion",
+//   },
   {
     // title: "PAN-India Equipment Solutions For Construction & Infrastructure Projects",
     title: "Liaisoning, Licensing & Regulatory Compliance Services",
@@ -17,12 +17,12 @@ const slides = [
     mobileImage: "/images/home/mobile/Sonali.webp",
     category: "Design",
   },
-  {
-    title: "Fire & Safety Systems and Compliance Solutions",
-    image: "/images/home/Neekuj.webp",
-    mobileImage: "/images/home/mobile/Neekuj.webp",
-    category: "Strategy",
-  },
+  // {
+  //   title: "Fire & Safety Systems and Compliance Solutions",
+  //   image: "/images/home/Neekuj.webp",
+  //   mobileImage: "/images/home/mobile/Neekuj.webp",
+  //   category: "Strategy",
+  // },
   {
     title: "Integrated Licensing & Liaisoning, Approval Compliance Solutions",
     image: "/images/home/Kalpita.webp",

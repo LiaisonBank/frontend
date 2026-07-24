@@ -28,7 +28,7 @@ body.modal-open {
 }
 html body {
   font-family: var(--font-family);
-  color: var(--foreground);
+  color: var(--black);
   font-size: var(--font-size);
   background: var(--background);
   // scroll-behavior: smooth;
@@ -39,7 +39,7 @@ body {
     padding: 0;
     overflow-x: hidden;
     font-family: var(--font-family);
-    color: var(--foreground);
+    color: var(--black);
     font-size: var(--font-size);
     background: var(--background);
 }
