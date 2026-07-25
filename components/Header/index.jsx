@@ -53,6 +53,11 @@ export default function Header() {
           <div
             className="flex items-center justify-between cursor-pointer"
             onClick={() => {
+               if (item.name === "Our Services") {
+                    setIsOpen(false);
+                    router.push("/ourservices");
+                    return;
+                  }
               if (children) {
                 toggleMenu(menuKey);
               } else if (item.href) {

@@ -1,4 +1,9 @@
-/* ServicesModal.css */
+/* ServicesModal.css - Slide Down from Navbar */
+
+/* ========================================
+   OVERLAY
+======================================== */
+/* ServicesModal.css - Updated for proper slide animation */
 
 /* ========================================
    OVERLAY
@@ -13,13 +18,14 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 0;
   background: rgba(0,0,0,0.5);
   backdrop-filter: blur(4px);
   overflow: hidden;
+  opacity: 0;
+  animation: overlayFadeIn 0.3s ease forwards;
 }
 
-@keyframes fadeIn {
+@keyframes overlayFadeIn {
   from {
     opacity: 0;
   }
@@ -29,7 +35,7 @@
 }
 
 /* ========================================
-   MODAL - Full screen
+   MODAL - Slide Down from Top
 ======================================== */
 .services-modal {
   background: #ffffff;
@@ -37,35 +43,55 @@
   max-width: 100%;
   height: auto;
   max-height: 100%;
-  border-radius: 0;
+  border-radius: 0 0 12px 12px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: none;
-  animation: slideUp 0.3s ease;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
   position: relative;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: none;
+}
+
+.services-modal.active {
+  animation: slideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.services-modal.closing {
+  animation: slideUp 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
   from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
+    transform: translateY(0);
+    opacity: 1;
   }
   to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(-100%);
+    opacity: 0;
   }
 }
 
-/* ========================================
-   HEADER
-======================================== */
+/* ... rest of your CSS remains the same ... */
+
 /* ========================================
    HEADER
 ======================================== */
 .services-modal-header {
   display: flex;
-  justify-content: flex-end; /* Align close button to the right */
+  justify-content: flex-end;
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid #e5e7eb;
@@ -91,8 +117,8 @@
 }
 
 .services-modal-close {
-  position:absolute;
-  right:1rem;
+  position: absolute;
+  right: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -104,9 +130,9 @@
   cursor: pointer;
   border-radius: 8px;
   transition: all 0.2s ease;
-  /* position: relative; */
   z-index: 2;
 }
+
 .services-modal-close:hover {
   background: #f3f4f6;
   color: #1a1a2e;
@@ -139,10 +165,8 @@
   background: #ffffff;
   height: 100%;
   position: relative;
-  /* Firefox scrollbar */
   scrollbar-width: auto;
   scrollbar-color: #c1c7cd #f1f1f1;
-  /* Ensure it can receive scroll events */
   touch-action: pan-y;
 }
 
@@ -225,10 +249,8 @@
   background: #ffffff;
   height: 100%;
   position: relative;
-  /* Firefox scrollbar */
   scrollbar-width: auto;
   scrollbar-color: #c1c7cd #f1f1f1;
-  /* Ensure it can receive scroll events */
   touch-action: pan-y;
 }
 
@@ -308,10 +330,8 @@
   background: #fafafa;
   height: 100%;
   position: relative;
-  /* Firefox scrollbar */
   scrollbar-width: auto;
   scrollbar-color: #c1c7cd #f1f1f1;
-  /* Ensure it can receive scroll events */
   touch-action: pan-y;
 }
 
@@ -335,6 +355,59 @@
   color: #6b7280;
   margin: 0 0 24px 0;
   line-height: 1.6;
+}
+
+/* ========================================
+   SERVICE OFFERINGS
+======================================== */
+.services-details-services {
+  margin: 16px 0 24px 0;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.03), rgba(255, 165, 0, 0.03));
+  border-radius: 10px;
+  border: 1px solid rgba(255, 107, 0, 0.12);
+}
+
+.services-details-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f97316;
+  margin-bottom: 12px;
+}
+
+.services-details-services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.services-details-service-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.services-details-service-item:hover {
+  background: rgba(255, 107, 0, 0.06);
+}
+
+.services-details-service-dot {
+  color: #f97316;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.services-details-service-name {
+  font-size: 13px;
+  color: #374151;
+  flex: 1;
 }
 
 /* ========================================
@@ -407,6 +480,64 @@
   margin-left: 12px;
 }
 
+/* Service badge */
+.service-services-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 107, 0, 0.1);
+  color: #f97316;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 4px;
+  transition: all 0.2s ease;
+}
+
+.service-child-header:hover .service-services-badge {
+  background: rgba(255, 107, 0, 0.15);
+}
+
+/* Service list under child */
+.service-services-list {
+  padding: 6px 12px 8px 40px;
+  border-left: 2px solid rgba(255, 107, 0, 0.2);
+  margin: 0 0 4px 12px;
+}
+
+.service-service-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.service-service-dot {
+  color: #f97316;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.service-service-name {
+  flex: 1;
+}
+
+/* Category count badge */
+.services-category-count {
+  background: rgba(255, 107, 0, 0.1);
+  color: #f97316;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+  min-width: 20px;
+  text-align: center;
+}
+
 /* Level styling */
 .level-1 .service-child-name {
   font-weight: 500;
@@ -462,9 +593,8 @@
 }
 
 /* ========================================
-   SCROLLBAR STYLING - FULLY FUNCTIONAL WITH BUTTONS
+   SCROLLBAR STYLING
 ======================================== */
-/* WebKit browsers (Chrome, Safari, Edge) */
 .services-left-panel::-webkit-scrollbar,
 .services-center-panel::-webkit-scrollbar,
 .services-right-panel::-webkit-scrollbar {
@@ -491,7 +621,6 @@
   transition: background 0.2s ease;
 }
 
-/* Scrollbar buttons (up/down arrows) */
 .services-left-panel::-webkit-scrollbar-button,
 .services-center-panel::-webkit-scrollbar-button,
 .services-right-panel::-webkit-scrollbar-button {
@@ -515,7 +644,6 @@
   background: #9ca3af;
 }
 
-/* Scrollbar button - up */
 .services-left-panel::-webkit-scrollbar-button:decrement,
 .services-center-panel::-webkit-scrollbar-button:decrement,
 .services-right-panel::-webkit-scrollbar-button:decrement {
@@ -530,7 +658,6 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M4 1L7 5H1L4 1z' fill='%234b5563'/%3E%3C/svg%3E");
 }
 
-/* Scrollbar button - down */
 .services-left-panel::-webkit-scrollbar-button:increment,
 .services-center-panel::-webkit-scrollbar-button:increment,
 .services-right-panel::-webkit-scrollbar-button:increment {
@@ -545,7 +672,6 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M4 7L1 3H7L4 7z' fill='%234b5563'/%3E%3C/svg%3E");
 }
 
-/* Hover states for thumb */
 .services-left-panel::-webkit-scrollbar-thumb:hover,
 .services-center-panel::-webkit-scrollbar-thumb:hover,
 .services-right-panel::-webkit-scrollbar-thumb:hover {
@@ -558,11 +684,146 @@
   background: #6b7280;
 }
 
-/* Corner */
 .services-left-panel::-webkit-scrollbar-corner,
 .services-center-panel::-webkit-scrollbar-corner,
 .services-right-panel::-webkit-scrollbar-corner {
   background: #f1f1f1;
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+======================================== */
+.dark-theme .services-modal {
+  background: #1a1a2e;
+}
+
+.dark-theme .services-modal-header {
+  background: #1a1a2e;
+  border-bottom-color: #2d2d44;
+}
+
+.dark-theme .services-modal-close:hover {
+  background: #2d2d44;
+  color: #e5e7eb;
+}
+
+.dark-theme .services-left-panel,
+.dark-theme .services-center-panel {
+  background: #1a1a2e;
+  border-color: #2d2d44;
+}
+
+.dark-theme .services-right-panel {
+  background: #16162a;
+}
+
+.dark-theme .services-section-btn {
+  color: #9ca3af;
+}
+
+.dark-theme .services-section-btn:hover {
+  background: #2d2d44;
+  color: #e5e7eb;
+}
+
+.dark-theme .services-section-btn.active {
+  background: #2d2d44;
+  color: #f97316;
+}
+
+.dark-theme .services-category-btn {
+  color: #9ca3af;
+}
+
+.dark-theme .services-category-btn:hover {
+  background: #2d2d44;
+  color: #e5e7eb;
+}
+
+.dark-theme .services-category-btn.active {
+  background: #2d2d44;
+  color: #f97316;
+}
+
+.dark-theme .services-details-title {
+  color: #e5e7eb;
+}
+
+.dark-theme .services-details-description {
+  color: #9ca3af;
+}
+
+.dark-theme .services-details-services {
+  background: rgba(255, 107, 0, 0.08);
+  border-color: rgba(255, 107, 0, 0.2);
+}
+
+.dark-theme .services-details-service-name {
+  color: #e5e7eb;
+}
+
+.dark-theme .services-details-service-item:hover {
+  background: rgba(255, 107, 0, 0.1);
+}
+
+.dark-theme .service-child {
+  border-bottom-color: #2d2d44;
+}
+
+.dark-theme .service-child-header:hover {
+  background: #2d2d44;
+}
+
+.dark-theme .service-child-name {
+  color: #e5e7eb;
+}
+
+.dark-theme .service-child-children {
+  border-left-color: #2d2d44;
+}
+
+.dark-theme .service-services-list {
+  border-left-color: rgba(255, 107, 0, 0.3);
+}
+
+.dark-theme .service-service-item {
+  color: #9ca3af;
+}
+
+.dark-theme .service-services-badge {
+  background: rgba(255, 107, 0, 0.2);
+}
+
+.dark-theme .services-category-count {
+  background: rgba(255, 107, 0, 0.2);
+}
+
+.dark-theme .services-details-empty-state {
+  color: #6b7280;
+}
+
+.dark-theme .services-left-panel::-webkit-scrollbar-track,
+.dark-theme .services-center-panel::-webkit-scrollbar-track,
+.dark-theme .services-right-panel::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+
+.dark-theme .services-left-panel::-webkit-scrollbar-thumb,
+.dark-theme .services-center-panel::-webkit-scrollbar-thumb,
+.dark-theme .services-right-panel::-webkit-scrollbar-thumb {
+  background: #2d2d44;
+}
+
+.dark-theme .services-left-panel::-webkit-scrollbar-button,
+.dark-theme .services-center-panel::-webkit-scrollbar-button,
+.dark-theme .services-right-panel::-webkit-scrollbar-button {
+  background: #2d2d44;
+}
+
+.dark-theme .services-left-panel::-webkit-scrollbar-button:hover,
+.dark-theme .services-center-panel::-webkit-scrollbar-button:hover,
+.dark-theme .services-right-panel::-webkit-scrollbar-button:hover {
+  background: #3d3d5c;
 }
 
 /* ========================================
@@ -581,8 +842,16 @@
 }
 
 @media (max-width: 768px) {
+  .services-modal-overlay {
+    top: 60px; /* Smaller navbar on mobile */
+  }
+
   .services-modal-body {
     flex-direction: column;
+  }
+
+  .services-modal {
+    border-radius: 0;
   }
 
   .services-left-panel {
@@ -684,7 +953,6 @@
     padding-left: 16px;
   }
 
-  /* Mobile scrollbar - with buttons */
   .services-left-panel::-webkit-scrollbar,
   .services-center-panel::-webkit-scrollbar,
   .services-right-panel::-webkit-scrollbar {
@@ -705,9 +973,21 @@
     min-height: 30px;
     min-width: 30px;
   }
+
+  .services-details-services {
+    padding: 12px 16px;
+  }
+
+  .services-details-service-item {
+    padding: 4px 8px;
+  }
 }
 
 @media (max-width: 480px) {
+  .services-modal-overlay {
+    top: 55px;
+  }
+
   .services-modal-header {
     padding: 12px 16px;
   }
@@ -729,4 +1009,161 @@
     font-size: 12px;
     padding: 6px 12px;
   }
+
+  .services-details-services {
+    padding: 10px 12px;
+  }
+
+  .services-details-service-name {
+    font-size: 12px;
+  }
+
+  .service-services-list {
+    padding-left: 24px;
+    margin-left: 8px;
+  }
+
+  .service-service-item {
+    font-size: 12px;
+  }
 }
+
+/* Skeleton Loading Styles */
+.services-modal-skeleton {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  gap: 0;
+}
+
+.skeleton-panel {
+  padding: 20px;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Left Panel Skeleton */
+.services-left-panel.skeleton-panel {
+  flex: 0 0 250px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.skeleton-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+}
+
+/* Center Panel Skeleton */
+.services-center-panel.skeleton-panel {
+  flex: 0 0 280px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.skeleton-category-item {
+  height: 40px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+}
+
+/* Right Panel Skeleton */
+.services-right-panel.skeleton-panel {
+  flex: 1;
+  padding: 24px 32px;
+}
+
+.skeleton-details-title {
+  height: 32px;
+  width: 60%;
+  margin-bottom: 16px;
+  border-radius: 4px;
+}
+
+.skeleton-details-line {
+  height: 16px;
+  width: 100%;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.skeleton-details-line.short {
+  width: 40%;
+}
+
+.skeleton-service-item {
+  height: 40px;
+  width: 100%;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+/* Skeleton Animation */
+.skeleton-line,
+.skeleton-section-header,
+.skeleton-category-item,
+.skeleton-details-title,
+.skeleton-details-line,
+.skeleton-service-item {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-line {
+  height: 16px;
+  border-radius: 4px;
+}
+
+.skeleton-line.short {
+  width: 40%;
+}
+
+/* Dark mode support for skeleton */
+@media (prefers-color-scheme: dark) {
+  .skeleton-line,
+  .skeleton-section-header,
+  .skeleton-category-item,
+  .skeleton-details-title,
+  .skeleton-details-line,
+  .skeleton-service-item {
+    background: linear-gradient(
+      90deg,
+      #2a2a2a 25%,
+      #3a3a3a 50%,
+      #2a2a2a 75%
+    );
+  }
+}
+
+/* Responsive skeleton */
+@media (max-width: 768px) {
+  .services-modal-skeleton {
+    flex-direction: column;
+  }
+  
+  .services-left-panel.skeleton-panel,
+  .services-center-panel.skeleton-panel {
+    flex: none;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    max-height: 200px;
+  }
+}
+
