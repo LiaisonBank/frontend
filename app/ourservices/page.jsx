@@ -1,13 +1,70 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useBodyClass from '@/components/useBodyClass';
-
-// Import your menu data
 
 export default function OurServices() {
   useBodyClass('our-services');
   const [expandedSections, setExpandedSections] = useState({});
+  const [servicesData, setServicesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch services from API
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/categories/our-services`
+        );
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch services");
+        }
+        
+        const result = await response.json();
+        console.log("API Response:", result);
+        
+        if (result.success && result.data) {
+          // Transform API data to match the component structure
+          const transformedData = result.data.map((category) => ({
+            id: category.id,
+            name: category.name,
+            description: category.description,
+            pdf: category.pdf,
+            items: category.subCategories?.map((sub) => ({
+              id: sub.id,
+              name: sub.name,
+              pdf: sub.pdf,
+              href: sub.href,
+              service: sub.service || [],
+              children: sub.items?.map((item) => ({
+                id: item.id,
+                name: item.name,
+                pdf: item.pdf,
+                href: item.href,
+                service: item.service || [],
+                children: item.children || []
+              })) || []
+            })) || []
+          }));
+          
+          setServicesData(transformedData);
+        } else {
+          setServicesData([]);
+        }
+      } catch (err) {
+        console.error("Error fetching services:", err);
+        setError(err.message);
+        setServicesData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   // Toggle function for accordion
   const toggleSection = (index) => {
@@ -18,219 +75,197 @@ export default function OurServices() {
   };
 
   // Recursive function to render menu items
-  const renderMenuItems = (items, level = 0) => {
+  const renderMenuItems = (items, level = 0, parentIndex = '') => {
     if (!items || items.length === 0) return null;
 
     return (
       <ul className={`menu-level-${level}`}>
-        {items.map((item, index) => (
-          <li key={index} className="menu-item">
-            {item.children || item.items ? (
-              // Has children - render as accordion
-              <div className="menu-accordion">
-                <button 
-                  className="menu-toggle"
-                  onClick={() => toggleSection(`${level}-${index}`)}
-                >
-                  <span className="menu-name">{item.name}</span>
-                  <span className="menu-arrow">
-                    {expandedSections[`${level}-${index}`] ? '▼' : '▶'}
-                  </span>
-                </button>
-                {expandedSections[`${level}-${index}`] && (
-                  <div className="menu-children">
-                    {renderMenuItems(item.children || item.items, level + 1)}
-                  </div>
-                )}
-              </div>
-            ) : (
-              // Leaf node - render as link
-              <Link href={item.href || '/contact-us-liaison-bank'} className="menu-link">
-                {item.name}
-                {item.pdf && <span className="pdf-badge">PDF</span>}
-              </Link>
-            )}
-          </li>
-        ))}
+        {items.map((item, index) => {
+          const itemKey = `${parentIndex}-${index}`;
+          const hasChildren = item.children && item.children.length > 0;
+          const hasServices = item.service && item.service.length > 0;
+
+          return (
+            <li key={itemKey} className="menu-item">
+              {hasChildren || hasServices ? (
+                // Has children or services - render as accordion
+                <div className="menu-accordion">
+                  <button 
+                    className="menu-toggle"
+                    onClick={() => toggleSection(itemKey)}
+                  >
+                    <span className="menu-name">{item.name}</span>
+                    <span className="menu-arrow">
+                      {expandedSections[itemKey] ? '▼' : '▶'}
+                    </span>
+                  </button>
+                  {expandedSections[itemKey] && (
+                    <div className="menu-children">
+                      {/* Render services if available */}
+                      {hasServices && (
+                        <ul className="service-list">
+                          {item.service.map((service, idx) => (
+                            <li key={idx} className="service-item">
+                              <span className="service-name">{service}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {/* Render children */}
+                      {hasChildren && renderMenuItems(item.children, level + 1, itemKey)}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                // Leaf node - render as link or item
+                item.href ? (
+                  <Link href={item.href} className="menu-link">
+                    {item.name}
+                    {item.pdf && <span className="pdf-badge">PDF</span>}
+                  </Link>
+                ) : (
+                  <span className="menu-item-name">{item.name}</span>
+                )
+              )}
+            </li>
+          );
+        })}
       </ul>
     );
   };
 
-  // Get the submenu data (assuming it's in importantLinks or wherever your data is)
-  const servicesData = [
-    {
-      name: "AMC",
-      items: [
-        "Licenses Renewal",
-        "PNG Audit and Certification",
-        "Fire Audit and Certification",
-        "Electric Audit and Certification",
-        "Pest Control Service and Certification",
-        "Water Tank Cleaning and Certification (Ongoing)"
-      ]
-    },
-    {
-      name: "Licensing",
-      items: [
-        {
-          name: "F&B",
-          children: [
-            {
-              name: "Resort, Banquet, Hotel",
-              children: [
-                "Lougging and boarding",
-                "Traffic police permission",
-                "Law and order approval"
-              ]
-            },
-            {
-              name: "Restaurant, Dhaba, Sweet mart, Dry Fruit",
-              children: [
-                "Shop & Establishment",
-                "FSSAI",
-                "Building & Factory NOC",
-                "Fire Compliance certificate",
-                "MOH License (Eating House)",
-                "Sign Board License (Permit)",
-                "Open space (Serving License)",
-                "FL III License",
-                "Premises License",
-                "PPL License",
-                "Novex License"
-              ]
-            }
-          ]
-        },
-        {
-          name: "Healthcare",
-          children: [
-            {
-              name: "Hospital, Clinic, Nursing Home",
-              children: [
-                "SMS - Bio medical waste",
-                "Clinic MPCB/BMW",
-                "MPCB - Registration 1 - 25 beds",
-                "MPCB - Registration 26 - 50 beds",
-                "MPCB Autho/consent above 50 beds",
-                "Fire NOC new with compliance",
-                "FIRE - A form (alarm system) AMC with audit charges for every 6 months",
-                "FIRE : Wiring for alarm etc",
-                "Architect fees for compliance",
-                "FIRE - B form",
-                "PCPNDT",
-                "MTP registration",
-                "Electrical audit certificate yearly",
-                "Structural audit",
-                "Board sign",
-                "Weather shed permission",
-                "Change of user for clinics",
-                "Change of user for nursing home",
-                "NABH 0 - 25 beds"
-              ]
-            }
-          ]
-        },
-        {
-          name: "Industrial and Manufacturer",
-          children: [
-            {
-              name: "Textile, Colour Coating, Laundry, Factory",
-              children: [
-                "Factory license",
-                "Shop & establishment",
-                "Building & factory NOC",
-                "Fire compliance certificate",
-                "MOH license (eating house)",
-                "Sign board license (permit)"
-              ]
-            }
-          ]
-        },
-        {
-          name: "Real Estate",
-          children: [
-            {
-              name: "Building and construction",
-              children: [
-                "Labour permit",
-                "Contractor license",
-                "Mathadi registration"
-              ]
-            }
-          ]
-        },
-        {
-          name: "Entertainment",
-          children: [
-            {
-              name: "Gym, Club House, Events",
-              children: [
-                "Shop & establishment",
-                "Building & factory NOC",
-                "MOH license (eating house) / Trade license",
-                "Police NOC",
-                "Staff fitness certificate"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      name: "Liaisoning",
-      items: [
-        "Brihanmumbai Municipal Corporation (B.M.C)",
-        "Vasai-Virar Municipal Corporation (V.V.M.C)",
-        "Kalyan-Dombivli Municipal Corporation (K.D.M.C)",
-        "Thane Municipal Corporation (T.M.C)",
-        "Maharashtra Housing and Area Development Authority (MHADA)",
-        "Slum Rehabilitation Authority (S.R.A)",
-        "Mumbai Metropolitan Region Development Authority (M.M.R.D.A)",
-        "Maharashtra Industrial Development Corporation (M.I.D.C)",
-        "Maharashtra Pollution Control Board (M.P.C.B)",
-        "Mumbai Port Trust (M.B.P.T)",
-        "Navi Mumbai Municipal Corporation (N.M.M.C)",
-        "Pune Mahanagar Co",
-        "Collector",
-        "S.L.R",
-        "D.D.L.R",
-        "Mumbai Fire Department",
-        "Coastal Regulation Zone (CRZ)",
-        "Mumbai Airport Authority of India (MAAI)",
-        "R.&.F.M",
-        "C.O.M",
-        "N.V.M",
-        "A.P.M",
-        "M.I.D.C.M",
-        "I.D.C",
-        "P.W.D",
-        "D.M",
-        "Adani Power",
-        "TATA Power",
-        "M.S.E.D.C.L"
-      ]
-    },
-    {
-      name: "Electrical (SITC)",
-      href: "/contact-us-liaison-bank"
-    },
-    {
-      name: "Fire (SITC)",
-      href: "/contact-us-liaison-bank"
-    },
-    {
-      name: "PNG (SITC)",
-      href: "/contact-us-liaison-bank"
-    },
-    {
-      name: "Equipment Solution Department (ESD)",
-      href: "/contact-us-liaison-bank"
-    },
-    {
-      name: "Group Profile",
-      href: "/group-profile"
-    }
-  ];
+  // Loading state
+  if (loading) {
+    return (
+      <>
+        <div className="page-header">
+          <div className="inner-header">
+            <div className="page-title">
+              <div className="container">
+                <div className="row justify-content-center text-center">
+                  <div className="col-lg-10">
+                    <div className="theme-breadcrumb-box">
+                      <h1>Our Services</h1>
+                      <nav aria-label="breadcrumb" className="page-breadcrumb">
+                        <ol className="breadcrumb justify-content-center">
+                          <li className="breadcrumb-item">
+                            <Link href="/">
+                              <i className="bi bi-house-door me-1" aria-hidden="true"></i>
+                              Home
+                            </Link>
+                          </li>
+                          <li className="breadcrumb-item active" aria-current="page">
+                            Our Services
+                          </li>
+                        </ol>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <section className="container py-5">
+          <div className="text-center">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-3">Loading services...</p>
+          </div>
+        </section>
+      </>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <>
+        <div className="page-header">
+          <div className="inner-header">
+            <div className="page-title">
+              <div className="container">
+                <div className="row justify-content-center text-center">
+                  <div className="col-lg-10">
+                    <div className="theme-breadcrumb-box">
+                      <h1>Our Services</h1>
+                      <nav aria-label="breadcrumb" className="page-breadcrumb">
+                        <ol className="breadcrumb justify-content-center">
+                          <li className="breadcrumb-item">
+                            <Link href="/">
+                              <i className="bi bi-house-door me-1" aria-hidden="true"></i>
+                              Home
+                            </Link>
+                          </li>
+                          <li className="breadcrumb-item active" aria-current="page">
+                            Our Services
+                          </li>
+                        </ol>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <section className="container py-5">
+          <div className="alert alert-danger text-center">
+            <h4>Failed to load services</h4>
+            <p>{error}</p>
+            <button 
+              className="btn btn-primary"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </button>
+          </div>
+        </section>
+      </>
+    );
+  }
+
+  // Empty state
+  if (servicesData.length === 0) {
+    return (
+      <>
+        <div className="page-header">
+          <div className="inner-header">
+            <div className="page-title">
+              <div className="container">
+                <div className="row justify-content-center text-center">
+                  <div className="col-lg-10">
+                    <div className="theme-breadcrumb-box">
+                      <h1>Our Services</h1>
+                      <nav aria-label="breadcrumb" className="page-breadcrumb">
+                        <ol className="breadcrumb justify-content-center">
+                          <li className="breadcrumb-item">
+                            <Link href="/">
+                              <i className="bi bi-house-door me-1" aria-hidden="true"></i>
+                              Home
+                            </Link>
+                          </li>
+                          <li className="breadcrumb-item active" aria-current="page">
+                            Our Services
+                          </li>
+                        </ol>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <section className="container py-5">
+          <div className="text-center">
+            <p>No services available at the moment.</p>
+          </div>
+        </section>
+      </>
+    );
+  }
 
   return (
     <>
@@ -270,7 +305,7 @@ export default function OurServices() {
             
             <div className="services-grid">
               {servicesData.map((service, index) => (
-                <div key={index} className="service-card">
+                <div key={service.id || index} className="service-card">
                   <div className="service-header">
                     <h3>{service.name}</h3>
                     {service.href && (
@@ -278,41 +313,43 @@ export default function OurServices() {
                         Learn More →
                       </Link>
                     )}
+                    {service.pdf && (
+                      <a 
+                        href={service.pdf} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="pdf-download-btn"
+                      >
+                        PDF
+                      </a>
+                    )}
                   </div>
                   
-                  {service.items && (
+                  {service.items && service.items.length > 0 && (
                     <div className="service-content">
                       {service.items.map((item, idx) => (
-                        <div key={idx} className="service-sub-item">
-                          {typeof item === 'string' ? (
-                            <span className="service-item-name">{item}</span>
-                          ) : (
-                            <div className="service-item-with-children">
-                              <strong>{item.name}</strong>
-                              {item.children && (
-                                <ul className="service-child-list">
-                                  {item.children.map((child, childIdx) => (
-                                    <li key={childIdx}>
-                                      {typeof child === 'string' ? (
-                                        <span>{child}</span>
-                                      ) : (
-                                        <div>
-                                          <strong>{child.name}</strong>
-                                          {child.children && (
-                                            <ul className="service-grandchild-list">
-                                              {child.children.map((grandchild, grandIdx) => (
-                                                <li key={grandIdx}>{grandchild}</li>
-                                              ))}
-                                            </ul>
-                                          )}
-                                        </div>
-                                      )}
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                            </div>
-                          )}
+                        <div key={item.id || idx} className="service-sub-item">
+                          <div className="service-item-with-children">
+                            <strong>{item.name}</strong>
+                            
+                            {/* Render services if available */}
+                            {item.service && item.service.length > 0 && (
+                              <ul className="service-child-list">
+                                {item.service.map((serviceItem, si) => (
+                                  <li key={si} className="service-item-name">
+                                    {serviceItem}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                            
+                            {/* Render children recursively */}
+                            {item.children && item.children.length > 0 && (
+                              <div className="service-children">
+                                {renderMenuItems(item.children, 1, `${index}-${idx}`)}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -354,6 +391,8 @@ export default function OurServices() {
           padding-bottom: 16px;
           border-bottom: 2px solid #f0f0f0;
           margin-bottom: 16px;
+          flex-wrap: wrap;
+          gap: 10px;
         }
 
         .service-header h3 {
@@ -375,8 +414,24 @@ export default function OurServices() {
           color: #be2a2a;
         }
 
+        .pdf-download-btn {
+          background: #e18c1d;
+          color: white;
+          padding: 4px 12px;
+          border-radius: 4px;
+          text-decoration: none;
+          font-size: 12px;
+          font-weight: 600;
+          transition: background 0.2s ease;
+        }
+
+        .pdf-download-btn:hover {
+          background: #be2a2a;
+          color: white;
+        }
+
         .service-content {
-          max-height: 400px;
+          max-height: 500px;
           overflow-y: auto;
         }
 
@@ -395,7 +450,7 @@ export default function OurServices() {
         }
 
         .service-sub-item {
-          padding: 6px 0;
+          padding: 8px 0;
           border-bottom: 1px solid #f5f5f5;
         }
 
@@ -403,16 +458,11 @@ export default function OurServices() {
           border-bottom: none;
         }
 
-        .service-item-name {
-          color: #475569;
-          font-size: 14px;
-        }
-
         .service-item-with-children strong {
           color: #12307a;
           font-size: 15px;
           display: block;
-          margin: 8px 0 4px 0;
+          margin: 4px 0;
         }
 
         .service-child-list {
@@ -432,21 +482,110 @@ export default function OurServices() {
           border-bottom: none;
         }
 
-        .service-grandchild-list {
+        .service-item-name {
+          color: #475569;
+          font-size: 13px;
+        }
+
+        .service-children {
+          margin-left: 16px;
+          margin-top: 4px;
+        }
+
+        /* Menu styles for recursive rendering */
+        .menu-level-0,
+        .menu-level-1,
+        .menu-level-2 {
           list-style: none;
           padding: 0;
-          margin: 2px 0 4px 20px;
+          margin: 0;
         }
 
-        .service-grandchild-list li {
+        .menu-item {
           padding: 2px 0;
-          color: #64748b;
-          font-size: 12px;
-          border-bottom: 1px solid #fafafa;
         }
 
-        .service-grandchild-list li:last-child {
-          border-bottom: none;
+        .menu-toggle {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          padding: 6px 8px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          font-size: 14px;
+          color: #12307a;
+          font-weight: 500;
+          transition: background 0.2s ease;
+          border-radius: 4px;
+        }
+
+        .menu-toggle:hover {
+          background: #f0f4ff;
+        }
+
+        .menu-name {
+          flex: 1;
+          text-align: left;
+        }
+
+        .menu-arrow {
+          font-size: 12px;
+          color: #e18c1d;
+        }
+
+        .menu-children {
+          padding-left: 16px;
+          border-left: 2px solid #e2e8f0;
+          margin: 2px 0 4px 8px;
+        }
+
+        .menu-link {
+          display: block;
+          padding: 4px 8px;
+          color: #475569;
+          text-decoration: none;
+          font-size: 14px;
+          transition: color 0.2s ease;
+          border-radius: 4px;
+        }
+
+        .menu-link:hover {
+          color: #e18c1d;
+          background: #f8fafc;
+        }
+
+        .menu-item-name {
+          display: block;
+          padding: 4px 8px;
+          color: #475569;
+          font-size: 14px;
+        }
+
+        .pdf-badge {
+          background: #e18c1d;
+          color: white;
+          padding: 2px 8px;
+          border-radius: 3px;
+          font-size: 10px;
+          font-weight: 600;
+          margin-left: 8px;
+        }
+
+        .service-list {
+          list-style: none;
+          padding: 0;
+          margin: 4px 0 4px 16px;
+        }
+
+        .service-item {
+          padding: 2px 0;
+        }
+
+        .service-name {
+          color: #475569;
+          font-size: 13px;
         }
 
         @media (max-width: 768px) {
@@ -460,6 +599,11 @@ export default function OurServices() {
 
           .service-header h3 {
             font-size: 18px;
+          }
+
+          .service-header {
+            flex-direction: column;
+            align-items: flex-start;
           }
         }
       `}</style>

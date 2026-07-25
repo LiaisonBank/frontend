@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/context/ModalContext";
-import { ChevronRight, ChevronDown, FileText, X } from "lucide-react";
+import { ChevronRight, ChevronDown, FileText, X, List } from "lucide-react";
+import Head from "next/head";
 import "./ServicesModal.css";
 
 export default function ServicesModal() {
@@ -14,234 +15,119 @@ export default function ServicesModal() {
   const centerPanelRef = useRef(null);
   const rightPanelRef = useRef(null);
 
-  // ... (keep your servicesData array exactly as it is)
-  const servicesData = [
-    {
-      name: "AMC",
-      title: "AMC",
-      alt: "AMC Liaisonbank",
-      pdf: "/pdf/amc.pdf",
-      items: [
-        { name: "Licenses Renewal", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "/pdf/licenses-renewal.pdf" },
-        { name: "PNG Audit and Certification", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "/pdf/licenses-renewal.pdf" },
-        { name: "Fire Audit and Certification", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "/pdf/licenses-renewal.pdf" },
-        { name: "Electric Audit and Certification", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "/pdf/licenses-renewal.pdf" },
-        { name: "Pest Control Service and Certification", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "/pdf/licenses-renewal.pdf" },
-        { name: "Water Tank Cleaning and Certification (Ongoing)", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "/pdf/licenses-renewal.pdf" },
-      ]
-    },
-    {
-      name: "Licensing",
-      title: "Licensing",
-      alt: "Licensing",
-      pdf: "/pdf/licensing.pdf",
-      items: [
-        {
-          name: "F&B",
-          href: "",
-          title: "",
-          alt: "",
-          children: [
-            {
-              name: "Resort, Banquet, Hotel",
-              href: "/contact-us-liaison-bank",
-              title: "",
-              alt: "",
-              pdf: "/pdf/licenses-renewal.pdf",
-              children: [
-                { name: "Lougging and boarding", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Traffic police permission", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Law and order approval", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-              ]
-            },
-            {
-              name: "Restaurant, Dhaba, Sweet mart, Dry Fruit",
-              href: "/contact-us-liaison-bank",
-              title: "",
-              alt: "",
-              pdf: "/pdf/licenses-renewal.pdf",
-              children: [
-                { name: "Shop & Establishment", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "FSSAI", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Building & Factory NOC", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Fire Compliance certificate", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "MOH License (Eating House)", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Sign Board License (Permit)", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Open space (Serving License)", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "FL III License", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Premises License", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "PPL License", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Novex License", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-              ]
-            },
-          ]
-        },
-        {
-          name: "Healthcare",
-          href: "",
-          title: "",
-          alt: "",
-          children: [
-            {
-              name: "Hospital, Clinic, Nursing Home",
-              href: "",
-              title: "",
-              alt: "",
-              pdf: "",
-              children: [
-                { name: "SMS - Bio medical waste", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Clinic MPCB/BMW", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "MPCB - Registration 1 - 25 beds", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "MPCB - Registration 26 - 50 beds", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "MPCB Autho/consent above 50 beds", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Fire NOC new with compliance", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "FIRE - A form (alarm system) AMC with audit charges for every 6 months", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "FIRE : Wiring for alarm etc", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Architect fees for compliance", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "FIRE - B form", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "PCPNDT", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "MTP registration", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Electrical audit certificate yearly", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Structural audit", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Board sign", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Weather shed permission", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Change of user for clinics", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Change of user for nursing home", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "NABH 0 - 25 beds", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" }
-              ]
-            }
-          ]
-        },
-        {
-          name: "Industrial and Manufacturer",
-          href: "",
-          title: "",
-          alt: "",
-          children: [
-            {
-              name: "Textile, Colour Coating, Laundry, Factory",
-              href: "",
-              title: "",
-              alt: "",
-              pdf: "",
-              children: [
-                { name: "Factory license", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Shop & establishment", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Building & factory NOC", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Fire compliance certificate", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "MOH license (eating house)", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Sign board license (permit)", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" }
-              ]
-            }
-          ]
-        },
-        {
-          name: "Real Estate",
-          href: "",
-          title: "",
-          alt: "",
-          children: [
-            {
-              name: "Building and construction",
-              href: "",
-              title: "",
-              alt: "",
-              pdf: "",
-              children: [
-                { name: "Labour permit", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Contractor license", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Mathadi registration", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" }
-              ]
-            }
-          ]
-        },
-        {
-          name: "Entertainment",
-          href: "",
-          title: "",
-          alt: "",
-          children: [
-            {
-              name: "Gym, Club House, Events",
-              href: "",
-              title: "",
-              alt: "",
-              pdf: "",
-              children: [
-                { name: "Shop & establishment", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Building & factory NOC", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "MOH license (eating house) / Trade license", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Police NOC", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" },
-                { name: "Staff fitness certificate", href: "/contact-us-liaison-bank", title: "", alt: "", pdf: "" }
-              ]
-            }
-          ]
-        },
-      ]
-    },
-    {
-      name: "Liaisoning",
-      title: "Liaisoning",
-      alt: "Liaisoning",
-      pdf: "/pdf/liaisoning.pdf",
-      items: [
-        {
-          name: "Brihanmumbai Municipal Corporation (B.M.C)",
-          title: "Brihanmumbai municipal corporation approvals and licensing services",
-          alt: "brihanmumbai municipal corporation approvals and licensing services",
-          children: [
-            { name: "Building Proposal (342)", href: "/contact-us-liaison-bank", title: "Building Proposal (342)", alt: "Building Proposal (342)", pdf: "/pdf/" },
-            { name: "Building Proposal – Miscellaneous", href: "/contact-us-liaison-bank", title: "Building Proposal – Miscellaneous", alt: "Building Proposal – Miscellaneous", pdf: "/pdf/" },
-            { name: "Retail Unit Approval", href: "/contact-us-liaison-bank", title: "Retail Unit Approval", alt: "Retail Unit Approval", pdf: "/pdf/" },
-            { name: "Building Proposal (337)", href: "/contact-us-liaison-bank", title: "Building Proposal (337)", alt: "Building Proposal (337)", pdf: "/pdf/" },
-            { name: "Shop to Restaurant Conversion", href: "/contact-us-liaison-bank", title: "Shop to Restaurant Conversion", alt: "Shop to Restaurant Conversion", pdf: "/pdf/" },
-            { name: "Floor Mill to Restaurant Conversion", href: "/contact-us-liaison-bank", title: "Floor Mill to Restaurant Conversion", alt: "Floor Mill to Restaurant Conversion", pdf: "/pdf/" },
-            { name: "Shop to Clinic Conversion", href: "/contact-us-liaison-bank", title: "Shop to Clinic Conversion", alt: "Shop to Clinic Conversion", pdf: "/pdf/" }
-          ]
-        },
-        // ... rest of the liaisoning items (truncated for brevity)
-      ]
-    },
-    { name: "Electrical ", href: "/contact-us-liaison-bank", title: "Electrical Execution, Compliance & Maintenance Services", alt: "Electrical ( SITC )", pdf: "/pdf/electrical-sitc.pdf" },
-    { name: "Fire & FAPA", href: "/contact-us-liaison-bank", title: "Fire & Safety Systems and Compliance Solutions", alt: "Fire ( SITC )", pdf: "/pdf/fss.pdf" },
-    { name: "Piped Natural Gas ", href: "/contact-us-liaison-bank", title: "Piped Natural Gas (Png) Services & Regulatory Compliance", alt: "PNG ( SITC )", pdf: "/pdf/png.pdf" },
-    { name: "Equipment Solution Department", href: "/contact-us-liaison-bank", title: "Equipment Solution Department", alt: "( ESD )", pdf: "/pdf/EEBP.pdf" },
-    { name: "Group Profile", href: "/group-profile", title: "Group Profile", alt: "( ESD )", pdf: "" },
-  ];
+  // State for API data
+  const [servicesData, setServicesData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isClosing, setIsClosing] = useState(false);
   
-  const [selectedSection, setSelectedSection] = useState(servicesData[0]);
-  const [selectedCategory, setSelectedCategory] = useState(servicesData[0]?.items?.[0] || null);
+  // State for selected items
+  const [selectedSection, setSelectedSection] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [expandedItems, setExpandedItems] = useState({});
+  const [expandedServices, setExpandedServices] = useState({});
+
+  // ✅ FETCH DATA IMMEDIATELY when component mounts
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/categories/our-services`
+      );
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch services: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success && result.data && result.data.length > 0) {
+        const transformedData = result.data.map(category => ({
+          id: category.id || category._id,
+          name: category.name || 'Unnamed Category',
+          title: category.name || 'Unnamed Category',
+          alt: category.name || 'Unnamed Category',
+          pdf: category.pdf || "",
+          items: (category.subCategories || []).map(sub => ({
+            id: sub.id || sub._id,
+            name: sub.name || 'Unnamed Subcategory',
+            title: sub.name || 'Unnamed Subcategory',
+            alt: sub.name || 'Unnamed Subcategory',
+            pdf: sub.pdf || "",
+            href: sub.href || "",
+            service: sub.service || [],
+            children: (sub.items || []).map(item => ({
+              id: item.id || item._id,
+              name: item.name || 'Unnamed Item',
+              title: item.name || 'Unnamed Item',
+              alt: item.name || 'Unnamed Item',
+              pdf: item.pdf || "",
+              href: item.href || "",
+              service: item.service || [],
+              children: item.children || []
+            }))
+          }))
+        }));
+        
+        setServicesData(transformedData);
+        
+        if (transformedData.length > 0) {
+          const firstSection = transformedData[0];
+          setSelectedSection(firstSection);
+          
+          if (firstSection.items && firstSection.items.length > 0) {
+            setSelectedCategory(firstSection.items[0]);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching services:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Close modal with animation
+  const closeModal = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setServiceModalOpen(false);
+      setIsClosing(false);
+    }, 300);
+  };
 
   // Close on escape key
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape') setServiceModalOpen(false);
+      if (e.key === 'Escape') closeModal();
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
-  }, [setServiceModalOpen]);
+  }, []);
 
-  // Prevent body scroll when modal is open - SIMPLIFIED VERSION
+  // Prevent body scroll when modal is open
   useEffect(() => {
     if (serviceModalOpen) {
-      // Save current scroll position
       const scrollY = window.scrollY;
       
-      // Prevent scrolling on body
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollY}px`;
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
       
       return () => {
-        // Restore scrolling when modal closes
         document.body.style.position = '';
         document.body.style.top = '';
         document.body.style.width = '';
         document.body.style.overflow = '';
-        
-        // Restore scroll position
         window.scrollTo(0, scrollY);
       };
     }
@@ -251,21 +137,20 @@ export default function ServicesModal() {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
-        setServiceModalOpen(false);
+        closeModal();
       }
     };
     if (serviceModalOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [serviceModalOpen, setServiceModalOpen]);
+  }, [serviceModalOpen]);
 
-  // FIX: Ensure mouse wheel scrolling works on all panels
+  // Ensure mouse wheel scrolling works on all panels
   useEffect(() => {
     if (!serviceModalOpen) return;
 
     const handleWheel = (e) => {
-      // Allow natural scroll on panels
       e.stopPropagation();
     };
 
@@ -274,7 +159,6 @@ export default function ServicesModal() {
     panels.forEach(panel => {
       if (panel) {
         panel.addEventListener('wheel', handleWheel, { passive: true });
-        // Ensure panel can receive scroll events
         panel.style.overflowY = 'auto';
         panel.style.overflowX = 'hidden';
       }
@@ -289,7 +173,7 @@ export default function ServicesModal() {
     };
   }, [serviceModalOpen]);
 
-  if (!serviceModalOpen) return null;
+  if (!serviceModalOpen && !isClosing) return null;
 
   const toggleExpand = (key) => {
     setExpandedItems(prev => ({
@@ -298,51 +182,141 @@ export default function ServicesModal() {
     }));
   };
 
+  const toggleServiceExpand = (key) => {
+    setExpandedServices(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  // ✅ Navigate to contact page if no href or children/services
   const handleItemClick = (item) => {
-    if (item.href) {
-      setServiceModalOpen(false);
-      router.push(item.href);
+    closeModal();
+    router.push(item.href || '/contact-us-liaison-bank');
+  };
+
+  // ✅ Handle category click - navigate if no children/services
+  const handleCategoryClick = (category) => {
+    const hasChildren = category.children && category.children.length > 0;
+    const hasServices = category.service && category.service.length > 0;
+    
+    if (hasChildren || hasServices) {
+      setSelectedCategory(category);
+    } else {
+      closeModal();
+      router.push('/contact-us-liaison-bank');
     }
   };
 
+  // ✅ Handle section click - COMPLETE RESET
+  const handleSectionClick = (section) => {
+    // Reset ALL expanded states
+    setExpandedItems({});
+    setExpandedServices({});
+    
+    // Set the new section
+    setSelectedSection(section);
+    
+    // Reset selected category to null first, then set the first one
+    setSelectedCategory(null);
+    
+    // Use setTimeout to ensure state updates properly
+    setTimeout(() => {
+      if (section.items && section.items.length > 0) {
+        // ✅ Always select the FIRST category
+        setSelectedCategory(section.items[0]);
+      } else {
+        closeModal();
+        router.push('/contact-us-liaison-bank');
+      }
+    }, 0);
+  };
+
+  // Render children with semantic HTML
   const renderChildren = (children, level = 0) => {
-    return children?.map((child, index) => {
+    if (!children || children.length === 0) return null;
+    
+    return children.map((child, index) => {
       const hasChildren = child.children && child.children.length > 0;
+      const hasServices = child.service && child.service.length > 0;
       const key = `${child.name}-${level}-${index}`;
       const isExpanded = expandedItems[key];
+      const isServicesExpanded = expandedServices[key];
 
       return (
-        <div key={key} className={`service-child level-${level}`}>
+        <div key={key} className={`service-child level-${level}`} role="listitem">
           <div 
-            className={`service-child-header ${hasChildren ? 'has-children' : ''}`}
+            className={`service-child-header ${hasChildren || hasServices ? 'has-children' : ''}`}
             onClick={() => {
               if (hasChildren) {
                 toggleExpand(key);
-              } else if (child.href) {
-                handleItemClick(child);
+              } else if (hasServices) {
+                toggleServiceExpand(key);
+              } else {
+                closeModal();
+                router.push(child.href || '/contact-us-liaison-bank');
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-expanded={isExpanded || isServicesExpanded}
+            aria-label={`${child.name} ${hasChildren ? 'has sub-services' : ''} ${hasServices ? `has ${child.service.length} offerings` : ''}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (hasChildren) {
+                  toggleExpand(key);
+                } else if (hasServices) {
+                  toggleServiceExpand(key);
+                } else {
+                  closeModal();
+                  router.push(child.href || '/contact-us-liaison-bank');
+                }
               }
             }}
           >
             <span className="service-child-name">{child.name}</span>
-            {hasChildren && (
-              <span className="service-child-toggle">
-                {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            {(hasChildren || hasServices) && (
+              <span className="service-child-toggle" aria-hidden="true">
+                {(hasChildren && isExpanded) || (hasServices && isServicesExpanded) ? 
+                  <ChevronDown size={16} /> : 
+                  <ChevronRight size={16} />
+                }
               </span>
             )}
-            {/* {child.pdf && (
+            {hasServices && (
+              <span className="service-services-badge" aria-label={`${child.service.length} offerings`}>
+                <List size={12} aria-hidden="true" />
+                {child.service.length}
+              </span>
+            )}
+            {child.pdf && (
               <a 
                 href={child.pdf} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="service-pdf-link"
                 onClick={(e) => e.stopPropagation()}
+                aria-label={`Download PDF for ${child.name}`}
               >
-                <FileText size={14} />
+                <FileText size={14} aria-hidden="true" />
               </a>
-            )} */}
+            )}
           </div>
+          
+          {hasServices && isServicesExpanded && (
+            <ul className="service-services-list" role="list">
+              {child.service.map((serviceItem, idx) => (
+                <li key={idx} className="service-service-item" role="listitem">
+                  <span className="service-service-dot" aria-hidden="true">•</span>
+                  <span className="service-service-name">{serviceItem}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          
           {hasChildren && isExpanded && (
-            <div className="service-child-children">
+            <div className="service-child-children" role="list">
               {renderChildren(child.children, level + 1)}
             </div>
           )}
@@ -351,106 +325,345 @@ export default function ServicesModal() {
     });
   };
 
-  return (
-    <div className="services-modal-overlay">
-      <div className={`services-modal ${serviceModalOpen ? "active" : ""}`} ref={modalRef}>
-        <div className="services-modal-body">
-           <button 
-            className="services-modal-close"
-            onClick={() => setServiceModalOpen(false)}
-            aria-label="Close modal"
-          >
-            <X size={24} />
-          </button>
-          {/* Left Panel - Sections */}
-          <div className="services-left-panel" ref={leftPanelRef}>
-            <div className="services-section-list">
-              {servicesData.map((section) => (
-                <button
-                  key={section.name}
-                  className={`services-section-btn ${selectedSection?.name === section.name ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedSection(section);
-                    setSelectedCategory(section.items?.[0] || null);
-                  }}
-                >
-                  <span className="services-section-name">{section.name}</span>
-                  {section.pdf && (
-                    <a 
-                      href={section.pdf} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="services-section-pdf"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FileText size={14} />
-                    </a>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
+  // Generate structured data for SEO
+  const generateStructuredData = () => {
+    if (!servicesData || servicesData.length === 0) return null;
 
-          {/* Center Panel - Categories */}
-          <div className="services-center-panel" ref={centerPanelRef}>
-            <div className="services-category-list">
-              {selectedSection?.items?.map((item) => (
-                <button
-                  key={item.name}
-                  className={`services-category-btn ${selectedCategory?.name === item.name ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory(item)}
-                >
-                  <span className="services-category-name">{item.name}</span>
-                  {item.pdf && (
-                    <a 
-                      href={item.pdf} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="services-category-pdf"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FileText size={14} />
-                    </a>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
+    const items = servicesData.flatMap(category => 
+      category.items?.flatMap(sub => 
+        sub.children?.map(child => ({
+          "@type": "Service",
+          "name": child.name,
+          "provider": {
+            "@type": "Organization",
+            "name": category.name
+          },
+          "description": child.description || `${child.name} service offered by ${category.name}`
+        })) || []
+      ) || []
+    );
 
-          {/* Right Panel - Details */}
-          <div className="services-right-panel" ref={rightPanelRef}>
-            {selectedCategory ? (
-              <div className="services-details">
-                <h3 className="services-details-title">{selectedCategory.name}</h3>
-                {selectedCategory.description && (
-                  <p className="services-details-description">{selectedCategory.description}</p>
-                )}
-                {selectedCategory.children && selectedCategory.children.length > 0 ? (
-                  <div className="services-details-children">
-                    {renderChildren(selectedCategory.children)}
-                  </div>
-                ) : (
-                  <div className="services-details-empty">
-                    <p>No sub-services available for this category.</p>
-                    {selectedCategory.href && (
-                      <button 
-                        className="services-details-cta"
-                        onClick={() => handleItemClick(selectedCategory)}
-                      >
-                        Learn More
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="services-details-empty-state">
-                <p>Select a category to view details</p>
-              </div>
-            )}
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "itemListElement": items.map((item, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": item
+      }))
+    };
+  };
+
+  // Get current page URL for canonical
+  const getCurrentUrl = () => {
+    if (typeof window !== 'undefined') {
+      return window.location.href;
+    }
+    return '';
+  };
+
+  // Generate breadcrumb structured data
+  const generateBreadcrumbData = () => {
+    if (!selectedCategory || !selectedSection) return null;
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Services",
+          "item": getCurrentUrl()
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": selectedSection.name,
+          "item": getCurrentUrl()
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": selectedCategory.name,
+          "item": getCurrentUrl()
+        }
+      ]
+    };
+  };
+
+  // Skeleton Loader Component
+  const SkeletonLoader = () => (
+    <div className="services-modal-body skeleton-loading">
+      <button 
+        className="services-modal-close"
+        onClick={closeModal}
+        aria-label="Close modal"
+      >
+        <X size={24} aria-hidden="true" />
+      </button>
+      
+      <div className="services-modal-skeleton">
+        <div className="services-left-panel skeleton-panel">
+          <div className="skeleton-section-header">
+            <div className="skeleton-line"></div>
+            <div className="skeleton-line short"></div>
           </div>
+          <div className="skeleton-section-header">
+            <div className="skeleton-line"></div>
+            <div className="skeleton-line short"></div>
+          </div>
+          <div className="skeleton-section-header">
+            <div className="skeleton-line"></div>
+            <div className="skeleton-line short"></div>
+          </div>
+          <div className="skeleton-section-header">
+            <div className="skeleton-line"></div>
+            <div className="skeleton-line short"></div>
+          </div>
+          <div className="skeleton-section-header">
+            <div className="skeleton-line"></div>
+            <div className="skeleton-line short"></div>
+          </div>
+        </div>
+
+        <div className="services-center-panel skeleton-panel">
+          <div className="skeleton-category-item"></div>
+          <div className="skeleton-category-item"></div>
+          <div className="skeleton-category-item"></div>
+          <div className="skeleton-category-item"></div>
+          <div className="skeleton-category-item"></div>
+        </div>
+
+        <div className="services-right-panel skeleton-panel">
+          <div className="skeleton-details-title"></div>
+          <div className="skeleton-details-line"></div>
+          <div className="skeleton-details-line"></div>
+          <div className="skeleton-details-line short"></div>
+          
+          <div className="skeleton-service-item"></div>
+          <div className="skeleton-service-item"></div>
+          <div className="skeleton-service-item"></div>
+          
+          <div className="skeleton-details-line"></div>
+          <div className="skeleton-details-line"></div>
+          <div className="skeleton-details-line short"></div>
         </div>
       </div>
     </div>
+  );
+
+  // Error state
+  if (error && !servicesData.length) {
+    return (
+      <div className="services-modal-overlay" role="dialog" aria-modal="true" aria-label="Error loading services">
+        <div className={`services-modal ${isClosing ? 'closing' : ''}`} ref={modalRef}>
+          <div className="services-modal-body error-state">
+            <button 
+              className="services-modal-close"
+              onClick={closeModal}
+              aria-label="Close modal"
+            >
+              <X size={24} aria-hidden="true" />
+            </button>
+            <div className="error-container">
+              <p className="error-icon" aria-hidden="true">⚠️</p>
+              <p className="error-message">{error}</p>
+              <button 
+                className="error-retry-btn"
+                onClick={() => {
+                  setIsInitialLoad(true);
+                  fetchServices();
+                }}
+                aria-label="Retry loading services"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const structuredData = generateStructuredData();
+  const breadcrumbData = generateBreadcrumbData();
+  const currentUrl = getCurrentUrl();
+
+  return (
+    <>
+      <Head>
+        <title>{`${selectedCategory?.name || 'Our Services'} | ${selectedSection?.name || 'Professional Services'}`}</title>
+        <meta name="description" content={`Explore our ${selectedSection?.name || 'comprehensive'} services including ${selectedCategory?.name || ''}. Professional services available.`} />
+        <meta name="keywords" content={`${selectedCategory?.name || ''}, ${selectedSection?.name || ''}, ${servicesData.map(s => s.name).join(', ')}`} />
+        <link rel="canonical" href={currentUrl} />
+        <meta property="og:title" content={`${selectedCategory?.name || 'Our Services'} | ${selectedSection?.name || 'Professional Services'}`} />
+        <meta property="og:description" content={`Explore our ${selectedSection?.name || 'comprehensive'} services. Professional services available.`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:site_name" content="Our Services" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${selectedCategory?.name || 'Our Services'} | ${selectedSection?.name || 'Professional Services'}`} />
+        <meta name="twitter:description" content={`Explore our ${selectedSection?.name || 'comprehensive'} services.`} />
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        
+        {structuredData && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(structuredData)
+            }}
+          />
+        )}
+        
+        {breadcrumbData && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(breadcrumbData)
+            }}
+          />
+        )}
+      </Head>
+
+      <div className="services-modal-overlay" role="dialog" aria-modal="true" aria-label="Services menu">
+        <div className={`services-modal ${serviceModalOpen ? 'active' : ''} ${isClosing ? 'closing' : ''}`} ref={modalRef}>
+          {loading ? (
+            <SkeletonLoader />
+          ) : (
+            <div className="services-modal-body">
+              <button 
+                className="services-modal-close"
+                onClick={closeModal}
+                aria-label="Close modal"
+              >
+                <X size={24} aria-hidden="true" />
+              </button>
+
+              {/* LEFT PANEL - Main Sections */}
+              <nav className="services-left-panel" ref={leftPanelRef} aria-label="Service categories">
+                <h2 className="sr-only">Service Categories</h2>
+                <div className="services-section-list" role="list">
+                  {servicesData.map((section) => (
+                    <button
+                      key={section.id || section.name}
+                      className={`services-section-btn ${selectedSection?.id === section.id ? 'active' : ''}`}
+                      onClick={() => handleSectionClick(section)}
+                      role="listitem"
+                      aria-current={selectedSection?.id === section.id ? 'page' : undefined}
+                    >
+                      <span className="services-section-name">{section.name}</span>
+                      {section.pdf && (
+                        <a 
+                          href={section.pdf} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="services-section-pdf"
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`Download PDF for ${section.name}`}
+                        >
+                          <FileText size={14} aria-hidden="true" />
+                        </a>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </nav>
+
+              {/* CENTER PANEL - Subcategories */}
+              <nav className="services-center-panel" ref={centerPanelRef} aria-label="Service subcategories">
+                <h2 className="sr-only">Service Subcategories</h2>
+                <div className="services-category-list" role="list">
+                  {selectedSection?.items?.map((item) => {
+                    // Check if this is the selected category
+                    const isActive = selectedCategory?.id === item.id;
+                    
+                    return (
+                      <button
+                        key={item.id || item.name}
+                        className={`services-category-btn ${isActive ? 'active' : ''}`}
+                        onClick={() => handleCategoryClick(item)}
+                        role="listitem"
+                        aria-current={isActive ? 'page' : undefined}
+                      >
+                        <span className="services-category-name">{item.name}</span>
+                        {item.pdf && (
+                          <a 
+                            href={item.pdf} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="services-category-pdf"
+                            onClick={(e) => e.stopPropagation()}
+                            aria-label={`Download PDF for ${item.name}`}
+                          >
+                            <FileText size={14} aria-hidden="true" />
+                          </a>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </nav>
+
+              {/* RIGHT PANEL - Details */}
+              <section className="services-right-panel" ref={rightPanelRef} aria-label="Service details">
+                {selectedCategory ? (
+                  <article className="services-details">
+                    <h1 className="services-details-title">{selectedCategory.name}</h1>
+                    {selectedCategory.description && (
+                      <p className="services-details-description">{selectedCategory.description}</p>
+                    )}
+                    
+                    {selectedCategory.service && selectedCategory.service.length > 0 && (
+                      <section className="services-details-services" aria-label="Service offerings">
+                        <h2 className="services-details-subtitle">
+                          <List size={16} aria-hidden="true" />
+                          Service Offerings
+                        </h2>
+                        <ul className="services-details-services-list" role="list">
+                          {selectedCategory.service.map((serviceItem, idx) => (
+                            <li key={idx} className="services-details-service-item" role="listitem">
+                              <span className="services-details-service-dot" aria-hidden="true">•</span>
+                              <span className="services-details-service-name">{serviceItem}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    )}
+                    
+                    {selectedCategory.children && selectedCategory.children.length > 0 ? (
+                      <div className="services-details-children" role="list">
+                        <h2 className="sr-only">Sub-services</h2>
+                        {renderChildren(selectedCategory.children)}
+                      </div>
+                    ) : (
+                      <div className="services-details-no-content">
+                        <div className="services-details-contact-cta">
+                          <p>No specific sub-services listed for this category.</p>
+                          <button 
+                            className="services-details-contact-btn"
+                            onClick={() => {
+                              closeModal();
+                              router.push('/contact-us-liaison-bank');
+                            }}
+                          >
+                            Contact Us for More Information
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </article>
+                ) : (
+                  <div className="services-details-empty-state">
+                    <p>Select a category to view details</p>
+                  </div>
+                )}
+              </section>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
   );
 }

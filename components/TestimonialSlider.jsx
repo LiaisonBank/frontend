@@ -7,13 +7,67 @@ import { testimonials } from "@/lib/data/testimonialList";
 export default function TestimonialSlider() {
   const [itemsPerView, setItemsPerView] = useState(1);
   const [curSlide, setCurSlide] = useState(0);
+  const [displayTestimonials, setDisplayTestimonials] = useState(testimonials);
+  const [loading, setLoading] = useState(false);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
-
   const intervalRef = useRef(null);
 
-  /* ---------------- RESPONSIVE ---------------- */
+  /* ---------------- FETCH API DATA ---------------- */
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setLoading(true);
+  const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/review`
+        );        
+        if (!response.ok) {
+          throw new Error("Failed to fetch reviews");
+        }
+        
+        const result = await response.json();
+        console.log("API Response:", result);
+        
+        if (result.success && result.data && result.data.length > 0) {
+          // Get a random static testimonial image for each API review
+          const getRandomImage = () => {
+            const staticImages = testimonials.map(t => t.image);
+            return staticImages[Math.floor(Math.random() * staticImages.length)];
+          };
 
+          // Transform API data to match the testimonial format
+          const apiTestimonials = result.data
+            .filter(item => item.status === "Active")
+            .map((item, index) => ({
+              id: `api-${item.id}`,
+              title: item.company || "Client Review", // Company name as title
+              text: item.review || "", // Review text
+              name: item.name || "Anonymous", // Client name
+              location: item.address || "", // Address as location
+              rating: item.rating || 5, // Rating
+              // Use a random static image from existing testimonials
+              image: testimonials[index % testimonials.length]?.image || "/images/avatar-placeholder.jpg",
+            }));
+          
+          // Combine static testimonials with API testimonials
+          setDisplayTestimonials([...testimonials, ...apiTestimonials]);
+        } else {
+          // If no data from API, keep only static testimonials
+          setDisplayTestimonials(testimonials);
+        }
+      } catch (err) {
+        console.error("Error fetching reviews:", err);
+        // Keep only static testimonials on error
+        setDisplayTestimonials(testimonials);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+
+  /* ---------------- RESPONSIVE ---------------- */
   useEffect(() => {
     const updateLayout = () => {
       if (window.innerWidth <= 1023) {
@@ -21,50 +75,49 @@ export default function TestimonialSlider() {
       } else {
         setItemsPerView(2);
       }
-
       setCurSlide(0);
     };
 
     updateLayout();
-
     window.addEventListener("resize", updateLayout);
-
     return () => window.removeEventListener("resize", updateLayout);
   }, []);
 
-  const totalSlides = Math.ceil(testimonials.length / itemsPerView);
+  const totalSlides = Math.ceil(displayTestimonials.length / itemsPerView);
 
   /* ---------------- SLIDER CONTROLS ---------------- */
-
   const nextSlide = useCallback(() => {
+    if (displayTestimonials.length === 0) return;
     setCurSlide((prev) => (prev + 1) % totalSlides);
-  }, [totalSlides]);
+  }, [totalSlides, displayTestimonials.length]);
 
   const prevSlide = () => {
+    if (displayTestimonials.length === 0) return;
     setCurSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
   };
 
   /* ---------------- AUTOPLAY ---------------- */
-
   const stopAutoplay = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
   };
 
   const startAutoplay = useCallback(() => {
+    if (displayTestimonials.length === 0) return;
     stopAutoplay();
     intervalRef.current = setInterval(nextSlide, 4000);
-  }, [nextSlide]);
+  }, [nextSlide, displayTestimonials.length]);
 
   useEffect(() => {
-    startAutoplay();
-
+    if (displayTestimonials.length > 0) {
+      startAutoplay();
+    }
     return () => stopAutoplay();
-  }, [startAutoplay]);
+  }, [startAutoplay, displayTestimonials.length]);
 
   /* Pause autoplay when tab hidden */
-
   useEffect(() => {
     const handleVisibility = () => {
       if (document.hidden) stopAutoplay();
@@ -72,41 +125,66 @@ export default function TestimonialSlider() {
     };
 
     document.addEventListener("visibilitychange", handleVisibility);
-
-    return () =>
-      document.removeEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, [startAutoplay]);
 
+  /* ---------------- TOUCH EVENTS ---------------- */
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
     touchEndX.current = e.touches[0].clientX;
-
-    // Pause autoplay while swiping
     stopAutoplay();
   };
-  /* ---------------- RENDER ---------------- */
+
   const handleTouchMove = (e) => {
     touchEndX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = () => {
-  const distance = touchStartX.current - touchEndX.current;
-  const threshold = 50;
+    const distance = touchStartX.current - touchEndX.current;
+    const threshold = 50;
 
-  if (Math.abs(distance) < threshold) {
+    if (Math.abs(distance) < threshold) {
+      startAutoplay();
+      return;
+    }
+
+    if (distance > 0) {
+      nextSlide();
+    } else {
+      prevSlide();
+    }
+
     startAutoplay();
-    return;
+  };
+
+  // Loading state
+  if (loading && displayTestimonials.length === 0) {
+    return (
+      <section className="testimonial-section">
+        <div className="slider">
+          <div className="testimonial-loading">
+            <div className="loading-spinner"></div>
+            <p>Loading testimonials...</p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
-  if (distance > 0) {
-    nextSlide();
-  } else {
-    prevSlide();
+  // Empty state
+  if (displayTestimonials.length === 0) {
+    return (
+      <section className="testimonial-section">
+        <div className="slider">
+          <div className="testimonial-empty">
+            <p>No testimonials available</p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
-  startAutoplay();
-};
-
+  /* ---------------- RENDER ---------------- */
   return (
     <section className="testimonial-section">
       <div
@@ -117,12 +195,12 @@ export default function TestimonialSlider() {
         onMouseEnter={stopAutoplay}
         onMouseLeave={startAutoplay}
       >
-        {testimonials.map((item, i) => {
+        {displayTestimonials.map((item, i) => {
           const translate = 100 * (i - curSlide * itemsPerView);
 
           return (
             <div
-              key={i}
+              key={item.id || i}
               className="slide"
               style={{
                 width: `${100 / itemsPerView}%`,
@@ -130,17 +208,23 @@ export default function TestimonialSlider() {
               }}
             >
               <div className="testimonial-card">
+                {/* Title: Company name for API, or existing title for static */}
                 <h5 className="testimonial-title">{item.title}</h5>
 
+                {/* Review Text */}
                 <p className="testimonial-text">{item.text}</p>
 
                 <div className="testimonial-author">
+                  {/* Image from static testimonials only */}
                   <Image
                     src={item.image}
                     alt={item.name}
                     width={70}
                     height={70}
                     className="author-img"
+                    onError={(e) => {
+                      e.target.src = "/images/avatar-placeholder.jpg";
+                    }}
                   />
 
                   <div className="author-info">
@@ -167,31 +251,31 @@ export default function TestimonialSlider() {
             </div>
           );
         })}
-       
 
         {/* Navigation Dots */}
-
-        <div className="slider-dots">
-          {Array.from({ length: totalSlides }).map((_, i) => (
-            <button
-              key={i}
-              className={`dot ${curSlide === i ? "active" : ""}`}
-              onClick={() => setCurSlide(i)}
-              aria-label={`Go to slide ${i + 1}`}
-            />
-          ))}
-        </div>
+        {totalSlides > 1 && (
+          <div className="slider-dots">
+            {Array.from({ length: totalSlides }).map((_, i) => (
+              <button
+                key={i}
+                className={`dot ${curSlide === i ? "active" : ""}`}
+                onClick={() => setCurSlide(i)}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
-          
 
-        {/* Arrow Buttons */}
+      {/* Arrow Buttons */}
+      {displayTestimonials.length > itemsPerView && (
         <div className="testimonial-controls">
           <button
             className="slider-btn left"
             onClick={prevSlide}
             aria-label="Previous testimonial"
           >
-            {/* ← */}<i className="bi bi-arrow-left"></i>
+            <i className="bi bi-arrow-left"></i>
           </button>
 
           <button
@@ -199,9 +283,10 @@ export default function TestimonialSlider() {
             onClick={nextSlide}
             aria-label="Next testimonial"
           >
-            {/* → */}<i className="bi bi-arrow-right"></i>
+            <i className="bi bi-arrow-right"></i>
           </button>
         </div>
+      )}
     </section>
   );
 }
