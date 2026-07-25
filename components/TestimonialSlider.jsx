@@ -18,16 +18,16 @@ export default function TestimonialSlider() {
     const fetchReviews = async () => {
       try {
         setLoading(true);
-  const response = await fetch(
+        const response = await fetch(
           `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/review`
-        );        
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch reviews");
         }
-        
+
         const result = await response.json();
         console.log("API Response:", result);
-        
+
         if (result.success && result.data && result.data.length > 0) {
           // Get a random static testimonial image for each API review
           const getRandomImage = () => {
@@ -48,9 +48,13 @@ export default function TestimonialSlider() {
               // Use a random static image from existing testimonials
               image: testimonials[index % testimonials.length]?.image || "/images/avatar-placeholder.jpg",
             }));
-          
+
           // Combine static testimonials with API testimonials
-          setDisplayTestimonials([...testimonials, ...apiTestimonials]);
+          if (apiTestimonials.length > 0) {
+            setDisplayTestimonials(apiTestimonials);
+          } else {
+            setDisplayTestimonials(testimonials);
+          }
         } else {
           // If no data from API, keep only static testimonials
           setDisplayTestimonials(testimonials);
@@ -235,11 +239,10 @@ export default function TestimonialSlider() {
                       {[...Array(5)].map((_, j) => (
                         <span
                           key={j}
-                          className={`star ${
-                            j + 1 <= Math.round(item.rating)
+                          className={`star ${j + 1 <= Math.round(item.rating)
                               ? "filled"
                               : ""
-                          }`}
+                            }`}
                         >
                           ★
                         </span>
