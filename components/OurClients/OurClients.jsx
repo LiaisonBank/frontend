@@ -4,8 +4,8 @@ import React, { Component } from "react";
 import { getImageUrl } from "@/lib/utils/getImagehelper";
 import Image from "next/image";
 
-  const API_URL = await fetch(
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/categories/our-services`
+  const API_URL = (
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/our-clients`
         );
 
 export default class OurClients extends Component {
