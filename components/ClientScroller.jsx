@@ -8,7 +8,6 @@ import "@splidejs/react-splide/css";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/utils/getImagehelper";
 
-const API_URL = "http://localhost:8000/api/our-clients";
 
 const ClientScroller = () => {
   const pathname = usePathname();
@@ -17,8 +16,9 @@ const ClientScroller = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const response = await fetch(API_URL);
-        const result = await response.json();
+  const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/our-clients`
+        );        const result = await response.json();
 
         if (result.success) {
           setClients(

@@ -27,8 +27,9 @@ export default function AwardPage() {
     const fetchAwards = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:8000/api/awards/");
-        
+  const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards`
+        );        
         if (!response.ok) {
           throw new Error("Failed to fetch awards");
         }

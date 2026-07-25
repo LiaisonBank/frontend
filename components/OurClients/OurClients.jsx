@@ -4,8 +4,9 @@ import React, { Component } from "react";
 import { getImageUrl } from "@/lib/utils/getImagehelper";
 import Image from "next/image";
 
-const API_URL = "http://localhost:8000/api/our-clients";
-// const IMAGE_BASE_URL = "http://localhost:8000/";
+  const API_URL = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/categories/our-services`
+        );
 
 export default class OurClients extends Component {
   state = {

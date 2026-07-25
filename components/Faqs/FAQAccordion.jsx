@@ -14,8 +14,9 @@ export default function FAQSection() {
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/faqs");
-        const result = await response.json();
+  const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/faqs`
+        );        const result = await response.json();
         
         if (result.success && result.data) {
           // Filter only active FAQs
