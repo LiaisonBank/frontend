@@ -1,56 +1,84 @@
-import { useRef } from "react";
-import {
-    SendHorizontal,
-} from "lucide-react";
+import { useRef, useState } from "react";
+import { SendHorizontal } from "lucide-react";
 
 const ChatForm = ({ setChatHistory }) => {
-    const inputRef = useRef(null);
+  const inputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
-   const handleChatFormSubmit = (e) => {
+  const handleChatFormSubmit = async (e) => {
     e.preventDefault();
 
-    // Get input value
     const userMessage = inputRef.current.value.trim();
 
-    if (!userMessage) return;
+    if (!userMessage || loading) return;
 
-    console.log("User Input:", userMessage);
-
-    // Add user message
     setChatHistory((prev) => [
-        ...prev,
-        { role: "user", text: userMessage }
+      ...prev,
+      {
+        role: "user",
+        text: userMessage,
+      },
     ]);
 
-    // Clear input field
     inputRef.current.value = "";
+    setLoading(true);
 
-    // Bot thinking message
-    setTimeout(() => {
-        setChatHistory((prev) => [
-            ...prev,
-            { role: "model", text: "Thinking..." }
-        ]);
-    }, 1000);
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/meta/chat",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phone: "919876543210",
+            message: userMessage,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "model",
+          text: data.message || "Message Sent",
+        },
+      ]);
+    } catch (error) {
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "model",
+          text: "Unable to send message.",
+        },
+      ]);
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <form className="chatForm" onSubmit={handleChatFormSubmit}>
+      <div className="inputArea">
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Message..."
+          disabled={loading}
+        />
+
+        <button
+          className="sendBtn"
+          disabled={loading}
+        >
+          <SendHorizontal size={18} />
+        </button>
+      </div>
+    </form>
+  );
 };
-    return (
-        <>
-            <div className="inputArea">
-                <form action="#" className="chatForm" onSubmit={handleChatFormSubmit}>
-                    <div className="inputArea">
-                        <input
-                            type="text"
-                            placeholder="Message..."
-                            ref={inputRef}
-                        />
 
-                        <button className="sendBtn">
-                            <SendHorizontal size={18} />
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </>
-    )
-}
 export default ChatForm;
