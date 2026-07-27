@@ -177,7 +177,7 @@ export default function Footer() {
             width="30"
             height="30"
             fill="white"
-            class="bi bi-person-plus-fill"
+            className="bi bi-person-plus-fill"
           >
             <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"></path>
             <path
@@ -188,8 +188,8 @@ export default function Footer() {
           &nbsp;&nbsp;
         </a>
 
-        <a class="enquire open-form">
-          Enquire Now <i class="fi fi-sr-attribution-pencil"></i>
+        <a className="enquire open-form">
+          Enquire Now <i className="fi fi-sr-attribution-pencil"></i>
         </a>
       </div>
 
@@ -219,7 +219,7 @@ export default function Footer() {
             </div>
 
             <div className="col-3 chatbot p-2">
-              <ChatBot />
+              {/* <ChatBot /> */}
             </div>
           </div>
         </div>
