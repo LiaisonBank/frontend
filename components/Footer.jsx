@@ -219,7 +219,7 @@ export default function Footer() {
             </div>
 
             <div className="col-3 chatbot p-2">
-              <ChatBot />
+              {/* <ChatBot /> */}
             </div>
           </div>
         </div>
