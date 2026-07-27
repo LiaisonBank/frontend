@@ -1,24 +1,78 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 export default function LenisProvider() {
+  const lenisRef = useRef(null);
+  const rafIdRef = useRef(null);
+  const pathname = usePathname();
+
+  // Initialize Lenis only once
   useEffect(() => {
+    // Prevent browser from restoring previous scroll position
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
     const lenis = new Lenis({
       duration: 1.2,
       smoothWheel: true,
+      smoothTouch: false,
+      autoRaf: false,
     });
 
-    function raf(time) {
+    lenisRef.current = lenis;
+
+    const raf = (time) => {
       lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+      rafIdRef.current = requestAnimationFrame(raf);
+    };
 
-    requestAnimationFrame(raf);
+    rafIdRef.current = requestAnimationFrame(raf);
 
-    return () => lenis.destroy();
+    // Always start from the top after initial load/refresh
+    requestAnimationFrame(() => {
+      lenis.scrollTo(0, {
+        immediate: true,
+        force: true,
+      });
+    });
+
+    return () => {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+
+      lenis.destroy();
+      lenisRef.current = null;
+    };
   }, []);
 
-  return null;
+    // Scroll to top on every route change
+    useEffect(() => {
+    const scrollToTop = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          lenisRef.current?.scrollTo(0, {
+            immediate: true,
+            force: true,
+          });
+
+          window.scrollTo(0, 0);
+        });
+      });
+    };
+
+    // Initial load
+    scrollToTop();
+
+    // Mobile browsers / BFCache
+    window.addEventListener("pageshow", scrollToTop);
+
+    return () => {
+      window.removeEventListener("pageshow", scrollToTop);
+    };
+  }, []);
 }

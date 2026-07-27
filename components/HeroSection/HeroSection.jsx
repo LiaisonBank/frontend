@@ -196,21 +196,6 @@ export default function HeroSection() {
 
                 {/* RIGHT IMAGE */}
                 <div className="hero-image">
-                    <div className="services-orbit d-none">
-                        <div className="orbit-ring"></div>
-
-                        <div className="center-wrapper">
-                            <div className="center-glow"></div>
-                            <div className="center-circle"></div>
-                        </div>
-
-                        <div className="node node-top"><span className="node-text">ABC</span></div>
-                        <div className="node node-top-right"></div>
-                        <div className="node node-bottom-right"></div>
-                        <div className="node node-bottom"></div>
-                        <div className="node node-bottom-left"></div>
-                        <div className="node node-top-left"></div>
-                    </div>
                     <Image
                         src={serviceIcons}
                         width={600}

@@ -1,104 +1,184 @@
+// AwardP.jsx
+// Production-ready Swiper example with API integration
+// Install: npm i swiper @fancyapps/ui
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from 'next/link'
-
+import Link from "next/link";
 import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
 import { Fancybox } from "@fancyapps/ui";
+import { getImageUrl } from "@/lib/utils/getImagehelper";
 
-import { certificateList } from "@/lib/data/certificateList";
-
+import "swiper/css";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
+// import "./AwardP.scss";
 
 export default function AwardP() {
-   const galleryRef = useRef(null);
-   const [animateCards, setAnimateCards] = useState(false);
+  const galleryRef = useRef(null);
+  const swiperRef = useRef(null);
+  const [certificates, setCertificates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  /**
+   * Fetch awards from API
+   */
+  useEffect(() => {
+    const fetchAwards = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch awards");
+        }
+        
+        const result = await response.json();
+        console.log("API Response:", result);
+        
+        if (result.success && result.data && result.data.length > 0) {
+          // Transform API data
+          const apiCertificates = result.data.map((item) => ({
+            id: item.id,
+            src: getImageUrl(item.file),
+            caption: item.title || "Award Certificate",
+            description: item.description,
+            original: item,
+          }));
+          
+          setCertificates(apiCertificates);
+        } else {
+          setCertificates([]);
+        }
+      } catch (err) {
+        console.error("Error fetching awards:", err);
+        setError(err.message);
+        setCertificates([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAwards();
+  }, []);
+
+  /**
+   * Fancybox
+   */
   useEffect(() => {
     const container = galleryRef.current;
 
-    if (!container) return;
+    if (!container || certificates.length === 0) return;
 
-    Fancybox.bind(
-      container,
-      '[data-fancybox="certificates"]',
-      {
-        animated: true,
+    Fancybox.bind(container, '[data-fancybox="certificates"]', {
+      animated: true,
 
-        Carousel: {
-          infinite: true,
+      Carousel: {
+        infinite: true,
+      },
+
+      Thumbs: {
+        autoStart: false,
+      },
+
+      Toolbar: {
+        display: {
+          left: [],
+          middle: ["zoomIn", "zoomOut", "toggle1to1"],
+          right: ["slideshow", "fullscreen", "close"],
+        },
+      },
+
+      on: {
+        reveal: () => {
+          swiperRef.current?.autoplay?.stop();
         },
 
-        Thumbs: {
-          autoStart: false,
-        },
-
-        Toolbar: {
-          display: {
-            left: [],
-            middle: [
-              "zoomIn",
-              "zoomOut",
-              "toggle1to1",
-            ],
-            right: [
-              "slideshow",
-              "fullscreen",
-              "close",
-            ],
-          },
+        close: () => {
+          swiperRef.current?.autoplay?.start();
         },
       }
-    );
+    });
 
     return () => {
       Fancybox.unbind(container);
       Fancybox.close();
     };
-  }, []);
+  }, [certificates]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setAnimateCards(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.3 }
+  // Loading state
+  if (loading) {
+    return (
+      <section className="certificate-section">
+        <div className="m-0 p-0">
+          <div className="certificate-loading">
+            <div className="loading-spinner"></div>
+            <p>Loading awards...</p>
+          </div>
+        </div>
+      </section>
     );
+  }
 
-    if (galleryRef.current) {
-      observer.observe(galleryRef.current);
-    }
-
-    return () => {
-      if (galleryRef.current) {
-        observer.unobserve(galleryRef.current);
-      }
-    };
-  }, []);
-
-  if (!certificateList?.length) {
-    return null;
+  // Error or empty state
+  if (error || certificates.length === 0) {
+    return (
+      <section className="certificate-section">
+        <div className="m-0 p-0">
+          <div className="certificate-empty">
+            <p>No awards available at the moment.</p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
-    <section
-      className="certificate-section"
-      aria-labelledby="certificates-heading"
-    >
-      <div className="container">
-        <div className="row g-4" ref={galleryRef}>
-          {certificateList.slice(0, 8).map((certificate, index) => (
-            <div
-              className={`col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mx-auto certificate-item-wrapper ${animateCards ? 'animate' : ''}`}
-              key={certificate.src}
-              style={{
-                animationDelay: animateCards ? `${index * 0.1}s` : '0s',
-              }}
-            >
-              <article className="certificate-card">
+    <section className="certificate-section">
+      <div className="m-0 p-0">
+        <div ref={galleryRef}>
+          <Swiper
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
+            modules={[Autoplay]}
+            dir="rtl"
+            loop={true}
+            speed={600}
+            spaceBetween={24}
+            grabCursor={true}
+            slidesPerView={4}
+            breakpoints={{
+              0: {
+                slidesPerView: 1,
+                spaceBetween: 16,
+              },
+              576: {
+                slidesPerView: 1,
+                spaceBetween: 20,
+              },
+              992: {
+                slidesPerView: 3,
+                spaceBetween: 24,
+              },
+              1200: {
+                slidesPerView: 5,
+                spaceBetween: 24,
+              },
+            }}
+            autoplay={{
+              delay: 1200,
+              disableOnInteraction: false,
+            }}
+            className="certificate-swiper"
+          >
+            {/* Double the certificates for seamless looping */}
+            {[...certificates, ...certificates].map((certificate, index) => (
+              <SwiperSlide key={`${certificate.id || certificate.src}-${index}`}>
                 <a
                   href={certificate.src}
                   data-fancybox="certificates"
@@ -106,47 +186,29 @@ export default function AwardP() {
                   className="certificate-link"
                   aria-label={`Open ${certificate.caption}`}
                 >
-                  <div className="certificate-image-wrapper">
-                    <Image
-                      src={certificate.src}
-                      alt={certificate.caption}
-                      width={600}
-                      height={850}
-                      className="certificate-image"
-                      loading="lazy"
-                      sizes="
-                        (max-width: 576px) 50vw,
-                        (max-width: 991px) 33vw,
-                        25vw
-                      "
-                    />
-                  </div>
+                  <Image
+                    src={certificate.src}
+                    alt={certificate.caption}
+                    width={280}
+                    height={396}
+                    className="certificate-image"
+                    unoptimized={true}
+                    loading="lazy"
+                  />
 
                   <div className="certificate-caption">
                     {certificate.caption}
                   </div>
                 </a>
-              </article>
-            </div>
-          ))}
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
-        <div className="col-8  mx-auto text-center d-flex align-items-center justify-content-center">
-            <Link href="/awards" scroll={true} className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4">
-            View More &nbsp;&nbsp;&nbsp;
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
-                fill="currentColor"
-                className="bi bi-arrow-right"
-                viewBox="0 0 16 16"
-            >
-                <path
-                fillRule="evenodd"
-                d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                />
-            </svg>
-            </Link>
+
+        <div className="col-8 mx-auto text-center d-flex align-items-center justify-content-center">
+          <Link href="/awards" className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4">
+            View More
+          </Link>
         </div>
       </div>
     </section>

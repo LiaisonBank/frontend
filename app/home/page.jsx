@@ -1,13 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import Link from 'next/link'
 import Image from 'next/image'
 import useBodyClass from '@/components/useBodyClass'; // Adjust path as needed
 // import Waves from "@/components/waves";
 
 // import smallLogo from "@/assets/images/shape-small-1-1.png"
+// import licensingImg from "./images/web-assets.bcg.webp";
 import welcomeImg from "@/assets/images/mahadev_Rupali_Arvind.webp"
-import devaImg from "@/assets/images/devaBirader.webp"
+import devaImg from "@/assets/images/ceo.png"
 import ServicesSection from "@/components/ServicesSection";
 import ClientScroller from "@/components/ClientScroller"
 import useFancybox from '@/components/useFancybox';
@@ -23,6 +25,9 @@ import HeroSlider from '@/components/HeroSection/HeroSlider';
 import OrbitServices from '@/components/HeroSection/OrbitServices';
 
 const Home = () => {
+  
+    const [expanded, setExpanded] = useState(false);
+    
   useBodyClass('home');
   const fancyboxRef = useFancybox({
     // This object disables the thumbnails entirely
@@ -51,10 +56,10 @@ const Home = () => {
           />
         </div> */}
       </div>
-      <section className="pt-2 bg-aliceblue ceo-message">
-        <div className="container mx-auto pt-2">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className='aling-items-center mx-auto image'>
+      <section className="ceo-message ">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end">
+               <div className="lg:col-span-1">
                   <Image
                     src={devaImg}
                     width={375}
@@ -67,34 +72,56 @@ const Home = () => {
                     priority
                   />
               </div>
-              <div className=' mt-2 mesg'>
-                <div className='quote'>
-                  <p>
-                    <span className="quote-close">
-                       <Image
-                        src="/images/top-left-quote.webp"
-                        width={40}
-                        height={40}
-                        alt="Closing quote"
-                        className="quote-close top"
-                      />
-                    </span>
-                        It&apos;s not about waiting for things to fall into place, it&lsquo;s about what you make of yourself.
-                    <Image
-                      src="/images/bottom-right-quote.webp"
-                      width={40}
-                      height={40}
-                      alt="Closing quote"
-                      className="quote-close bottom"
-                    />
-                  </p>
-                </div>
-                <div className='col-auto ceo-name'>
-                  <h1 className="author-title" aria-label="Deva Biradar">Deva Biradar</h1>
-                  <p className="author-desc">Chief Executive Officer</p>
-                </div>
+              <div className="lg:col-span-2 ceo-name">
+                <h2 className='author-title'>Mahadev Biradar</h2>
+                <h6 className='author-desc'>Founder & CEO</h6>
+                 <p>
+                  Mahadev Biradar is the Founder and Chief Executive Officer of Liaison Bank, providing strategic leadership in government liaisoning, licensing, and regulatory compliance.
+                </p>
+                <p>
+                  Born and brought up in Wagalgaon, Karnataka, he faced numerous failures and rejections across various cities. He came to Bombay in 2005 to make his parents proud. He started as a waiter, guided by one motto: to always give his best. Later entering real estate, he gained valuable property knowledge, built strong relationships, and entered liaisoning.
+                </p>
+                <p>
+                  In 2017, he founded DBRE India to deliver innovative solutions and sustainable value. DBRE expanded his expertise into PNG fabrication, firefighting system installation, testing, certification, electrical audits, and government regulatory licensing.
+                </p>
 
-              </div>
+                <p>Mahadev’s journey reflects resilience and continuous learning. Though educated primarily through practical experience rather than traditional higher studies, he transformed determination, discipline, and hands-on knowledge into a thriving enterprise built on trust.
+                </p>
+        
+                <p>
+                 Known as Deva Biradar, he leaves his mark wherever he goes. Under his leadership, the company expanded across India and registered in Singapore to connect international markets. Originally from Karnataka, He developed his professional roots in Mumbai, where he continues driving the company’s global vision.
+                </p>
+                {/* {expanded && (
+                    <>
+                    <p>
+                      Wherever he goes, he leaves his mark. He is well known as Deva
+                      Biradar. Under his leadership, the company has expanded its
+                      operations across India and registered in Singapore, aiming to
+                      connect international markets with seamless compliance solutions.
+                      Originally from Karnataka, Mahadev developed his professional roots
+                      in Mumbai, where he continues to drive the company’s global vision
+                      and commitment to service excellence.
+                    </p>
+                  </>
+                )} */}
+                <div className="flex justify-between items-center">
+                 <button
+                    type="button"
+                    className="read-more-btn hidden"
+                    onClick={() => setExpanded(!expanded)}
+                  >
+                    {expanded ? "Read Less" : "Read More"}
+                  </button> &nbsp;
+                  <Link href="https://mumbaimirror.indiatimes.com/mumbai/other/waiters-mumbai-dreams-turn-concrete/articleshow/16001427.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="read-more-btn"
+                >
+                  Read the Mumbai Mirror Article
+                </Link>
+                </div>
+             
+          </div>
           </div>
         </div>
       </section>
@@ -135,8 +162,8 @@ const Home = () => {
                 <p>Your trusted partner for seamless bank licensing and liaisoning services and png, fire etc.
                 We simplify complex regulatory processes with expert guidance and industry expertise.
                 Helping financial institutions achieve compliance and operational success.</p>
-                <p>Bridging the gap between the complicated regulatory frameworks and your business goals, we act as an interface for all your statutory requirements. As your dedicated licensing and liaisoning partner, we specialize in managing the intricate legalities and bureaucratic uncertainties that often stall business momentum. Our expertise ensures smoother operations, allowing you to channelize your energy into core priorities and other important business objectives.</p>
-                <p>We commit to deliver a seamless, and reliable framework that offers absolute clarity and operational confidence. By taking care of the complexities of industrial licensing, permits, and government liaisoning, we transform a traditionally slow process into a smooth, efficient experience. While we handle the administrative hurdles, you stay empowered to focus on strategic growth and achieving your business milestones with the certainty that your legal standing is in expert hands.</p>
+                <p>Bridging the gap between the complicated regulatory frameworks and your business goals, we act as an interface for all your statutory requirements. As your dedicated liaisoning and licensing  partner, we specialize in managing the intricate legalities and bureaucratic uncertainties that often stall business momentum. Our expertise ensures smoother operations, allowing you to channelize your energy into core priorities and other important business objectives.</p>
+                <p>We commit to deliver a seamless, and reliable framework that offers absolute clarity and operational confidence. By taking care of the government liaisoning and complexities of industrial licensing, permits, we transform a traditionally slow process into a smooth, efficient experience. While we handle the administrative hurdles, you stay empowered to focus on strategic growth and achieving your business milestones with the certainty that your legal standing is in expert hands.</p>
                 {/* <p>By entrusting us with your regulatory approvals and government relations, you accelerate the transition between policy and progress.</p> */}
                 {/* <h2 className="text-xl font-semibold mb-2">Column 2</h2> */}
                 {/* <p>We take care of the intricacies and uncertainties, allowing you to redirect your energy towards your core priorities and business objectives. This ensures a smoother and more efficient experience, providing you with the peace of mind to concentrate on what matters most to your success.</p>
@@ -167,19 +194,19 @@ const Home = () => {
           </div>
         </div>
       </section>
+
       <section className="ourservices">
-        <div className="container mx-auto py-5 service-list">
+        <div className="mx-auto py-5 service-list">
           <div className="section-title">
             <h3>Licensing and Liaisoning</h3>
             <h5>We bring our services to multiple sectors and create customised solutions for diverse set of business needs.</h5>
           </div>
-          <div className='col-12 mx-auto'>
+          <div className='mx-auto'>
             <OurServices/>
           </div>
         </div>
       </section>
       
-
       <section className="weprovide">
         <div className="container mx-auto  py-5 bg-white">
           <div className="section-title">
@@ -193,13 +220,13 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="awardscertification">
-        <div className="container-fluid mx-auto py-5">
+      <section className="awardscertification px-0">
+        <div className="container-fluid mx-auto py-5 px-0">
           <div className="section-title">
             <h3>Awards & Certifications</h3>
           </div>
 
-          <div ref={fancyboxRef} className="row  pt-5 d-flex align-items-center">
+          <div ref={fancyboxRef} className="d-flex align-items-center px-0 mx-0">
             {/* <div className="col-lg-2 col-md-2 col-sm-6 col-6"> */}
             <CertificateGallery />
             {/* <CertificateScroller /> */}
@@ -208,10 +235,9 @@ const Home = () => {
         </div>
       </section>
 
-
       <section className="ourclients">
-        <div className="container-fluid mx-auto px-0 pt-5 bg-white">
-          <div className="section-title">
+        <div className="container-fluid mx-auto px-0 pt-5 pb-4 bg-white">
+          <div className="section-title pb-3">
             <h3>Our Latest Clients</h3>
           </div>
           <div>
@@ -219,18 +245,66 @@ const Home = () => {
           </div>
         </div>
       </section>
+      
+      <section className="assistance d-none">
+        <div className="container-fluid px-0">
+          <div className="row g-0 align-items-stretch">
+
+            {/* Left Content */}
+            <div className="col-lg-6">
+              <div className="licensing-content">
+                <h2>
+                  Need Licensing Assistance?
+                </h2>
+                <p>
+                 Choose a licensing category to learn how LiaisonBank can help you secure, renew, and manage your business 
+                 licenses with confidence and compliance.
+                </p>
+                <div className="licensing-selects">
+                  <select id="lb-license">
+                    <option>Capabilities</option>
+                    <option>Licensing</option>
+                    <option>Compliance</option>
+                  </select>
+
+                  <select id="lb-servicetype">
+                    <option>Industries</option>
+                    <option>Banking</option>
+                    <option>Insurance</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Image */}
+            <div className="col-lg-6">
+              <div className="licensing-image">
+                {/* <img
+                  src="/images/licensing/licensing-banner.jpg"
+                  alt="Licensing"
+                /> */}
+                <Image 
+                  src="/images/web-assets.bcg.webp"
+                  alt="Licensing"
+                  width={1920}
+                  height={1080}
+                  className="service-license"
+                />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
 
       <section className="clientfeedback pb-5">
         <div className="container-fluid mx-auto px-0 bg-white">
-          <div className="section-title">
+          <div className="section-title pt-3">
             <h3>What Clients Say</h3>
           </div>
           <TestimonialSlider  />
         </div>
       </section>
-
-      
-
 
       <section className="faqs">
         <div className="container mx-auto  py-4 bg-white">

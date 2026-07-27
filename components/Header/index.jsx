@@ -13,6 +13,7 @@ import pdfIcon from "@/public/pdf_icon.png";
 import { ChevronDown } from 'react-bootstrap-icons';
 import NewLauncb from "@/components/NewLaunch";
 import NavText from "@/components/NavReusable/NavText";
+import { useModal } from "@/context/ModalContext";
 
 
 
@@ -22,7 +23,7 @@ export default function Header() {
   const [isSticky, setIsSticky] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
-
+  const { setServiceModalOpen } = useModal();
     
   const handleMegaScroll = (e) => {
     e.stopPropagation();
@@ -52,6 +53,11 @@ export default function Header() {
           <div
             className="flex items-center justify-between cursor-pointer"
             onClick={() => {
+               if (item.name === "Our Services") {
+                    setIsOpen(false);
+                    router.push("/ourservices");
+                    return;
+                  }
               if (children) {
                 toggleMenu(menuKey);
               } else if (item.href) {
@@ -77,7 +83,7 @@ export default function Header() {
         </li>
       );
     })}
-  </ul>
+    </ul>
   );
 };
   return (
@@ -128,7 +134,16 @@ export default function Header() {
                       onMouseLeave={() => setActiveMegaMenu(null)}
                     >
                       {/* Main Navigation */}
-                      {link.href ? (
+                    {link.name === "Our Services" ? (
+                        <button
+                          type="button"
+                          className="nav-link bg-transparent border-0 p-0 cursor-pointer flex items-center gap-1"
+                          onClick={() => setServiceModalOpen(true)}
+                        >
+                          <NavText text={link.name} />
+                          <ChevronDown size={16} className="nav-arrow" />
+                        </button>
+                      ) : link.href ? (
                         <button
                           type="button"
                           className="nav-link bg-transparent border-0 p-0 cursor-pointer"

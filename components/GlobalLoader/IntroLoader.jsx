@@ -2,11 +2,13 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useLoading } from "@/context/LoadingContext";
 import logo from "../../assets/images/company/logo.png";
 import name from "../../assets/images/company/name.png";
 import styles from "./IntroLoader.module.css";
 
 export default function IntroLoader() {
+  const { setIsLoading } = useLoading();
   const [show, setShow] = useState(true);
   const [position, setPosition] = useState({
     x: "-38vw",
@@ -15,7 +17,10 @@ export default function IntroLoader() {
   });
 
   useEffect(() => {
-    const timer = setTimeout(() => setShow(false), 3000);
+    const timer = setTimeout(() => {
+      setShow(false);
+      setIsLoading(false);
+    }, 3000);
 
     const updatePosition = () => {
       const width = window.innerWidth;

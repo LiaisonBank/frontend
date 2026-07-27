@@ -1,0 +1,207 @@
+.completed {
+    $transition-speed: 0.2s;
+    .section-title {
+      // text-align:center;
+      margin: 0;
+      padding: 1rem 0;
+      background-color: white;
+      text-align: center;
+      h3 {
+        text-align: center;
+        line-height: 1;
+        padding-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+        font-size: 2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        background:$secodary-bg-color;
+        // background: linear-gradient(
+        //   115deg,
+        //   var(--themeht-primary-color),
+        //   var(--themeht-secondary-color)
+        // );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        z-index: 9;
+
+        /* ORANGE UNDERLINE (CENTERED) */
+        &::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          bottom: 0;
+          width: 90px;
+          height: 3px;
+          background: $secodary-bg-color;
+          border-radius: 4px;
+          transform: translateX(-45%);
+          overflow: hidden;
+        }
+
+        /* SINGLE MOVING DOT (CENTERED FLOW) */
+        &::before {
+          content: "";
+          position: absolute;
+          bottom: -6px;
+          left: 50%;
+          width: 14px;
+          height: 14px;
+          background: #ffffff;
+          border: 3px solid $secodary-bg-color;
+          border-radius: 50%;
+          transform: translateX(-45px); // half of underline width
+          animation: dot-flow 3s linear infinite alternate;
+          z-index: 2;
+        }
+      }
+    }
+    .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    white-space: nowrap;
+    margin: 0 auto;
+    .grid-item {
+      background: transparent;
+      padding: 20px;
+      border-radius: 1.5rem;
+      box-shadow: 0px 25px 70px rgba(8, 10, 55, 0.08);
+      position: relative;
+      overflow: hidden; 
+      transition: all 0.4s ease-in-out;
+      // z-index: 1;
+
+      // Base white background
+      &:before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        z-index: -1;
+      }
+
+      // The Gradient that grows from the CENTER
+      &:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:lightgray;
+        // background: #FDC725;
+        // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
+        z-index: -1;
+        
+        // 1. Set initial scale to 0 (invisible at center)
+        transform: scale(0); 
+        
+        // 2. Set origin to center so it grows outward in all directions
+        transform-origin: center; 
+        
+        // 3. Use a cubic-bezier for a "bouncy" organic feel
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        // Optional: make it a circle initially for a 'lens' effect
+        border-radius: 50%; 
+      }
+
+      &:hover {
+        // Slight zoom up of the entire card
+        // transform: scale(1.02); 
+
+        &:after {
+          // 4. Scale to 1 on hover
+          transform: scale(1.2); // Scale slightly past 1 to ensure edges are covered
+          border-radius: 0%; // Transition from circle to square to fill the box
+        }
+
+        ul li {
+          color: black;
+          &::before { color: black; }
+          strong { color: black; }
+          border-color: rgba(255, 255, 255, 0);
+        }
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: relative;
+        z-index: 2; // Ensures text stays above the growing background
+
+        li {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 0;
+          transition: color 0.4s ease;
+          // font-weight: 600;
+           img{
+            // background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
+            // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
+            background-color:  black;
+            border-radius: 50%;
+            width: 1.1rem;
+            height: 1.1rem;
+            margin-right: .5rem;
+            padding: .2rem;
+          }
+
+          &.header-row {
+            border-bottom: 1px solid #373737;
+            margin-bottom: 5px;
+          }
+
+          &::before {
+            // content: "•";
+            margin-right: 10px;
+            color: #333;
+            transition: color 0.4s ease;
+          }
+
+          &:first-child::before {
+            content: "";
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+  .item-name {
+    flex: 1;
+    margin-left: 5px;
+    display: flex;
+    text-align: left;
+       flex:1;
+    min-width:0;          /* Important */
+    white-space:normal;
+    overflow-wrap:break-word;
+  }
+  table{
+    @media (max-width: 1024px){
+      width: 100% !important;
+      font-size: 1rem;
+    }
+    thead{
+      th:nth-child(2) {
+        // text-align:left;
+        padding:0.2rem;
+      }
+    }
+    tbody{
+      tr td:nth-child(2) {
+        // text-align:left;
+        padding:0.2rem;
+      }
+    }
+  }
+}

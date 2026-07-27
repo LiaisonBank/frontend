@@ -1,12 +1,40 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { faqData } from "@/lib/data/faqData";
+// REMOVED: import { faqData } from "@/lib/data/faqData";
 
 export default function FAQSection() {
   const [openItems, setOpenItems] = useState([]);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [faqData, setFaqData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const wrapperRef = useRef(null);
+
+  // Fetch FAQ data from API
+  useEffect(() => {
+    const fetchFAQs = async () => {
+      try {
+  const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/faqs`
+        );        const result = await response.json();
+        
+        if (result.success && result.data) {
+          // Filter only active FAQs
+          const activeFAQs = result.data.filter(item => item.status === "Active");
+          setFaqData(activeFAQs);
+        } else {
+          setFaqData([]);
+        }
+      } catch (error) {
+        console.error("Error fetching FAQs:", error);
+        setFaqData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFAQs();
+  }, []);
 
   useEffect(() => {
     // Detect if device supports touch
@@ -62,6 +90,31 @@ export default function FAQSection() {
     };
   }, []);
 
+  // Show loading state while fetching
+  if (loading) {
+    return (
+      <section className="max-w-full mx-auto px-4 py-10">
+        <div className="flex justify-center items-center min-h-[200px]">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+            <p className="mt-4 text-gray-600">Loading FAQs...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Show message if no FAQs
+  if (faqData.length === 0) {
+    return (
+      <section className="max-w-full mx-auto px-4 py-10">
+        <div className="text-center text-gray-600">
+          <p>No FAQs available at the moment.</p>
+        </div>
+      </section>
+    );
+  }
+
   const leftColumn = faqData.filter((_, i) => i % 2 === 0);
   const rightColumn = faqData.filter((_, i) => i % 2 !== 0);
 
@@ -72,7 +125,7 @@ export default function FAQSection() {
       <div
           key={realIndex}
           className="faq-items bg-white mb-1 overflow-hidden"
-          onMouseEnter={() => openAccordion(realIndex)}
+          // onMouseEnter={() => openAccordion(realIndex)}
         >
         <button
           onClick={() => toggleAccordion(realIndex)}

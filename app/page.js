@@ -55,7 +55,13 @@ export const metadata = {
     "Experienced business liaison partners",
     "Industrial licensing experts",
     "Structural compliance and documentation",
-    "Government policy tracking consultants"
+    "Government policy tracking consultants",
+    "License Renewal Services Mumbai",
+    "Business license renewal assistance",
+    "Government liaisoning for industrial approvals",
+    "Statutory compliance for manufacturing units",
+    "Industrial project approvals and permits",
+    // "Environmental compliance for industries",
   ],
 
   alternates: {
