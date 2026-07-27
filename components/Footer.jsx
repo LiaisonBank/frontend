@@ -128,6 +128,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
+        <ChatBot/>
       </footer>
 
       <ScrollToTopButton />
@@ -162,29 +163,36 @@ export default function Footer() {
             Enquire Now <i className="fi fi-sr-attribution-pencil"></i>
           </a>
         </div>
-      </div>
-
-      {/* {!hideOnSitemap && (
-        <div className="floating-wrapper">
-          <button
-            className={`float-pill float-call ${activeButton === "call" ? "expanded" : ""}`}
-            onMouseEnter={() => setActiveButton("call")}
-            onMouseLeave={() => setActiveButton(null)}
-            onClick={() => (window.location.href = "tel:+919769458515")}
-          >
-            <span className="float-text">+91 97694 58515</span>
-            <TelephoneFill size={20} className="float-icon" />
-          </button>
-
-          <button
-            className={`float-pill float-add ${activeButton === "hiring" ? "expanded" : ""}`}
-            onMouseEnter={() => setActiveButton("hiring")}
-            onMouseLeave={() => setActiveButton(null)}
-            onClick={() => setHiringOpen(true)}
-          >
-            <span className="float-text">We&apos;re Hiring</span>
-            <PersonPlusFill size={24} className="float-icon" />
-          </button>
+        </div>
+              {/* {Sticky CTA from 1024 to below} */}
+        <div className="sticky-icon-below-1024">
+          <div className="container-fluid mx-auto">
+            <div className="row">
+              <div className="col-3 callnow p-2">
+                <a href="tel:+919769458515" target="_blank">
+                  <i className="fi fi-sr-phone-flip" ></i> Call Now
+                </a>
+              </div>
+              <div className="col-3 enquire open-form p-2">
+                <a onClick={() => setOpen(true)}>
+                  <i className="fi fi-sr-attribution-pencil" ></i> Enquire Now
+                </a>
+              </div>
+              <div className="col-3 whatsapp p-2 d-flex align-items-center justify-content-center">
+                <a className="hiring open-form text-right" onClick={() => setHiringOpen(true)}>
+                 <PersonPlusFill size={36} color="white" /> &nbsp;We are Hiring 
+                </a>
+                {/* <a href="https://wa.me/919324577378" target="_blank" rel="noopener noreferrer">
+                  <i className="fi fi-brands-whatsapp"></i> WhatsApp
+                </a> */}
+              </div>
+              <div className="col-3 whatsapp p-2 d-flex align-items-center justify-content-center">
+                <a>
+                  <ChatBot/>
+                </a>
+              </div>
+            </div>
+          </div>
 
           <button
             className={`float-pill float-edit ${activeButton === "enquire" ? "expanded" : ""}`}
