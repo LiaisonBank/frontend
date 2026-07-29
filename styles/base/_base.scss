@@ -111,6 +111,23 @@ body.home {
     }
   }
 }
+body.careers {
+  .page-header {
+    // height: calc(100vh - 5vh);
+    // min-height: 95vh;
+    // background-color: $page-header;
+    img{
+      position: relative !important;
+    }
+    .inner-header{  
+      margin: 0 auto;
+      padding: 5rem 0 0;
+      @media (max-width: 1024px) {
+        padding: 5rem 0 0;
+      }
+    }
+  }
+}
 body.pressrelease, body.pr-detailpage {
   main {
     .page-header{  
@@ -860,7 +877,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   height: 55px;
   border-radius: 50%;
   border: none;
-  background: $whstapp-color;
+  background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
   color: #fff;
   display: flex;
   align-items: center;
@@ -886,7 +903,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   border-radius: 22px;
 
   position: fixed;
-  bottom: 110px;
+  bottom: 90px;
   right: 25px;
 
   display: flex;
@@ -913,6 +930,8 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   visibility: hidden;
   transform: translateY(20px);
 }
+
+// CHAT FORM STARTS
 .chatForm{
   width:100%;
 }
@@ -923,13 +942,14 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   margin-bottom: 18px;
 }
 .chatHeader {
-  background: $whstapp-color;
-  color: #fff;
-  padding: 18px 20px;
-
-  display: flex;
-  align-items: center;
+  // background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
+  background: #fff;
   justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  display: flex;
+  border: 1px solid lightgray;
+  border-radius: 23px 22px 0 0;
 
   /* Prevent header shrinking */
   flex-shrink: 0;
@@ -948,18 +968,27 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   display: flex;
   align-items: center;
   gap: 12px;
+  h4 {
+    color:#6c757d;
+    font-size: 1.5rem;
+    margin:0;
+    padding:0;
+  }
 }
 
 .botIcon {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: $whstapp-color;
-  color: #7b5cff;
+  // background: $whstapp-color;
+  // color: #7b5cff;
 
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.newchat {
+  padding:1rem;
 }
 
 .minimize {
@@ -970,6 +999,10 @@ body:has(.has-single-submenu:hover) .menu-overlay {
 }
 
 .chatBody {
+  height: 450px;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* Prevent scroll chaining */
+  -webkit-overflow-scrolling: touch;
   flex: 1;
 
   padding: 20px;
@@ -1076,30 +1109,55 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     font-size: 15px;
     background: transparent;
     color:#000;
+     &:focus{
+      box-shadow:none;
+    }
   }
 }
 
 .sendBtn {
-  width: 50px;
-  height: 50px;
-
+  width: 4rem !important;
+  padding:1rem !important;
   border-radius: 50%;
   border: none;
-
-  background: $whstapp-color;
+  background: linear-gradient(
+    115deg,
+    var(--themeht-primary-color),
+    var(--themeht-secondary-color)
+  ) !important;
   color: #fff;
-
   margin-right: 5px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
-
   flex-shrink: 0;
+
+  svg {
+    color: #fff;
+    stroke: currentColor;
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
 }
 
+.loadingDots::after {
+  content: "";
+  animation: dots 1.2s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%   { content: ""; }
+  25%  { content: "."; }
+  50%  { content: ".."; }
+  75%  { content: "..."; }
+  100% { content: ""; }
+}
 .chat-message {
   display: flex;
   align-items: flex-start;
@@ -1127,6 +1185,7 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   &.bot-message {
     justify-content: flex-end;
     flex-direction: row-reverse;
+    align-items: center;
     .messageText {
       background: #f3f4f6;
       color: #333;
@@ -1147,3 +1206,4 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     }
   }
 }
+// CHATBOT ENDS

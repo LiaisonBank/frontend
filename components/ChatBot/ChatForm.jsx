@@ -12,6 +12,7 @@ const ChatForm = ({ setChatHistory }) => {
 
     if (!userMessage || loading) return;
 
+    // Show user message immediately
     setChatHistory((prev) => [
       ...prev,
       {
@@ -25,18 +26,21 @@ const ChatForm = ({ setChatHistory }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/meta/chat",
+        "https://liaisonbank.frappe.cloud/api/method/frappe_whatsapp.utils.webhook.webhook",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            phone: "919876543210",
             message: userMessage,
           }),
         }
       );
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
 
       const data = await response.json();
 
@@ -44,20 +48,26 @@ const ChatForm = ({ setChatHistory }) => {
         ...prev,
         {
           role: "model",
-          text: data.message || "Message Sent",
+          text:
+            data.message ||
+            data.response ||
+            data.data ||
+            "Message received.",
         },
       ]);
     } catch (error) {
+      console.error(error);
+
       setChatHistory((prev) => [
         ...prev,
         {
           role: "model",
-          text: "Unable to send message.",
+          text: "Unable to connect to ERP chatbot.",
         },
       ]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -71,10 +81,15 @@ const ChatForm = ({ setChatHistory }) => {
         />
 
         <button
+          type="submit"
           className="sendBtn"
           disabled={loading}
         >
-          <SendHorizontal size={18} />
+          {loading ? (
+            <span className="loadingDots"></span>
+          ) : (
+            <SendHorizontal size={18} strokeWidth={2.5} />
+          )}
         </button>
       </div>
     </form>
