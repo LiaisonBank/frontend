@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -9,19 +9,23 @@ import { AnimatePresence, motion } from "framer-motion";
 import "swiper/css";
 import "swiper/css/pagination";
 
-import { teamData } from "@/lib/data/teamData";
+// import { teamData } from "@/lib/data/teamData";
+
 
 function TeamCard({ member, onClick }) {
+
+
   return (
     <div onClick={onClick} className="w-full max-w-sm mx-auto cursor-pointer">
       <div className="rounded-2xl text-center shadow-sm hover:shadow-xl transition-all duration-300">
         <div className="relative w-full h-[320px] rounded-xl overflow-hidden bg-gray-200">
           <Image
-            src={member.image}
+            src={`${process.env.NEXT_PUBLIC_LOCAL_API_URL}${member.image}`}
             alt={member.name}
             fill
             className="object-cover object-[50%_10%]"
-            sizes="(max-width:300px)100vw,300px"
+            unoptimized={true}
+
           />
         </div>
 
@@ -99,11 +103,11 @@ function TeamMemberModal({ member, isOpen, onClose }) {
 
                     <div>
                       <h4>Key Achievements</h4>
-                        {member.keyachievments && (
-                          <ul className="achievement-list"
-                            dangerouslySetInnerHTML={{ __html: member.keyachievments }}
-                          />
-                        )}
+                      {member.keyachievments && (
+                        <ul className="achievement-list"
+                          dangerouslySetInnerHTML={{ __html: member.keyachievments }}
+                        />
+                      )}
                     </div>
 
                   </div>
@@ -124,6 +128,32 @@ function TeamMemberModal({ member, isOpen, onClose }) {
 
 export default function TeamSection() {
   const [selectedMember, setSelectedMember] = useState(null);
+    const [teamData, setTeamData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/employee`
+        );
+
+        const data = await res.json();
+
+        if (data.success) {
+          setTeamData(data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch team:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeam();
+  }, []);
+
+
 
   return (
     <section className="w-full py-8">
@@ -150,7 +180,7 @@ export default function TeamSection() {
             <SwiperSlide key={index}>
               <TeamCard
                 member={member}
-                // onClick={() => setSelectedMember(member)}
+              // onClick={() => setSelectedMember(member)}
               />
             </SwiperSlide>
           ))}
@@ -163,7 +193,7 @@ export default function TeamSection() {
           <TeamCard
             key={index}
             member={member}
-            // onClick={() => setSelectedMember(member)}
+          // onClick={() => setSelectedMember(member)}
           />
         ))}
       </div>
