@@ -31,7 +31,7 @@ export default function AwardP() {
       try {
         setLoading(true);
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards`
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards/limited`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch awards");
@@ -148,7 +148,7 @@ export default function AwardP() {
             modules={[Autoplay]}
             dir="rtl"
             loop={true}
-            speed={600}
+            speed={100}
             spaceBetween={24}
             grabCursor={true}
             slidesPerView={4}
@@ -171,7 +171,7 @@ export default function AwardP() {
               },
             }}
             autoplay={{
-              delay: 1200,
+              interval: 1200,
               disableOnInteraction: false,
             }}
             className="certificate-swiper"
