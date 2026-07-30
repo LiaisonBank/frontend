@@ -164,12 +164,12 @@ export default function Footer() {
 
       {/* Desktop Sticky Buttons */}
       <div id="sticky-icon" className="sticky-icon">
-        <a href="tel:+919769458515" className="callnow">
+        <a href="tel:+919769458515" target="_blank" className="callnow">
           +91 97694 58515
           <i className="fi fi-sr-phone-flip"></i>
         </a>
 
-        <a className="hiring open-form text-right">
+        <a className="hiring open-form text-right" onClick={() => setHiringOpen(true)}>
           We are Hiring &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -188,7 +188,7 @@ export default function Footer() {
           &nbsp;&nbsp;
         </a>
 
-        <a className="enquire open-form">
+        <a className="enquire open-form" onClick={() => setOpen(true)}>
           Enquire Now <i className="fi fi-sr-attribution-pencil"></i>
         </a>
       </div>
@@ -198,7 +198,7 @@ export default function Footer() {
         <div className="container-fluid">
           <div className="row">
             <div className="col-3 callnow p-2">
-              <a href="tel:+919769458515">
+              <a href="tel:+919769458515" target="_blank">
                 <i className="fi fi-sr-phone-flip"></i>
                 Call
               </a>

@@ -81,16 +81,16 @@ const ChatForm = ({ setChatHistory }) => {
         />
 
         <button
-          type="submit"
-          className="sendBtn"
-          disabled={loading}
-        >
-          {loading ? (
-            <span className="loadingDots"></span>
-          ) : (
-            <SendHorizontal size={18} strokeWidth={2.5} />
-          )}
-        </button>
+            type="submit"
+            className="sendBtn"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="loadingDots"></span>
+            ) : (
+              <SendHorizontal size={18} strokeWidth={2.5} />
+            )}
+          </button>
       </div>
     </form>
   );

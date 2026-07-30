@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useLenis } from "lenis/react"; // or however you're accessing Lenis
 import Image from "next/image";
 import WhatsAppIcon from "./WhatsAppIcon";
 import { ChevronDown, X } from "lucide-react";
@@ -10,40 +11,9 @@ import ChatMessage from "./ChatMessage";
 
 export default function ChatBot() {
   const [isMobile, setIsMobile] = useState(false);
+  const [ischatOpen, setIschatOpen] = useState(false);
+  
   const [chatHistory, setChatHistory] = useState([]);
-
-  // Default Closed
-  const [open, setOpen] = useState(false);
-
-  const chatBodyRef = useRef(null);
-
-useEffect(() => {
-  const el = chatBodyRef.current;
-  if (!el) return;
-
-  const handleWheel = (e) => {
-    const { scrollTop, scrollHeight, clientHeight } = el;
-
-    const scrollingDown = e.deltaY > 0;
-    const atTop = scrollTop === 0;
-    const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
-
-    if (
-      (scrollingDown && !atBottom) ||
-      (!scrollingDown && !atTop)
-    ) {
-      e.stopPropagation();
-    }
-
-    e.preventDefault();
-  };
-
-  el.addEventListener("wheel", handleWheel, { passive: false });
-
-  return () => {
-    el.removeEventListener("wheel", handleWheel);
-  };
-}, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -72,9 +42,9 @@ useEffect(() => {
       {/* FLOAT BUTTON */}
       <button
         className={isMobile ? "row" : "chatToggle"}
-        onClick={() => setOpen(!open)}
+        onClick={() => setIschatOpen(!ischatOpen)}
       >
-        {open ? (
+        {ischatOpen ? (
           <X size={28} />
         ) : (
           <WhatsAppIcon size={40} color="#ffffff" />
@@ -82,7 +52,7 @@ useEffect(() => {
       </button>
 
       {/* CHAT CONTAINER */}
-      <div className={`chatContainer ${!open ? "hide" : ""}`}>
+      <div className={`chatContainer ${!ischatOpen ? "hide" : ""}`}>
         {/* HEADER */}
         <div className="chatHeader">
           <div className="headerLeft">
@@ -126,11 +96,12 @@ useEffect(() => {
         </div>
 
         {/* BODY */}
-        <div className="chatBody" ref={chatBodyRef}>
+        <div className="chatBody" >
           {chatHistory.map((chat, index) => (
             <ChatMessage
               key={index}
               chat={chat}
+              ref={chatRef}
               clearChatHistory={clearChatHistory}
             />
           ))}

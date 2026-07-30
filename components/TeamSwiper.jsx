@@ -163,7 +163,7 @@ export default function TeamSection() {
           <TeamCard
             key={index}
             member={member}
-            // onClick={() => setSelectedMember(member)}
+            onClick={() => setSelectedMember(member)}
           />
         ))}
       </div>

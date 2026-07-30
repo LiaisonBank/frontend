@@ -1163,6 +1163,8 @@ body:has(.has-single-submenu:hover) .menu-overlay {
   align-items: flex-start;
   gap: 12px;
   margin-bottom: 16px;
+    max-height: 450px;
+  overflow-y: auto;
 
   .messageText {
     max-width: 70%;
