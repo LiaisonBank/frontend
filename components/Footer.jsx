@@ -12,7 +12,6 @@ import Modal from "@/components/ModalDialog/Modal";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import EnquiryForm from "@/components/EnquiryForm/page";
 import HiringForm from "@/components/HiringForm/page";
-import ChatBot from "@/components/ChatBot/ChatBot"; // Update path if required
 
 import {
   PersonPlusFill,
@@ -157,7 +156,6 @@ export default function Footer() {
           </div>
         </div>
 
-         <ChatBot /> 
       </footer>
 
       <ScrollToTopButton />
