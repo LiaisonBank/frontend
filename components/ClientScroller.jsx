@@ -17,7 +17,7 @@ const ClientScroller = () => {
     const fetchClients = async () => {
       try {
   const response = await fetch(
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/our-clients`
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/our-clients/foraccess`
         );        const result = await response.json();
 
         if (result.success) {
