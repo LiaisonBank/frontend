@@ -1520,7 +1520,7 @@
           &.accordion-item{
             align-items: flex-start;
             border-radius: 10px;
-            padding: 0;
+            // padding: 0;
             &.active {
               .service-title{
               background: linear-gradient(#ef7f1a 5.85%, #be2a2a 186.4%);
@@ -1805,6 +1805,7 @@
                 font-weight: 600;
                 line-height: 1.4;
                 color: #000;
+                text-transform:capitalize;
               }
             }
           }
