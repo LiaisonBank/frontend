@@ -99,6 +99,8 @@ export const metadata = {
     "Compliance Consultant India",
     "Government Permit Consultant",
     "End-to-End Licensing Solutions",
+    "Piped Natural Gas consultancy",
+    "PNG infrastructure services"
   ],
 
   authors: [
