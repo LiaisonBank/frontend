@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  // console.log(process.env.BACKEND_URL);
+  // console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
 
   try {
     const response = await fetch(
-      `${process.env.BACKEND_URL}/db-test/`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/db-test/`
     );
 
     const data = await response.json();
@@ -20,9 +20,9 @@ export async function GET() {
 }
 
 // export async function GET() {
-//   console.log(process.env.BACKEND_URL);
+//   console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
 
 //   return NextResponse.json({
-//     backend: process.env.BACKEND_URL,
+//     backend: process.env.NEXT_PUBLIC_BACKEND_URL,
 //   });
 // }
