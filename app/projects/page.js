@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -7,62 +8,49 @@ import Link from "next/link";
 import useBodyClass from "@/components/useBodyClass";
 import rightTick from "@/assets/images/rightTick.svg";
 import { completedList } from "@/lib/data/completedList";
-import MumbaiMap from "./MumbaiMap";
+import MumbaiMap from "@/components/MumbaiMap/MumbaiMap";
 
-export default function OurExpertise() {
+export default function ProjectsPage() {
   useBodyClass("completed");
 
-  const leftListRef = useRef(null);
-  const rightListRef = useRef(null);
-
-  const middleIndex = Math.ceil(completedList.length / 2);
-
-  const leftList = completedList.slice(0, middleIndex);
-  const rightList = completedList.slice(middleIndex);
+  const listRef = useRef(null);
 
   useEffect(() => {
-    const intervals = [];
+    const list = listRef.current;
 
-    const startScroll = (list) => {
-      if (!list) return;
+    if (!list || completedList.length <= 1) return;
 
-      const scroll = () => {
-        const first = list.firstElementChild;
+    const scroll = () => {
+      const first = list.firstElementChild;
 
-        if (!first) return;
+      if (!first) return;
 
-        const height = first.getBoundingClientRect().height;
+      const height = first.getBoundingClientRect().height;
 
-        list.style.transition = "transform .6s linear";
-        list.style.transform = `translateY(-${height}px)`;
+      list.style.transition = "transform .6s linear";
+      list.style.transform = `translateY(-${height}px)`;
 
-        const onTransitionEnd = () => {
-          list.appendChild(first);
+      const onTransitionEnd = () => {
+        list.appendChild(first);
 
-          list.style.transition = "none";
-          list.style.transform = "translateY(0)";
+        list.style.transition = "none";
+        list.style.transform = "translateY(0)";
 
-          // Force reflow
-          list.offsetHeight;
+        // Force reflow
+        list.offsetHeight;
 
-          list.removeEventListener("transitionend", onTransitionEnd);
-        };
-
-        list.addEventListener("transitionend", onTransitionEnd, {
-          once: true,
-        });
+        list.removeEventListener("transitionend", onTransitionEnd);
       };
 
-      const id = setInterval(scroll, 2000);
-
-      intervals.push(id);
+      list.addEventListener("transitionend", onTransitionEnd, {
+        once: true,
+      });
     };
 
-    startScroll(leftListRef.current);
-    startScroll(rightListRef.current);
+    const interval = setInterval(scroll, 2000);
 
     return () => {
-      intervals.forEach(clearInterval);
+      clearInterval(interval);
     };
   }, []);
 
@@ -108,7 +96,7 @@ export default function OurExpertise() {
       <section className="container py-5">
         <div className="auto-grid">
 
-          {/* LEFT COLUMN */}
+          {/* CLIENT LIST */}
 
           <div className="grid-item">
 
@@ -125,81 +113,37 @@ export default function OurExpertise() {
             </ul>
 
             <div className="listItem">
-
               <ul
-                ref={leftListRef}
+                ref={listRef}
                 className="scroll-list"
               >
-                {[...leftList, ...leftList].map((item, index) => (
-                  <li key={`left-${index}`}>
-                    <Image
-                      src={rightTick}
-                      alt=""
-                      className="item-icon"
-                    />
+                {[...completedList, ...completedList].map(
+                  (item, index) => (
+                    <li key={`client-${index}`}>
+                      <Image
+                        src={rightTick}
+                        alt=""
+                        className="item-icon"
+                      />
 
-                    <span className="item-name">
-                      {item.clientName}
-                    </span>
+                      <span className="item-name">
+                        {item.clientName}
+                      </span>
 
-                    <span className="item-price">
-                      {item.location}
-                    </span>
-                  </li>
-                ))}
+                      <span className="item-price">
+                        {item.location}
+                      </span>
+                    </li>
+                  )
+                )}
               </ul>
-
             </div>
+
           </div>
 
           {/* MAP */}
 
           <MumbaiMap />
-
-          {/* RIGHT COLUMN */}
-
-          <div className="grid-item">
-
-            <ul className="scroll-wrapper">
-              <li className="header-row">
-                <strong className="item-name">
-                  Client Name
-                </strong>
-
-                <strong className="item-price">
-                  Location
-                </strong>
-              </li>
-            </ul>
-
-            <div className="listItem">
-
-              <ul
-                ref={rightListRef}
-                className="scroll-list"
-              >
-                {[...rightList, ...rightList].map((item, index) => (
-                  <li key={`right-${index}`}>
-                    <Image
-                      src={rightTick}
-                      alt=""
-                      className="item-icon"
-                    />
-
-                    <span className="item-name">
-                      {item.clientName}
-                    </span>
-
-                    <span className="item-price">
-                      {item.location}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-            </div>
-
-          </div>
 
         </div>
       </section>
