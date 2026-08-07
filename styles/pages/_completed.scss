@@ -214,10 +214,16 @@
   .auto-grid {
     display: grid;
     // grid-template-columns: repeat(auto-fit, minmax(250px, 2fr));
-    grid-template-columns: 40% 60%;
+    grid-template-columns: 35% 65%;
     gap: 12px;
     align-items: center;
     justify-content: center;
+    @media (max-width: 1024px) {
+      grid-template-columns:repeat(auto-fit, minmax(350px, 1fr))
+    }
+    @media (max-width: 600px) {
+      grid-template-columns:repeat(auto-fit, minmax(350px, 1fr))
+    }
      .grid-item {
       background: transparent;
       padding: 20px;
