@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET(request, { params }) {
   try {
     const response = await fetch(
-      `${process.env.BACKEND_URL}/press-releases/${params.slug}`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/press-releases/${params.slug}`
     );
 
     const data = await response.json();

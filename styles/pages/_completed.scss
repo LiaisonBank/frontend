@@ -136,7 +136,7 @@
         padding: 0;
         margin: 0;
         position: relative;
-        z-index: 2; // Ensures text stays above the growing background
+        // z-index: 2; // Ensures text stays above the growing background
 
         li {
           display: flex;
@@ -175,16 +175,23 @@
         }
       }
     }
+    .page-wrapper{
+      min-height: calc(100vh - 250px);
+    }
   }
   .item-name {
     flex: 1;
     margin-left: 5px;
     display: flex;
     text-align: left;
-       flex:1;
+    flex:1;
     min-width:0;          /* Important */
     white-space:normal;
     overflow-wrap:break-word;
+    text-wrap: wrap;
+  }
+  .item-price {
+    text-align: right;
   }
   table{
     @media (max-width: 1024px){
@@ -204,4 +211,243 @@
       }
     }
   }
+  .auto-grid {
+    display: grid;
+    // grid-template-columns: repeat(auto-fit, minmax(250px, 2fr));
+    grid-template-columns: 35% 65%;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    @media (max-width: 1024px) {
+      grid-template-columns:repeat(auto-fit, minmax(350px, 1fr))
+    }
+    @media (max-width: 600px) {
+      grid-template-columns:repeat(auto-fit, minmax(350px, 1fr))
+    }
+     .grid-item {
+      background: transparent;
+      padding: 20px;
+      border-radius: 1.5rem;
+      // box-shadow: 0px 25px 70px rgba(8, 10, 55, 0.08);
+      position: relative;
+      overflow: hidden; 
+      transition: all 0.4s ease-in-out;
+      // z-index: 1;
+
+      // Base white background
+      &:before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        z-index: -1;
+      }
+
+      // The Gradient that grows from the CENTER
+      &:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:lightgray;
+        // background: #FDC725;
+        // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
+        z-index: -1;
+        
+        // 1. Set initial scale to 0 (invisible at center)
+        transform: scale(0); 
+        
+        // 2. Set origin to center so it grows outward in all directions
+        transform-origin: center; 
+        
+        // 3. Use a cubic-bezier for a "bouncy" organic feel
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        // Optional: make it a circle initially for a 'lens' effect
+        border-radius: 50%; 
+      }
+
+      &:hover {
+        // Slight zoom up of the entire card
+        // transform: scale(1.02); 
+
+        &:after {
+          // 4. Scale to 1 on hover
+          transform: scale(1.2); // Scale slightly past 1 to ensure edges are covered
+          border-radius: 0%; // Transition from circle to square to fill the box
+        }
+
+        ul li {
+          color: black;
+          &::before { color: black; }
+          strong { color: black; }
+          border-color: rgba(255, 255, 255, 0);
+        }
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: relative;
+        // z-index: 2; // Ensures text stays above the growing background
+
+        li {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 0;
+          transition: color 0.4s ease;
+          // font-weight: 600;
+           img{
+            // background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
+            // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
+            background-color:  black;
+            border-radius: 50%;
+            width: 1.1rem;
+            height: 1.1rem;
+            margin-right: .5rem;
+            padding: .2rem;
+          }
+
+          &.header-row {
+            border-bottom: 1px solid #373737;
+            margin-bottom: 5px;
+          }
+
+          &::before {
+            // content: "•";
+            margin-right: 10px;
+            color: #333;
+            transition: color 0.4s ease;
+          }
+
+          &:first-child::before {
+            content: "";
+            margin: 0;
+          }
+        }
+        &.scroll-wrapper {
+          height: 50px;
+          overflow: hidden;
+          position: relative;
+      
+        }
+       
+      }
+      .listItem{
+        height: 38rem;
+          overflow: hidden;
+        position: relative;
+          ul.scroll-list {
+            display: flex;
+            flex-direction: column;
+            animation: scrollUp 35s linear infinite;
+            will-change: transform;
+            height:3000px;
+              overflow: hidden;
+            position: relative; 
+
+            &:hover {
+              animation-play-state: paused;
+            }
+
+            li {
+              display: grid;
+              grid-template-columns: 30px 1fr 140px;
+              align-items: center;
+              gap: 5px;
+              padding: 5px 0;
+              flex-shrink: 0;
+            }
+              @keyframes scrollUp {
+              from {
+                transform: translateY(0);
+              }
+              to {
+                transform: translateY(-50%);
+              }
+            }
+          }
+      }
+    }
+  }
+  .mapWrapper{
+    position: relative;
+
+  }
+  .mapContainer {
+    position: relative;
+    width: 100%;
+    height: 650px;
+
+    .mapImage {
+      object-fit: cover;
+    }
+
+    .pointer {
+      position: absolute;
+      top: 35%;
+      left: 42%;
+
+      width: 50px;
+      height: 50px;
+    }
+    .locPointer {
+      object-fit: contain;
+    }
+    .pointer {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      z-index: 10;
+    }
+
+    .pointer:hover {
+      transform: translate(-50%, -100%) scale(1.15);
+    }
+  }
+  .zoomControls {
+    position: absolute;
+    top: 1rem;
+    left: 1.5rem;
+    z-index: 9;
+
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    button {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: 600;
+      background: #fff;
+      box-shadow: 0 3px 10px rgba(0,0,0,.15);
+
+      &:hover {
+        background: #f3f3f3;
+      }
+    }
+  }
+  .react-transform-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.react-transform-component {
+  width: 100%;
+  height: 100%;
+}
+
 }
