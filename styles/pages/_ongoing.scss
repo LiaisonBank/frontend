@@ -182,8 +182,11 @@
     min-width:0;          /* Important */
     white-space:normal;
     overflow-wrap:break-word;
+    text-wrap: wrap;
   }
-
+  .item-price {
+    text-align: right;
+  }
   .project-grid1{
     display: grid;
     /* This creates 4 columns on desktop, but adjusts automatically */

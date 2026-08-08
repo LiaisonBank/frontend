@@ -16,23 +16,26 @@ export default function AppProviders({ children }) {
     <LoadingProvider>
       <ReduxProvider>
         <ModalProvider>
+
+          {/* Global Intro Loader */}
           <IntroLoader />
 
-          <LenisProvider />
+          <LenisProvider>
+            <DisableZoom />
 
-          <DisableZoom />
+            <Header />
 
-          <Header />
+            <div className="menu-overlay" />
 
-          <div className="menu-overlay" />
+            <main className="page-wrapper flex-grow">
+              {children}
+            </main>
 
-          <main className="page-wrapper flex-grow">
-            {children}
-          </main>
+            <Footer />
 
-          <Footer />
+            <ServicesModal />
+          </LenisProvider>
 
-          <ServicesModal />
         </ModalProvider>
       </ReduxProvider>
     </LoadingProvider>

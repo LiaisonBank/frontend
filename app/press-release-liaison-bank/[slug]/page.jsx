@@ -11,7 +11,7 @@ import { getPressReleaseBySlug, getPressReleases } from "@/lib/api/press-release
 
 export async function generateMetadata({ params }) {
     const { slug } = await params;
-    const BACKEND_URL =  process.env.BACKEND_URL;
+    const NEXT_PUBLIC_BACKEND_URL =  process.env.NEXT_PUBLIC_BACKEND_URL;
 
   try {
     const post = await getPressReleaseBySlug(slug);
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }) {
     const image =
       post.featuredImage?.startsWith("http")
         ? post.featuredImage
-        : `${process.env.BACKEND_URL}${post.featuredImage}`;
+        : `${process.env.NEXT_PUBLIC_BACKEND_URL}${post.featuredImage}`;
 
     return {
       title: post.seo?.metaTitle || post.title,
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }) {
       keywords: post.seo?.keywords || [],
 
       alternates: {
-        canonical: `${ BACKEND_URL}/press-release-liaison-bank/${post.slug}`,
+        canonical: `${ NEXT_PUBLIC_BACKEND_URL}/press-release-liaison-bank/${post.slug}`,
       },
 
       openGraph: {
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }) {
           post.seo?.metaDescription ||
           "Latest press release from Liaison Bank.",
 
-        url: `${ BACKEND_URL}/press-release-liaison-bank/${post.slug}`,
+        url: `${ NEXT_PUBLIC_BACKEND_URL}/press-release-liaison-bank/${post.slug}`,
 
         type: "article",
 
@@ -154,7 +154,7 @@ export default async function PressReleaseDetailPage({  params,}) {
                     src={
                         post.featuredImage.startsWith("http")
                         ? post.featuredImage
-                        : `${process.env.BACKEND_URL}${post.featuredImage}`
+                        : `${process.env.NEXT_PUBLIC_BACKEND_URL}${post.featuredImage}`
                     }
                     alt={post.title}
                     className="img-fluid rounded mb-4"

@@ -175,13 +175,14 @@ const NAV_LINKS = [
   { name: "Home", href: "/" },
   { name: "About Us", href: "/about-us-liaison" },
   { name: "Our Clients", href: "/client-liaison" },
-  { 
-    name: "Projects",
-    projects: [
-      { name: "Completed", href: "/completed-liaison-bank" },
-      { name: "On Going", href: "/ongoing-liaison-bank" },
-    ]
-  },
+  { name: "Projects", href: "/projects" },
+  // { 
+  //   name: "Projects",
+  //   projects: [
+  //     { name: "Completed", href: "/completed-liaison-bank" },
+  //     { name: "On Going", href: "/ongoing-liaison-bank" },
+  //   ]
+  // },
   { 
     name: "Our Services",
     submenu: [
