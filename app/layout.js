@@ -7,6 +7,8 @@ import Script from "next/script";
 
 import OrientationBlocker from "@/components/OrientationBlocker";
 import AppProviders from "@/components/AppProviders";
+import ClientChatbotWrapper from "@/components/ManualChatbot/ClientChatbotWrapper"; // 👈 ADD THIS IMPORT
+
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -100,7 +102,12 @@ export const metadata = {
     "Government Permit Consultant",
     "End-to-End Licensing Solutions",
     "Piped Natural Gas consultancy",
-    "PNG infrastructure services"
+    "PNG infrastructure services",
+    "Fire detection systems",
+    "Fire hydrant systems",
+    "Gas suppression systems",
+    "Fire alarm control panels",
+    "Fire pump maintenance"
   ],
 
   authors: [
@@ -264,6 +271,8 @@ export default function RootLayout({ children }) {
               window.scrollTo(0, 0);
             `}
           </Script> */}
+        <ClientChatbotWrapper />
+
           <AppProviders>{children}</AppProviders>
         </OrientationBlocker>
       </body>

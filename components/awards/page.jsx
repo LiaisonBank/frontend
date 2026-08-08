@@ -148,7 +148,7 @@ export default function AwardP() {
             modules={[Autoplay]}
             dir="rtl"
             loop={true}
-            speed={100}
+            speed={600}
             spaceBetween={24}
             grabCursor={true}
             slidesPerView={4}
@@ -171,8 +171,10 @@ export default function AwardP() {
               },
             }}
             autoplay={{
-              interval: 1200,
+              interval: 0,
               disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+
             }}
             className="certificate-swiper"
           >
