@@ -60,8 +60,8 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <div fallback={<div className="container py-5 text-center">Loading...</div>}>
+    <Suspense fallback={<div className="container py-5 text-center">Loading...</div>}>
       <SearchContent />
-    </div>
+    </Suspense>
   );
 }
