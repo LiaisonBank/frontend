@@ -286,7 +286,7 @@ export default function AboutUsLiaisonPage() {
           </div>
         </section>
 
-        {/* Fire Services - Fixed with proper fallback */}
+        {/* Fire Services - Fixed spacing */}
         <section className="about-service alt-bg">
           <div className="container">
             <div className="row justify-content-center">
@@ -298,7 +298,7 @@ export default function AboutUsLiaisonPage() {
                     <h2 className="about-service-title">Fire Services</h2>
                   </div>
                   <div className="about-service-body">
-                    <div className="row align-items-center g-4">
+                    <div className="row align-items-center g-3">
                       <div className="col-lg-6 order-lg-2">
                         <div className="about-service-image">
                           {!fireImageError ? (
@@ -542,7 +542,6 @@ export default function AboutUsLiaisonPage() {
                   </div>
                   <div className="about-sectors-footer">
                     <p>
-                      <span className="footer-icon">🌍</span>
                       With our commitment to expanding our reach across India and internationally, we aim to
                       support businesses with reliable liaisoning, compliance, audit, certification, and regulatory
                       services across diverse markets and industries.
@@ -606,13 +605,6 @@ export default function AboutUsLiaisonPage() {
         .about-hero-highlight {
           color: #e67e22;
         }
-        .hero-subtitle {
-          font-size: 1.1rem;
-          color: #718096;
-          margin-top: 12px;
-          font-weight: 400;
-          font-family: 'Barlow', sans-serif;
-        }
 
         /* Intro */
         .about-intro {
@@ -667,7 +659,7 @@ export default function AboutUsLiaisonPage() {
           display: flex;
           align-items: center;
           gap: 16px;
-          margin-bottom: 28px;
+          margin-bottom: 24px;
         }
         .service-number {
           font-size: 1.8rem;
@@ -713,7 +705,7 @@ export default function AboutUsLiaisonPage() {
           font-size: 1rem;
           line-height: 1.9;
           color: #4a5568;
-          margin-bottom: 20px;
+          margin-bottom: 16px;
           font-weight: 400;
           font-family: 'Barlow', sans-serif;
         }
@@ -721,18 +713,18 @@ export default function AboutUsLiaisonPage() {
         .service-features {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 6px;
         }
         .service-features.two-col {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 6px 16px;
+          gap: 4px 16px;
         }
         .feature-item {
           display: flex;
           align-items: center;
           gap: 10px;
-          padding: 4px 0;
+          padding: 3px 0;
         }
         .feature-icon {
           color: #e67e22;
@@ -744,7 +736,7 @@ export default function AboutUsLiaisonPage() {
         .feature-item span:last-child {
           font-size: 0.95rem;
           color: #4a5568;
-          line-height: 1.5;
+          line-height: 1.4;
           font-weight: 400;
           font-family: 'Barlow', sans-serif;
         }
@@ -870,6 +862,7 @@ export default function AboutUsLiaisonPage() {
           .about-intro-box { padding: 28px 30px; }
           .about-sectors-grid { grid-template-columns: repeat(3, 1fr); }
           .service-features.two-col { grid-template-columns: 1fr; }
+          .image-fallback { min-height: 200px; }
         }
 
         @media (max-width: 768px) {
@@ -878,19 +871,22 @@ export default function AboutUsLiaisonPage() {
             padding: 20px 24px;
           }
           .about-intro-text { font-size: 1rem; }
-          .about-service-card { padding: 24px; }
-          .about-sectors-card { padding: 24px; }
+          .about-service-card { padding: 20px 24px; }
+          .about-sectors-card { padding: 20px 24px; }
           .about-service-title { font-size: 1.2rem; }
           .about-sectors-grid { grid-template-columns: repeat(3, 1fr); }
           .about-service-header { gap: 12px; flex-wrap: wrap; }
           .about-service-line { height: 28px; }
-          .about-service-image { margin-bottom: 16px; }
+          .about-service-image { margin-bottom: 12px; }
           .service-number { font-size: 1.4rem; }
           .about-service { padding: 30px 0; }
           .about-sectors { padding: 30px 0; }
           .about-team { padding: 30px 0 10px; }
           .image-fallback { min-height: 180px; }
           .fallback-icon { font-size: 3rem; }
+          .service-features.two-col { gap: 2px 12px; }
+          .feature-item { padding: 2px 0; }
+          .feature-item span:last-child { font-size: 0.9rem; }
         }
 
         @media (max-width: 480px) {
@@ -899,12 +895,15 @@ export default function AboutUsLiaisonPage() {
           .about-sectors-footer { padding: 14px 16px; }
           .about-sector-item { padding: 12px 8px; }
           .sector-emoji { font-size: 1.8rem; }
-          .about-service-card { padding: 18px; }
-          .about-sectors-card { padding: 18px; }
+          .about-service-card { padding: 16px 18px; }
+          .about-sectors-card { padding: 16px 18px; }
           .service-number { font-size: 1.2rem; }
           .image-fallback { min-height: 150px; }
           .fallback-icon { font-size: 2.5rem; }
           .fallback-text { font-size: 0.9rem; }
+          .service-features.two-col { grid-template-columns: 1fr; }
+          .feature-item span:last-child { font-size: 0.85rem; }
+          .about-service-title { font-size: 1.1rem; }
         }
       `}</style>
     </>
