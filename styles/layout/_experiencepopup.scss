@@ -1,0 +1,410 @@
+// ==========================================
+// Experience Popup
+// ==========================================
+
+.experience-popup {
+  position: fixed;
+  inset: 0;
+
+  z-index: 999999;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  // ------------------------------------------
+  // Panel
+  // ------------------------------------------
+
+  &__panel {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    width: 15%;
+    min-height: 140px;
+
+    padding: 12px;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+
+    color: #fff;
+
+    background: #111;
+
+    border-radius: 1rem 0 0 0;
+
+    pointer-events: auto;
+
+    will-change: transform;
+
+    transform: translate3d(0, 100%, 0);
+
+    animation:
+      experience-panel-reveal
+      1s cubic-bezier(0.16, 1, 0.3, 1)
+      forwards;
+
+    // ------------------------------------------
+    // Exit / Washout
+    // ------------------------------------------
+
+    &--exit {
+      animation:
+        experience-panel-washout
+        1s cubic-bezier(0.76, 0, 0.24, 1)
+        forwards;
+    }
+  }
+
+  // ------------------------------------------
+  // Content
+  // ------------------------------------------
+
+  &__content {
+    width: 100%;
+
+    padding: 0 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    gap: 2px;
+  }
+
+  // ------------------------------------------
+  // Text
+  // ------------------------------------------
+
+  &__line {
+    display: block;
+
+    overflow: hidden;
+
+    font-size: clamp(18px, 0.9vw, 60px);
+
+    font-weight: 500;
+
+    letter-spacing: -0.045em;
+
+    line-height: 1.2;
+
+    span {
+      display: block;
+
+      opacity: 0;
+
+      transform: translate3d(0, 110%, 0);
+
+      will-change: transform, opacity;
+
+      animation:
+        experience-text-reveal
+        900ms
+        cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
+    }
+
+    &:nth-child(1) span {
+      animation-delay: 350ms;
+    }
+
+    &:nth-child(2) span {
+      animation-delay: 450ms;
+    }
+  }
+
+  // ------------------------------------------
+  // Contact Info - FIXED for single line
+  // ------------------------------------------
+
+  &__contact {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    
+    width: 100%;
+
+    span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      
+      flex-wrap: nowrap;
+      white-space: nowrap;
+
+      opacity: 0;
+
+      transform: translate3d(0, 110%, 0);
+
+      will-change: transform, opacity;
+
+      animation:
+        experience-text-reveal
+        900ms
+        cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
+
+      animation-delay: 550ms;
+    }
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      
+      font-size: clamp(10px, 0.5vw, 14px);
+      font-weight: 400;
+      color: #fff;
+      text-decoration: none;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      letter-spacing: normal;
+      white-space: nowrap;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        text-decoration: none;
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    .contact-separator {
+      display: inline-flex;
+      margin: 0 4px;
+      color: rgba(255, 255, 255, 0.3);
+      font-weight: 300;
+      flex-shrink: 0;
+    }
+  }
+
+  // ------------------------------------------
+  // Close
+  // ------------------------------------------
+
+  &__close {
+    position: absolute;
+
+    right: -2px;
+    bottom: 42px;
+
+    z-index: 2;
+
+    width: 24px;
+    height: 24px;
+
+    padding: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: none;
+
+    border: 1px solid #ffffff59;
+    border-radius: 50%;
+
+    color: #fff;
+
+    cursor: pointer;
+
+    transition:
+      background 0.3s,
+      border-color 0.3s;
+
+    span {
+      position: absolute;
+
+      width: 16px;
+      height: 1px;
+
+      background: #fff;
+
+      transition:
+        transform 0.3s ease,
+        background 0.3s ease;
+
+      &:first-child {
+        transform: rotate(45deg);
+      }
+
+      &:last-child {
+        transform: rotate(-45deg);
+      }
+    }
+
+    &:hover {
+      background: #fff;
+      border-color: #fff;
+
+      span {
+        background: #111;
+      }
+    }
+  }
+}
+
+// ==========================================
+// Reveal Animation
+// ==========================================
+
+@keyframes experience-panel-reveal {
+  0% {
+    transform: translate3d(0, 100%, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+// ==========================================
+// Washout / Exit Animation
+// ==========================================
+
+@keyframes experience-panel-washout {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
+// ==========================================
+// Text Reveal
+// ==========================================
+
+@keyframes experience-text-reveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 110%, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+// ==========================================
+// Mobile
+// ==========================================
+
+@media (max-width: 768px) {
+  .experience-popup {
+    &__panel {
+      width: 100%;
+      min-height: 180px;
+
+      padding: 24px 16px;
+
+      border-radius: 1rem 1rem 0 0;
+    }
+
+    &__line {
+      font-size: clamp(20px, 5vw, 36px);
+
+      letter-spacing: -0.035em;
+    }
+
+    &__contact {
+      margin-top: 8px;
+      padding-top: 8px;
+      
+      a {
+        font-size: clamp(12px, 2.5vw, 16px);
+        padding: 4px 8px;
+      }
+
+      .contact-separator {
+        margin: 0 3px;
+      }
+    }
+
+    &__close {
+      top: 12px;
+      right: 14px;
+
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
+
+// ==========================================
+// Small Mobile
+// ==========================================
+
+@media (max-width: 480px) {
+  .experience-popup {
+    &__panel {
+      min-height: 160px;
+      padding: 20px 12px;
+    }
+
+    &__line {
+      font-size: clamp(16px, 4vw, 24px);
+    }
+
+    &__contact {
+      a {
+        font-size: clamp(10px, 2vw, 13px);
+        padding: 2px 4px;
+      }
+    }
+  }
+}
+
+// ==========================================
+// Reduced Motion
+// ==========================================
+
+@media (prefers-reduced-motion: reduce) {
+  .experience-popup {
+    &__panel {
+      animation: none;
+
+      transform: translate3d(0, 0, 0);
+
+      &--exit {
+        animation: none;
+
+        transform: translate3d(0, 100%, 0);
+      }
+    }
+
+    &__line span,
+    &__contact span {
+      animation: none;
+
+      opacity: 1;
+
+      transform: translate3d(0, 0, 0);
+    }
+  }
+}
