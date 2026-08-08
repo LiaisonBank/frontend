@@ -1,0 +1,526 @@
+.mumbai-map-section {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #f5f8f4;
+  padding: 0;
+}
+
+.mumbai-map-header {
+  width: min(1280px, calc(100% - 80px));
+  margin: 0 auto 55px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+
+  position: relative;
+  z-index: 10;
+}
+
+.map-eyebrow {
+  display: block;
+
+  margin-bottom: 18px;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+
+  opacity: 0.6;
+}
+
+.mumbai-map-header h2 {
+  margin: 0;
+
+  font-size: clamp(48px, 7vw, 100px);
+  line-height: 0.9;
+  font-weight: 500;
+  letter-spacing: -0.055em;
+}
+
+.mumbai-map-header h2 span {
+  font-style: italic;
+  font-weight: 300;
+}
+
+.mumbai-map-header p {
+  max-width: 540px;
+
+  margin: 28px 0 0;
+
+  font-size: 16px;
+  line-height: 1.7;
+
+  opacity: 0.65;
+}
+
+.map-controls-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+
+  opacity: 0.5;
+}
+
+/* MAP */
+
+.mumbai-map-wrapper {
+  position: relative;
+
+  width: 100%;
+  height: min(900px,85vh);
+
+  overflow: hidden;
+
+  background: #78cbe5;
+}
+
+.mumbai-map-transform-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+     overflow: hidden;
+  cursor: grab;
+}
+
+.mumbai-map-transform-wrapper:active {
+  cursor: grabbing;
+}
+
+.mumbai-map-transform-content {
+      width: max-content;
+  height: max-content;
+  position: relative;
+}
+
+.mumbai-map-canvas {
+  position: relative;
+
+  width: 962px;
+  height: 1635px;
+
+  flex-shrink: 0;
+}
+
+.mumbai-map-image {
+  position: absolute !important;
+  inset: 0;
+
+  width: 962px !important;
+  height: 1635px !important;
+
+  max-width: none !important;
+  max-height: none !important;
+
+  display: block;
+
+  object-fit: contain;
+
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* MARKERS */
+
+.mumbai-project-layer {
+  position: absolute;
+  inset: 0;
+
+  z-index: 5;
+
+  pointer-events: none;
+}
+
+.project-marker {
+  position: absolute;
+
+  width: 34px;
+  height: 34px;
+
+  margin-left: -17px;
+  margin-top: -17px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  pointer-events: auto;
+
+  transform: translateZ(0);
+}
+
+.marker-dot {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 13px;
+  height: 13px;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background: #111;
+
+  border: 3px solid #fff;
+
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.15);
+
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
+}
+
+.marker-pulse {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 30px;
+  height: 30px;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background: rgba(17, 17, 17, 0.12);
+
+  animation: markerPulse 2.4s ease-out infinite;
+}
+
+.project-marker:hover .marker-dot,
+.project-marker.is-active .marker-dot {
+  transform: translate(-50%, -50%) scale(1.45);
+}
+
+.project-marker.is-active .marker-dot {
+  background: #111;
+}
+
+@keyframes markerPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.55);
+    opacity: 0.8;
+  }
+
+  70% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* PROJECT CARD */
+
+.project-info-card {
+  position: absolute;
+
+  z-index: 20;
+
+  right: 40px;
+  bottom: 40px;
+
+  width: min(390px, calc(100% - 40px));
+
+  padding: 32px;
+
+  background: rgba(255, 255, 255, 0.94);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.14);
+
+  transform: translateY(30px);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease,
+    visibility 0.45s ease;
+}
+
+.project-info-card.is-visible {
+  opacity: 1;
+  visibility: visible;
+
+  transform: translateY(0);
+}
+
+.project-card-close {
+  position: absolute;
+
+  top: 15px;
+  right: 15px;
+
+  width: 32px;
+  height: 32px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: rgba(0, 0, 0, 0.06);
+
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.project-category {
+  display: block;
+
+  margin-bottom: 15px;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+
+  opacity: 0.5;
+}
+
+.project-info-card h3 {
+  margin: 0 0 10px;
+
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.project-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 20px;
+
+  font-size: 13px;
+
+  opacity: 0.55;
+}
+
+.location-icon {
+  font-size: 9px;
+}
+
+.project-info-card p {
+  margin: 0 0 25px;
+
+  font-size: 14px;
+  line-height: 1.65;
+
+  opacity: 0.7;
+}
+
+.project-view-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+
+  padding: 14px 17px;
+
+  border: 0;
+
+  background: #111;
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.project-view-button:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* CONTROLS */
+
+.map-top-controls {
+  position: absolute;
+
+  z-index: 30;
+
+  top: 25px;
+  right: 25px;
+}
+
+.map-top-controls button,
+.map-zoom-controls button {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+
+  background: rgba(255, 255, 255, 0.88);
+
+  backdrop-filter: blur(10px);
+
+  cursor: pointer;
+}
+
+.map-top-controls button {
+  padding: 10px 16px;
+
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.map-zoom-controls {
+  position: absolute;
+
+  z-index: 30;
+
+  left: 25px;
+  bottom: 25px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.map-zoom-controls button {
+  width: 44px;
+  height: 44px;
+
+  font-size: 22px;
+}
+
+.map-zoom-controls button:hover,
+.map-top-controls button:hover {
+  background: #fff;
+}
+
+/* BOTTOM GRADIENT */
+
+.map-gradient {
+  position: absolute;
+
+  z-index: 10;
+
+  pointer-events: none;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 120px;
+
+  background: linear-gradient(
+    to top,
+    rgba(245, 248, 244, 0.7),
+    transparent
+  );
+}
+
+/* TABLET */
+
+@media (max-width: 991px) {
+  .mumbai-map-section {
+    padding-top: 70px;
+  }
+
+  .mumbai-map-header {
+    width: min(100% - 40px, 800px);
+
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    margin-bottom: 35px;
+  }
+
+  .map-controls-info {
+    flex-direction: row;
+  }
+
+  .mumbai-map-wrapper {
+    height: 700px;
+  }
+
+  .project-info-card {
+    right: 20px;
+    bottom: 20px;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 767px) {
+  .mumbai-map-section {
+    padding-top: 55px;
+  }
+
+  .mumbai-map-header {
+    width: calc(100% - 32px);
+  }
+
+  .mumbai-map-header h2 {
+    font-size: clamp(48px, 15vw, 80px);
+  }
+
+  .mumbai-map-header p {
+    font-size: 14px;
+  }
+
+  .map-controls-info {
+    display: none;
+  }
+
+  .mumbai-map-wrapper {
+    height: 620px;
+  }
+
+  .map-top-controls {
+    top: 15px;
+    right: 15px;
+  }
+
+  .map-zoom-controls {
+    left: 15px;
+    bottom: 15px;
+  }
+
+  .project-info-card {
+    right: 15px;
+    bottom: 15px;
+
+    width: calc(100% - 30px);
+
+    padding: 25px;
+  }
+
+  .project-info-card h3 {
+    font-size: 25px;
+  }
+}

@@ -12,10 +12,10 @@ export default function OrientationBlocker({ children }) {
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
 
-      console.log("Mobile", isMobile);
-      console.log("Landscape", isLandscape);
-      console.log("Window Width", windowWidth);
-      console.log("Window Height", windowHeight);
+      // console.log("Mobile", isMobile);
+      // console.log("Landscape", isLandscape);
+      // console.log("Window Width", windowWidth);
+      // console.log("Window Height", windowHeight);
 
       setIsBlocked(isMobile && isLandscape);
     };

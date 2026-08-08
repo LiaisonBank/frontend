@@ -4,10 +4,10 @@ const REQUEST_TIMEOUT = 30000; // 30 seconds
 
 export async function POST(request) {
   try {
-    const backendUrl = process.env.BACKEND_URL;
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     if (!backendUrl) {
-      console.error("BACKEND_URL is not configured.");
+      console.error("NEXT_PUBLIC_BACKEND_URL is not configured.");
 
       return NextResponse.json(
         {
