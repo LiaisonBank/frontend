@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from 'next/link'
+
 
 const UnderDevelopment = () => {
   return (
@@ -29,7 +31,11 @@ const UnderDevelopment = () => {
         <div className="under-development__divider" />
 
         <p className="under-development__footer">
-          Thank you for your patience.
+          To Avail Our Services Call Us :
+          <span className="under-development__contact">
+            <Link href="tel:+919769458515"><span> +91 97694 58515</span></Link> | 
+            <Link href="tel:+919136066910"><span> +91 91360 66910</span></Link>
+          </span>
         </p>
       </div>
     </section>
@@ -37,3 +43,4 @@ const UnderDevelopment = () => {
 };
 
 export default UnderDevelopment;
+ 

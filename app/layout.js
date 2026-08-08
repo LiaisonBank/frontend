@@ -6,6 +6,7 @@ import {
 import Script from "next/script";
 
 import OrientationBlocker from "@/components/OrientationBlocker";
+
 import AppProviders from "@/components/AppProviders";
 import ClientChatbotWrapper from "@/components/ManualChatbot/ClientChatbotWrapper"; // 👈 ADD THIS IMPORT
 

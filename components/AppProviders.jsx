@@ -10,11 +10,12 @@ import DisableZoom from "@/components/DisableZoom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ServicesModal from "@/components/ServicesModal/page";
+import ExperiencePopup from "@/components/ExperiencePopup/page";
 
 export default function AppProviders({ children }) {
   return (
-    <LoadingProvider>
-      <ReduxProvider>
+    <ReduxProvider>
+      <LoadingProvider>
         <ModalProvider>
 
           {/* Global Intro Loader */}
@@ -33,11 +34,15 @@ export default function AppProviders({ children }) {
 
             <Footer />
 
+            {/* Global Modals */}
             <ServicesModal />
+
+            {/* Show once per browser session */}
+            <ExperiencePopup />
           </LenisProvider>
 
         </ModalProvider>
-      </ReduxProvider>
-    </LoadingProvider>
+      </LoadingProvider>
+    </ReduxProvider>
   );
 }
