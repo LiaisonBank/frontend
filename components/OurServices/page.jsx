@@ -1,14 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import Image from "next/image";
-import servicesList from "@/lib/data/servicesList";
 
 import "@splidejs/react-splide/css";
+import { getImageUrl } from "@/lib/utils/getImagehelper";
 
 export default function ServicesSlider() {
   const [activeCard, setActiveCard] = useState(null);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/homelicensingandliaisoning/`
+        );
+
+        const result = await response.json();
+
+        console.log(result);
+
+        if (result.success) {
+          setServices(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   const handleFlip = (id) => {
     if (window.innerWidth <= 991) {
@@ -16,20 +42,22 @@ export default function ServicesSlider() {
     }
   };
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <Splide
       className="services-slider"
       options={{
         type: "loop",
         perPage: 4,
-        perMove: 1, // Slides one item at a time
+        perMove: 1,
         gap: "20px",
         arrows: true,
         pagination: false,
         autoplay: true,
         interval: 2000,
-        
-
         breakpoints: {
           1199: {
             perPage: 3,
@@ -43,12 +71,11 @@ export default function ServicesSlider() {
         },
       }}
     >
-      {servicesList.map((service) => (
+      {services.map((service) => (
         <SplideSlide key={service.id}>
           <div
-            className={`flip-service-card ${
-              activeCard === service.id ? "is-flipped" : ""
-            }`}
+            className={`flip-service-card ${activeCard === service.id ? "is-flipped" : ""
+              }`}
             onClick={(e) => {
               e.stopPropagation();
               handleFlip(service.id);
@@ -57,25 +84,26 @@ export default function ServicesSlider() {
             <div className="flip-service-wrapper">
               {/* Front */}
               <div className="flip-service-front">
-                <Image
-                  src={service.img}
-                  alt={service.title}
-                  width={500}
-                  height={650}
-                  className="flip-service-image"
-                />
+                {service.image ? (
+                  <Image
+                    src={getImageUrl(service.image)}
+                    alt={service.name}
+                    width={500}
+                    height={650}
+                    className="flip-service-image"
+                    unoptimized
+                  />
+                ) : null}
 
                 <div className="flip-service-overlay">
-                  <h5>{service.title}</h5>
+                  <h5>{service.name}</h5>
                 </div>
               </div>
 
               {/* Back */}
               <div className="flip-service-back">
                 <div className="flip-service-content">
-                  {/* <h4>{service.title}</h4> */}
-                  <p>{service.desc}</p>
-                  {/* <button>Learn More</button> */}
+                  <p>{service.description}</p>
                 </div>
               </div>
             </div>
