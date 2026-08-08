@@ -1,7 +1,7 @@
 // app/careers-liaison-bank/introductory-video/page.jsx
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Webcam from "react-webcam";
 import Image from "next/image";
@@ -38,8 +38,8 @@ import {
 import Logo from "@/assets/images/logo_grey2.png";
 import "./introductory-video.scss";
 
-export default function IntroductoryVideoPage() {
-
+// Create a separate component that uses useSearchParams
+function IntroductoryVideoContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -310,50 +310,50 @@ export default function IntroductoryVideoPage() {
             }
         };
 
-recorder.onstop = async () => {
-    const blob = new Blob(localChunks, { type: recorder.mimeType });
-    
-    let fileToUpload = blob;
-    let fileExtension = 'webm';
-    let fileType = 'video/webm';
-    
-    // If it's webm, try to convert to mp4
-    if (recorder.mimeType.includes('webm')) {
-        try {
-            console.log("🔄 Converting WebM to MP4...");
-            const mp4Blob = await convertWebmToMp4(blob);
-            fileToUpload = mp4Blob;
-            fileExtension = 'mp4';
-            fileType = 'video/mp4';
-            console.log("✅ Conversion successful");
-        } catch (conversionError) {
-            console.warn("⚠️ Conversion failed, using original webm:", conversionError);
-            // Fall back to original webm
-        }
-    }
-    
-    const fileName = `introduction.${fileExtension}`;
-    const file = new File([fileToUpload], fileName, { type: fileType });
-    const url = URL.createObjectURL(fileToUpload);
-    
-    setVideoFile(file);
-    setVideoUrl(url);
-    setChunks(localChunks);
-    setRecording(false);
-    setSeconds(0);
-    setDisplayTime("00:00");
-    setPaused(false);
-    setIsStartingRecording(false);
-    setIsStoppingRecording(false);
-    
-    if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-    }
-    stopProfessionalDetection();
+        recorder.onstop = async () => {
+            const blob = new Blob(localChunks, { type: recorder.mimeType });
+            
+            let fileToUpload = blob;
+            let fileExtension = 'webm';
+            let fileType = 'video/webm';
+            
+            // If it's webm, try to convert to mp4
+            if (recorder.mimeType.includes('webm')) {
+                try {
+                    console.log("🔄 Converting WebM to MP4...");
+                    const mp4Blob = await convertWebmToMp4(blob);
+                    fileToUpload = mp4Blob;
+                    fileExtension = 'mp4';
+                    fileType = 'video/mp4';
+                    console.log("✅ Conversion successful");
+                } catch (conversionError) {
+                    console.warn("⚠️ Conversion failed, using original webm:", conversionError);
+                    // Fall back to original webm
+                }
+            }
+            
+            const fileName = `introduction.${fileExtension}`;
+            const file = new File([fileToUpload], fileName, { type: fileType });
+            const url = URL.createObjectURL(fileToUpload);
+            
+            setVideoFile(file);
+            setVideoUrl(url);
+            setChunks(localChunks);
+            setRecording(false);
+            setSeconds(0);
+            setDisplayTime("00:00");
+            setPaused(false);
+            setIsStartingRecording(false);
+            setIsStoppingRecording(false);
+            
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+            }
+            stopProfessionalDetection();
 
-    showNotification("Recording completed!", "success");
-};
+            showNotification("Recording completed!", "success");
+        };
 
         recorder.start(1000);
         setRecording(true);
@@ -422,53 +422,52 @@ recorder.onstop = async () => {
         showNotification("Stopping recording...", "info");
     };
 
-
-
     // Add this function to convert webm to mp4
-const convertWebmToMp4 = async (webmBlob) => {
-    return new Promise((resolve, reject) => {
-        const video = document.createElement('video');
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        video.src = URL.createObjectURL(webmBlob);
-        video.onloadedmetadata = () => {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+    const convertWebmToMp4 = async (webmBlob) => {
+        return new Promise((resolve, reject) => {
+            const video = document.createElement('video');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
             
-            const stream = canvas.captureStream(30);
-            const recorder = new MediaRecorder(stream, {
-                mimeType: 'video/mp4'
-            });
-            
-            const chunks = [];
-            recorder.ondataavailable = (e) => chunks.push(e.data);
-            recorder.onstop = () => {
-                const mp4Blob = new Blob(chunks, { type: 'video/mp4' });
-                resolve(mp4Blob);
+            video.src = URL.createObjectURL(webmBlob);
+            video.onloadedmetadata = () => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                const stream = canvas.captureStream(30);
+                const recorder = new MediaRecorder(stream, {
+                    mimeType: 'video/mp4'
+                });
+                
+                const chunks = [];
+                recorder.ondataavailable = (e) => chunks.push(e.data);
+                recorder.onstop = () => {
+                    const mp4Blob = new Blob(chunks, { type: 'video/mp4' });
+                    resolve(mp4Blob);
+                };
+                
+                // Draw video frames to canvas
+                const drawFrame = () => {
+                    if (!video.paused && !video.ended) {
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        requestAnimationFrame(drawFrame);
+                    }
+                };
+                
+                video.play();
+                recorder.start();
+                drawFrame();
+                
+                // Stop after video ends
+                video.onended = () => {
+                    recorder.stop();
+                    video.pause();
+                };
             };
-            
-            // Draw video frames to canvas
-            const drawFrame = () => {
-                if (!video.paused && !video.ended) {
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    requestAnimationFrame(drawFrame);
-                }
-            };
-            
-            video.play();
-            recorder.start();
-            drawFrame();
-            
-            // Stop after video ends
-            video.onended = () => {
-                recorder.stop();
-                video.pause();
-            };
-        };
-        video.onerror = () => reject(new Error('Failed to convert video'));
-    });
-};
+            video.onerror = () => reject(new Error('Failed to convert video'));
+        });
+    };
+
     //------------------------------------------------
     // File Upload Selection
     //------------------------------------------------
@@ -867,8 +866,7 @@ const convertWebmToMp4 = async (webmBlob) => {
     }
 
     return (
-        <div className="introductory-video-page">
-
+        <>
             {/* Notification */}
             {notification && (
                 <div className={`notification ${notification.type}`}>
@@ -955,14 +953,11 @@ const convertWebmToMp4 = async (webmBlob) => {
                 </div>
             )}
 
-          
-
-
             <main className="page-content">
-               <button className="back-btn" onClick={goBack}>
-                            <ArrowLeft size={20} />
-                            Back to Dashboard
-                        </button>
+                <button className="back-btn" onClick={goBack}>
+                    <ArrowLeft size={20} />
+                    Back to Dashboard
+                </button>
                 <div className="container">
                     <div className="page-header-section">
                         <h1>Professional Introduction Video</h1>
@@ -1359,6 +1354,20 @@ const convertWebmToMp4 = async (webmBlob) => {
                     </div>
                 </div>
             </main>
-        </div>
+        </>
+    );
+}
+
+// Main export with Suspense boundary
+export default function IntroductoryVideoPage() {
+    return (
+        <Suspense fallback={
+            <div className="loading-state">
+                <Loader2 className="spinner" />
+                <p>Loading...</p>
+            </div>
+        }>
+            <IntroductoryVideoContent />
+        </Suspense>
     );
 }
