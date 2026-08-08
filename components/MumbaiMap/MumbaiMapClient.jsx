@@ -225,7 +225,11 @@ function MapResizeObserver() {
         cancelAnimationFrame(frameId);
       }
       frameId = requestAnimationFrame(() => {
-        map.invalidateSize({ pan: false, animate: false });
+        try {
+          map.invalidateSize({ pan: false, animate: false });
+        } catch (error) {
+          // Ignore resize errors
+        }
       });
     });
 
@@ -258,36 +262,52 @@ function MapController({ controllerRef }) {
 
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
-        map.stop();
-        const targetPoint = map.project([lat, lng], PROJECT_ZOOM);
-        targetPoint.y -= PROJECT_CAMERA_OFFSET_Y;
-        const adjustedLatLng = map.unproject(targetPoint, PROJECT_ZOOM);
+        try {
+          map.stop();
+          const targetPoint = map.project([lat, lng], PROJECT_ZOOM);
+          targetPoint.y -= PROJECT_CAMERA_OFFSET_Y;
+          const adjustedLatLng = map.unproject(targetPoint, PROJECT_ZOOM);
 
-        map.flyTo(adjustedLatLng, PROJECT_ZOOM, {
-          animate: true,
-          duration: PROJECT_ANIMATION_DURATION,
-          easeLinearity: 0.25,
-          noMoveStart: true,
-        });
+          map.flyTo(adjustedLatLng, PROJECT_ZOOM, {
+            animate: true,
+            duration: PROJECT_ANIMATION_DURATION,
+            easeLinearity: 0.25,
+            noMoveStart: true,
+          });
+        } catch (error) {
+          console.debug('Error in select:', error);
+        }
       },
       reset: () => {
-        map.stop();
-        map.flyTo(MAP_CENTER, RESET_ZOOM, {
-          animate: true,
-          duration: RESET_ANIMATION_DURATION,
-          easeLinearity: 0.25,
-          noMoveStart: true,
-        });
+        try {
+          map.stop();
+          map.flyTo(MAP_CENTER, RESET_ZOOM, {
+            animate: true,
+            duration: RESET_ANIMATION_DURATION,
+            easeLinearity: 0.25,
+            noMoveStart: true,
+          });
+        } catch (error) {
+          console.debug('Error in reset:', error);
+        }
       },
       stop: () => {
-        map.stop();
+        try {
+          map.stop();
+        } catch (error) {
+          console.debug('Error in stop:', error);
+        }
       },
     };
 
     controllerRef.current = controller;
 
     return () => {
-      map.stop();
+      try {
+        map.stop();
+      } catch (error) {
+        // Ignore
+      }
       controllerRef.current = null;
     };
   }, [map, controllerRef]);
@@ -314,34 +334,63 @@ function MapInteraction({ onMapClick }) {
   return null;
 }
 
-// Marker Layer - Removed tooltip
+// Marker Layer - Using LayerGroup for safe marker management
 function MarkerLayer({ projects, selectedProject, onSelect }) {
-   const validProjects = useMemo(() => {
-    return projects.filter((project) => {
-      const lat = Number(project.latitude);
-      const lng = Number(project.longitude);
-
-      return Number.isFinite(lat) && Number.isFinite(lng);
-    });
-  }, [projects]);
   const map = useMap();
-  const markersRef = useRef(new Map());
+  const markerGroupRef = useRef(null);
+  const isMountedRef = useRef(true);
+  const markerDataRef = useRef(new Map());
 
+  // Initialize marker group
   useEffect(() => {
-    if (!Array.isArray(projects) || projects.length === 0) {
-      return undefined;
+    if (!map) return;
+    
+    isMountedRef.current = true;
+    
+    // Create layer group
+    const group = L.layerGroup().addTo(map);
+    markerGroupRef.current = group;
+
+    return () => {
+      isMountedRef.current = false;
+      
+      if (markerGroupRef.current) {
+        try {
+          markerGroupRef.current.clearLayers();
+          if (map && map.hasLayer(markerGroupRef.current)) {
+            map.removeLayer(markerGroupRef.current);
+          }
+        } catch (error) {
+          console.debug('Error cleaning up marker group:', error);
+        }
+        markerGroupRef.current = null;
+      }
+      
+      markerDataRef.current.clear();
+    };
+  }, [map]);
+
+  // Manage markers
+  useEffect(() => {
+    const group = markerGroupRef.current;
+    if (!group || !isMountedRef.current || !Array.isArray(projects)) {
+      return;
     }
 
-    const markerMap = markersRef.current;
+    // Clear existing markers
+    try {
+      group.clearLayers();
+    } catch (error) {
+      console.debug('Error clearing markers:', error);
+      return;
+    }
 
-    markerMap.forEach((marker) => {
-      marker.off();
-      map.removeLayer(marker);
-    });
-    markerMap.clear();
+    // Clear stored data
+    markerDataRef.current.clear();
 
-    projects.forEach((project) => {
-      if (!project) return;
+    // Add new markers
+    projects.forEach((project, index) => {
+      if (!project || !isMountedRef.current) return;
 
       const lat = Number(project.lat);
       const lng = Number(project.long || project.lng);
@@ -349,65 +398,88 @@ function MarkerLayer({ projects, selectedProject, onSelect }) {
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
       try {
+        const isActive = selectedProject && String(selectedProject.id) === String(project.id);
+        
         const marker = L.marker([lat, lng], {
-          icon: createCustomPinIcon(false, project),
+          icon: createCustomPinIcon(isActive, project),
           pane: "projectMarkerPane",
           keyboard: true,
           title: project.client_name || project.location || "Project",
           alt: project.client_name || project.location || "Project",
           riseOnHover: false,
           autoPan: false,
-          zIndexOffset: 0,
+          zIndexOffset: isActive ? 1000 : 0,
           interactive: true,
         });
 
         marker.projectData = project;
-        marker.addTo(map);
 
-        marker.on("click", (event) => {
-          const originalEvent = event?.originalEvent;
-          if (originalEvent) {
-            L.DomEvent.stopPropagation(originalEvent);
-            L.DomEvent.preventDefault(originalEvent);
+        marker.on('click', function(e) {
+          if (e && e.originalEvent) {
+            L.DomEvent.stopPropagation(e.originalEvent);
+            L.DomEvent.preventDefault(e.originalEvent);
           }
-          onSelect(project);
+          if (isMountedRef.current && onSelect) {
+            onSelect(project);
+          }
         });
 
-        markerMap.set(String(project.id || markerMap.size), marker);
+        if (isMountedRef.current) {
+          group.addLayer(marker);
+        }
+
+        const key = String(project.id || index);
+        markerDataRef.current.set(key, marker);
       } catch (error) {
-        console.error("Error creating marker:", error);
+        console.error('Error creating marker:', error);
       }
     });
 
+    // Cleanup function
     return () => {
-      markerMap.forEach((marker) => {
-        marker.off();
-        map.removeLayer(marker);
-      });
-      markerMap.clear();
+      // Only cleanup if we're not mounted
+      if (!isMountedRef.current && markerGroupRef.current) {
+        try {
+          markerGroupRef.current.clearLayers();
+        } catch (error) {
+          // Ignore
+        }
+      }
     };
-  }, [map, projects, onSelect]);
+  }, [map, projects, selectedProject, onSelect]);
 
+  // Update active marker when selection changes
   useEffect(() => {
-    const markerMap = markersRef.current;
+    const group = markerGroupRef.current;
+    if (!group || !isMountedRef.current) return;
+
     const selectedId = selectedProject ? String(selectedProject.id) : null;
 
-    markerMap.forEach((marker, projectId) => {
-      const active = projectId === selectedId;
-      const project = marker.projectData;
-      marker.setIcon(createCustomPinIcon(active, project));
-      marker.setZIndexOffset(active ? 1000 : 0);
+    markerDataRef.current.forEach((marker, key) => {
+      try {
+        const isActive = key === selectedId;
+        const project = marker.projectData;
+        
+        if (group.hasLayer(marker)) {
+          marker.setIcon(createCustomPinIcon(isActive, project));
+          marker.setZIndexOffset(isActive ? 1000 : 0);
+        }
+      } catch (error) {
+        console.debug('Error updating marker:', error);
+      }
     });
   }, [selectedProject]);
 
   return null;
 }
 
-// Selected Project Position Tracker - Fixed with proper cleanup
+// Selected Project Position Tracker
 function SelectedProjectPosition({ project, onPositionChange }) {
   const map = useMap();
   const isMountedRef = useRef(true);
   const frameIdRef = useRef(null);
+  const timeoutRef = useRef(null);
+  const eventHandlersRef = useRef([]);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -418,8 +490,21 @@ function SelectedProjectPosition({ project, onPositionChange }) {
         cancelAnimationFrame(frameIdRef.current);
         frameIdRef.current = null;
       }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      
+      eventHandlersRef.current.forEach(({ event, handler }) => {
+        try {
+          map.off(event, handler);
+        } catch (error) {
+          // Ignore
+        }
+      });
+      eventHandlersRef.current = [];
     };
-  }, []);
+  }, [map]);
 
   useEffect(() => {
     if (!project || !map || !isMountedRef.current) {
@@ -436,8 +521,7 @@ function SelectedProjectPosition({ project, onPositionChange }) {
     }
 
     const updatePosition = () => {
-      // Check if component is still mounted and map exists
-      if (!isMountedRef.current || !map || !map.getContainer()) {
+      if (!isMountedRef.current || !map) {
         return;
       }
 
@@ -450,8 +534,11 @@ function SelectedProjectPosition({ project, onPositionChange }) {
         frameIdRef.current = null;
         
         try {
-          // Check if map is still valid
           if (!map || !map.getContainer()) {
+            return;
+          }
+          
+          if (typeof map.latLngToContainerPoint !== 'function') {
             return;
           }
           
@@ -460,24 +547,34 @@ function SelectedProjectPosition({ project, onPositionChange }) {
             onPositionChange({ x: point.x, y: point.y });
           }
         } catch (error) {
-          // Silently handle errors (e.g., map container not found)
-          console.debug('Position update error:', error);
+          // Silent fail
         }
       });
     };
 
-    // Initial update
-    updatePosition();
+    timeoutRef.current = setTimeout(updatePosition, 100);
 
-    // Bind events
-    map.on("move", updatePosition);
-    map.on("zoom", updatePosition);
-    map.on("resize", updatePosition);
+    const events = ['move', 'zoom', 'resize'];
+    events.forEach(event => {
+      const handler = updatePosition;
+      map.on(event, handler);
+      eventHandlersRef.current.push({ event, handler });
+    });
 
     return () => {
-      map.off("move", updatePosition);
-      map.off("zoom", updatePosition);
-      map.off("resize", updatePosition);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      
+      eventHandlersRef.current.forEach(({ event, handler }) => {
+        try {
+          map.off(event, handler);
+        } catch (error) {
+          // Ignore
+        }
+      });
+      eventHandlersRef.current = [];
 
       if (frameIdRef.current !== null) {
         cancelAnimationFrame(frameIdRef.current);
@@ -514,7 +611,7 @@ function useScrollToCard() {
   return scrollToCard;
 }
 
-// Project Card Component with Arrow pointing down and ref forwarding
+// Project Card Component
 const ProjectCard = React.forwardRef(function ProjectCard({ 
   project, 
   isVisible, 
@@ -839,7 +936,7 @@ export default function MumbaiMapClient() {
   }, [getLocationCoordinates, getFallbackCoordinates]);
 
   useEffect(() => {
-    const audio = new Audio("/audio/map-pointer1.mp3");
+    const audio = new Audio("/audio/computer-mouse-click-2.mp3");
     audio.preload = "auto";
     pointerAudioRef.current = audio;
 
@@ -911,7 +1008,6 @@ export default function MumbaiMapClient() {
   }, [playAudio]);
 
   const handleMapClick = useCallback(async () => {
-    // Only handle map click if a project is selected
     if (!selectedProject) return;
     
     await playAudio();
@@ -920,7 +1016,6 @@ export default function MumbaiMapClient() {
     setSelectedProjectPosition(null);
     setSelectedProject(null);
 
-    // Zoom out to original map position
     requestAnimationFrame(() => {
       controllerRef.current?.reset();
     });

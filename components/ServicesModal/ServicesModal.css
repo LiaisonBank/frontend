@@ -10,7 +10,7 @@
 ======================================== */
 .services-modal-overlay {
   position: fixed;
-  top: 70px;
+  top: 80px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -193,7 +193,7 @@
   font-weight: 500;
   color: #4a4a5e;
   position: relative;
-  font-size: 18px;
+  font-size: var(--menu-font-size);
 }
 
 .services-section-btn:hover {
@@ -323,10 +323,10 @@
    RIGHT PANEL - Details
 ======================================== */
 .services-right-panel {
-  flex: 1;
+  /* flex: 1; */
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 24px 28px;
+  padding: 24px 20px  0 28px;
   background: #fafafa;
   height: 100%;
   position: relative;

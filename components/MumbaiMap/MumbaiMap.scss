@@ -1327,36 +1327,36 @@
   }
 }
 
-// Reset button
-.map-location-badge {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
+// // Reset button
+// .map-location-badge {
+//   position: absolute;
+//   bottom: 20px;
+//   right: 20px;
+//   z-index: 1000;
 
-  .mumbai-map-reset {
-    padding: 8px 16px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-    color: #2c3e50;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+//   .mumbai-map-reset {
+//     padding: 8px 16px;
+//     background: white;
+//     border: 1px solid #ddd;
+//     border-radius: 4px;
+//     cursor: pointer;
+//     font-size: 12px;
+//     font-weight: 600;
+//     color: #2c3e50;
+//     transition: all 0.2s;
+//     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-    &:hover {
-      background: #f8f9fa;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transform: translateY(-1px);
-    }
+//     &:hover {
+//       background: #f8f9fa;
+//       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+//       transform: translateY(-1px);
+//     }
 
-    &:active {
-      transform: translateY(0);
-    }
-  }
-}
+//     &:active {
+//       transform: translateY(0);
+//     }
+//   }
+// }
 
 // Loading spinner
 .mumbai-map-loading {

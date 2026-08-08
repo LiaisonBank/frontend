@@ -63,7 +63,7 @@ export default function ProjectsPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1>Completed</h1>
+                    <h1>Projects</h1>
 
                     <nav
                       aria-label="breadcrumb"
@@ -81,7 +81,7 @@ export default function ProjectsPage() {
                           className="breadcrumb-item active"
                           aria-current="page"
                         >
-                          Completed Projects
+                          Projects
                         </li>
                       </ol>
                     </nav>

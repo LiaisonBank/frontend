@@ -1,19 +1,98 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/context/ModalContext";
 import { ChevronRight, ChevronDown, FileText, X, List } from "lucide-react";
+import { useLenis } from "@/components/LenisProvider";
 import Head from "next/head";
+import UnderDevelopment from "@/components/UnderDevelopment/page";
 import "./ServicesModal.css";
 
+  // Skeleton Loader Component
+  const SkeletonLoader = () => (
+    // <div className="services-modal-body skeleton-loading">
+    <div
+        className={`services-modal-body ${
+          hasSubcategories
+            ? "has-subcategories"
+            : "no-subcategories"
+        }`}
+      >
+      <button 
+        className="services-modal-close"
+        onClick={closeModal}
+        aria-label="Close modal"
+      >
+        <X size={24} aria-hidden="true" />
+      </button>
+      
+      <div className="services-modal-skeleton">
+        <div className="services-left-panel skeleton-panel">
+          <div className="skeleton-section-header">
+            <div className="skeleton-line"></div>
+            <div className="skeleton-line short"></div>
+          </div>
+          <div className="skeleton-section-header">
+            <div className="skeleton-line"></div>
+            <div className="skeleton-line short"></div>
+          </div>
+          <div className="skeleton-section-header">
+            <div className="skeleton-line"></div>
+            <div className="skeleton-line short"></div>
+          </div>
+          <div className="skeleton-section-header">
+            <div className="skeleton-line"></div>
+            <div className="skeleton-line short"></div>
+          </div>
+          <div className="skeleton-section-header">
+            <div className="skeleton-line"></div>
+            <div className="skeleton-line short"></div>
+          </div>
+        </div>
+
+        <div className="services-center-panel skeleton-panel">
+          <div className="skeleton-category-item"></div>
+          <div className="skeleton-category-item"></div>
+          <div className="skeleton-category-item"></div>
+          <div className="skeleton-category-item"></div>
+          <div className="skeleton-category-item"></div>
+        </div>
+
+        <div className="services-right-panel skeleton-panel">
+          <div className="skeleton-details-title"></div>
+          <div className="skeleton-details-line"></div>
+          <div className="skeleton-details-line"></div>
+          <div className="skeleton-details-line short"></div>
+          
+          <div className="skeleton-service-item"></div>
+          <div className="skeleton-service-item"></div>
+          <div className="skeleton-service-item"></div>
+          
+          <div className="skeleton-details-line"></div>
+          <div className="skeleton-details-line"></div>
+          <div className="skeleton-details-line short"></div>
+        </div>
+      </div>
+    </div>
+  );
+
 export default function ServicesModal() {
+  const {
+    stopLenis,
+    startLenis,
+    getLenisScroll,
+    restoreLenisScroll,
+  } = useLenis();
   const router = useRouter();
-  const { serviceModalOpen, setServiceModalOpen } = useModal();
   const modalRef = useRef(null);
   const leftPanelRef = useRef(null);
   const centerPanelRef = useRef(null);
   const rightPanelRef = useRef(null);
+  const scrollPositionRef = useRef(0);
+  const modalScrollRef = useRef(0);
+  const closeTimerRef = useRef(null);
+  const { serviceModalOpen, setServiceModalOpen } = useModal();
 
   // State for API data
   const [servicesData, setServicesData] = useState([]);
@@ -28,12 +107,10 @@ export default function ServicesModal() {
   const [expandedItems, setExpandedItems] = useState({});
   const [expandedServices, setExpandedServices] = useState({});
 
-  // ✅ FETCH DATA IMMEDIATELY when component mounts
+ 
+   // ✅ FETCH DATA IMMEDIATELY when component mounts
   useEffect(() => {
-    fetchServices();
-  }, []);
-
-  const fetchServices = async () => {
+     const fetchServices = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -94,15 +171,26 @@ export default function ServicesModal() {
       setLoading(false);
     }
   };
+    fetchServices();
+  }, []);
 
   // Close modal with animation
-  const closeModal = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setServiceModalOpen(false);
-      setIsClosing(false);
-    }, 300);
-  };
+  const closeModal = useCallback(() => {
+  // Prevent multiple timers
+  if (closeTimerRef.current) {
+    clearTimeout(closeTimerRef.current);
+  }
+
+  setIsClosing(true);
+
+  closeTimerRef.current = setTimeout(() => {
+    setServiceModalOpen(false);
+    setIsClosing(false);
+
+    closeTimerRef.current = null;
+  }, 300);
+}, [setServiceModalOpen]);
+
 
   // Close on escape key
   useEffect(() => {
@@ -111,27 +199,47 @@ export default function ServicesModal() {
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
+  }, [closeModal]);
 
   // Prevent body scroll when modal is open
-  useEffect(() => {
-    if (serviceModalOpen) {
-      const scrollY = window.scrollY;
-      
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
-      
-      return () => {
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.body.style.overflow = '';
-        window.scrollTo(0, scrollY);
-      };
+ useEffect(() => {
+  if (!serviceModalOpen) {
+    return;
+  }
+
+  // Save current Lenis position
+  modalScrollRef.current = getLenisScroll();
+
+  // Stop Lenis background scrolling
+  stopLenis();
+
+  return () => {
+    const savedPosition = modalScrollRef.current;
+
+    // Restart Lenis
+    startLenis();
+
+    // Restore position after modal has been removed
+    requestAnimationFrame(() => {
+      restoreLenisScroll(savedPosition);
+    });
+  };
+}, [
+  serviceModalOpen,
+  getLenisScroll,
+  stopLenis,
+  startLenis,
+  restoreLenisScroll,
+]);
+
+useEffect(() => {
+  return () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
     }
-  }, [serviceModalOpen]);
+  };
+}, []);
 
   // Close on click outside
   useEffect(() => {
@@ -213,24 +321,32 @@ export default function ServicesModal() {
     // Reset ALL expanded states
     setExpandedItems({});
     setExpandedServices({});
-    
-    // Set the new section
+
+    // Set selected section
     setSelectedSection(section);
-    
-    // Reset selected category to null first, then set the first one
+
+    // Reset selected category
     setSelectedCategory(null);
-    
-    // Use setTimeout to ensure state updates properly
-    setTimeout(() => {
-      if (section.items && section.items.length > 0) {
-        // ✅ Always select the FIRST category
-        setSelectedCategory(section.items[0]);
-      } else {
-        closeModal();
-        router.push('/contact-us-liaison-bank');
-      }
-    }, 0);
+
+    // Check if section has subcategories
+    const hasItems =
+      Array.isArray(section?.items) &&
+      section.items.length > 0;
+
+    if (hasItems) {
+      // Always select the first subcategory
+      setSelectedCategory(section.items[0]);
+    }
+
+    // IMPORTANT:
+    // Do NOT redirect when there are no subcategories.
+    // The center panel will disappear and the right panel
+    // will automatically take the available space.
   };
+
+  const hasSubcategories =
+  Array.isArray(selectedSection?.items) &&
+  selectedSection.items.length > 0;
 
   // Render children with semantic HTML
   const renderChildren = (children, level = 0) => {
@@ -392,66 +508,7 @@ export default function ServicesModal() {
     };
   };
 
-  // Skeleton Loader Component
-  const SkeletonLoader = () => (
-    <div className="services-modal-body skeleton-loading">
-      <button 
-        className="services-modal-close"
-        onClick={closeModal}
-        aria-label="Close modal"
-      >
-        <X size={24} aria-hidden="true" />
-      </button>
-      
-      <div className="services-modal-skeleton">
-        <div className="services-left-panel skeleton-panel">
-          <div className="skeleton-section-header">
-            <div className="skeleton-line"></div>
-            <div className="skeleton-line short"></div>
-          </div>
-          <div className="skeleton-section-header">
-            <div className="skeleton-line"></div>
-            <div className="skeleton-line short"></div>
-          </div>
-          <div className="skeleton-section-header">
-            <div className="skeleton-line"></div>
-            <div className="skeleton-line short"></div>
-          </div>
-          <div className="skeleton-section-header">
-            <div className="skeleton-line"></div>
-            <div className="skeleton-line short"></div>
-          </div>
-          <div className="skeleton-section-header">
-            <div className="skeleton-line"></div>
-            <div className="skeleton-line short"></div>
-          </div>
-        </div>
-
-        <div className="services-center-panel skeleton-panel">
-          <div className="skeleton-category-item"></div>
-          <div className="skeleton-category-item"></div>
-          <div className="skeleton-category-item"></div>
-          <div className="skeleton-category-item"></div>
-          <div className="skeleton-category-item"></div>
-        </div>
-
-        <div className="services-right-panel skeleton-panel">
-          <div className="skeleton-details-title"></div>
-          <div className="skeleton-details-line"></div>
-          <div className="skeleton-details-line"></div>
-          <div className="skeleton-details-line short"></div>
-          
-          <div className="skeleton-service-item"></div>
-          <div className="skeleton-service-item"></div>
-          <div className="skeleton-service-item"></div>
-          
-          <div className="skeleton-details-line"></div>
-          <div className="skeleton-details-line"></div>
-          <div className="skeleton-details-line short"></div>
-        </div>
-      </div>
-    </div>
-  );
+  
 
   // Error state
   if (error && !servicesData.length) {
@@ -460,6 +517,7 @@ export default function ServicesModal() {
         <div className={`services-modal ${isClosing ? 'closing' : ''}`} ref={modalRef}>
           <div className="services-modal-body error-state">
             <button 
+              type="button"
               className="services-modal-close"
               onClick={closeModal}
               aria-label="Close modal"
@@ -530,9 +588,17 @@ export default function ServicesModal() {
       <div className="services-modal-overlay" role="dialog" aria-modal="true" aria-label="Services menu">
         <div className={`services-modal ${serviceModalOpen ? 'active' : ''} ${isClosing ? 'closing' : ''}`} ref={modalRef}>
           {loading ? (
-            <SkeletonLoader />
+            <SkeletonLoader
+              hasSubcategories={hasSubcategories}
+            />
           ) : (
-            <div className="services-modal-body">
+            <div
+                className={`services-modal-body ${
+                  hasSubcategories
+                    ? "has-subcategories"
+                    : "no-subcategories"
+                }`}
+              >
               <button 
                 className="services-modal-close"
                 onClick={closeModal}
@@ -572,13 +638,12 @@ export default function ServicesModal() {
               </nav>
 
               {/* CENTER PANEL - Subcategories */}
-              <nav className="services-center-panel" ref={centerPanelRef} aria-label="Service subcategories">
+              {/* <nav className="services-center-panel" ref={centerPanelRef} aria-label="Service subcategories">
                 <h2 className="sr-only">Service Subcategories</h2>
                 <div className="services-category-list" role="list">
                   {selectedSection?.items?.map((item) => {
                     // Check if this is the selected category
                     const isActive = selectedCategory?.id === item.id;
-                    
                     return (
                       <button
                         key={item.id || item.name}
@@ -604,13 +669,69 @@ export default function ServicesModal() {
                     );
                   })}
                 </div>
-              </nav>
+              </nav> */}
+              {/* CENTER PANEL - Subcategories */}
+              {hasSubcategories && (
+                <nav
+                  className="services-center-panel"
+                  ref={centerPanelRef}
+                  aria-label="Service subcategories"
+                >
+                  <h2 className="sr-only">
+                    Service Subcategories
+                  </h2>
+
+                  <div
+                    className="services-category-list"
+                    role="list"
+                  >
+                    {selectedSection.items.map((item) => {
+                      const isActive =
+                        selectedCategory?.id === item.id;
+
+                      return (
+                        <button
+                          key={item.id || item.name}
+                          className={`services-category-btn ${
+                            isActive ? "active" : ""
+                          }`}
+                          onClick={() => handleCategoryClick(item)}
+                          role="listitem"
+                          aria-current={
+                            isActive ? "page" : undefined
+                          }
+                        >
+                          <span className="services-category-name">
+                            {item.name}
+                          </span>
+
+                          {item.pdf && (
+                            <a
+                              href={item.pdf}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="services-category-pdf"
+                              onClick={(e) => e.stopPropagation()}
+                              aria-label={`Download PDF for ${item.name}`}
+                            >
+                              <FileText
+                                size={14}
+                                aria-hidden="true"
+                              />
+                            </a>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </nav>
+              )}
 
               {/* RIGHT PANEL - Details */}
               <section className="services-right-panel" ref={rightPanelRef} aria-label="Service details">
                 {selectedCategory ? (
                   <article className="services-details">
-                    <h1 className="services-details-title">{selectedCategory.name}</h1>
+                    {/* <h1 className="services-details-title">{selectedCategory.name}</h1> */}
                     {selectedCategory.description && (
                       <p className="services-details-description">{selectedCategory.description}</p>
                     )}
@@ -656,7 +777,8 @@ export default function ServicesModal() {
                   </article>
                 ) : (
                   <div className="services-details-empty-state">
-                    <p>Select a category to view details</p>
+                    {/* <p>Select a category to view details</p> */}
+                    <UnderDevelopment />
                   </div>
                 )}
               </section>
