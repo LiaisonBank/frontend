@@ -1,3 +1,4 @@
+// Frontend - AddReview.jsx (Updated with requested changes)
 "use client";
 
 import { useState } from "react";
@@ -16,11 +17,12 @@ export default function AddReview() {
   const [formData, setFormData] = useState({
     name: "",
     designation: "",
+    company_type: "company",
     company: "",
+    brand_name: "",
     address: "",
     review: "",
     rating: 5.0,
-    status: "Active",
     image: null,
   });
 
@@ -47,6 +49,14 @@ export default function AddReview() {
           newErrors.name = 'Name must be less than 100 characters';
         } else {
           delete newErrors.name;
+        }
+        break;
+
+      case 'company':
+        if (!value || !value.trim()) {
+          newErrors.company = 'Company/Individual name is required';
+        } else {
+          delete newErrors.company;
         }
         break;
 
@@ -91,6 +101,19 @@ export default function AddReview() {
       [name]: value,
     });
     validateField(name, value);
+  };
+
+  const handleCompanyTypeChange = (type) => {
+    setFormData({
+      ...formData,
+      company_type: type,
+      company: '',
+    });
+    if (errors.company) {
+      const newErrors = { ...errors };
+      delete newErrors.company;
+      setErrors(newErrors);
+    }
   };
 
   const handleRatingChange = (value) => {
@@ -163,7 +186,7 @@ export default function AddReview() {
   };
 
   const validateForm = () => {
-    const fieldsToValidate = ['name', 'review', 'rating'];
+    const fieldsToValidate = ['name', 'company', 'review', 'rating'];
     let isValid = true;
 
     fieldsToValidate.forEach(field => {
@@ -190,7 +213,11 @@ export default function AddReview() {
       const formDataToSend = new FormData();
       formDataToSend.append("name", formData.name.trim());
       formDataToSend.append("designation", formData.designation?.trim() || "");
+      
+      // Always send company name (whether it's company or individual)
       formDataToSend.append("company", formData.company?.trim() || "");
+      
+      formDataToSend.append("brand_name", formData.brand_name?.trim() || "");
       formDataToSend.append("address", formData.address?.trim() || "");
       formDataToSend.append("review", formData.review.trim());
       
@@ -198,7 +225,7 @@ export default function AddReview() {
       formDataToSend.append("rating", ratingValue.toFixed(1));
       
       formDataToSend.append("priority", "1");
-      formDataToSend.append("status", formData.status);
+      formDataToSend.append("status", "Inactive"); // Always set to Inactive
 
       if (formData.image) {
         formDataToSend.append("image", formData.image);
@@ -220,15 +247,15 @@ export default function AddReview() {
         severity: "success",
       });
 
-      // Reset form
       setFormData({
         name: "",
         designation: "",
+        company_type: "company",
         company: "",
+        brand_name: "",
         address: "",
         review: "",
         rating: 5.0,
-        status: "Active",
         image: null,
       });
       setImagePreview(null);
@@ -278,52 +305,86 @@ export default function AddReview() {
 
   return (
     <div className="add-review-container">
-      <div className="add-review-paper">
+      <div className="review-card">
         {/* Header */}
-        <div className="review-header">
-          <div className="review-header-left">
-            <button
-              className="back-btn"
-              onClick={() => router.push("/")}
-            >
-              ← Back to Home
+        <div className="review-card-header">
+          <div className="header-left">
+            <button className="back-btn" onClick={() => router.push("/")}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back
             </button>
-            <div>
-              <h1 className="review-title">Create New Review</h1>
-              <p className="review-subtitle">
-                Add a new client review or testimonial
-              </p>
-            </div>
           </div>
-          <span className={`status-badge ${formData.status === "Active" ? 'active' : 'inactive'}`}>
-            {formData.status}
-          </span>
+          <div className="header-center">
+            <h1 className="page-title">New Review</h1>
+            <p className="page-subtitle">Share your client's experience</p>
+          </div>
+          <div className="header-right">
+            <span className="status-pill inactive">● Inactive</span>
+          </div>
         </div>
 
-        <hr className="divider" />
+        <div className="divider"></div>
 
         {/* Form */}
         <div className="review-form">
-          {/* Client Name */}
-          <div className="form-group">
-            <label className="form-label">
-              Client Name <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              className={`form-input ${errors.name ? 'error' : ''}`}
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="e.g., John Doe"
-              required
-            />
-            {errors.name && <span className="error-text">{errors.name}</span>}
-            <span className="helper-text">Name of the client giving the review</span>
+          {/* Row 1: Company/Individual Name + Brand Name */}
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">
+                <span className="label-with-select">
+                  <span>Company/Individual Name</span>
+                  <span className="type-selector-inline">
+
+                 
+                  </span>
+                </span>
+                <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                name="company"
+                className={`form-input ${errors.company ? 'error' : ''}`}
+                value={formData.company}
+                onChange={handleChange}
+                placeholder={formData.company_type === 'company' ? "Enter company name" : "Enter individual name"}
+                required
+              />
+              {errors.company && <span className="error-text">{errors.company}</span>}
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Brand Name</label>
+              <input
+                type="text"
+                name="brand_name"
+                className="form-input"
+                value={formData.brand_name}
+                onChange={handleChange}
+                placeholder="Brand or product name"
+              />
+            </div>
           </div>
 
+          {/* Row 2: Client Name + Designation */}
           <div className="form-row">
-            {/* Designation */}
+            <div className="form-group">
+              <label className="form-label">
+                Client Name <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                className={`form-input ${errors.name ? 'error' : ''}`}
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter client name"
+                required
+              />
+              {errors.name && <span className="error-text">{errors.name}</span>}
+            </div>
+
             <div className="form-group">
               <label className="form-label">Designation</label>
               <input
@@ -332,38 +393,22 @@ export default function AddReview() {
                 className="form-input"
                 value={formData.designation}
                 onChange={handleChange}
-                placeholder="e.g., CEO, Founder"
+                placeholder="CEO, Founder"
               />
-              <span className="helper-text">Client's job title (optional)</span>
-            </div>
-
-            {/* Company */}
-            <div className="form-group">
-              <label className="form-label">Company</label>
-              <input
-                type="text"
-                name="company"
-                className="form-input"
-                value={formData.company}
-                onChange={handleChange}
-                placeholder="e.g., ABC Corporation"
-              />
-              <span className="helper-text">Company name (optional)</span>
             </div>
           </div>
 
-          {/* Address */}
+          {/* Row 3: Location */}
           <div className="form-group">
-            <label className="form-label">Address</label>
+            <label className="form-label">Location</label>
             <input
               type="text"
               name="address"
               className="form-input"
               value={formData.address}
               onChange={handleChange}
-              placeholder="e.g., New York, USA"
+              placeholder="City, Country"
             />
-            <span className="helper-text">Client's location (optional)</span>
           </div>
 
           {/* Review Text */}
@@ -381,9 +426,12 @@ export default function AddReview() {
               required
             />
             {errors.review && <span className="error-text">{errors.review}</span>}
-            <span className="helper-text">
-              {formData.review.length}/{MAX_REVIEW_LENGTH} characters
-            </span>
+            <div className="char-counter">
+              <span className={`char-count ${formData.review.length > MAX_REVIEW_LENGTH * 0.9 ? 'warning' : ''}`}>
+                {formData.review.length}
+              </span>
+              / {MAX_REVIEW_LENGTH}
+            </div>
           </div>
 
           {/* Rating */}
@@ -392,9 +440,8 @@ export default function AddReview() {
               Rating <span className="required">*</span>
             </label>
             <div className="rating-container">
-              <div className="rating-stars">
-                {renderStars()}
-              </div>
+              <div className="rating-stars">{renderStars()}</div>
+              <div className="rating-divider"></div>
               <div className="rating-input-wrapper">
                 <input
                   type="number"
@@ -408,110 +455,64 @@ export default function AddReview() {
                 <span className="rating-max">/ 5.0</span>
               </div>
               <span className={`rating-label ${formData.rating >= 4 ? 'excellent' : formData.rating >= 3 ? 'good' : 'average'}`}>
-                {formData.rating >= 4 ? "Excellent" : formData.rating >= 3 ? "Good" : "Average"}
+                {formData.rating >= 4 ? "⭐ Excellent" : formData.rating >= 3 ? "Good" : "Average"}
               </span>
             </div>
             {errors.rating && <span className="error-text">{errors.rating}</span>}
-            <span className="helper-text">
-              Rate the client's experience from 1 to 5 stars (e.g., 4.3, 4.2, 4.1)
-            </span>
           </div>
 
           {/* Image Upload */}
           <div className="form-group">
             <label className="form-label">Client Image</label>
-            <span className="helper-text" style={{ display: 'block', marginBottom: '8px' }}>
-              Upload a profile picture of the client (Optional)
-              <br />
-              <span style={{ fontSize: '0.75rem' }}>
-                Allowed: JPG, PNG, WEBP, GIF | Max size: 5MB
-              </span>
-            </span>
-
-            {imagePreview ? (
-              <div className="image-preview-card">
-                <div className="image-preview-content">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="image-preview-avatar"
-                  />
-                  <div className="image-preview-info">
-                    <p className="image-preview-name">
-                      {formData.image?.name || "Image uploaded"}
-                    </p>
-                    <p className="image-preview-size">
-                      {formData.image &&
-                        `${(formData.image.size / 1024).toFixed(1)} KB`}
-                    </p>
-                    {imageError && (
-                      <p className="image-error">{imageError}</p>
-                    )}
+            <div className="image-upload-wrapper">
+              {imagePreview ? (
+                <div className="image-preview-card">
+                  <div className="image-preview-content">
+                    <img src={imagePreview} alt="Preview" className="image-preview-avatar" />
+                    <div className="image-preview-info">
+                      <p className="image-preview-name">{formData.image?.name || "Image uploaded"}</p>
+                      <p className="image-preview-size">
+                        {formData.image && `${(formData.image.size / 1024).toFixed(1)} KB`}
+                      </p>
+                      {imageError && <p className="image-error">{imageError}</p>}
+                    </div>
+                    <button type="button" className="remove-image-btn" onClick={removeImage}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                      </svg>
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    className="remove-image-btn"
-                    onClick={removeImage}
-                  >
-                    ✕
-                  </button>
                 </div>
-              </div>
-            ) : (
-              <div className="image-upload-area">
-                <input
-                  type="file"
-                  id="image-upload"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  style={{ display: 'none' }}
-                />
-                <label htmlFor="image-upload" className="image-upload-label">
-                  <span className="upload-icon">📤</span>
-                  <span>Click to upload client image</span>
-                </label>
-              </div>
-            )}
-          </div>
-
-          {/* Status Select */}
-          <div className="form-group">
-            <label className="form-label">Status</label>
-            <select
-              name="status"
-              className="form-select"
-              value={formData.status}
-              onChange={handleChange}
-            >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
-            <span className="helper-text">
-              Set the review status to control visibility on the website
-            </span>
+              ) : (
+                <div className="image-upload-area">
+                  <input type="file" id="image-upload" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
+                  <label htmlFor="image-upload" className="image-upload-label">
+                    <div className="upload-icon">📤</div>
+                    <span className="upload-text">Drop an image here, or click to browse</span>
+                    <span className="upload-hint">PNG, JPG, WEBP, GIF • Max 5MB</span>
+                  </label>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Actions */}
           <div className="form-actions">
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={saveReview}
-              disabled={loading || Object.keys(errors).length > 0}
-            >
+            <button type="button" className="btn-secondary" onClick={() => router.push("/")}>
+              Cancel
+            </button>
+            <button type="button" className="btn-primary" onClick={saveReview} disabled={loading || Object.keys(errors).length > 0}>
               {loading ? (
                 <span className="loading-spinner">⏳</span>
               ) : (
-                <span>💾</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
               )}
-              {loading ? "Creating..." : "Create Review"}
-            </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => router.push("/")}
-            >
-              Cancel
+              {loading ? "Saving..." : "Save Review"}
             </button>
           </div>
         </div>
@@ -522,9 +523,7 @@ export default function AddReview() {
         <div className={`snackbar ${snackbar.severity}`}>
           <div className="snackbar-content">
             <span>{snackbar.message}</span>
-            <button className="snackbar-close" onClick={handleCloseSnackbar}>
-              ✕
-            </button>
+            <button className="snackbar-close" onClick={handleCloseSnackbar}>✕</button>
           </div>
         </div>
       )}

@@ -1,0 +1,853 @@
+// app/careers-liaison-bank/candidate-exam-form.scss
+.exam-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+// Toast Notifications
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  min-width: 320px;
+  max-width: 500px;
+  animation: slideInRight 0.4s ease-out;
+  border-left: 4px solid;
+
+  &.error {
+    border-left-color: #dc3545;
+    background: #fff5f5;
+
+    .toast-icon {
+      color: #dc3545;
+    }
+  }
+
+  &.success {
+    border-left-color: #28a745;
+    background: #f0fff4;
+
+    .toast-icon {
+      color: #28a745;
+    }
+  }
+
+  .toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+
+    .toast-icon {
+      flex-shrink: 0;
+    }
+
+    .toast-message {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a1a2e;
+      line-height: 1.4;
+    }
+  }
+
+  .toast-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #6c757d;
+    transition: color 0.2s;
+    margin-left: 12px;
+    flex-shrink: 0;
+
+    &:hover {
+      color: #343a40;
+    }
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+// Add to candidate_exam_form.scss
+
+.error-container {
+  text-align: center;
+  padding: 30px 20px;
+
+  .error-icon-large {
+    color: #dc3545;
+    margin-bottom: 16px;
+  }
+
+  h4 {
+    color: #721c24;
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+  }
+
+  .error-message-text {
+    color: #721c24;
+    font-size: 16px;
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .api-response-message {
+    color: #856404;
+    background: #fff3cd;
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin: 12px 0;
+    font-size: 14px;
+    border: 1px solid #ffc107;
+    word-break: break-word;
+  }
+
+  .error-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+
+    .btn-primary {
+      padding: 10px 24px;
+      background: #e67e22;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: #d35400;
+        transform: translateY(-1px);
+      }
+    }
+
+    .btn-secondary {
+      padding: 10px 24px;
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: #5a6268;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+// Toast positioning for mobile
+@media (max-width: 768px) {
+  .toast-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    min-width: auto;
+    max-width: none;
+    padding: 14px 16px;
+  }
+}
+// app/careers-liaison-bank/candidate_exam_form.scss
+// Add these new styles to your existing SCSS file
+
+.exam-info-bar {
+  display: flex;
+  gap: 24px;
+  padding: 12px 24px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+
+  .exam-info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #4b5563;
+
+    svg {
+      color: #6b7280;
+      flex-shrink: 0;
+    }
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 200px;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+
+  .spinner {
+    animation: spin 1s linear infinite;
+    color: #4f46e5;
+    width: 40px;
+    height: 40px;
+
+    &.large {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  p {
+    color: #6b7280;
+    font-size: 16px;
+  }
+}
+
+.exam-footer {
+  padding: 12px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 0 0 16px 16px;
+
+  .exam-instructions {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+.error-icon {
+  color: #dc2626;
+  margin-bottom: 16px;
+}
+
+.exam-result {
+  &.failed {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #dc2626;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .exam-info-bar {
+    gap: 12px;
+    padding: 10px 16px;
+    flex-direction: column;
+
+    .exam-info-item {
+      font-size: 13px;
+
+      span {
+        max-width: 150px;
+      }
+    }
+  }
+
+  .loading-container {
+    padding: 40px 16px;
+
+    .spinner.large {
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  .exam-footer {
+    padding: 10px 16px;
+  }
+}
+.exam-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+
+  &.form-modal {
+    max-width: 700px;
+  }
+
+  .exam-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    border-radius: 16px 16px 0 0;
+
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 4px;
+      border-radius: 8px;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #f3f4f6;
+        color: #1f2937;
+      }
+    }
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Exam mode styles
+.exam-timer {
+  padding: 16px 24px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .timer-label {
+    font-weight: 500;
+    color: #4b5563;
+  }
+
+  .timer-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #10b981;
+    font-variant-numeric: tabular-nums;
+
+    &.warning {
+      color: #ef4444;
+      animation: pulse 1s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.exam-progress {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+
+  .progress-bar {
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      transition: width 0.3s ease;
+    }
+  }
+
+  .progress-text {
+    font-size: 14px;
+    color: #6b7280;
+  }
+}
+
+.exam-content {
+  padding: 24px;
+
+  .question-container {
+    .question-text {
+      font-size: 18px;
+      font-weight: 500;
+      color: #1f2937;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .option-label {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: #9ca3af;
+          background: #f9fafb;
+        }
+
+        .option-radio {
+          width: 18px;
+          height: 18px;
+          accent-color: #4f46e5;
+          cursor: pointer;
+          flex-shrink: 0;
+        }
+
+        .option-text {
+          font-size: 16px;
+          color: #1f2937;
+        }
+
+        &:has(input:checked) {
+          border-color: #4f46e5;
+          background: #eef2ff;
+          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+      }
+    }
+  }
+}
+
+.exam-navigation {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  .nav-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &.prev {
+      background: #f3f4f6;
+      color: #4b5563;
+
+      &:hover:not(:disabled) {
+        background: #e5e7eb;
+      }
+    }
+
+    &.next {
+      background: #4f46e5;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: #4338ca;
+      }
+    }
+
+    &.submit-exam {
+      background: #10b981;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: #059669;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.exam-questions-status {
+  padding: 12px 24px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .status-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    margin-right: 4px;
+  }
+
+  .question-status-btn {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #e5e7eb;
+    border-radius: 50%;
+    background: white;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #9ca3af;
+      transform: scale(1.05);
+    }
+
+    &.answered {
+      background: #10b981;
+      border-color: #10b981;
+      color: white;
+    }
+
+    &.active {
+      border-color: #4f46e5;
+      background: #eef2ff;
+      color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+  }
+}
+
+// Form mode styles
+.exam-form {
+  padding: 24px;
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-radius: 8px;
+    color: #dc2626;
+    margin-bottom: 20px;
+
+    .retry-btn {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: #dc2626;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 4px 8px;
+      border-radius: 4px;
+
+      &:hover {
+        background: #fee2e2;
+      }
+    }
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #374151;
+
+        svg {
+          color: #6b7280;
+        }
+      }
+
+      input,
+      select,
+      textarea {
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s;
+
+        &:focus {
+          outline: none;
+          border-color: #4f46e5;
+          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        &::placeholder {
+          color: #9ca3af;
+        }
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: #f3f4f6;
+      border: none;
+      border-radius: 8px;
+      color: #4b5563;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #e5e7eb;
+      }
+    }
+
+    .btn-primary {
+      padding: 10px 24px;
+      background: #4f46e5;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &:hover:not(:disabled) {
+        background: #4338ca;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .spinner {
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+}
+
+// Success state
+.success-content {
+  padding: 40px 24px;
+  text-align: center;
+
+  .success-icon {
+    color: #10b981;
+    margin-bottom: 16px;
+  }
+
+  h4 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #6b7280;
+    margin-bottom: 20px;
+  }
+
+  .exam-result {
+    padding: 16px;
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    border-radius: 8px;
+    color: #065f46;
+    margin-bottom: 20px;
+
+    &.failed {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #dc2626;
+    }
+
+    .exam-details {
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .exam-feedback {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+  }
+
+  .btn-primary {
+    padding: 10px 24px;
+    background: #4f46e5;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #4338ca;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 640px) {
+  .exam-modal {
+    max-width: 100%;
+    border-radius: 12px;
+    max-height: 95vh;
+
+    .exam-modal-header {
+      padding: 16px;
+
+      h3 {
+        font-size: 18px;
+      }
+    }
+  }
+
+  .exam-form {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .exam-content {
+    padding: 16px;
+
+    .question-container {
+      .question-text {
+        font-size: 16px;
+      }
+      
+      .options-container .option-label {
+        padding: 10px 12px;
+        
+        .option-text {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .exam-navigation {
+    flex-wrap: wrap;
+
+    .nav-btn {
+      flex: 1;
+      justify-content: center;
+      font-size: 14px;
+      padding: 8px 16px;
+    }
+  }
+
+  .exam-questions-status {
+    gap: 6px;
+    padding: 12px 16px;
+
+    .question-status-btn {
+      width: 28px;
+      height: 28px;
+      font-size: 11px;
+    }
+  }
+
+  .exam-timer {
+    padding: 12px 16px;
+
+    .timer-value {
+      font-size: 18px;
+    }
+  }
+}
