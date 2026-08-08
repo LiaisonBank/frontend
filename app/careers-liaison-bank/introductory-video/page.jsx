@@ -1,10 +1,10 @@
 // app/careers-liaison-bank/introductory-video/page.jsx
 "use client";
 
-import { useState, useRef, useEffect, Suspense } from "react";
+import { Suspense } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Webcam from "react-webcam";
-import Image from "next/image";
 
 import {
     Camera,
@@ -35,10 +35,9 @@ import {
     FileText
 } from "lucide-react";
 
-import Logo from "@/assets/images/logo_grey2.png";
 import "./introductory-video.scss";
 
-// Create a separate component that uses useSearchParams
+// Main component that uses useSearchParams
 function IntroductoryVideoContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -494,14 +493,7 @@ function IntroductoryVideoContent() {
             closeCamera();
         }
 
-        // For webm files, try to keep the original type
-        let finalFile = file;
-        if (file.type === 'video/webm') {
-            // Keep as webm, the backend should handle it
-            console.log("📹 WebM file selected:", file.name);
-        }
-
-        setVideoFile(finalFile);
+        setVideoFile(file);
         setVideoUrl(URL.createObjectURL(file));
         setIsUploaded(false);
         setTranscript("");
@@ -510,7 +502,7 @@ function IntroductoryVideoContent() {
     };
 
     //------------------------------------------------
-    // Upload Video - FIXED with proper form data
+    // Upload Video
     //------------------------------------------------
 
     const uploadVideo = async () => {
@@ -541,25 +533,15 @@ function IntroductoryVideoContent() {
         setUploadError(null);
 
         try {
-            // Create FormData
             const formData = new FormData();
             formData.append("candidate_id", user.id);
             formData.append("vacancy_id", vacancyId);
-            
-            // For webm files, ensure the backend accepts the format
-            // Try to convert to MP4 if backend doesn't support webm
-            let fileToUpload = videoFile;
-            
-            // If it's a webm file, we need to ensure the backend accepts it
-            // The backend error shows "Unsupported file type" for webm
-            // So we need to either convert or use the correct endpoint
-            
-            formData.append("video", fileToUpload);
+            formData.append("video", videoFile);
 
             console.log("📤 FormData prepared");
-            console.log("📤 File name:", fileToUpload.name);
-            console.log("📤 File type:", fileToUpload.type);
-            console.log("📤 File size:", fileToUpload.size);
+            console.log("📤 File name:", videoFile.name);
+            console.log("📤 File type:", videoFile.type);
+            console.log("📤 File size:", videoFile.size);
 
             const progressInterval = setInterval(() => {
                 setUploadProgress(prev => {
@@ -571,7 +553,6 @@ function IntroductoryVideoContent() {
                 });
             }, 500);
 
-            // Try the correct endpoint - /api/upload-introduction-video
             const API_URL = `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/introduction-video`;
             console.log("📤 API URL:", API_URL);
 
@@ -599,7 +580,6 @@ function IntroductoryVideoContent() {
             if (!response.ok) {
                 const errorMsg = data.detail || data.message || data.error || "Upload failed";
                 
-                // Check for specific error messages
                 if (errorMsg.includes("Unsupported file type") || errorMsg.includes("file type")) {
                     throw new Error(`The ${videoFile.type} file format is not supported by the server. Please try recording again or upload a different video format.`);
                 } else {
@@ -866,7 +846,8 @@ function IntroductoryVideoContent() {
     }
 
     return (
-        <>
+        <div className="introductory-video-page">
+
             {/* Notification */}
             {notification && (
                 <div className={`notification ${notification.type}`}>
@@ -1223,11 +1204,6 @@ function IntroductoryVideoContent() {
                                                         className="btn-secondary stop-btn"
                                                         onClick={stopRecording}
                                                         disabled={isStoppingRecording}
-                                                        style={{ 
-                                                            background: '#dc3545', 
-                                                            color: 'white', 
-                                                            borderColor: '#dc3545' 
-                                                        }}
                                                     >
                                                         {isStoppingRecording ? (
                                                             <>
@@ -1354,7 +1330,7 @@ function IntroductoryVideoContent() {
                     </div>
                 </div>
             </main>
-        </>
+        </div>
     );
 }
 
