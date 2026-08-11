@@ -608,7 +608,7 @@ export default function CareersLiaisonPage() {
               <p>Take the next step in your career journey</p>
               <div className="cta-actions">
                 {isAuthenticated ? (
-                  <Link href="mailto:careers@liaisonbank.com" className="btn-primary">
+                  <Link href="mailto:manisha.panwar@liaisonbank.com" className="btn-primary">
                     <Mail className="w-4 h-4" />
                     Apply Now
                   </Link>
@@ -618,7 +618,7 @@ export default function CareersLiaisonPage() {
                     Get Started
                   </button>
                 )}
-                <Link href="/contact" className="btn-secondary-cta">
+                <Link href="/contact-us-liaison-bank" className="btn-secondary-cta">
                   Contact HR
                 </Link>
               </div>
