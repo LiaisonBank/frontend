@@ -73,19 +73,29 @@ export default function TestimonialSlider() {
 
   /* ---------------- RESPONSIVE ---------------- */
   useEffect(() => {
-    const updateLayout = () => {
-      if (window.innerWidth <= 1023) {
-        setItemsPerView(1);
-      } else {
-        setItemsPerView(2);
-      }
-      setCurSlide(0);
-    };
+  const updateLayout = () => {
+    if (window.innerWidth <= 767) {
+      // Mobile: 1 testimonial
+      setItemsPerView(1);
+    } else if (window.innerWidth <= 1023) {
+      // Tablet: 2 testimonials
+      setItemsPerView(2);
+    } else {
+      // Desktop: 3 testimonials
+      setItemsPerView(3);
+    }
 
-    updateLayout();
-    window.addEventListener("resize", updateLayout);
-    return () => window.removeEventListener("resize", updateLayout);
-  }, []);
+    setCurSlide(0);
+  };
+
+  updateLayout();
+
+  window.addEventListener("resize", updateLayout);
+
+  return () => {
+    window.removeEventListener("resize", updateLayout);
+  };
+}, []);
 
   const totalSlides = Math.ceil(displayTestimonials.length / itemsPerView);
 

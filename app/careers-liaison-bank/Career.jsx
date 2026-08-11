@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import useBodyClass from '@/components/useBodyClass';
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useRef  } from 'react';
+
 import { useRouter } from "next/navigation";
 import { 
   Briefcase, 
@@ -38,6 +39,13 @@ import {
 import AuthModal from './AuthModal';
 import './career.scss';
 import CandidateExamForm from "./CandidateExamForm";
+import RecruitemtnModal from "./RecruitemtnModal";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+
 
 export default function CareersLiaisonPage() {
   useBodyClass('careers');
@@ -58,6 +66,24 @@ export default function CareersLiaisonPage() {
   // State for Read More modal
   const [isReadMoreOpen, setIsReadMoreOpen] = useState(false);
   const [readMoreJob, setReadMoreJob] = useState(null);
+   const heroRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.to(heroRef.current, {
+        y: -100,
+        ease: "none",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('career_token');
@@ -286,6 +312,7 @@ export default function CareersLiaisonPage() {
 
   return (
     <div className="careers-page">
+      <RecruitemtnModal />
       {/* Auth Modal */}
       <AuthModal 
         isOpen={isAuthModalOpen}
@@ -362,6 +389,17 @@ export default function CareersLiaisonPage() {
           </div>
         </div>
       )}
+
+      <section ref={heroRef} className="hero-banner">
+        <div className="container">
+          <div className="page-title">
+            <h2>
+              A culture that inspires people to take ownership, unlock their potential, embrace growth, and transform their ambitions into meaningful and rewarding careers 
+            </h2>
+          </div>
+
+        </div>
+      </section>
 
       {/* Hero Section */}
       <section className="hero-section">

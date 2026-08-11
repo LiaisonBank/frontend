@@ -6,7 +6,7 @@ import Link from "next/link";
 const STORAGE_KEY = "liaisonbank-experience-popup-shown";
 
 const SHOW_DELAY = 800;
-const DISPLAY_DURATION = 4000;
+const DISPLAY_DURATION = 400000000;
 const EXIT_DURATION = 1000;
 
 export default function ExperiencePopup() {

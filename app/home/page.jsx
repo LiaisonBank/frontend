@@ -57,7 +57,7 @@ const Home = () => {
         </div> */}
       </div>
       <section className="ceo-message ">
-        <div className="container mx-auto">
+        <div className="container-fluid px-5">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end">
                <div className="lg:col-span-1">
                   <Image
@@ -126,7 +126,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="welcome">
+      <section className="welcome d-none">
         <div className="container mx-auto py-5 bg-white">
           {/* <div className="smallObject">
             <Image
@@ -207,7 +207,16 @@ const Home = () => {
         </div>
       </section>
       
-      <section className="weprovide">
+      <section className="bhado-haksae px-0">
+        <div className="container-fluid mx-auto py-5 px-0">
+              <div>
+                
+              </div>
+        </div>
+      </section>
+      
+      
+      <section className="weprovide d-none">
         <div className="container mx-auto  py-5 bg-white">
           <div className="section-title">
             <h3>What we Provide ?</h3>
@@ -307,7 +316,7 @@ const Home = () => {
       </section>
 
       <section className="faqs">
-        <div className="container mx-auto  py-4 bg-white">
+        <div className="container-fluid mx-auto  py-4 bg-white">
           <div className="section-title">
             <h3>Frequently ask Questions</h3>
           </div>
