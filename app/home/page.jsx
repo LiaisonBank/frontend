@@ -198,7 +198,7 @@ const Home = () => {
       <section className="ourservices">
         <div className="mx-auto py-5 service-list">
           <div className="section-title">
-            <h3>Licensing and Liaisoning</h3>
+            <h3>Liaisoning and Licensing</h3>
             <h5>We bring our services to multiple sectors and create customised solutions for diverse set of business needs.</h5>
           </div>
           <div className='mx-auto'>

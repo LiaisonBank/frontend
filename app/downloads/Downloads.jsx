@@ -7,11 +7,11 @@ export default function Downloads() {
   useBodyClass('downloads');
 
   const downloads = [
-    { name: "Liaisoning", file: "Adani_Group_Corporate_Brochure.pdf" },
-    { name: "Licensing", file: "Adani_Energy_Solutions_Brochure.pdf" },
-    { name: "Fire", file: "Adani_Green_Energy_Brochure.pdf" },
-    { name: "Electrical", file: "Adani_Ports_and_SEZ_Brochure.pdf" },
-    { name: "AMC", file: "Adani_Power_Brochure.pdf" },
+    { name: "Liaisoning", file: "liaisoning" },
+    { name: "Licensing", file: "licensing" },
+    { name: "Fire", file: "fss" },
+    { name: "Electrical", file: "electrical" },
+    { name: "AMC", file: "amc" },
   ];
 
   return (
@@ -47,14 +47,14 @@ export default function Downloads() {
 
       <section className="companyprofile mt-5 pt-5 px-4">
         <div className="container-fluid py-4 px-5">
-          <h2 className="section-title mb-4">Downloads</h2>
+          <h1 className="section-title mb-4">Downloads</h1>
 
           <div className="download-list">
             {downloads.map((item, index) => (
-              <div key={index} className="download-item d-flex align-items-center justify-content-between py-3 border-bottom">
+              <div key={index} className="download-item d-flex align-items-center justify-content-between border-bottom">
                 <span className="download-name fw-medium">{item.name}</span>
                 <a
-                  href={`/pdfs/${item.file}`}
+                  href={`/pdf/${item.file}.pdf`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="download-link text-primary fw-semibold text-decoration-none"
