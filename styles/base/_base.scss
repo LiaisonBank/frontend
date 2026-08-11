@@ -63,8 +63,8 @@ p {
   min-height: calc(100vh - 350px);
 }
 main {
-  margin: 0;
-  padding: 0;
+  margin: 0 !important;
+  padding: 0 !important;
   position: relative;
   // top: 5rem;
   margin-bottom: 5rem;

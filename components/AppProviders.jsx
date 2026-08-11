@@ -10,7 +10,7 @@ import DisableZoom from "@/components/DisableZoom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ServicesModal from "@/components/ServicesModal/page";
-import ExperiencePopup from "@/components/ExperiencePopup/page";
+// import ExperiencePopup from "@/components/ExperiencePopup/page";
 
 export default function AppProviders({ children }) {
   return (
@@ -38,7 +38,7 @@ export default function AppProviders({ children }) {
             <ServicesModal />
 
             {/* Show once per browser session */}
-            <ExperiencePopup />
+            {/* <ExperiencePopup /> */}
           </LenisProvider>
 
         </ModalProvider>

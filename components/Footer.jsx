@@ -51,7 +51,7 @@ export default function Footer() {
         </div>
 
         {/* Footer Content */}
-        <div className="footer-container">
+        <div className="footer-container-fluid px-5">
           <div className="footer-grid">
             {/* Brand */}
             <div className="footer-brand">
@@ -97,7 +97,7 @@ export default function Footer() {
 
             {/* Contact */}
             <div>
-              <h4 className="footer-title-for-contact">Contact</h4>
+              <h4 className="footer-title-for-contact"><Link href="/contact-us-liaison-bank">Contact</Link></h4>
 
               <div className="footer-contact">
                 <div className="contact-item">

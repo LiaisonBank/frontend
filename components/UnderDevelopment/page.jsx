@@ -19,24 +19,21 @@ const UnderDevelopment = () => {
 
       {/* Right Column - Content */}
       <div className="under-development__content">
-        <span className="under-development__badge">Coming Soon</span>
-
-        <h3>Currently Under Development</h3>
+        <h3>Website Under Development</h3>
 
         <p className="under-development__description">
-         We`re currently working on this section to bring <br/>
-         you a more informative, seamless, and engaging experience.
+        Our website is getting a fresh look, but our services are running as usual. Thanks for your patience!
         </p>
 
-        <div className="under-development__divider" />
+        {/* <div className="under-development__divider" /> */}
 
-        <p className="under-development__footer">
+        {/* <p className="under-development__footer">
           To Avail Our Services Call Us :
           <span className="under-development__contact">
             <Link href="tel:+919769458515"><span> +91 97694 58515</span></Link> | 
             <Link href="tel:+919136066910"><span> +91 91360 66910</span></Link>
           </span>
-        </p>
+        </p> */}
       </div>
     </section>
   );
