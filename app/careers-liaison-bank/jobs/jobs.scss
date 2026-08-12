@@ -1,49 +1,4 @@
 // app/careers-liaison-bank/jobs/jobs.scss
-
-
-/* =========================================================
-   HIDE GLOBAL ELEMENTS ON JOBS PAGE
-   ========================================================= */
-
-// This will hide navbar, footer, and other global elements
-// when the jobs page is active
-
-// =========================================================
-// ALTERNATIVE: Target by specific ID or custom class
-// =========================================================
-
-// If you know specific IDs or classes of your navbar/footer
-// Uncomment and modify these:
-
-
-
-
-// =========================================================
-// ALTERNATIVE: Use body:has() selector (modern browsers)
-// =========================================================
-
-// This is a cleaner approach that doesn't require :global
-// Note: Works in modern browsers only
-
-
-body:has(.jobs-page) {
-  .navbar,
-  .header,
-  .footer,
-  nav:not(.jobs-page nav) {
-    display: none !important;
-  }
-  
-  main {
-    padding-top: 0 !important;
-  }
-}
-
-
-
-
-
-
 .jobs-page {
   background: #f5f6fa;
   min-height: 100vh;
