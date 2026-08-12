@@ -1,453 +1,326 @@
 .completed {
-    $transition-speed: 0.2s;
-    .section-title {
-      // text-align:center;
-      margin: 0;
-      padding: 1rem 0;
-      background-color: white;
+  $transition-speed: 0.2s;
+
+  .section-title {
+    // text-align:center;
+    margin: 0;
+    padding: 1rem 0;
+    background-color: white;
+    text-align: center;
+
+    h3 {
       text-align: center;
-      h3 {
-        text-align: center;
-        line-height: 1;
-        padding-bottom: 1rem;
-        position: relative;
-        display: inline-block;
-        font-size: 2rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        margin-bottom: 1rem;
-        background:$secodary-bg-color;
-        // background: linear-gradient(
-        //   115deg,
-        //   var(--themeht-primary-color),
-        //   var(--themeht-secondary-color)
-        // );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        z-index: 9;
-
-        /* ORANGE UNDERLINE (CENTERED) */
-        &::after {
-          content: "";
-          position: absolute;
-          left: 50%;
-          bottom: 0;
-          width: 90px;
-          height: 3px;
-          background: $secodary-bg-color;
-          border-radius: 4px;
-          transform: translateX(-45%);
-          overflow: hidden;
-        }
-
-        /* SINGLE MOVING DOT (CENTERED FLOW) */
-        &::before {
-          content: "";
-          position: absolute;
-          bottom: -6px;
-          left: 50%;
-          width: 14px;
-          height: 14px;
-          background: #ffffff;
-          border: 3px solid $secodary-bg-color;
-          border-radius: 50%;
-          transform: translateX(-45px); // half of underline width
-          animation: dot-flow 3s linear infinite alternate;
-          z-index: 2;
-        }
-      }
-    }
-    .project-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 20px;
-    max-width: 1200px;
-    white-space: nowrap;
-    margin: 0 auto;
-    .grid-item {
-      background: transparent;
-      padding: 20px;
-      border-radius: 1.5rem;
-      box-shadow: 0px 25px 70px rgba(8, 10, 55, 0.08);
+      line-height: 1;
+      padding-bottom: 1rem;
       position: relative;
-      overflow: hidden; 
-      transition: all 0.4s ease-in-out;
-      // z-index: 1;
-
-      // Base white background
-      &:before {
-        content: "";
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        z-index: -1;
-      }
-
-      // The Gradient that grows from the CENTER
-      &:after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background:lightgray;
-        // background: #FDC725;
-        // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
-        z-index: -1;
-        
-        // 1. Set initial scale to 0 (invisible at center)
-        transform: scale(0); 
-        
-        // 2. Set origin to center so it grows outward in all directions
-        transform-origin: center; 
-        
-        // 3. Use a cubic-bezier for a "bouncy" organic feel
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        
-        // Optional: make it a circle initially for a 'lens' effect
-        border-radius: 50%; 
-      }
-
-      &:hover {
-        // Slight zoom up of the entire card
-        // transform: scale(1.02); 
-
-        &:after {
-          // 4. Scale to 1 on hover
-          transform: scale(1.2); // Scale slightly past 1 to ensure edges are covered
-          border-radius: 0%; // Transition from circle to square to fill the box
-        }
-
-        ul li {
-          color: black;
-          &::before { color: black; }
-          strong { color: black; }
-          border-color: rgba(255, 255, 255, 0);
-        }
-      }
-
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        position: relative;
-        // z-index: 2; // Ensures text stays above the growing background
-
-        li {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 0;
-          transition: color 0.4s ease;
-          // font-weight: 600;
-           img{
-            // background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
-            // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
-            background-color:  black;
-            border-radius: 50%;
-            width: 1.1rem;
-            height: 1.1rem;
-            margin-right: .5rem;
-            padding: .2rem;
-          }
-
-          &.header-row {
-            border-bottom: 1px solid #373737;
-            margin-bottom: 5px;
-          }
-
-          &::before {
-            // content: "•";
-            margin-right: 10px;
-            color: #333;
-            transition: color 0.4s ease;
-          }
-
-          &:first-child::before {
-            content: "";
-            margin: 0;
-          }
-        }
-      }
-    }
-    .page-wrapper{
-      min-height: calc(100vh - 250px);
-    }
-  }
-  .item-name {
-    flex: 1;
-    margin-left: 5px;
-    display: flex;
-    text-align: left;
-    flex:1;
-    min-width:0;          /* Important */
-    white-space:normal;
-    overflow-wrap:break-word;
-    text-wrap: wrap;
-  }
-  .item-price {
-    text-align: right;
-  }
-  table{
-    @media (max-width: 1024px){
-      width: 100% !important;
-      font-size: 1rem;
-    }
-    thead{
-      th:nth-child(2) {
-        // text-align:left;
-        padding:0.2rem;
-      }
-    }
-    tbody{
-      tr td:nth-child(2) {
-        // text-align:left;
-        padding:0.2rem;
-      }
-    }
-  }
-  .auto-grid {
-    display: grid;
-    // grid-template-columns: repeat(auto-fit, minmax(250px, 2fr));
-    grid-template-columns: 35% 65%;
-    gap: 12px;
-    align-items: center;
-    justify-content: center;
-    @media (max-width: 1024px) {
-      grid-template-columns:repeat(auto-fit, minmax(350px, 1fr))
-    }
-    @media (max-width: 600px) {
-      grid-template-columns:repeat(auto-fit, minmax(350px, 1fr))
-    }
-     .grid-item {
-      background: transparent;
-      padding: 20px;
-      border-radius: 1.5rem;
-      // box-shadow: 0px 25px 70px rgba(8, 10, 55, 0.08);
-      position: relative;
-      overflow: hidden; 
-      transition: all 0.4s ease-in-out;
-      // z-index: 1;
-
-      // Base white background
-      &:before {
-        content: "";
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        z-index: -1;
-      }
-
-      // The Gradient that grows from the CENTER
-      &:after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background:lightgray;
-        // background: #FDC725;
-        // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
-        z-index: -1;
-        
-        // 1. Set initial scale to 0 (invisible at center)
-        transform: scale(0); 
-        
-        // 2. Set origin to center so it grows outward in all directions
-        transform-origin: center; 
-        
-        // 3. Use a cubic-bezier for a "bouncy" organic feel
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        
-        // Optional: make it a circle initially for a 'lens' effect
-        border-radius: 50%; 
-      }
-
-      &:hover {
-        // Slight zoom up of the entire card
-        // transform: scale(1.02); 
-
-        &:after {
-          // 4. Scale to 1 on hover
-          transform: scale(1.2); // Scale slightly past 1 to ensure edges are covered
-          border-radius: 0%; // Transition from circle to square to fill the box
-        }
-
-        ul li {
-          color: black;
-          &::before { color: black; }
-          strong { color: black; }
-          border-color: rgba(255, 255, 255, 0);
-        }
-      }
-
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        position: relative;
-        // z-index: 2; // Ensures text stays above the growing background
-
-        li {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 0;
-          transition: color 0.4s ease;
-          // font-weight: 600;
-           img{
-            // background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
-            // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
-            background-color:  black;
-            border-radius: 50%;
-            width: 1.1rem;
-            height: 1.1rem;
-            margin-right: .5rem;
-            padding: .2rem;
-          }
-
-          &.header-row {
-            border-bottom: 1px solid #373737;
-            margin-bottom: 5px;
-          }
-
-          &::before {
-            // content: "•";
-            margin-right: 10px;
-            color: #333;
-            transition: color 0.4s ease;
-          }
-
-          &:first-child::before {
-            content: "";
-            margin: 0;
-          }
-        }
-        &.scroll-wrapper {
-          height: 50px;
-          overflow: hidden;
-          position: relative;
-      
-        }
-       
-      }
-      .listItem{
-        height: 38rem;
-          overflow: hidden;
-        position: relative;
-          ul.scroll-list {
-            display: flex;
-            flex-direction: column;
-            animation: scrollUp 35s linear infinite;
-            will-change: transform;
-            height:3000px;
-              overflow: hidden;
-            position: relative; 
-
-            &:hover {
-              animation-play-state: paused;
-            }
-
-            li {
-              display: grid;
-              grid-template-columns: 30px 1fr 140px;
-              align-items: center;
-              gap: 5px;
-              padding: 5px 0;
-              flex-shrink: 0;
-            }
-              @keyframes scrollUp {
-              from {
-                transform: translateY(0);
-              }
-              to {
-                transform: translateY(-50%);
-              }
-            }
-          }
-      }
-    }
-  }
-  .mapWrapper{
-    position: relative;
-
-  }
-  .mapContainer {
-    position: relative;
-    width: 100%;
-    height: 650px;
-
-    .mapImage {
-      object-fit: cover;
-    }
-
-    .pointer {
-      position: absolute;
-      top: 35%;
-      left: 42%;
-
-      width: 50px;
-      height: 50px;
-    }
-    .locPointer {
-      object-fit: contain;
-    }
-    .pointer {
-      position: absolute;
-      transform: translate(-50%, -100%);
-      cursor: pointer;
-      transition: transform 0.3s ease;
-      z-index: 10;
-    }
-
-    .pointer:hover {
-      transform: translate(-50%, -100%) scale(1.15);
-    }
-  }
-  .zoomControls {
-    position: absolute;
-    top: 1rem;
-    left: 1.5rem;
-    z-index: 9;
-
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-
-    button {
-      width: 36px;
-      height: 36px;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 20px;
+      display: inline-block;
+      font-size: 2rem;
       font-weight: 600;
-      background: #fff;
-      box-shadow: 0 3px 10px rgba(0,0,0,.15);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      background: $secodary-bg-color;
+      // background: linear-gradient(
+      //   115deg,
+      //   var(--themeht-primary-color),
+      //   var(--themeht-secondary-color)
+      // );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      z-index: 9;
 
-      &:hover {
-        background: #f3f3f3;
+      /* ORANGE UNDERLINE (CENTERED) */
+      &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 90px;
+        height: 3px;
+        background: $secodary-bg-color;
+        border-radius: 4px;
+        transform: translateX(-45%);
+        overflow: hidden;
+      }
+
+      /* SINGLE MOVING DOT (CENTERED FLOW) */
+      &::before {
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        width: 14px;
+        height: 14px;
+        background: #ffffff;
+        border: 3px solid $secodary-bg-color;
+        border-radius: 50%;
+        transform: translateX(-45px); // half of underline width
+        animation: dot-flow 3s linear infinite alternate;
+        z-index: 2;
       }
     }
   }
-  .react-transform-wrapper {
+
+  // Variables
+  $primary-color: #2d3748;
+  $text-color: #4a5568;
+  $border-color: #e1e4e8;
+  $background-light: #f5f6fa;
+  $background-hover: #f8f9fa;
+  $shadow-light: rgba(0, 0, 0, 0.08);
+  $shadow-medium: rgba(0, 0, 0, 0.1);
+
+  // Status Colors
+  $status-colors: (
+    active: (bg: #c6f6d5, text: #22543d),
+    inactive: (bg: #fed7d7, text: #9b2c2c),
+    pending: (bg: #fefcbf, text: #744210)
+  );
+
+// Breakpoints
+$tablet-breakpoint: 768px;
+$mobile-breakpoint: 600px;
+
+.grid-item {
+  padding: 1rem;
   width: 100%;
-  height: 100%;
+  max-width: 100%;
+  overflow: hidden;
+
+  .desktop-view {
+    display: block;
+    width: 100%;
+
+    .client-table {
+      width: 100%;
+      table-layout: fixed; // Equal width distribution
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px $shadow-medium;
+
+      thead {
+        display: table-header-group;
+        width: 100%;
+        position: relative;
+        z-index:9;
+      }
+
+      .header-row {
+        background: $background-light;
+        border-bottom: 2px solid $border-color;
+        display: table-row;
+        width: 100%;
+
+        th {
+          padding: 12px 16px;
+          text-align: left;
+          font-weight: 600;
+          color: $primary-color;
+          font-size: 14px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          width: 33.33%; // Equal distribution
+
+          &.item-name {
+            width: 40%;
+          }
+
+          &.item-status {
+            width: 25%;
+          }
+
+          &.item-location {
+            width: 35%;
+          }
+        }
+      }
+
+      .scroll-body {
+        display: table-row-group;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        transition: transform 0.6s ease-in-out;
+
+        // Hide scrollbar
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .client-row {
+        // display: table-row;
+        width: 100%;
+        border-bottom: 1px solid $border-color;
+        transition: background 0.2s;
+
+        &:hover {
+          background: $background-hover;
+        }
+
+        td {
+          padding: 12px 16px;
+          // vertical-align: middle;
+
+          width: 33.33%;
+
+          &.item-name {
+            width: 40%;
+             text-align: left !important;
+          }
+
+          &.item-status {
+            width: 20%;
+          }
+
+          &.item-location {
+            width: 40%;
+          text-align: left;
+
+          }
+        }
+      }
+    }
+  }
+
+  .mobile-view {
+    display: none;
+    width: 100%;
+
+    @media screen and (max-width: $tablet-breakpoint) {
+      display: block;
+    }
+
+    .scroll-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      max-height: 400px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.6s ease-in-out;
+
+      .client-card {
+        background: white;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px $shadow-light;
+        border: 1px solid $border-color;
+        width: 100%;
+
+        .card-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 12px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid $border-color;
+
+          .item-name {
+            font-size: 16px;
+            font-weight: 600;
+            flex: 1;
+          }
+        }
+
+        .card-details {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+
+            .detail-label {
+              font-weight: 600;
+              color: #718096;
+              font-size: 13px;
+              min-width: 70px;
+            }
+
+            .item-location {
+              flex: 1;
+              word-break: break-word;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Shared Components
+  .item-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  .item-name {
+    display: inline-flex;
+    align-items: flex-start;
+    font-weight: 500;
+    color: $primary-color;
+
+    .item-icon {
+      margin-right: 10px;
+    }
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+
+    @each $status, $colors in $status-colors {
+      &.status-#{$status} {
+        background: map-get($colors, bg);
+        color: map-get($colors, text);
+      }
+    }
+  }
+
+  .item-location {
+    color: $text-color;
+    word-break: break-word;
+  }
+
+  // Responsive
+  @media screen and (max-width: $tablet-breakpoint) {
+    .desktop-view {
+      display: none;
+    }
+
+    .mobile-view {
+      display: block;
+    }
+  }
 }
 
-.react-transform-component {
+// Auto-grid layout for parent
+.auto-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
   width: 100%;
-  height: 100%;
+
+  @media screen and (max-width: $tablet-breakpoint) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
 }
 
 }

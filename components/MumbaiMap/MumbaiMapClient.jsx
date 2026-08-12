@@ -1,134 +1,202 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  lazy,
+  Suspense,
+} from "react";
+
+import {
+  MapContainer,
+  TileLayer,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
+
 import L from "leaflet";
+
 import "leaflet/dist/leaflet.css";
 import "./MumbaiMap.scss";
 
-// Constants
-const MAP_CENTER = [19.14, 72.93];
-const MAP_BOUNDS = [
-  [18.8, 72.7],
-  [19.5, 73.2],
-];
-const INITIAL_ZOOM = 11.5;
-const RESET_ZOOM = 11.5;
-const MIN_ZOOM = 10.5;
-const MAX_ZOOM = 18;
-const PROJECT_ZOOM = 16;
-const PROJECT_ANIMATION_DURATION = 0.65;
-const RESET_ANIMATION_DURATION = 0.75;
-const PROJECT_CAMERA_OFFSET_Y = 145;
-const PROJECT_MARKER_PANE_Z_INDEX = 1300;
-const SCROLL_OFFSET = 120;
-const SCROLL_DELAY = 450;
+import { MANUAL_PROJECTS } from "@/lib/map/projectCoordinates";
 
-// API Base URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL || 'http://localhost:8000';
+// ============================================================
+// CONFIGURATION
+// ============================================================
 
-// Fallback coordinates for common Mumbai locations
-const FALLBACK_COORDINATES = {
-  "Mumbai": { lat: 19.0760, long: 72.8777 },
-  "Mumbai Central": { lat: 18.9699, long: 72.8195 },
-  "Bandra": { lat: 19.0544, long: 72.8398 },
-  "Andheri": { lat: 19.1136, long: 72.8697 },
-  "Borivali": { lat: 19.2306, long: 72.8561 },
-  "Dadar": { lat: 19.0181, long: 72.8434 },
-  "Colaba": { lat: 18.9067, long: 72.8144 },
-  "Worli": { lat: 19.0169, long: 72.8150 },
-  "Juhu": { lat: 19.1075, long: 72.8282 },
-  "Powai": { lat: 19.1176, long: 72.9060 },
-  "Navi Mumbai": { lat: 19.0330, long: 73.0290 },
-  "Thane": { lat: 19.2183, long: 72.9781 },
-  "Vasai": { lat: 19.3919, long: 72.8398 },
-  "Virar": { lat: 19.4553, long: 72.8154 },
-  "Vasai-Virar": { lat: 19.4236, long: 72.8276 },
+const MAP_CONFIG = {
+  center: [19.14, 72.93],
+  bounds: [
+    [18.8, 72.7],
+    [19.5, 73.2],
+  ],
+  initialZoom: 11.5,
+  resetZoom: 11.5,
+  minZoom: 10.5,
+  maxZoom: 18,
+  projectZoom: 16,
+  projectAnimationDuration: 0.65,
+  resetAnimationDuration: 0.75,
+  projectCameraOffsetY: 145,
+  markerPaneZIndex: 1300,
+  scrollOffset: 120,
+  scrollDelay: 450,
+  animationEaseLinearity: 0.5,
 };
 
-// Fix Leaflet default icon
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_LOCAL_API_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  "http://localhost:8000";
+
+// ============================================================
+// FALLBACK COORDINATES
+// ============================================================
+
+const FALLBACK_COORDINATES = {
+  Mumbai: { lat: 19.076, long: 72.8777 },
+  "Mumbai Central": { lat: 18.9699, long: 72.8195 },
+  Bandra: { lat: 19.0544, long: 72.8398 },
+  Andheri: { lat: 19.1136, long: 72.8697 },
+  Borivali: { lat: 19.2306, long: 72.8561 },
+  Dadar: { lat: 19.0181, long: 72.8434 },
+  Colaba: { lat: 18.9067, long: 72.8144 },
+  Worli: { lat: 19.0169, long: 72.815 },
+  Juhu: { lat: 19.1075, long: 72.8282 },
+  Powai: { lat: 19.1176, long: 72.906 },
+  Mulund: { lat: 19.1726, long: 72.9567 },
+  "Navi Mumbai": { lat: 19.033, long: 73.029 },
+  Thane: { lat: 19.2183, long: 72.9781 },
+  Vasai: { lat: 19.3919, long: 72.8398 },
+  Virar: { lat: 19.4553, long: 72.8154 },
+  "Vasai-Virar": { lat: 19.4236, long: 72.8276 },
+  Panvel: { lat: 18.9894, long: 73.1175 },
+  Uran: { lat: 18.8788, long: 72.9392 },
+  Alibag: { lat: 18.6414, long: 72.8722 },
+};
+
+// ============================================================
+// LEAFLET DEFAULT ICON
+// ============================================================
+
 delete L.Icon.Default.prototype._getIconUrl;
+
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-// Helper function to get full image URL
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+
+const isValidCoordinate = (lat, lng) => {
+  const latitude = Number(lat);
+  const longitude = Number(lng);
+  return (
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    latitude >= -90 &&
+    latitude <= 90 &&
+    longitude >= -180 &&
+    longitude <= 180
+  );
+};
+
+const normalizeLocation = (value) => {
+  if (!value) return "";
+  return String(value).trim().toLowerCase().replace(/\s+/g, " ");
+};
+
 const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
     return imagePath;
   }
-  if (imagePath.startsWith('/media/') || imagePath.startsWith('/uploads/')) {
-    return `${API_BASE_URL}${imagePath}`;
-  }
-  if (imagePath.startsWith('/')) {
+  if (imagePath.startsWith("/")) {
     return `${API_BASE_URL}${imagePath}`;
   }
   return `${API_BASE_URL}/${imagePath}`;
 };
 
-// Get status-based colors
-const getStatusColors = (status, active = false) => {
-  switch(status) {
-    case "Completed":
-      return {
-        statusColor: "#f59e0b",
-        gradientStart: active ? "#fcd34d" : "#fbbf24",
-        gradientEnd: "#f59e0b",
-        shadowColor: "#fed7aa",
-        strokeColor: "#f59e0b"
-      };
-    case "In Progress":
-      return {
-        
-        statusColor: "#16a34a",
-        gradientStart: active ? "#86efac" : "#4ade80",
-        gradientEnd: "#16a34a",
-        shadowColor: "#bbf7d0",
-        strokeColor: "#16a34a"
-      };
-    case "Upcoming":
-      return {
-        statusColor: "#FFB700",
-        gradientStart: active ? "#FFE066" : "#FFD600",
-        gradientEnd: "#FFB700",
-        shadowColor: "#FFF3CC",
-        strokeColor: "#FFB700"
-      };
-    default:
-      return {
-        statusColor: "#FF6B00",
-        gradientStart: active ? "#FFA366" : "#FFD600",
-        gradientEnd: "#FF2D00",
-        shadowColor: "#FFE6A0",
-        strokeColor: "#ff6b00"
-      };
-  }
+const getApiCoordinates = (project) => {
+  if (!project) return null;
+  const lat = Number(project.lat);
+  const lng = Number(project.long ?? project.lng ?? project.longitude);
+  if (!isValidCoordinate(lat, lng)) return null;
+  return { lat, long: lng, source: "api" };
 };
 
-// Create custom SVG pin icon
-const createCustomPinIcon = (active = false, project = null) => {
-  const getInitials = (name) => {
-    if (!name) return "P";
-    const words = name.split(" ");
-    if (words.length >= 2) {
-      return words[0][0] + words[1][0];
+const getFallbackCoordinates = (location) => {
+  if (!location) return null;
+  const normalizedLocation = normalizeLocation(location);
+  for (const [key, coordinates] of Object.entries(FALLBACK_COORDINATES)) {
+    const normalizedKey = normalizeLocation(key);
+    if (normalizedLocation.includes(normalizedKey)) {
+      return {
+        lat: coordinates.lat,
+        long: coordinates.long,
+        source: "fallback",
+      };
     }
-    return name.substring(0, 2).toUpperCase();
-  };
+  }
+  return null;
+};
 
+const getStatusColors = (status, active = false) => {
+  const colors = {
+    Completed: {
+      statusColor: "#FF6B00",
+      gradientStart: active ? "#FFA366" : "#FFD600",
+      gradientEnd: "#FF2D00",
+      shadowColor: "#FFE6A0",
+      strokeColor: "#FF6B00",
+    },
+    "In Progress": {
+      statusColor: "#FFB700",
+      gradientStart: active ? "#FFE066" : "#FFD600",
+      gradientEnd: "#FFB700",
+      shadowColor: "#FFF3CC",
+      strokeColor: "#FFB700",
+    },
+    Upcoming: {
+      statusColor: "#FFB700",
+      gradientStart: active ? "#FFE066" : "#FFD600",
+      gradientEnd: "#FFB700",
+      shadowColor: "#FFF3CC",
+      strokeColor: "#FFB700",
+    },
+  };
+  return colors[status] || colors.Completed;
+};
+
+// ============================================================
+// CUSTOM PIN ICON
+// ============================================================
+
+const createCustomPinIcon = (active = false, project = null) => {
   const colors = getStatusColors(project?.project_status, active);
-  const projectId = project?.id || Math.random().toString(36).substr(2, 9);
+  const uniqueId = `pin_${String(project?.id || "project").replace(
+    /[^a-zA-Z0-9_-]/g,
+    "_"
+  )}_${Math.random().toString(36).slice(2, 8)}`;
 
   return L.divIcon({
-    className: `liaison-pin-icon ${active ? 'active' : ''}`,
+    className: `liaison-pin-icon ${active ? "active" : ""}`,
     html: `
       <div class="liaison-pin-wrapper">
         <div
-          class="custom-pin${active ? " is-active" : ""}"
-          data-status="${project?.project_status || 'default'}"
+          class="custom-pin ${active ? "is-active" : ""}"
+          data-project-id="${project?.id || ""}"
+          data-project-source="${project?.coordinate_source || ""}"
           style="
             --gradient-start: ${colors.gradientStart};
             --gradient-end: ${colors.gradientEnd};
@@ -139,41 +207,31 @@ const createCustomPinIcon = (active = false, project = null) => {
           <svg
             class="location-pin"
             viewBox="0 0 512 512"
+            width="42"
+            height="52"
+            preserveAspectRatio="xMidYMid meet"
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
               <linearGradient
-                id="pinGradient_${projectId}"
+                id="${uniqueId}"
                 x1="256"
                 y1="0"
                 x2="256"
                 y2="453"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop offset="0%" stop-color="${colors.gradientStart}" />
-                <stop offset="100%" stop-color="${colors.gradientEnd}" />
+                <stop
+                  offset="0%"
+                  stop-color="${colors.gradientStart}"
+                />
+                <stop
+                  offset="100%"
+                  stop-color="${colors.gradientEnd}"
+                />
               </linearGradient>
-
-              <radialGradient
-                id="circleGradient_${projectId}"
-              >
-                <stop offset="0%" stop-color="#FFFDEB" />
-                <stop offset="100%" stop-color="#FFF4C4" />
-              </radialGradient>
             </defs>
 
-            <!-- Shadow -->
-            <ellipse
-              cx="256"
-              cy="438"
-              rx="136"
-              ry="74"
-              fill="${colors.shadowColor}"
-              opacity="0.6"
-              class="pin-shadow"
-            />
-
-            <!-- Location Pin -->
             <path
               class="pin-outline"
               d="
@@ -184,33 +242,26 @@ const createCustomPinIcon = (active = false, project = null) => {
                 C249.8 455.3 262.2 455.3 268 447
                 L342 340
                 C382 282 421 226 421 165
-                C421 73.7 347.3 0 256 0
-                Z
+                C421 73.7 347.3 0 256 0 Z
               "
-              fill="url(#pinGradient_${projectId})"
+              fill="url(#${uniqueId})"
               stroke="${colors.strokeColor}"
               stroke-width="5"
               stroke-linejoin="round"
-              stroke-linecap="round"
             />
 
-            <!-- Inner Circle -->
             <circle
               cx="256"
               cy="165"
               r="105"
-              fill="url(#circleGradient_${projectId})"
+              fill="#FFFDEB"
             />
           </svg>
 
-          ${
-            project?.project_status
-              ? `<span
-                  class="pin-status-dot"
-                  style="background: ${colors.statusColor}"
-                ></span>`
-              : ""
-          }
+          <span
+            class="pin-status-dot"
+            style="background:${colors.statusColor};"
+          ></span>
         </div>
       </div>
     `,
@@ -220,17 +271,20 @@ const createCustomPinIcon = (active = false, project = null) => {
   });
 };
 
-// Project Marker Pane Component
+// ============================================================
+// SUB-COMPONENTS
+// ============================================================
+
 function ProjectMarkerPane() {
   const map = useMap();
 
   useEffect(() => {
     let pane = map.getPane("projectMarkerPane");
     if (!pane) {
-      pane = map.createPane("projectMarkerPane", map.getPane("overlayPane"));
+      pane = map.createPane("projectMarkerPane", map.getPane("markerPane"));
     }
     if (pane) {
-      pane.style.zIndex = String(PROJECT_MARKER_PANE_Z_INDEX);
+      pane.style.zIndex = String(MAP_CONFIG.markerPaneZIndex);
       pane.style.pointerEvents = "auto";
     }
   }, [map]);
@@ -238,7 +292,6 @@ function ProjectMarkerPane() {
   return null;
 }
 
-// Map Resize Observer
 function MapResizeObserver() {
   const map = useMap();
 
@@ -248,12 +301,14 @@ function MapResizeObserver() {
 
     let frameId = null;
     const observer = new ResizeObserver(() => {
-      if (frameId !== null) cancelAnimationFrame(frameId);
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+      }
       frameId = requestAnimationFrame(() => {
         try {
           map.invalidateSize({ pan: false, animate: false });
-        } catch (error) {
-          // Ignore resize errors
+        } catch {
+          // Ignore
         }
       });
     });
@@ -262,21 +317,20 @@ function MapResizeObserver() {
 
     return () => {
       observer.disconnect();
-      if (frameId !== null) cancelAnimationFrame(frameId);
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+      }
     };
   }, [map]);
 
   return null;
 }
 
-// Map Zoom Controller
-function MapZoomController({ isProjectSelected }) {
+function MapZoomController({ disabled }) {
   const map = useMap();
 
   useEffect(() => {
-    if (!map) return;
-
-    if (isProjectSelected) {
+    if (disabled) {
       map.scrollWheelZoom.disable();
       map.doubleClickZoom.disable();
       map.keyboard.disable();
@@ -285,79 +339,90 @@ function MapZoomController({ isProjectSelected }) {
       map.doubleClickZoom.enable();
       map.keyboard.enable();
     }
-  }, [map, isProjectSelected]);
+  }, [map, disabled]);
 
   return null;
 }
 
-// Map Controller
 function MapController({ controllerRef, onZoomStateChange }) {
   const map = useMap();
-  const isMountedRef = useRef(true);
+  const animationRef = useRef(null);
 
   useEffect(() => {
-    isMountedRef.current = true;
-
     if (!map) return;
 
     const controller = {
-      select: (project) => {
+      select(project) {
         if (!project) return;
 
         const lat = Number(project.lat);
-        const lng = Number(project.long || project.lng);
+        const lng = Number(project.long ?? project.lng);
 
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+        if (!isValidCoordinate(lat, lng)) return;
 
-        try {
-          map.scrollWheelZoom.disable();
-          map.doubleClickZoom.disable();
-          map.keyboard.disable();
+        // Stop any ongoing animations
+        map.stop();
+        if (animationRef.current) {
+          clearTimeout(animationRef.current);
+          animationRef.current = null;
+        }
 
-          map.stop();
-          const targetPoint = map.project([lat, lng], PROJECT_ZOOM);
-          targetPoint.y -= PROJECT_CAMERA_OFFSET_Y;
-          const adjustedLatLng = map.unproject(targetPoint, PROJECT_ZOOM);
+        // Disable zoom controls
+        map.scrollWheelZoom.disable();
+        map.doubleClickZoom.disable();
+        map.keyboard.disable();
 
-          map.flyTo(adjustedLatLng, PROJECT_ZOOM, {
-            animate: true,
-            duration: PROJECT_ANIMATION_DURATION,
-            easeLinearity: 0.25,
-            noMoveStart: true,
-          });
+        const targetPoint = map.project([lat, lng], MAP_CONFIG.projectZoom);
+        targetPoint.y -= MAP_CONFIG.projectCameraOffsetY;
 
+        const adjustedLatLng = map.unproject(targetPoint, MAP_CONFIG.projectZoom);
+
+        map.flyTo(adjustedLatLng, MAP_CONFIG.projectZoom, {
+          animate: true,
+          duration: MAP_CONFIG.projectAnimationDuration,
+          easeLinearity: MAP_CONFIG.animationEaseLinearity,
+          noMoveStart: true,
+        });
+
+        // Notify zoom state change after animation completes
+        animationRef.current = setTimeout(() => {
           onZoomStateChange?.(true);
-        } catch (error) {
-          console.debug('Error in select:', error);
-        }
+          animationRef.current = null;
+        }, MAP_CONFIG.projectAnimationDuration * 1000 + 100);
       },
-      reset: () => {
-        try {
-          map.stop();
-          map.flyTo(MAP_CENTER, RESET_ZOOM, {
-            animate: true,
-            duration: RESET_ANIMATION_DURATION,
-            easeLinearity: 0.25,
-            noMoveStart: true,
-          });
 
-          setTimeout(() => {
-            if (isMountedRef.current) {
-              map.scrollWheelZoom.enable();
-              map.doubleClickZoom.enable();
-              map.keyboard.enable();
-              onZoomStateChange?.(false);
-            }
-          }, RESET_ANIMATION_DURATION * 1000 + 100);
-        } catch (error) {
-          console.debug('Error in reset:', error);
+      reset() {
+        // Stop any ongoing animations
+        map.stop();
+        if (animationRef.current) {
+          clearTimeout(animationRef.current);
+          animationRef.current = null;
         }
+
+        // Re-enable zoom controls before animation
+        map.scrollWheelZoom.enable();
+        map.doubleClickZoom.enable();
+        map.keyboard.enable();
+
+        map.flyTo(MAP_CONFIG.center, MAP_CONFIG.resetZoom, {
+          animate: true,
+          duration: MAP_CONFIG.resetAnimationDuration,
+          easeLinearity: MAP_CONFIG.animationEaseLinearity,
+          noMoveStart: true,
+        });
+
+        // Notify zoom state change after animation completes
+        animationRef.current = setTimeout(() => {
+          onZoomStateChange?.(false);
+          animationRef.current = null;
+        }, MAP_CONFIG.resetAnimationDuration * 1000 + 100);
       },
-      stop: () => {
-        try {
-          map.stop();
-        } catch (error) {
-          console.debug('Error in stop:', error);
+
+      stop() {
+        map.stop();
+        if (animationRef.current) {
+          clearTimeout(animationRef.current);
+          animationRef.current = null;
         }
       },
     };
@@ -365,22 +430,17 @@ function MapController({ controllerRef, onZoomStateChange }) {
     controllerRef.current = controller;
 
     return () => {
-      isMountedRef.current = false;
-      controllerRef.current = null;
-      try {
-        map.scrollWheelZoom.enable();
-        map.doubleClickZoom.enable();
-        map.keyboard.enable();
-      } catch (error) {
-        // Ignore
+      if (animationRef.current) {
+        clearTimeout(animationRef.current);
+        animationRef.current = null;
       }
+      controllerRef.current = null;
     };
   }, [map, controllerRef, onZoomStateChange]);
 
   return null;
 }
 
-// Map Interaction
 function MapInteraction({ onMapClick }) {
   useMapEvents({
     click(event) {
@@ -399,264 +459,212 @@ function MapInteraction({ onMapClick }) {
   return null;
 }
 
-// Marker Layer
 function MarkerLayer({ projects, selectedProject, onSelect }) {
   const map = useMap();
-  const markerGroupRef = useRef(null);
-  const isMountedRef = useRef(true);
+  const groupRef = useRef(null);
+  const markersRef = useRef(new Map());
 
+  // Create marker layer
   useEffect(() => {
     if (!map) return;
-    isMountedRef.current = true;
 
     const group = L.layerGroup().addTo(map);
-    markerGroupRef.current = group;
+    groupRef.current = group;
 
     return () => {
-      isMountedRef.current = false;
-      if (markerGroupRef.current) {
-        try {
-          markerGroupRef.current.clearLayers();
-          if (map && map.hasLayer(markerGroupRef.current)) {
-            map.removeLayer(markerGroupRef.current);
-          }
-        } catch (error) {
-          console.debug('Error cleaning up marker group:', error);
+      try {
+        group.clearLayers();
+        if (map.hasLayer(group)) {
+          map.removeLayer(group);
         }
-        markerGroupRef.current = null;
+      } catch {
+        // Ignore cleanup errors
       }
+      groupRef.current = null;
+      markersRef.current.clear();
     };
   }, [map]);
 
+  // Render markers
   useEffect(() => {
-    const group = markerGroupRef.current;
-    if (!group || !isMountedRef.current || !Array.isArray(projects)) return;
+    const group = groupRef.current;
+    if (!group) return;
 
-    try {
-      group.clearLayers();
-    } catch (error) {
-      console.debug('Error clearing markers:', error);
-      return;
-    }
+    group.clearLayers();
+    markersRef.current.clear();
 
-    projects.forEach((project, index) => {
-      if (!project || !isMountedRef.current) return;
+    if (!Array.isArray(projects) || projects.length === 0) return;
+
+    projects.forEach((project) => {
+      if (!project) return;
 
       const lat = Number(project.lat);
-      const lng = Number(project.long || project.lng);
+      const lng = Number(project.long ?? project.lng);
 
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+      if (!isValidCoordinate(lat, lng)) return;
 
-      try {
-        const isActive = selectedProject && String(selectedProject.id) === String(project.id);
+      const isSelected =
+        selectedProject && String(selectedProject.id) === String(project.id);
 
-        const marker = L.marker([lat, lng], {
-          icon: createCustomPinIcon(isActive, project),
-          pane: "projectMarkerPane",
-          keyboard: true,
-          title: project.client_name || project.location || "Project",
-          alt: project.client_name || project.location || "Project",
-          zIndexOffset: isActive ? 1000 : 0,
-          interactive: true,
-        });
+      const marker = L.marker([lat, lng], {
+        icon: createCustomPinIcon(isSelected, project),
+        pane: "projectMarkerPane",
+        zIndexOffset: isSelected ? 1000 : 0,
+        keyboard: true,
+        title: project.client_name || project.location || "Project",
+        alt: project.client_name || project.location || "Project",
+        interactive: true,
+      });
 
-        marker.projectData = project;
+      marker.projectData = project;
 
-        marker.on('click', function(e) {
-          if (e && e.originalEvent) {
-            L.DomEvent.stopPropagation(e.originalEvent);
-            L.DomEvent.preventDefault(e.originalEvent);
-          }
-          if (isMountedRef.current && onSelect) {
-            onSelect(project);
-          }
-        });
-
-        if (isMountedRef.current) {
-          group.addLayer(marker);
+      marker.on("click", (event) => {
+        if (event?.originalEvent) {
+          L.DomEvent.stopPropagation(event.originalEvent);
+          L.DomEvent.preventDefault(event.originalEvent);
         }
-      } catch (error) {
-        console.error('Error creating marker:', error);
-      }
+        onSelect?.(project);
+      });
+
+      group.addLayer(marker);
+      markersRef.current.set(String(project.id), marker);
     });
   }, [projects, selectedProject, onSelect]);
 
+  // Update marker icons when selection changes
   useEffect(() => {
-    const group = markerGroupRef.current;
-    if (!group || !isMountedRef.current) return;
+    if (!groupRef.current) return;
 
-    const selectedId = selectedProject ? String(selectedProject.id) : null;
+    markersRef.current.forEach((marker, id) => {
+      const project = marker.projectData;
+      if (!project) return;
 
-    group.eachLayer((marker) => {
-      try {
-        const isActive = selectedId && String(marker.projectData?.id) === selectedId;
-        marker.setIcon(createCustomPinIcon(isActive, marker.projectData));
-        marker.setZIndexOffset(isActive ? 1000 : 0);
-      } catch (error) {
-        console.debug('Error updating marker:', error);
-      }
+      const isSelected =
+        selectedProject && String(selectedProject.id) === id;
+
+      marker.setIcon(createCustomPinIcon(isSelected, project));
+      marker.setZIndexOffset(isSelected ? 1000 : 0);
     });
   }, [selectedProject]);
 
   return null;
 }
 
-// Selected Project Position Tracker
 function SelectedProjectPosition({ project, onPositionChange }) {
   const map = useMap();
-  const isMountedRef = useRef(true);
-  const frameIdRef = useRef(null);
-  const timeoutRef = useRef(null);
-  const isDraggingRef = useRef(false);
-  const dragTimeoutRef = useRef(null);
+  const frameRef = useRef(null);
+  const positionRef = useRef(null);
 
   useEffect(() => {
-    isMountedRef.current = true;
-
-    return () => {
-      isMountedRef.current = false;
-      if (frameIdRef.current !== null) {
-        cancelAnimationFrame(frameIdRef.current);
-        frameIdRef.current = null;
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-      if (dragTimeoutRef.current) {
-        clearTimeout(dragTimeoutRef.current);
-        dragTimeoutRef.current = null;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!project || !map || !isMountedRef.current) {
+    if (!project) {
       onPositionChange(null);
       return;
     }
 
     const lat = Number(project.lat);
-    const lng = Number(project.long || project.lng);
+    const lng = Number(project.long ?? project.lng);
 
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    if (!isValidCoordinate(lat, lng)) {
       onPositionChange(null);
       return;
     }
 
-    const updatePosition = (forceUpdate = false) => {
-      if (!isMountedRef.current || !map) return;
-      if (isDraggingRef.current && !forceUpdate) return;
+    const updatePosition = () => {
+      if (!map) return;
+      try {
+        const point = map.latLngToContainerPoint([lat, lng]);
+        if (!point) return;
 
-      if (frameIdRef.current !== null) {
-        cancelAnimationFrame(frameIdRef.current);
-        frameIdRef.current = null;
-      }
+        const newPosition = { x: point.x, y: point.y };
+        const oldPosition = positionRef.current;
 
-      frameIdRef.current = requestAnimationFrame(() => {
-        frameIdRef.current = null;
-        try {
-          if (!map || !map.getContainer()) return;
-          const point = map.latLngToContainerPoint([lat, lng]);
-          if (point && isMountedRef.current) {
-            onPositionChange({ x: point.x, y: point.y });
-          }
-        } catch (error) {
-          // Silent fail
+        // Only update if position changed significantly
+        if (
+          !oldPosition ||
+          Math.abs(oldPosition.x - newPosition.x) > 1 ||
+          Math.abs(oldPosition.y - newPosition.y) > 1
+        ) {
+          positionRef.current = newPosition;
+          onPositionChange(newPosition);
         }
+      } catch {
+        // Ignore
+      }
+    };
+
+    const scheduleUpdate = () => {
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current);
+      }
+      frameRef.current = requestAnimationFrame(() => {
+        frameRef.current = null;
+        updatePosition();
       });
     };
 
-    timeoutRef.current = setTimeout(() => updatePosition(true), 100);
+    updatePosition();
 
-    const handleDragStart = () => {
-      isDraggingRef.current = true;
-      onPositionChange(null);
-    };
-
-    const handleDragEnd = () => {
-      isDraggingRef.current = false;
-      if (dragTimeoutRef.current) clearTimeout(dragTimeoutRef.current);
-      dragTimeoutRef.current = setTimeout(() => updatePosition(true), 50);
-    };
-
-    const handleMoveEnd = () => {
-      if (!isDraggingRef.current) updatePosition(true);
-    };
-
-    map.on('dragstart', handleDragStart);
-    map.on('dragend', handleDragEnd);
-    map.on('moveend', handleMoveEnd);
-    map.on('zoomend', () => updatePosition(true));
+    map.on("move", scheduleUpdate);
+    map.on("zoom", scheduleUpdate);
+    map.on("moveend", scheduleUpdate);
+    map.on("zoomend", scheduleUpdate);
 
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (dragTimeoutRef.current) clearTimeout(dragTimeoutRef.current);
-      if (frameIdRef.current !== null) cancelAnimationFrame(frameIdRef.current);
+      map.off("move", scheduleUpdate);
+      map.off("zoom", scheduleUpdate);
+      map.off("moveend", scheduleUpdate);
+      map.off("zoomend", scheduleUpdate);
 
-      map.off('dragstart', handleDragStart);
-      map.off('dragend', handleDragEnd);
-      map.off('moveend', handleMoveEnd);
-      map.off('zoomend', () => updatePosition(true));
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+      positionRef.current = null;
     };
   }, [map, project, onPositionChange]);
 
   return null;
 }
 
-// Custom hook for scrolling to card
-function useScrollToCard() {
-  const scrollToCard = useCallback((cardElement, offset = SCROLL_OFFSET) => {
-    if (!cardElement) return;
+// ============================================================
+// PROJECT CARD
+// ============================================================
 
-    requestAnimationFrame(() => {
-      const rect = cardElement.getBoundingClientRect();
-      const isBelowViewport = rect.bottom > window.innerHeight;
-      const isAboveViewport = rect.top < 0;
-      const isVisible = !isBelowViewport && !isAboveViewport;
-
-      if (!isVisible) {
-        const scrollPosition = window.scrollY + rect.top - offset;
-        window.scrollTo({
-          top: Math.max(0, scrollPosition),
-          behavior: 'smooth'
-        });
-      }
-    });
-  }, []);
-
-  return scrollToCard;
-}
-
-// Project Card Component
-const ProjectCard = React.forwardRef(function ProjectCard({ project, isVisible, onClose, position }, ref) {
+const ProjectCard = React.forwardRef(function ProjectCard(
+  { project, onClose, position },
+  ref
+) {
   if (!project) return null;
 
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'Completed': return '#f59e0b';
-      case 'In Progress': return '#16a34a ';
-      case 'Upcoming': return '#FFB700';
-      default: return '#FF6B00';
-    }
-  };
-
   const imageUrl = getImageUrl(project.featured_image);
+  const statusColor =
+    project.project_status === "Completed"
+      ? "#FF6B00"
+      : project.project_status === "In Progress"
+      ? "#FFB700"
+      : "#f59e0b";
 
   return (
     <article
       ref={ref}
-      className={`project-info-card ${isVisible ? "is-visible" : ""}`}
+      className="project-info-card is-visible"
       role="dialog"
       aria-modal="true"
-      aria-label={project.client_name ? `${project.client_name} information` : "Project information"}
-      style={position ? { 
-        '--card-x': `${position.x}px`,
-        '--card-y': `${position.y}px`
-      } : {}}
+      aria-label={
+        project.client_name
+          ? `${project.client_name} information`
+          : "Project information"
+      }
+      style={
+        position
+          ? {
+              "--card-x": `${position.x}px`,
+              "--card-y": `${position.y}px`,
+            }
+          : {}
+      }
     >
       <div className="project-card-arrow-down" />
-      
       <div className="project-card-header">
         {imageUrl && (
           <div
@@ -666,163 +674,239 @@ const ProjectCard = React.forwardRef(function ProjectCard({ project, isVisible, 
             aria-label={project.client_name || "Project"}
           />
         )}
-
         <button
           type="button"
           className="project-card-close"
           onClick={onClose}
-          aria-label="Close project information"
+          aria-label="Close project"
         >
           <span aria-hidden="true">×</span>
         </button>
       </div>
-
       <div className="project-card-content">
         {project.client_name && (
           <h2 className="project-client-name">{project.client_name}</h2>
         )}
-
         {project.project_status && (
           <div className="project-status">
-            <span 
-              className="status-indicator" 
-              style={{ backgroundColor: getStatusColor(project.project_status) }}
+            <span
+              className="status-indicator"
+              style={{ backgroundColor: statusColor }}
             />
             <span className="status-text">{project.project_status}</span>
           </div>
         )}
-
         {project.location && (
-          <div>
-            <span className="project-location">{project.location}</span>
+          <div className="project-location-wrapper">
+            <span className="project-location">
+              {project.location}
+              {project.location !== "Navi Mumbai" && ", Mumbai"}
+            </span>
             {project.category && (
               <span className="project-category">{project.category}</span>
             )}
           </div>
         )}
-
         {project.completion_date && (
           <div className="project-completion-date">
-            <span>{project.completion_date}</span>
+            {project.completion_date}
           </div>
         )}
-
-        {project.zone && (
-          <span className="project-card-zone">{project.zone}</span>
-        )}
-
-        {Number.isFinite(Number(project.lat)) &&
-          Number.isFinite(Number(project.long || project.lng)) && (
-            <div className="project-card-coordinates">
-              📍 {Number(project.lat).toFixed(4)}, {Number(project.long || project.lng).toFixed(4)}
-            </div>
-          )}
       </div>
     </article>
   );
 });
 
-// Main Component
-export default function MumbaiMapClient() {
+// ============================================================
+// LOADING SKELETON
+// ============================================================
+
+const LoadingSkeleton = () => (
+  <section
+    className="mumbai-map-section"
+    aria-label="Loading project locations"
+  >
+    <div className="mumbai-map-loading">
+      <div className="loading-spinner" aria-hidden="true" />
+      <p>Loading project locations...</p>
+    </div>
+  </section>
+);
+
+// ============================================================
+// ERROR STATE
+// ============================================================
+
+const ErrorState = ({ error, onRetry }) => (
+  <section
+    className="mumbai-map-section"
+    aria-label="Error loading project locations"
+  >
+    <div className="mumbai-map-error">
+      <p>{error}</p>
+      <button type="button" onClick={onRetry}>
+        Retry
+      </button>
+    </div>
+  </section>
+);
+
+// ============================================================
+// EMPTY STATE
+// ============================================================
+
+const EmptyState = ({ onRetry }) => (
+  <section
+    className="mumbai-map-section"
+    aria-label="No projects found"
+  >
+    <div className="mumbai-map-error">
+      <p>No projects found with valid coordinates.</p>
+      <button type="button" onClick={onRetry}>
+        Retry
+      </button>
+    </div>
+  </section>
+);
+
+// ============================================================
+// CUSTOM HOOKS
+// ============================================================
+
+function useScrollToCard() {
+  return useCallback((element, offset = MAP_CONFIG.scrollOffset) => {
+    if (!element) return;
+
+    requestAnimationFrame(() => {
+      const rect = element.getBoundingClientRect();
+      const isBelow = rect.bottom > window.innerHeight;
+      const isAbove = rect.top < 0;
+
+      if (isBelow || isAbove) {
+        const scrollPosition = window.scrollY + rect.top - offset;
+        window.scrollTo({
+          top: Math.max(0, scrollPosition),
+          behavior: "smooth",
+        });
+      }
+    });
+  }, []);
+}
+
+function useAudio() {
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    const audio = new Audio("/audio/computer-mouse-click-2.mp3");
+    audio.preload = "auto";
+    audioRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+      audioRef.current = null;
+    };
+  }, []);
+
+  const playAudio = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.pause();
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+  }, []);
+
+  return playAudio;
+}
+
+function useProjects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [selectedProjectPosition, setSelectedProjectPosition] = useState(null);
-  const [geocodingProgress, setGeocodingProgress] = useState(0);
-  const [geocodingStatus, setGeocodingStatus] = useState("");
-  const [isZoomDisabled, setIsZoomDisabled] = useState(false);
+  const [dataSource, setDataSource] = useState("Loading...");
 
-  const controllerRef = useRef(null);
-  const selectedProjectIdRef = useRef(null);
-  const pointerAudioRef = useRef(null);
-  const cardRef = useRef(null);
-  const scrollToCard = useScrollToCard();
-
-  const getFallbackCoordinates = useCallback((location) => {
-    if (!location) return null;
-    
-    for (const [key, coords] of Object.entries(FALLBACK_COORDINATES)) {
-      if (location.toLowerCase().includes(key.toLowerCase())) {
-        return coords;
-      }
-    }
-    
-    return { lat: 19.0760, long: 72.8777 };
+  const normalizeManualProjects = useCallback(() => {
+    if (!Array.isArray(MANUAL_PROJECTS)) return [];
+    return MANUAL_PROJECTS.filter((project) =>
+      isValidCoordinate(project?.lat, project?.long ?? project?.lng)
+    ).map((project) => {
+      const lng = Number(project.long ?? project.lng);
+      return {
+        ...project,
+        id: String(project.id),
+        lat: Number(project.lat),
+        long: lng,
+        lng,
+        state: project.state || "Maharashtra",
+        country: project.country || "India",
+        coordinate_source: "manual",
+        is_manual: true,
+        is_geocoded: false,
+        is_fallback: false,
+      };
+    });
   }, []);
 
-  const getLocationCoordinates = useCallback(async (location) => {
+  const geocodeWithNominatim = useCallback(async (location) => {
     if (!location?.trim()) return null;
-
-    const searchLocation = location.trim();
 
     try {
       const response = await fetch(
-        `/api/geocode?location=${encodeURIComponent(searchLocation)}`,
+        `/api/geocode?location=${encodeURIComponent(location)}`,
         {
           method: "GET",
           cache: "no-store",
         }
       );
 
-      if (!response.ok) {
-        const fallback = getFallbackCoordinates(searchLocation);
-        return fallback ? {
-          location: searchLocation,
-          country: "India",
-          state: "Maharashtra",
-          lat: fallback.lat,
-          long: fallback.long,
-          isFallback: true,
-        } : null;
-      }
-
+      if (!response.ok) return null;
       const data = await response.json();
 
-      if (data?.lat === undefined || data?.long === undefined) {
-        const fallback = getFallbackCoordinates(searchLocation);
-        return fallback ? {
-          location: searchLocation,
-          country: "India",
-          state: "Maharashtra",
-          lat: fallback.lat,
-          long: fallback.long,
-          isFallback: true,
-        } : null;
-      }
+      if (!isValidCoordinate(data?.lat, data?.long)) return null;
 
       return {
-        location: searchLocation,
-        country: "India",
-        state: "Maharashtra",
         lat: Number(data.lat),
         long: Number(data.long),
-        isFallback: false,
+        source: "nominatim",
       };
     } catch (error) {
-      console.error("Geocoding error:", error);
-      const fallback = getFallbackCoordinates(searchLocation);
-      return fallback ? {
-        location: searchLocation,
-        country: "India",
-        state: "Maharashtra",
-        lat: fallback.lat,
-        long: fallback.long,
-        isFallback: true,
-      } : null;
+      console.warn("Nominatim failed:", location, error);
+      return null;
     }
-  }, [getFallbackCoordinates]);
+  }, []);
+
+  const resolveApiProjectCoordinates = useCallback(
+    async (project) => {
+      // 1. API LAT/LONG
+      const apiCoordinates = getApiCoordinates(project);
+      if (apiCoordinates) return apiCoordinates;
+
+      // 2. NOMINATIM
+      const nominatimCoordinates = await geocodeWithNominatim(project.location);
+      if (nominatimCoordinates) return nominatimCoordinates;
+
+      // 3. LOCAL FALLBACK
+      const fallbackCoordinates = getFallbackCoordinates(project.location);
+      if (fallbackCoordinates) return fallbackCoordinates;
+
+      return null;
+    },
+    [geocodeWithNominatim]
+  );
 
   useEffect(() => {
-    const fetchAndGeocodeProjects = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        setGeocodingProgress(0);
-        setGeocodingStatus("Fetching projects...");
+    let cancelled = false;
 
-        const apiUrl = `${API_BASE_URL}/api/projects/`;
-        const response = await fetch(apiUrl, {
+    const loadProjects = async () => {
+      setLoading(true);
+      setError(null);
+
+      const manualProjects = normalizeManualProjects();
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/projects/`, {
+          method: "GET",
           cache: "no-store",
           headers: {
             "Content-Type": "application/json",
@@ -830,268 +914,273 @@ export default function MumbaiMapClient() {
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch projects: ${response.status}`);
+          throw new Error(`API error ${response.status}`);
         }
 
-        const data = await response.json();
-        let projectsArray = Array.isArray(data) ? data : data.data || data.projects || [];
-        
-        if (!Array.isArray(projectsArray)) {
-          setProjects([]);
-          setLoading(false);
-          return;
-        }
+        const result = await response.json();
+        const apiProjects = Array.isArray(result)
+          ? result
+          : Array.isArray(result?.data)
+          ? result.data
+          : Array.isArray(result?.projects)
+          ? result.projects
+          : [];
 
-        setGeocodingStatus(`Processing ${projectsArray.length} projects...`);
+        const resolvedApiProjects = [];
+        for (const project of apiProjects) {
+          if (cancelled) return;
 
-        const processedProjects = [];
-        let completed = 0;
-        let geocodedCount = 0;
-        let fallbackCount = 0;
-
-        for (const project of projectsArray) {
-          const hasCoordinates = (project.lat && project.long) || (project.lat && project.lng);
-          let coordinates = null;
-
-          if (!hasCoordinates && project.location) {
-            setGeocodingStatus(`Geocoding: ${project.client_name || project.location}...`);
-            coordinates = await getLocationCoordinates(project.location);
-            
-            if (coordinates) {
-              if (coordinates.isFallback) {
-                fallbackCount++;
-              } else {
-                geocodedCount++;
-              }
-            }
+          const coordinates = await resolveApiProjectCoordinates(project);
+          if (!coordinates) {
+            console.warn("Project skipped - no coordinates:", project);
+            continue;
           }
 
-          const enhancedProject = {
+          resolvedApiProjects.push({
             ...project,
-            lat: coordinates?.lat || project.lat || getFallbackCoordinates(project.location || "Mumbai")?.lat || null,
-            long: coordinates?.long || project.long || project.lng || getFallbackCoordinates(project.location || "Mumbai")?.long || null,
-            lng: coordinates?.long || project.long || project.lng || getFallbackCoordinates(project.location || "Mumbai")?.long || null,
-            state: coordinates?.state || project.state || "Maharashtra",
-            country: coordinates?.country || project.country || "India",
-            isGeocoded: !!coordinates && !coordinates.isFallback,
-            isFallback: !coordinates || coordinates.isFallback,
-          };
-
-          if (enhancedProject.lat && enhancedProject.long) {
-            processedProjects.push(enhancedProject);
-          }
-
-          completed++;
-          const progress = Math.round((completed / projectsArray.length) * 100);
-          setGeocodingProgress(progress);
+            lat: coordinates.lat,
+            long: coordinates.long,
+            lng: coordinates.long,
+            coordinate_source: coordinates.source,
+            is_manual: false,
+            is_geocoded: coordinates.source === "nominatim",
+            is_fallback: coordinates.source === "fallback",
+          });
         }
 
-        setProjects(processedProjects);
-        setGeocodingStatus(`Ready: ${processedProjects.length} projects loaded`);
-        setLoading(false);
+        if (cancelled) return;
 
-      } catch (err) {
-        console.error("Failed to fetch and geocode projects:", err);
-        setError(err.message || "Failed to load projects");
-        setProjects([]);
-        setLoading(false);
+        const combinedProjects = [...resolvedApiProjects, ...manualProjects];
+        setProjects(combinedProjects);
+        setDataSource(
+          `API: ${resolvedApiProjects.length} + Manual: ${manualProjects.length}`
+        );
+      } catch (error) {
+        console.error("Failed loading API projects:", error);
+        if (!cancelled) {
+          setProjects(manualProjects);
+          setDataSource(`Manual: ${manualProjects.length}`);
+          setError(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
-    fetchAndGeocodeProjects();
-  }, [getLocationCoordinates, getFallbackCoordinates]);
-
-  useEffect(() => {
-    const audio = new Audio("/audio/computer-mouse-click-2.mp3");
-    audio.preload = "auto";
-    pointerAudioRef.current = audio;
+    loadProjects();
 
     return () => {
-      if (pointerAudioRef.current) {
-        pointerAudioRef.current.pause();
-        pointerAudioRef.current.currentTime = 0;
-        pointerAudioRef.current = null;
+      cancelled = true;
+    };
+  }, [normalizeManualProjects, resolveApiProjectCoordinates]);
+
+  return { projects, loading, error, dataSource, setError };
+}
+
+// ============================================================
+// MAIN COMPONENT
+// ============================================================
+
+export default function MumbaiMapClient() {
+  const { projects, loading, error, dataSource, setError } = useProjects();
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedProjectPosition, setSelectedProjectPosition] = useState(null);
+  const [isZoomDisabled, setIsZoomDisabled] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const controllerRef = useRef(null);
+  const selectedProjectIdRef = useRef(null);
+  const cardRef = useRef(null);
+  const closeTimeoutRef = useRef(null);
+
+  const playAudio = useAudio();
+  const scrollToCard = useScrollToCard();
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
       }
+      if (controllerRef.current) {
+        controllerRef.current.stop();
+      }
+      selectedProjectIdRef.current = null;
     };
   }, []);
 
-  const playAudio = useCallback(() => {
-    return new Promise((resolve) => {
-      const audio = pointerAudioRef.current;
-      if (audio) {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.play().then(() => {
-          setTimeout(() => resolve(), 300);
-        }).catch(() => resolve());
-      } else {
-        resolve();
+  // ==========================================================
+  // SELECT PROJECT
+  // ==========================================================
+
+  const selectProject = useCallback(
+    (project) => {
+      if (!project) return;
+
+      const projectId = String(project.id);
+      if (selectedProjectIdRef.current === projectId) return;
+
+      // Clear any pending close operations
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
       }
-    });
-  }, []);
 
-  const selectProject = useCallback(async (project) => {
-    if (!project) return;
+      playAudio();
+      setIsClosing(false);
 
-    const projectId = String(project.id);
-    if (selectedProjectIdRef.current === projectId) return;
+      selectedProjectIdRef.current = projectId;
+      setSelectedProject(project);
+      setSelectedProjectPosition(null);
+      setIsZoomDisabled(true);
 
-    await playAudio();
-    
-    selectedProjectIdRef.current = projectId;
-    setSelectedProject(project);
-    setSelectedProjectPosition(null);
-    setIsZoomDisabled(true);
+      requestAnimationFrame(() => {
+        controllerRef.current?.select(project);
+      });
 
-    requestAnimationFrame(() => {
-      controllerRef.current?.select(project);
-    });
+      setTimeout(() => {
+        if (cardRef.current) {
+          scrollToCard(cardRef.current);
+        }
+      }, MAP_CONFIG.scrollDelay);
+    },
+    [playAudio, scrollToCard]
+  );
 
-    setTimeout(() => {
-      if (cardRef.current) {
-        scrollToCard(cardRef.current);
-      }
-    }, SCROLL_DELAY);
-  }, [playAudio, scrollToCard]);
+  // ==========================================================
+  // CLOSE PROJECT
+  // ==========================================================
 
-  const closeProject = useCallback(async () => {
-    await playAudio();
-    
-    selectedProjectIdRef.current = null;
+  const closeProject = useCallback(() => {
+    // Prevent multiple close operations
+    if (isClosing) return;
+    setIsClosing(true);
+
+    playAudio();
+
+    // Clear any pending timeouts
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+
+    // Stop any ongoing animations
     controllerRef.current?.stop();
-    setSelectedProjectPosition(null);
-    setSelectedProject(null);
-    setIsZoomDisabled(false);
 
-    requestAnimationFrame(() => {
-      controllerRef.current?.reset();
-    });
-  }, [playAudio]);
-
-  const handleMapClick = useCallback(async () => {
-    if (!selectedProject) return;
-    
-    await playAudio();
+    // Reset state immediately
     selectedProjectIdRef.current = null;
-    controllerRef.current?.stop();
-    setSelectedProjectPosition(null);
     setSelectedProject(null);
-    setIsZoomDisabled(false);
-
-    requestAnimationFrame(() => {
-      controllerRef.current?.reset();
-    });
-  }, [playAudio, selectedProject]);
-
-  const resetMap = useCallback(async () => {
-    await playAudio();
-    selectedProjectIdRef.current = null;
-    controllerRef.current?.stop();
     setSelectedProjectPosition(null);
-    setSelectedProject(null);
-    setIsZoomDisabled(false);
 
-    requestAnimationFrame(() => {
+    // Reset zoom after a small delay to ensure smooth transition
+    closeTimeoutRef.current = setTimeout(() => {
       controllerRef.current?.reset();
-    });
-  }, [playAudio]);
+      closeTimeoutRef.current = null;
+      setIsClosing(false);
+    }, 150);
+  }, [playAudio, isClosing]);
+
+  // ==========================================================
+  // MAP CLICK
+  // ==========================================================
+
+  const handleMapClick = useCallback(() => {
+    if (!selectedProject || isClosing) return;
+    closeProject();
+  }, [selectedProject, closeProject, isClosing]);
+
+  // ==========================================================
+  // ZOOM STATE CHANGE
+  // ==========================================================
 
   const handleZoomStateChange = useCallback((disabled) => {
     setIsZoomDisabled(disabled);
   }, []);
 
+  // ==========================================================
+  // RETRY
+  // ==========================================================
+
+  const handleRetry = useCallback(() => {
+    window.location.reload();
+  }, []);
+
+  // ==========================================================
+  // RENDER STATES
+  // ==========================================================
+
   if (loading) {
-    return (
-      <section className="mumbai-map-section" aria-label="Loading Mumbai project locations">
-        <div className="mumbai-map-loading">
-          <div className="loading-spinner" aria-hidden="true" />
-          <p>{geocodingStatus || "Loading project locations..."}</p>
-          {geocodingProgress > 0 && (
-            <div className="progress-bar">
-              <div 
-                className="progress-fill" 
-                style={{ width: `${geocodingProgress}%` }}
-              />
-              <span className="progress-text">{geocodingProgress}%</span>
-            </div>
-          )}
-        </div>
-      </section>
-    );
+    return <LoadingSkeleton />;
   }
 
-  if (error) {
-    return (
-      <section className="mumbai-map-section" aria-label="Error loading Mumbai project locations">
-        <div className="mumbai-map-error">
-          <p>Failed to load project locations: {error}</p>
-          <button onClick={() => window.location.reload()}>Retry</button>
-        </div>
-      </section>
-    );
+  if (error && projects.length === 0) {
+    return <ErrorState error={error} onRetry={handleRetry} />;
   }
 
-  if (projects.length === 0) {
-    return (
-      <section className="mumbai-map-section" aria-label="No projects found">
-        <div className="mumbai-map-error">
-          <p>No projects found with valid coordinates</p>
-          <button onClick={() => window.location.reload()}>Retry</button>
-        </div>
-      </section>
-    );
+  if (!projects.length) {
+    return <EmptyState onRetry={handleRetry} />;
   }
+
+  // ==========================================================
+  // MAIN RENDER
+  // ==========================================================
 
   return (
-    <section className="mumbai-map-section" aria-label="Mumbai project locations">
+    <section
+      className="mumbai-map-section"
+      aria-label="Mumbai project locations"
+    >
       <div className="mumbai-map-container">
         <MapContainer
-          center={MAP_CENTER}
-          zoom={INITIAL_ZOOM}
-          minZoom={MIN_ZOOM}
-          maxZoom={MAX_ZOOM}
-          maxBounds={MAP_BOUNDS}
+          center={MAP_CONFIG.center}
+          zoom={MAP_CONFIG.initialZoom}
+          minZoom={MAP_CONFIG.minZoom}
+          maxZoom={MAP_CONFIG.maxZoom}
+          maxBounds={MAP_CONFIG.bounds}
           maxBoundsViscosity={1}
           dragging
           inertia
           inertiaDeceleration={1400}
           inertiaMaxSpeed={1200}
-          easeLinearity={0.12}
+          easeLinearity={MAP_CONFIG.animationEaseLinearity}
           scrollWheelZoom={!isZoomDisabled}
           doubleClickZoom={!isZoomDisabled}
           keyboard={!isZoomDisabled}
           wheelDebounceTime={40}
           wheelPxPerZoomLevel={100}
-           zoomControl={false}
+          zoomControl={false}
           attributionControl
           className="mumbai-leaflet-map"
         >
           <ProjectMarkerPane />
-          
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png"
-            maxZoom={20}
-            tileSize={256}
-            subdomains={["a", "b", "c", "d"]}
-          />
-
-          <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
-            maxZoom={20}
-            tileSize={256}
-            subdomains={["a", "b", "c", "d"]}
-            pane="overlayPane"
-          />
-
           <MapResizeObserver />
-          <MapController 
-            controllerRef={controllerRef} 
+
+<TileLayer
+  attribution='&copy; OpenStreetMap &copy; CARTO'
+  url="https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
+  maxZoom={20}
+  tileSize={256}
+  subdomains={["a", "b", "c", "d"]}
+/>
+
+<TileLayer
+  url="https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png"
+  maxZoom={20}
+  tileSize={256}
+  subdomains={["a", "b", "c", "d"]}
+  pane="overlayPane"
+/>
+
+          <MapController
+            controllerRef={controllerRef}
             onZoomStateChange={handleZoomStateChange}
           />
-          
-          <MapZoomController isProjectSelected={!!selectedProject} />
-          
+
+          <MapZoomController disabled={isZoomDisabled} />
+
           <SelectedProjectPosition
             project={selectedProject}
             onPositionChange={setSelectedProjectPosition}
@@ -1105,11 +1194,12 @@ export default function MumbaiMapClient() {
             onSelect={selectProject}
           />
 
-          <div className="map-location-badge" aria-label="Map controls">
+          <div className="map-location-badge">
+            {/* <span className="map-data-source">{dataSource}</span> */}
             <button
               type="button"
               className="mumbai-map-reset"
-              onClick={resetMap}
+              onClick={closeProject}
               aria-label="Reset map view"
             >
               Reset Map
@@ -1121,7 +1211,6 @@ export default function MumbaiMapClient() {
           <ProjectCard
             ref={cardRef}
             project={selectedProject}
-            isVisible={true}
             onClose={closeProject}
             position={selectedProjectPosition}
           />

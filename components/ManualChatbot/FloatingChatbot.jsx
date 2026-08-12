@@ -515,10 +515,18 @@ const FloatingChatbot = () => {
             </div>
           </div>
           
-          <div 
-            className="chat-messages"
-            ref={chatMessagesRef}
-          >
+          <div
+              className="chat-messages"
+              onWheel={(e) => {
+                e.stopPropagation();
+
+                const element = e.currentTarget;
+
+                if (e.deltaY !== 0) {
+                  element.scrollTop += e.deltaY;
+                }
+              }}
+            >
             {messages.length === 0 && !loading ? (
               <div className="empty-state">
                 <span className="empty-icon">🤖</span>

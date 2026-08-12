@@ -57,7 +57,7 @@ export default function Downloads() {
                   href={`/pdf/${item.file}.pdf`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="download-link text-primary fw-semibold text-decoration-none"
+                  className="read-more-btn download-link text-primary fw-semibold text-decoration-none"
                 >
                   View
                 </a>

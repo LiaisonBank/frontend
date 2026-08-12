@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -14,43 +13,96 @@ export default function ProjectsPage() {
   useBodyClass("completed");
 
   const listRef = useRef(null);
+  const mobileListRef = useRef(null);
 
+  // Infinite scroll for desktop table
   useEffect(() => {
     const list = listRef.current;
-
     if (!list || completedList.length <= 1) return;
 
-    const scroll = () => {
-      const first = list.firstElementChild;
+    let animationFrame;
+    let isTransitioning = false;
 
+    const scroll = () => {
+      if (isTransitioning) return;
+      
+      const first = list.firstElementChild;
       if (!first) return;
 
       const height = first.getBoundingClientRect().height;
+      isTransitioning = true;
 
-      list.style.transition = "transform .6s linear";
+      list.style.transition = "transform 0.6s ease-in-out";
       list.style.transform = `translateY(-${height}px)`;
 
       const onTransitionEnd = () => {
         list.appendChild(first);
-
         list.style.transition = "none";
         list.style.transform = "translateY(0)";
-
+        
         // Force reflow
-        list.offsetHeight;
-
+        void list.offsetHeight;
+        
+        isTransitioning = false;
         list.removeEventListener("transitionend", onTransitionEnd);
       };
 
-      list.addEventListener("transitionend", onTransitionEnd, {
-        once: true,
-      });
+      list.addEventListener("transitionend", onTransitionEnd, { once: true });
     };
 
-    const interval = setInterval(scroll, 2000);
+    const interval = setInterval(scroll, 30000000);
 
     return () => {
       clearInterval(interval);
+      if (list) {
+        list.style.transition = "none";
+        list.style.transform = "translateY(0)";
+      }
+    };
+  }, []);
+
+  // Infinite scroll for mobile cards
+  useEffect(() => {
+    const list = mobileListRef.current;
+    if (!list || completedList.length <= 1) return;
+
+    let isTransitioning = false;
+
+    const scroll = () => {
+      if (isTransitioning) return;
+      
+      const first = list.firstElementChild;
+      if (!first) return;
+
+      const height = first.getBoundingClientRect().height;
+      isTransitioning = true;
+
+      list.style.transition = "transform 0.6s ease-in-out";
+      list.style.transform = `translateY(-${height}px)`;
+
+      const onTransitionEnd = () => {
+        list.appendChild(first);
+        list.style.transition = "none";
+        list.style.transform = "translateY(0)";
+        
+        // Force reflow
+        void list.offsetHeight;
+        
+        isTransitioning = false;
+        list.removeEventListener("transitionend", onTransitionEnd);
+      };
+
+      list.addEventListener("transitionend", onTransitionEnd, { once: true });
+    };
+
+    const interval = setInterval(scroll, 3000);
+
+    return () => {
+      clearInterval(interval);
+      if (list) {
+        list.style.transition = "none";
+        list.style.transform = "translateY(0)";
+      }
     };
   }, []);
 
@@ -65,10 +117,7 @@ export default function ProjectsPage() {
                   <div className="theme-breadcrumb-box">
                     <h1>Projects</h1>
 
-                    <nav
-                      aria-label="breadcrumb"
-                      className="page-breadcrumb"
-                    >
+                    <nav aria-label="breadcrumb" className="page-breadcrumb">
                       <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
@@ -93,58 +142,74 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      <section className="container py-5">
+      <section className="container">
         <div className="auto-grid">
-
-          {/* CLIENT LIST */}
-
-          <div className="grid-item">
-
-            <ul className="scroll-wrapper">
-              <li className="header-row">
-                <strong className="item-name">
-                  Client Name
-                </strong>
-
-                <strong className="item-price">
-                  Location
-                </strong>
-              </li>
-            </ul>
-
-            <div className="listItem">
-              <ul
-                ref={listRef}
-                className="scroll-list"
-              >
-                {[...completedList, ...completedList].map(
-                  (item, index) => (
-                    <li key={`client-${index}`}>
-                      <Image
-                        src={rightTick}
-                        alt=""
-                        className="item-icon"
-                      />
-
-                      <span className="item-name">
-                        {item.clientName}
-                      </span>
-
-                      <span className="item-price">
-                        {item.location}
-                      </span>
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
-
-          </div>
-
           {/* MAP */}
 
           <MumbaiMap />
 
+          {/* CLIENT LIST */}
+
+          <div className="grid-item">
+            {/* Desktop Table View */}
+            <div className="table-wrapper desktop-view">
+              <table className="client-table">
+                <thead>
+                  <tr className="header-row">
+                    <th className="item-name">Brand Name</th>
+                    <th className="item-status">Status</th>
+                    <th className="item-location">Location</th>
+                  </tr>
+                </thead>
+                <tbody ref={listRef} className="scroll-body">
+                  {[...completedList, ...completedList].map((item, index) => (
+                    <tr key={`client-${index}`} className="client-row">
+                      <td className="item-name">
+                        <Image src={rightTick} alt="" className="item-icon" />
+                        {item.clientName}
+                      </td>
+                      <td className="item-status">
+                        <span
+                          className={`status-badge status-${item.status?.toLowerCase()}`}
+                        >
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className="item-location">{item.location}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="mobile-view">
+              <ul ref={mobileListRef} className="scroll-list">
+                {[...completedList, ...completedList].map((item, index) => (
+                  <li key={`client-mobile-${index}`} className="client-card">
+                    <div className="card-header">
+                      <Image src={rightTick} alt="" className="item-icon" />
+                      <span className="item-name">{item.clientName}</span>
+                    </div>
+                    <div className="card-details">
+                      <div className="detail-item">
+                        <span className="detail-label">Status:</span>
+                        <span
+                          className={`status-badge status-${item.status?.toLowerCase()}`}
+                        >
+                          {item.status}
+                        </span>
+                      </div>
+                      <div className="detail-item">
+                        <span className="detail-label">Location:</span>
+                        <span className="item-location">{item.location}</span>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
     </>

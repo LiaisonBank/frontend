@@ -93,17 +93,25 @@
 .mumbai-map-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 1.5 / 1.2;
+  // aspect-ratio: 1.5 / 1.2;
 }
 
 .mumbai-leaflet-map {
   width: 100%;
-  height: 100%;
+  height: calc(100dvh - 80px);
   min-height: 500px;
   border-radius: 8px;
   overflow: hidden;
 }
-
+ // Sample data badge
+  .sample-data-badge {
+    background: #f59e0b;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-right: 10px;
+  }
 // ============ LOADING & ERROR STATES ============
 .mumbai-map-loading,
 .mumbai-map-error {
@@ -247,9 +255,9 @@
     }
   }
 
-  &:hover {
-    animation: pinJump 0.5s ease-in-out infinite;
-  }
+  // &:hover {
+  //   animation: pinJump 0.5s ease-in-out infinite;
+  // }
 
   .location-pin {
     width: 42px;
@@ -289,7 +297,7 @@
 // ============ PROJECT INFO CARD ============
 .project-info-card {
   position: absolute;
-  bottom: 13.5rem;
+  bottom: 13rem;
   left: 50%;
   transform: translateX(-50%) scale(0.3);
   transform-origin: bottom center;
@@ -413,7 +421,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
-    gap: 8px;
+    // gap: 8px;
 
     .project-client-name {
       margin: 0 0 6px 0;
@@ -427,12 +435,14 @@
       color: #2c3e50;
       font-size: 14px;
     }
-
+    .project-location-wrapper{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
     .project-category {
-      position: absolute;
-      top: 1rem;
-      left: 0.2rem;
-      margin: 0 1rem;
+      position: relative;
+      margin:5px 0;
       color: white;
       font-size: 14px;
       padding: 2px 8px;
