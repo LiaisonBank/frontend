@@ -389,7 +389,7 @@ export default function CandidateExamForm({
   // Submit exam result to API
   const submitExamResultToAPI = async (examData) => {
     try {
-      const response = await fetch('http://localhost:8000/api/erp-exam-result', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/erp-exam-result`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
