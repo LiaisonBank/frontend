@@ -22,8 +22,6 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./MumbaiMap.scss";
 
-import { MANUAL_PROJECTS } from "@/lib/map/projectCoordinates";
-
 // ============================================================
 // CONFIGURATION
 // ============================================================
@@ -826,28 +824,6 @@ function useProjects() {
   const [error, setError] = useState(null);
   const [dataSource, setDataSource] = useState("Loading...");
 
-  const normalizeManualProjects = useCallback(() => {
-    if (!Array.isArray(MANUAL_PROJECTS)) return [];
-    return MANUAL_PROJECTS.filter((project) =>
-      isValidCoordinate(project?.lat, project?.long ?? project?.lng)
-    ).map((project) => {
-      const lng = Number(project.long ?? project.lng);
-      return {
-        ...project,
-        id: String(project.id),
-        lat: Number(project.lat),
-        long: lng,
-        lng,
-        state: project.state || "Maharashtra",
-        country: project.country || "India",
-        coordinate_source: "manual",
-        is_manual: true,
-        is_geocoded: false,
-        is_fallback: false,
-      };
-    });
-  }, []);
-
   const geocodeWithNominatim = useCallback(async (location) => {
     if (!location?.trim()) return null;
 
@@ -902,8 +878,6 @@ function useProjects() {
       setLoading(true);
       setError(null);
 
-      const manualProjects = normalizeManualProjects();
-
       try {
         const response = await fetch(`${API_BASE_URL}/api/projects/`, {
           method: "GET",
@@ -950,17 +924,20 @@ function useProjects() {
 
         if (cancelled) return;
 
-        const combinedProjects = [...resolvedApiProjects, ...manualProjects];
-        setProjects(combinedProjects);
-        setDataSource(
-          `API: ${resolvedApiProjects.length} + Manual: ${manualProjects.length}`
-        );
+        // Use ONLY API projects - no manual projects
+        setProjects(resolvedApiProjects);
+        setDataSource(`API: ${resolvedApiProjects.length} projects`);
+        
+        // If no projects found, set error
+        if (resolvedApiProjects.length === 0) {
+          setError("No projects found with valid coordinates.");
+        }
       } catch (error) {
         console.error("Failed loading API projects:", error);
         if (!cancelled) {
-          setProjects(manualProjects);
-          setDataSource(`Manual: ${manualProjects.length}`);
-          setError(null);
+          setProjects([]);
+          setDataSource("API: 0 projects");
+          setError(`Failed to load projects: ${error.message}`);
         }
       } finally {
         if (!cancelled) {
@@ -974,7 +951,7 @@ function useProjects() {
     return () => {
       cancelled = true;
     };
-  }, [normalizeManualProjects, resolveApiProjectCoordinates]);
+  }, [resolveApiProjectCoordinates]);
 
   return { projects, loading, error, dataSource, setError };
 }
@@ -1158,21 +1135,21 @@ export default function MumbaiMapClient() {
           <ProjectMarkerPane />
           <MapResizeObserver />
 
-<TileLayer
-  attribution='&copy; OpenStreetMap &copy; CARTO'
-  url="https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
-  maxZoom={20}
-  tileSize={256}
-  subdomains={["a", "b", "c", "d"]}
-/>
+           <TileLayer
+            attribution="&copy; OpenStreetMap &copy; CARTO"
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png"
+            maxZoom={20}
+            tileSize={256}
+            subdomains={["a", "b", "c", "d"]}
+          />
 
-<TileLayer
-  url="https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png"
-  maxZoom={20}
-  tileSize={256}
-  subdomains={["a", "b", "c", "d"]}
-  pane="overlayPane"
-/>
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
+            maxZoom={20}
+            tileSize={256}
+            subdomains={["a", "b", "c", "d"]}
+            pane="overlayPane"
+          />
 
           <MapController
             controllerRef={controllerRef}
