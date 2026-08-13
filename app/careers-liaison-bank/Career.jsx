@@ -24,42 +24,42 @@ const services = [
     name: "Liaisoning",
     slug: "liaisoning",
     image: "/commitment.webp",
-    description: "Liaisoning services for your business."
+    description: "____________________________"
   },
   {
     id: 2,
     name: "Licensing",
     slug: "Licensing",
     image: "/LicensingCareer.jpg",
-    description: "Building the backbone of modern cities and industries."
+    description: "_______________________________________________"
   },
   {
     id: 3,
     name: "Electrical",
-    slug: "materials",
+    slug: "Electrical",
     image: "/ElectricalCareer.jpg",
-    description: "Supplying high‑quality materials for diverse projects."
+    description: "________________________________________________"
   },
   {
     id: 4,
     name: "Fire",
     slug: "media",
     image: "/FireCareer.jpg",
-    description: "Connecting audiences through innovative media solutions."
+    description: "____________________________________________"
   },
   {
     id: 5,
-    name: "PNG",
-    slug: "PNG",
+    name: "Piped Natural Gas",
+    slug: "Piped Natural Gas",
     image: "/pipedNaturalGas.jpg",
-    description: "Creating spaces that inspire and endure."
+    description: "_____________________________________"
   },
   {
     id: 6,
     name: "AMC",
     slug: "AMC",
     image: "/AMCCareer.jpg",
-    description: "Delivering efficiency across the supply chain."
+    description: "_______________________________________"
   }
 ];
 
@@ -123,7 +123,7 @@ export default function CareersLiaisonPage() {
       .to(heroContentRef.current, {
         scale: 1,
         opacity: 1,
-        duration: 0.9,
+        duration: 1.2,
         ease: "power2.out",
       }, "-=0.6")
       // Title text: fade in with animation
