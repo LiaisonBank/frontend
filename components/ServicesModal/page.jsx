@@ -211,7 +211,7 @@ export default function ServicesModal() {
     },
     "Water Tank Cleaning and Certification": {
       title: "Water Tank Cleaning and Certification",
-      description: "Our Water Tank Cleaning service is getting a fresh update, but our services are running as usual. Thank you for your patience!",
+      description: "Our service is getting a fresh update, but our services are running as usual. Thank you for your patience!",
       features: [
         "Professional tank cleaning",
         "Water quality testing",
@@ -833,7 +833,7 @@ export default function ServicesModal() {
                         
                         {displayContent.features && displayContent.features.length > 0 && (
                           <section className="services-details-features" aria-label="Service features">
-                            <h3 className="services-details-subtitle">Key Features</h3>
+                            {/* <h3 className="services-details-subtitle">Key Features</h3> */}
                             {/* <ul className="services-details-features-list" role="list">
                               {displayContent.features.map((feature, idx) => (
                                 <li key={idx} className="services-details-feature-item" role="listitem">
@@ -870,7 +870,7 @@ export default function ServicesModal() {
                         ) : (
                           <div className="services-details-no-content">
                             <div className="services-details-contact-cta">
-                              <p>No specific sub-services listed for this category.</p>
+                              {/* <p>No specific sub-services listed for this category.</p> */}
                             </div>
                           </div>
                         )}

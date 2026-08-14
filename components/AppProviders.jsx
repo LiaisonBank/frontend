@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation"; // Add this import
 import { LoadingProvider } from "@/context/LoadingContext";
 import { ModalProvider } from "@/context/ModalContext";
 import ReduxProvider from "@/store/ReduxProvider";
@@ -13,13 +14,14 @@ import ServicesModal from "@/components/ServicesModal/page";
 // import ExperiencePopup from "@/components/ExperiencePopup/page";
 
 export default function AppProviders({ children }) {
+    const pathname = usePathname(); // Get current path
+  const isHomePage = pathname === "/"; // Check if on home page
   return (
     <ReduxProvider>
       <LoadingProvider>
         <ModalProvider>
-
-          {/* Global Intro Loader */}
-          <IntroLoader />
+          {/* Global Intro Loader - Only on Home Page */}
+          {isHomePage && <IntroLoader />}
 
           <LenisProvider>
             <DisableZoom />

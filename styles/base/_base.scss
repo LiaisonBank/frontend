@@ -742,8 +742,15 @@ body:has(.has-single-submenu:hover) .menu-overlay {
         color: transparent;
       }
     }
-
+    .css-t3ipsp-control{
+      border-color:#cdcdcd !important;
+      box-shadow: none !important;
+    }
     // ✅ Focus effect (auto float label)
+    input:focus{
+      box-shadow: none !important;
+      border:none;
+    }
     input:focus + span,
     textarea:focus + span {
       font-size: 13px;
@@ -779,6 +786,12 @@ body:has(.has-single-submenu:hover) .menu-overlay {
       font-weight: 600;
       font-size: 13px;
     }
+  }
+  .basic-multi-select .select__multi-value{
+     background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+  }
+  .enq-btn {
+     background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
   }
 }
 

@@ -21,6 +21,7 @@ import L from "leaflet";
 
 import "leaflet/dist/leaflet.css";
 import "./MumbaiMap.scss";
+import Link from "next/link";
 
 // ============================================================
 // CONFIGURATION
@@ -127,8 +128,8 @@ const getImageUrl = (imagePath) => {
 
 const getApiCoordinates = (project) => {
   if (!project) return null;
-  const lat = Number(project.lat);
-  const lng = Number(project.long ?? project.lng ?? project.longitude);
+  const lat = Number(project.latitude ?? project.lat);
+  const lng = Number(project.longitude ?? project.long ?? project.lng);
   if (!isValidCoordinate(lat, lng)) return null;
   return { lat, long: lng, source: "api" };
 };
@@ -499,7 +500,17 @@ function MarkerLayer({ projects, selectedProject, onSelect }) {
       const lat = Number(project.lat);
       const lng = Number(project.long ?? project.lng);
 
-      if (!isValidCoordinate(lat, lng)) return;
+      // Skip only if coordinates are invalid, but still keep the project in the list
+      if (!isValidCoordinate(lat, lng)) {
+        // Log but don't skip - we'll still show the project without a marker
+        console.warn("Project has invalid coordinates:", {
+          id: project.id,
+          location: project.location,
+          lat,
+          lng
+        });
+        return;
+      }
 
       const isSelected =
         selectedProject && String(selectedProject.id) === String(project.id);
@@ -707,9 +718,20 @@ const ProjectCard = React.forwardRef(function ProjectCard(
         )}
         {project.completion_date && (
           <div className="project-completion-date">
-            {project.completion_date}
+            {project.completion_date
+              ? new Date(project.completion_date).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "2-digit",
+                })
+              : "-"}
           </div>
         )}
+        <div className="learnmore">
+          <Link href={`/projects/${project.id}`} className="learn-more-link">
+            Learn More
+          </Link>
+        </div>
       </div>
     </article>
   );
@@ -854,7 +876,7 @@ function useProjects() {
 
   const resolveApiProjectCoordinates = useCallback(
     async (project) => {
-      // 1. API LAT/LONG
+      // 1. API LATITUDE/LONGITUDE (primary)
       const apiCoordinates = getApiCoordinates(project);
       if (apiCoordinates) return apiCoordinates;
 
@@ -900,37 +922,79 @@ function useProjects() {
           ? result.projects
           : [];
 
+        // Process ALL projects without skipping any
         const resolvedApiProjects = [];
+        const projectsWithCoords = [];
+        const projectsWithoutCoords = [];
+
         for (const project of apiProjects) {
           if (cancelled) return;
 
-          const coordinates = await resolveApiProjectCoordinates(project);
-          if (!coordinates) {
-            console.warn("Project skipped - no coordinates:", project);
-            continue;
-          }
-
-          resolvedApiProjects.push({
+          // Create base project object
+          const baseProject = {
             ...project,
-            lat: coordinates.lat,
-            long: coordinates.long,
-            lng: coordinates.long,
-            coordinate_source: coordinates.source,
+            // Normalize coordinate properties
+            lat: project.latitude ?? project.lat ?? null,
+            long: project.longitude ?? project.long ?? project.lng ?? null,
+            lng: project.longitude ?? project.long ?? project.lng ?? null,
+            coordinate_source: null,
             is_manual: false,
-            is_geocoded: coordinates.source === "nominatim",
-            is_fallback: coordinates.source === "fallback",
-          });
+            is_geocoded: false,
+            is_fallback: false,
+          };
+
+          // Check if project has valid API coordinates
+          const hasApiCoords = isValidCoordinate(baseProject.lat, baseProject.long);
+
+          if (hasApiCoords) {
+            // Project has valid coordinates - mark as API source
+            baseProject.coordinate_source = "api";
+            projectsWithCoords.push(baseProject);
+          } else {
+            // Project doesn't have API coordinates - try to resolve
+            const resolvedCoords = await resolveApiProjectCoordinates(project);
+            
+            if (resolvedCoords) {
+              // Successfully resolved coordinates
+              baseProject.lat = resolvedCoords.lat;
+              baseProject.long = resolvedCoords.long;
+              baseProject.lng = resolvedCoords.long;
+              baseProject.coordinate_source = resolvedCoords.source;
+              baseProject.is_geocoded = resolvedCoords.source === "nominatim";
+              baseProject.is_fallback = resolvedCoords.source === "fallback";
+              projectsWithCoords.push(baseProject);
+            } else {
+              // No coordinates found - still keep the project but without coordinates
+              baseProject.coordinate_source = "none";
+              projectsWithoutCoords.push(baseProject);
+              console.warn("Project has no coordinates:", {
+                id: project.id,
+                location: project.location,
+                client: project.client_name
+              });
+            }
+          }
         }
 
         if (cancelled) return;
 
-        // Use ONLY API projects - no manual projects
-        setProjects(resolvedApiProjects);
-        setDataSource(`API: ${resolvedApiProjects.length} projects`);
+        // Combine ALL projects - projects with coordinates first, then without
+        const allProjects = [...projectsWithCoords, ...projectsWithoutCoords];
         
-        // If no projects found, set error
-        if (resolvedApiProjects.length === 0) {
-          setError("No projects found with valid coordinates.");
+        setProjects(allProjects);
+        setDataSource(
+          `Total: ${allProjects.length} projects ` +
+          `(Coords: ${projectsWithCoords.length}, ` +
+          `No Coords: ${projectsWithoutCoords.length})`
+        );
+
+        // Only show error if there are no projects at all
+        if (allProjects.length === 0) {
+          setError("No projects found.");
+        } else if (allProjects.length > 0 && projectsWithCoords.length === 0) {
+          setError("Projects found but none have valid coordinates.");
+        } else {
+          setError(null);
         }
       } catch (error) {
         console.error("Failed loading API projects:", error);
@@ -1135,7 +1199,7 @@ export default function MumbaiMapClient() {
           <ProjectMarkerPane />
           <MapResizeObserver />
 
-           <TileLayer
+          <TileLayer
             attribution="&copy; OpenStreetMap &copy; CARTO"
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png"
             maxZoom={20}
@@ -1172,7 +1236,6 @@ export default function MumbaiMapClient() {
           />
 
           <div className="map-location-badge">
-            {/* <span className="map-data-source">{dataSource}</span> */}
             <button
               type="button"
               className="mumbai-map-reset"

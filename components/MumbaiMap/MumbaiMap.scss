@@ -476,6 +476,18 @@
       color: #2c3e50;
       font-size: 13px;
       text-align: right;
+      svg {
+        font-size: 12px;
+        width: 16px;
+        height: 16px;
+      }
+      .learn-more-link{
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content:flex-end;
+        padding: 1rem 0 0;
+      }
     }
 
     .project-card-zone {
