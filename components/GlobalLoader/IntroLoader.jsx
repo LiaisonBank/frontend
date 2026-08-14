@@ -11,8 +11,8 @@ export default function IntroLoader() {
   const { setIsLoading } = useLoading();
   const [show, setShow] = useState(true);
   const [position, setPosition] = useState({
-    x: "-38vw",
-    y: "-44.5vh",
+    x: "-44.2vw",
+    y: "-44.8vh",
     scale: 0.68,
   });
 
@@ -27,8 +27,8 @@ export default function IntroLoader() {
 
       if (width >= 1280 && width <= 1440) {
         setPosition({
-          x: "-42.8vw",
-          y: "-46.4vh",
+          x: "-44.2vw",
+          y: "-44.8vh",
           scale: 0.68,
         });
       } else if (width >= 1025 && width < 1280) {

@@ -1,0 +1,36 @@
+.download-item {
+  transition: background-color 0.5s ease-in-out;
+  padding: 2rem 1rem;
+}
+
+.download-item:hover {
+  background-color: #f8f9fa;
+}
+
+.download-name {
+  font-size: 1.5rem;
+ 
+  
+}
+
+.download-link {
+  font-size: 1.2rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+   color: #1a1a1a;
+    background: linear-gradient(
+          115deg,
+          var(--themeht-primary-color),
+          var(--themeht-secondary-color)
+        );
+        background-clip: border-box;
+        -webkit-text-fill-color: #0000;
+        z-index: 9;
+        -webkit-background-clip: text;
+}
+
+.download-link:hover {
+  // background-color: rgba(13, 110, 253, 0.08);
+  text-decoration: none;
+}

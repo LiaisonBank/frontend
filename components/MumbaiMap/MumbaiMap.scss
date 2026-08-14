@@ -1,557 +1,141 @@
-// MumbaiMap.scss
-@keyframes pinJump {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
+// MumbaiMap.scss - Production Ready
 
-  50% {
-    transform: translateY(-8px);
-  }
-}
-@keyframes ring {
-  0% {
-      opacity: .9;
-      transform: rotate(45deg) scale(.5);
-  }
-  100% {
-      opacity: 0;
-      transform: rotate(45deg) scale(1.6);
-  }
-}
-.mumbai-map-section {
-  width: 100%;
-  position: relative;
-  z-index: 0;
-
-  .mumbai-map-loading,
-  .mumbai-map-error {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    min-height: 400px;
-    text-align: center;
-    
-    .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #3498db;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-  }
-}
-
+// ============ KEYFRAMES ============
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
+@keyframes growFromPin {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.3);
+    transform-origin: bottom center;
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.05);
+    transform-origin: bottom center;
+  }
+  70% {
+    transform: translateX(-50%) scale(0.95);
+    transform-origin: bottom center;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    transform-origin: bottom center;
+  }
+}
+
+@keyframes shrinkToPin {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    transform-origin: bottom center;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.3);
+    transform-origin: bottom center;
+  }
+}
+
+@keyframes pinJump {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes pin-ring-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.25);
+    opacity: 0.85;
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(3.2);
+    opacity: 0.25;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(4);
+    opacity: 0;
+  }
+}
+
+@keyframes drawLocationPin {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes borderShine {
+  0% {
+    background-position: 100% 0;
+  }
+  50% {
+    background-position: 0% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+// ============ MAIN SECTION ============
+.mumbai-map-section {
+  width: 100%;
+  position: relative;
+  z-index: 0;
+}
+
 .mumbai-map-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 1.5 / 1.2;
+  // aspect-ratio: 1.5 / 1.2;
 }
 
 .mumbai-leaflet-map {
   width: 100%;
-  height: 100%;
+  height: calc(100dvh - 80px);
   min-height: 500px;
   border-radius: 8px;
   overflow: hidden;
 }
-
-// Pin styles
-.liaison-pin-icon {
-  cursor: pointer;
-  display: block;
-  width: 38px;
-  height: 48px;
-  position: relative;
-}
-
-.liaison-pin-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.liaison-blue-pin {
-  position: relative;
-  width: 36px;
-  height: 46px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.liaison-blue-pin::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
-  border-bottom: 34px solid var(--status-color, #3498db);
-  transition: all 0.3s ease;
-}
-
-.liaison-blue-pin::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 8px;
-  height: 8px;
-  background: var(--status-color, #3498db);
-  border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
-.liaison-blue-pin-inner {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 24px;
-  height: 24px;
-  background: white;
-  border-radius: 50%;
-  z-index: 1;
-  transition: all 0.3s ease;
-  border: 2px solid white;
-  // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pin-initials {
-  display: none;
-  font-size: 10px;
-  font-weight: 700;
-  color: #2c3e50;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  line-height: 1;
-}
-
-.pin-status-dot {
-  display: none;
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 2px solid white;
-  z-index: 2;
-}
-
-.liaison-blue-pin.is-active {
-  transform: scale(1.15);
-}
-
-.liaison-blue-pin.is-active::before {
-  border-bottom-color: #e74c3c;
-}
-
-.liaison-blue-pin.is-active::after {
-  background: #e74c3c;
-}
-
-.liaison-blue-pin.is-active .liaison-blue-pin-inner {
-  background: #e74c3c;
-  width: 28px;
-  height: 28px;
-  top: 4px;
-  border-color: #e74c3c;
-}
-
-.liaison-blue-pin.is-active .pin-initials {
-  color: white;
-}
-
-// Tooltip styles
-.project-tooltip {
-  background: rgba(44, 62, 80, 0.95);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  border: none;
-  pointer-events: none;
-  
-  &::before {
-    border-top-color: rgba(44, 62, 80, 0.95);
-  }
-}
-
-// Add to your MumbaiMap.scss
-
-// Project Card with Arrow
-.project-info-card {
-  position: absolute;
-  bottom: 16rem;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  max-width: 400px;
-  width: 90%;
-  z-index: 2000;
-  opacity: 0;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  overflow: visible;
-
-  &.is-visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
-    animation: cardAppear 0.5s ease;
-  }
-
-  // Arrow pointer to marker
-  .project-card-arrow {
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 14px solid white;
-    filter: drop-shadow(0 -2px 4px rgba(0, 0, 0, 0.1));
-    opacity: 0;
-    transition: opacity 0.3s ease 0.3s;
-  }
-
-  &.is-visible .project-card-arrow {
-    opacity: 1;
-  }
-
-  .project-card-image {
-    width: 100%;
-    height: 200px;
-    background-size: cover;
-    background-position: center;
-    background-color: #f5f5f5;
-    border-radius: 12px 12px 0 0;
-  }
-
-  .project-card-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.6);
+ // Sample data badge
+  .sample-data-badge {
+    background: #f59e0b;
     color: white;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    font-size: 22px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-    z-index: 1;
-    
-    &:hover {
-      background: rgba(0, 0, 0, 0.8);
-    }
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-right: 10px;
   }
-
-  .project-card-content {
-    padding: 20px;
-    
-    .project-client-name {
-      margin: 0 0 6px 0;
-      font-size: 22px;
-      font-weight: 700;
-      color: #2c3e50;
-    }
-    
-    .project-location {
-      margin: 0;
-      color: #2c3e50;
-      font-size: 1.1rem;
-    }
-     .project-category {
-          position: absolute;
-    top: 1rem;
-    left: 0.2rem;
-      margin: 0 1rem;
-      color: #2c3e50;
-      font-size: 14px;
-      padding: 2px 8px;
-      color: white;
-      border-radius: 12px;
-      background:linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));;
-    }
-    
-    .project-state {
-      margin: 0 0 4px 0;
-      color: #2c3e50;
-      font-size: 13px;
-    }
-    
-    .project-country {
-      margin: 0 0 10px 0;
-      color: #95a5a6;
-      font-size: 13px;
-    }
-    
-    .project-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-      
-      .status-indicator {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-      }
-      
-      .status-text {
-        font-size: 13px;
-        font-weight: 600;
-        color: #2c3e50;
-      }
-    }
-    
-    .project-card-zone {
-      display: inline-block;
-      background: #f97316;
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 10px;
-    }
-    
-    .project-card-coordinates {
-      display: none;
-      font-size: 12px;
-      color: #95a5a6;
-      font-family: monospace;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid #ecf0f1;
-    }
-  }
-}
-
-// Card appear animation
-@keyframes cardAppear {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(30px) scale(0.95);
-  }
-  60% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(-5px) scale(1.02);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-}
-.leaflet-tile-pane {
-  filter: saturate(1.4) hue-rotate(-10deg);
-}
-// Balloon Pin styles with orange gradient
-.liaison-balloon-pin {
-  position: relative;
+// ============ LOADING & ERROR STATES ============
+.mumbai-map-loading,
+.mumbai-map-error {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  filter: drop-shadow(0 4px 8px rgba(251, 146, 60, 0.3));
-}
-
-.liaison-balloon-body {
-  position: relative;
-  width: 42px;
-  height: 42px;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-  border-radius: 50% 50% 50% 50%;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 
-    0 2px 12px rgba(251, 146, 60, 0.4),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.1),
-    inset 0 2px 6px rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
+  height: 100%;
+  min-height: 400px;
+  text-align: center;
 }
 
-.liaison-balloon-body::before {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 10px;
-  width: 12px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  transform: rotate(-30deg);
-  filter: blur(1px);
-}
-
-.liaison-balloon-body::after {
-  content: '';
-  position: absolute;
-  top: 6px;
-  right: 12px;
-  width: 6px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  transform: rotate(20deg);
-  filter: blur(1px);
-}
-
-.liaison-balloon-inner {
-  width: 34px;
-  height: 34px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.pin-initials {
-  display:none;
-  font-size: 12px;
-  font-weight: 700;
-  color: #ea580c;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  line-height: 1;
-  transition: all 0.3s ease;
-}
-
-.liaison-balloon-tail {
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 12px solid var(--gradient-end);
-  margin-top: -2px;
-  filter: drop-shadow(0 2px 4px rgba(251, 146, 60, 0.2));
-  transition: all 0.3s ease;
-}
-
-.pin-status-dot {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid white;
-  z-index: 2;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-// Active state
-.liaison-balloon-pin.is-active {
-  transform: scale(1.15);
-  filter: drop-shadow(0 6px 16px rgba(251, 146, 60, 0.5));
-  z-index: 1000;
-}
-
-.liaison-balloon-pin.is-active .liaison-balloon-body {
-  border-color: #fff;
-  box-shadow: 
-    0 4px 20px rgba(251, 146, 60, 0.6),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.1),
-    inset 0 2px 6px rgba(255, 255, 255, 0.4);
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-.liaison-balloon-pin.is-active .liaison-balloon-inner {
-  background: #fff;
-  transform: scale(1.05);
-}
-
-.liaison-balloon-pin.is-active .pin-initials {
-  color: #ea580c;
-  font-weight: 800;
-}
-
-.liaison-balloon-pin.is-active .liaison-balloon-tail {
-  border-top-color: #ea580c;
-}
-
-// Hover state
-.liaison-balloon-pin:not(.is-active):hover {
-  transform: scale(1.08);
-  filter: drop-shadow(0 6px 12px rgba(251, 146, 60, 0.4));
-}
-
-.liaison-balloon-pin:not(.is-active):hover .liaison-balloon-body {
-  border-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 
-    0 4px 16px rgba(251, 146, 60, 0.5),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.1),
-    inset 0 2px 6px rgba(255, 255, 255, 0.3);
-}
-
-// Pulse animation for active pin
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
+.mumbai-map-loading {
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #FF4D00;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
   }
 }
 
-// Tooltip styles
-.project-tooltip {
-  background: linear-gradient(135deg, #fb923c, #f97316);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.4);
-  border: none;
-  pointer-events: none;
-  
-  &::before {
-    border-top-color: #f97316;
-  }
-}
-
-// Progress bar styles
+// ============ PROGRESS BAR ============
 .progress-bar {
   width: 80%;
   max-width: 300px;
@@ -564,7 +148,7 @@
   
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #fb923c, #f97316, #ea580c);
+    background: linear-gradient(90deg, #FFD600, #FF4D00);
     border-radius: 3px;
     transition: width 0.3s ease;
   }
@@ -579,26 +163,7 @@
   }
 }
 
-// Overlay
-.project-map-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-
-  &.is-visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
-// Reset button
+// ============ MAP CONTROLS ============
 .map-location-badge {
   position: absolute;
   bottom: 20px;
@@ -629,253 +194,15 @@
   }
 }
 
-// Mobile responsive
-@media (max-width: 768px) {
-  .project-info-card {
-    max-width: 100%;
-    bottom: 20px;
-    border-radius: 8px;
-    width: calc(100% - 20px);
-    
-    .project-card-image {
-      height: 150px;
-    }
-    
-    .project-card-content {
-      padding: 15px;
-      
-      .project-client-name {
-        font-size: 18px;
-      }
-    }
-  }
-}
-// Add to your MumbaiMap.scss
-
-// Balloon Pin styles with orange gradient
-.liaison-balloon-pin {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  filter: drop-shadow(0 4px 8px rgba(251, 146, 60, 0.3));
-}
-
-.liaison-balloon-body {
-  position: relative;
-  width: 42px;
-  height: 42px;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-  border-radius: 50% 50% 50% 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 
-    0 2px 12px rgba(251, 146, 60, 0.4),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.1),
-    inset 0 2px 6px rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.liaison-balloon-body::before {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 10px;
-  width: 12px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  transform: rotate(-30deg);
-  filter: blur(1px);
-}
-
-.liaison-balloon-body::after {
-  content: '';
-  position: absolute;
-  top: 6px;
-  right: 12px;
-  width: 6px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  transform: rotate(20deg);
-  filter: blur(1px);
-}
-
-.liaison-balloon-inner {
-  width: 34px;
-  height: 34px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.pin-initials {
-  font-size: 12px;
-  font-weight: 700;
-  color: #ea580c;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  line-height: 1;
-  transition: all 0.3s ease;
-}
-
-.liaison-balloon-tail {
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 12px solid var(--gradient-end);
-  margin-top: -2px;
-  filter: drop-shadow(0 2px 4px rgba(251, 146, 60, 0.2));
-  transition: all 0.3s ease;
-}
-
-.pin-status-dot {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid white;
-  z-index: 2;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-// Active state
-.liaison-balloon-pin.is-active {
-  transform: scale(1.15);
-  filter: drop-shadow(0 6px 16px rgba(251, 146, 60, 0.5));
-  z-index: 1000;
-}
-
-.liaison-balloon-pin.is-active .liaison-balloon-body {
-  border-color: #fff;
-  box-shadow: 
-    0 4px 20px rgba(251, 146, 60, 0.6),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.1),
-    inset 0 2px 6px rgba(255, 255, 255, 0.4);
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-.liaison-balloon-pin.is-active .liaison-balloon-inner {
-  background: #fff;
-  transform: scale(1.05);
-}
-
-.liaison-balloon-pin.is-active .pin-initials {
-  color: #ea580c;
-  font-weight: 800;
-}
-
-.liaison-balloon-pin.is-active .liaison-balloon-tail {
-  border-top-color: #ea580c;
-}
-
-// Hover state
-.liaison-balloon-pin:not(.is-active):hover {
-  transform: scale(1.08);
-  filter: drop-shadow(0 6px 12px rgba(251, 146, 60, 0.4));
-}
-
-.liaison-balloon-pin:not(.is-active):hover .liaison-balloon-body {
-  border-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 
-    0 4px 16px rgba(251, 146, 60, 0.5),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.1),
-    inset 0 2px 6px rgba(255, 255, 255, 0.3);
-}
-
-// Pulse animation for active pin
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-// Tooltip styles
-.project-tooltip {
-  background: linear-gradient(135deg, #fb923c, #f97316);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.4);
-  border: none;
-  pointer-events: none;
-  
-  &::before {
-    border-top-color: #f97316;
-  }
-}
-
-// Progress bar styles
-.progress-bar {
-  width: 80%;
-  max-width: 300px;
-  height: 6px;
-  background: #e0e0e0;
-  border-radius: 3px;
-  margin: 15px auto 0;
-  position: relative;
-  overflow: hidden;
-  
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #fb923c, #f97316, #ea580c);
-    border-radius: 3px;
-    transition: width 0.3s ease;
-  }
-  
-  .progress-text {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    color: #7f8c8d;
-  }
-}
-.pin-outline {
-  stroke: #ff6b00;
-  stroke-width: 5;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-
-  stroke-dasharray: 1200;
-  stroke-dashoffset: 1200;
-
-  animation: drawLocationPin 1.8s ease-out forwards;
-}
-
-@keyframes drawLocationPin {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-// Add to your MumbaiMap.scss
-
-// Custom Pin styles
+// ============ CUSTOM PIN STYLES ============
 .liaison-pin-icon {
   cursor: pointer;
   display: block;
   width: 42px;
   height: 52px;
   position: relative;
+  background: transparent !important;
+  border: none !important;
 }
 
 .liaison-pin-wrapper {
@@ -896,29 +223,29 @@
   justify-content: center;
   transition: all 0.3s ease;
   cursor: pointer;
-  // Ring is hidden by default
+  transform-origin: bottom center;
+
+  // Ring pulse effect
   &::before,
   &::after {
     content: "";
     position: absolute;
     left: 50%;
     top: 80%;
-
     width: 18px;
     height: 18px;
-
     border-radius: 50%;
-    border: 1px solid #f97316;
-
+    border: 1px solid var(--status-color, #f97316);
     transform: translate(-50%, -50%) scale(0.25);
     opacity: 0;
-
     pointer-events: none;
     z-index: 1;
   }
 
-  // Only animate when pin is active
   &.is-active {
+    transform: scale(1.15);
+    filter: drop-shadow(0 4px 20px rgba(255, 77, 0, 0.4));
+
     &::before {
       animation: pin-ring-pulse 1.8s ease-out infinite;
     }
@@ -927,64 +254,35 @@
       animation: pin-ring-pulse 1.8s ease-out 0.9s infinite;
     }
   }
-}
-@keyframes pin-ring-pulse {
-  0% {
-    transform: translate(-50%, -50%) scale(0.25);
-    opacity: 0.85;
+
+  // &:hover {
+  //   animation: pinJump 0.5s ease-in-out infinite;
+  // }
+
+  .location-pin {
+    width: 42px;
+    height: 52px;
+    display: block;
+    transition: all 0.3s ease;
   }
 
-  70% {
-    transform: translate(-50%, -50%) scale(3.2);
-    opacity: 0.25;
+  .pin-outline {
+    stroke: var(--stroke-color, #ff6b00);
+    stroke-width: 5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation: drawLocationPin 1.8s ease-out forwards;
   }
 
-  100% {
-    transform: translate(-50%, -50%) scale(4);
-    opacity: 0;
+  &.is-active .location-pin {
+    animation: none;
   }
-}
-.custom-pin {
-  transform-origin: bottom center;
-}
-
-.custom-pin:hover {
-  animation: pinJump 0.5s ease-in-out infinite;
-}
-
-@keyframes pinJump {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-.custom-pin .location-pin {
-  width: 42px;
-  height: 52px;
-  display: block;
-  transition: all 0.3s ease;
-}
-
-.custom-pin:hover {
-  transform: scale(1.05);
-}
-
-.custom-pin.is-active {
-  transform: scale(1.15);
-  filter: drop-shadow(0 4px 20px rgba(255, 77, 0, 0.4));
- 
-}
-
-.custom-pin.is-active .location-pin {
-  animation: none;
 }
 
 .pin-status-dot {
+  display: none;
   position: absolute;
   top: 2px;
   right: 0px;
@@ -996,87 +294,15 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-// Tooltip styles
-.project-tooltip {
-  background: linear-gradient(135deg, #FFD600, #FF4D00);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(255, 77, 0, 0.3);
-  border: none;
-  pointer-events: none;
-  
-  &::before {
-    border-top-color: #FF4D00;
-  }
-}
-.project-info-card {
-  position: relative;
-  border: 2px solid #ff5a00;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: none;
-
-  // Very subtle border shine
-  &::before {
-    content: "";
-    position: absolute;
-    inset: -2px;
-    border-radius: inherit;
-    padding: 2px;
-
-    background: linear-gradient(
-      30deg,
-      #ff5a00 0%,
-      #ff5a00 35%,
-      #ffd9c2 50%,
-      #ff5a00 65%,
-      #ff5a00 100%
-    );
-
-    background-size: 250% 100%;
-    animation: borderShine 3s ease-in-out infinite;
-
-    // Show only the border
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-
-    mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-
-    pointer-events: none;
-    z-index: 10;
-  }
-}
-
-@keyframes borderShine {
-  0% {
-    background-position: 100% 0;
-  }
-
-  50% {
-    background-position: 0% 0;
-  }
-
-  100% {
-    background-position: 100% 0;
-  }
-}
-// Project Card - On top of pointer with arrow pointing down
+// ============ PROJECT INFO CARD ============
 .project-info-card {
   position: absolute;
-  bottom: 13.5rem;
+  bottom: 13rem;
   left: 50%;
   transform: translateX(-50%) scale(0.3);
   transform-origin: bottom center;
   background: white;
-  border:2px solid #FF4D00;
+  border: 2px solid #FF4D00;
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   max-width: 400px;
@@ -1093,7 +319,40 @@
     transform: translateX(-50%) scale(1);
     animation: growFromPin 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
-  // Arrow pointing DOWN to the marker
+
+  &.is-visible.closing {
+    animation: shrinkToPin 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  // Shine border effect
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(
+      30deg,
+      #ff5a00 0%,
+      #ff5a00 35%,
+      #ffd9c2 50%,
+      #ff5a00 65%,
+      #ff5a00 100%
+    );
+    background-size: 250% 100%;
+    animation: borderShine 3s ease-in-out infinite;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 10;
+  }
+
   .project-card-arrow-down {
     position: absolute;
     bottom: -15px;
@@ -1146,7 +405,7 @@
     justify-content: center;
     transition: background 0.2s;
     z-index: 1;
-    
+
     &:hover {
       background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
     }
@@ -1160,60 +419,77 @@
     border-image: linear-gradient(90deg, #FFD600, #FF4D00);
     border-image-slice: 1;
     display: grid;
-    flex-direction: column;
     grid-template-columns: 1fr 1fr;
     align-items: center;
-    justify-content: space-between;
+    // gap: 8px;
+
     .project-client-name {
       margin: 0 0 6px 0;
       font-size: 22px;
       font-weight: 700;
       color: #2c3e50;
     }
-    
+
     .project-location {
       margin: 0;
       color: #2c3e50;
       font-size: 14px;
     }
-    
-    .project-state {
-      margin: 0 0 4px 0;
-      color: #95a5a6;
-      font-size: 13px;
+    .project-location-wrapper{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
-    
-    .project-country {
-      margin: 0 0 10px 0;
-      color: #95a5a6;
-      font-size: 13px;
+    .project-category {
+      position: relative;
+      margin:5px 0;
+      color: white;
+      font-size: 14px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
     }
-    .project-completion-date{
-      margin: 0 0 10px 0;
-      color: #2c3e50;
-      font-size: 13px;
-      text-align: right;
-    }
+
     .project-status {
       display: flex;
       align-items: center;
       gap: 8px;
       margin-bottom: 10px;
       justify-content: flex-end;
+
       .status-indicator {
         width: 10px;
         height: 10px;
         border-radius: 50%;
         display: inline-block;
       }
-      
+
       .status-text {
         font-size: 13px;
         font-weight: 600;
         color: #2c3e50;
       }
     }
-    
+
+    .project-completion-date {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+      font-size: 13px;
+      text-align: right;
+      svg {
+        font-size: 12px;
+        width: 16px;
+        height: 16px;
+      }
+      .learn-more-link{
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content:flex-end;
+        padding: 1rem 0 0;
+      }
+    }
+
     .project-card-zone {
       display: inline-block;
       background: linear-gradient(90deg, #FFD600, #FF4D00);
@@ -1226,8 +502,9 @@
       margin-bottom: 10px;
       font-weight: 600;
     }
-    
+
     .project-card-coordinates {
+      display: none;
       font-size: 12px;
       color: #95a5a6;
       font-family: monospace;
@@ -1238,166 +515,30 @@
   }
 }
 
-
-// Grow from pin animation
-@keyframes growFromPin {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.3);
-    transform-origin: bottom center;
-  }
-  50% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1.05);
-    transform-origin: bottom center;
-  }
-  70% {
-    transform: translateX(-50%) scale(0.95);
-    transform-origin: bottom center;
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-    transform-origin: bottom center;
-  }
+// ============ TILE STYLES ============
+.leaflet-tile-pane {
+  filter: saturate(1.4) hue-rotate(-10deg);
 }
 
-// Close animation
-.project-info-card.is-visible.closing {
-  animation: shrinkToPin 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+.leaflet-control-attribution {
+  display: none !important;
 }
 
-@keyframes shrinkToPin {
-  0% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-    transform-origin: bottom center;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.3);
-    transform-origin: bottom center;
-  }
-}
-
-// Progress bar styles
-.progress-bar {
-  width: 80%;
-  max-width: 300px;
-  height: 6px;
-  background: #e0e0e0;
-  border-radius: 3px;
-  margin: 15px auto 0;
-  position: relative;
-  overflow: hidden;
-  
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #FFD600, #FF4D00);
-    border-radius: 3px;
-    transition: width 0.3s ease;
-  }
-  
-  .progress-text {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    color: #7f8c8d;
-  }
-}
-
-// Overlay
-.project-map-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-
-  &.is-visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
-// // Reset button
-// .map-location-badge {
-//   position: absolute;
-//   bottom: 20px;
-//   right: 20px;
-//   z-index: 1000;
-
-//   .mumbai-map-reset {
-//     padding: 8px 16px;
-//     background: white;
-//     border: 1px solid #ddd;
-//     border-radius: 4px;
-//     cursor: pointer;
-//     font-size: 12px;
-//     font-weight: 600;
-//     color: #2c3e50;
-//     transition: all 0.2s;
-//     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-//     &:hover {
-//       background: #f8f9fa;
-//       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-//       transform: translateY(-1px);
-//     }
-
-//     &:active {
-//       transform: translateY(0);
-//     }
-//   }
-// }
-
-// Loading spinner
-.mumbai-map-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  min-height: 400px;
-  text-align: center;
-  
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #FF4D00;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-// Mobile responsive
+// ============ MOBILE RESPONSIVE ============
 @media (max-width: 768px) {
   .project-info-card {
     max-width: 100%;
     bottom: 50px;
     border-radius: 8px;
     width: calc(100% - 20px);
-    
+
     .project-card-image {
       height: 150px;
     }
-    
+
     .project-card-content {
       padding: 15px;
-      
+
       .project-client-name {
         font-size: 18px;
       }

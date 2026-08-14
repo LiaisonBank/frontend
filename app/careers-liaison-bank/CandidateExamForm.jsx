@@ -429,103 +429,8 @@ export default function CandidateExamForm({
     }
   };
 
-  // Manual exam questions data (fallback)
-  const getManualExamQuestions = (jobTitle, department) => {
-    const baseQuestions = [
-      {
-        id: 'q1',
-        question: "What is the primary responsibility of a liaison officer?",
-        options: [
-          "Facilitating communication between organizations",
-          "Managing internal operations",
-          "Handling financial transactions",
-          "Developing marketing strategies"
-        ],
-        correct_answer: "Facilitating communication between organizations",
-        explanation: "A liaison officer's primary role is to facilitate communication and coordination between different organizations or departments."
-      },
-      {
-        id: 'q2',
-        question: "Which of the following is a key skill for a liaison professional?",
-        options: [
-          "Technical programming",
-          "Interpersonal communication",
-          "Graphic design",
-          "Data entry"
-        ],
-        correct_answer: "Interpersonal communication",
-        explanation: "Strong interpersonal communication skills are essential for liaison roles to effectively connect with various stakeholders."
-      },
-      {
-        id: 'q3',
-        question: "What is the importance of confidentiality in liaison work?",
-        options: [
-          "To maintain trust and protect sensitive information",
-          "To increase work efficiency",
-          "To reduce paperwork",
-          "To save time"
-        ],
-        correct_answer: "To maintain trust and protect sensitive information",
-        explanation: "Confidentiality is crucial in liaison roles to maintain trust between parties and protect sensitive organizational information."
-      }
-    ];
-
-    const departmentQuestions = {
-      'sales': [
-        {
-          id: 'q4',
-          question: "What is the key metric for measuring sales performance?",
-          options: [
-            "Revenue growth",
-            "Number of emails sent",
-            "Office attendance",
-            "Years of experience"
-          ],
-          correct_answer: "Revenue growth",
-          explanation: "Revenue growth is a primary indicator of sales team performance and business success."
-        }
-      ],
-      'technology': [
-        {
-          id: 'q4',
-          question: "What is the primary purpose of agile methodology in software development?",
-          options: [
-            "Rapid iterative development",
-            "Writing documentation first",
-            "Following a strict plan",
-            "Avoiding changes"
-          ],
-          correct_answer: "Rapid iterative development",
-          explanation: "Agile methodology emphasizes iterative development, flexibility, and continuous delivery of value."
-        }
-      ]
-    };
-
-    let selectedDepartmentQuestions = [];
-    const deptLower = (department || '').toLowerCase();
-    
-    if (deptLower.includes('sales')) {
-      selectedDepartmentQuestions = departmentQuestions.sales || [];
-    } else if (deptLower.includes('technology') || deptLower.includes('it')) {
-      selectedDepartmentQuestions = departmentQuestions.technology || [];
-    }
-
-    const allQuestions = [
-      ...baseQuestions,
-      ...selectedDepartmentQuestions
-    ];
-
-    return shuffleArray(allQuestions);
-  };
-
-  const shuffleArray = (array) => {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  };
+ 
+ 
 
   const handleAnswerSelect = (questionIndex, answer) => {
     setAnswers(prev => ({
@@ -702,7 +607,7 @@ export default function CandidateExamForm({
   // Render error state when exam is not available
   if (showExamNotAvailable || alreadyTakenExam || showErrorState) {
     return (
-      <div className="exam-modal-overlay">
+      <div className="exam-modal-overlay" >
         <div className="exam-modal form-modal">
           <div className="exam-modal-header">
             <h3>{error?.includes('already') ? 'Exam Not Available' : 'Error'}</h3>
@@ -772,133 +677,160 @@ export default function CandidateExamForm({
   }
 
   // Render exam
-  if (examStarted && !examSubmitted) {
-    return (
-      <div className="exam-modal-overlay">
-        <div className="exam-modal">
-          <div className="exam-modal-header">
-            <h3>Technical Assessment - {jobData?.job_title || jobData?.title || 'Position'}</h3>
-            <button onClick={onClose} className="close-btn">
-              <X size={20} />
-            </button>
+ // Render exam
+if (examStarted && !examSubmitted) {
+  return (
+    <div className="exam-modal-overlay">
+      <div className="exam-modal">
+        <div className="exam-modal-header">
+          <h3>Technical Assessment - {jobData?.job_title || jobData?.title || 'Position'}</h3>
+          <button onClick={onClose} className="close-btn">
+            <X size={20} />
+          </button>
+        </div>
+        
+        <div className="exam-info-bar">
+          <div className="exam-info-item">
+            <User size={16} />
+            <span>{formData.full_name || 'Candidate'}</span>
           </div>
-          
-          <div className="exam-info-bar">
-            <div className="exam-info-item">
-              <User size={16} />
-              <span>{formData.full_name || 'Candidate'}</span>
-            </div>
-            <div className="exam-info-item">
-              <Mail size={16} />
-              <span>{formData.email || 'Email'}</span>
-            </div>
-            <div className="exam-info-item">
-              <Briefcase size={16} />
-              <span>{jobData?.job_title || jobData?.title || 'Position'}</span>
-            </div>
+          <div className="exam-info-item">
+            <Mail size={16} />
+            <span>{formData.email || 'Email'}</span>
           </div>
-          
-          <div className="exam-timer">
-            <span className="timer-label">⏱️ Time Remaining:</span>
-            <span className={`timer-value ${examTimer < 300 ? 'warning' : ''}`}>
-              {formatTime(examTimer)}
-            </span>
+          <div className="exam-info-item">
+            <Briefcase size={16} />
+            <span>{jobData?.job_title || jobData?.title || 'Position'}</span>
           </div>
+        </div>
+        
+        <div className="exam-timer">
+          <span className="timer-label">⏱️ Time Remaining:</span>
+          <span className={`timer-value ${examTimer < 300 ? 'warning' : ''}`}>
+            {formatTime(examTimer)}
+          </span>
+        </div>
 
-          <div className="exam-progress">
-            <div className="progress-bar">
-              <div 
-                className="progress-fill"
-                style={{ width: `${((currentQuestion + 1) / examQuestions.length) * 100}%` }}
-              />
-            </div>
-            <span className="progress-text">
-              Question {currentQuestion + 1} of {examQuestions.length}
-            </span>
-          </div>
-
-          <div className="exam-content">
-            {examQuestions.length > 0 && examQuestions[currentQuestion] && (
-              <div className="question-container">
-                <h4 className="question-text">
-                  Q{currentQuestion + 1}: {examQuestions[currentQuestion].question}
-                </h4>
-                
-                <div className="options-container">
-                  {examQuestions[currentQuestion].options.map((option, idx) => (
-                    <label key={idx} className="option-label">
-                      <input
-                        type="radio"
-                        name={`question_${currentQuestion}`}
-                        value={option}
-                        checked={answers[currentQuestion] === option}
-                        onChange={() => handleAnswerSelect(currentQuestion, option)}
-                        className="option-radio"
-                      />
-                      <span className="option-text">{option}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="exam-navigation">
-            <button
-              onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
-              disabled={currentQuestion === 0}
-              className="nav-btn prev"
-            >
-              Previous
-            </button>
-            
-            {currentQuestion === examQuestions.length - 1 ? (
-              <button
-                onClick={handleExamSubmit}
-                disabled={loading || Object.keys(answers).length < examQuestions.length}
-                className="nav-btn submit-exam"
-              >
-                {loading ? <Loader2 className="spinner" /> : 'Submit Exam'}
-              </button>
-            ) : (
-              <button
-                onClick={() => setCurrentQuestion(prev => Math.min(examQuestions.length - 1, prev + 1))}
-                className="nav-btn next"
-              >
-                Next
-              </button>
-            )}
-          </div>
-
-          <div className="exam-questions-status">
-            <div className="status-label">Questions:</div>
-            {examQuestions.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentQuestion(idx)}
-                className={`question-status-btn ${answers[idx] ? 'answered' : ''} ${currentQuestion === idx ? 'active' : ''}`}
-              >
-                {idx + 1}
-              </button>
-            ))}
-          </div>
-          
-          <div className="exam-footer">
-            <p className="exam-instructions">
-              Please answer all questions. You have {Math.floor(examTimer / 60)} minutes to complete the assessment.
-            </p>
-          </div>
-          {toast && (
-            <Toast 
-              message={toast.message} 
-              type={toast.type} 
-              onClose={() => setToast(null)} 
+        <div className="exam-progress">
+          <div className="progress-bar">
+            <div 
+              className="progress-fill"
+              style={{ width: `${((currentQuestion + 1) / examQuestions.length) * 100}%` }}
             />
+          </div>
+          <span className="progress-text">
+            Question {currentQuestion + 1} of {examQuestions.length}
+          </span>
+        </div>
+
+        {/* ADDED onWheel handler here */}
+        <div 
+          className="exam-content"
+          onWheel={(e) => {
+            e.stopPropagation();
+            const element = e.currentTarget;
+            if (e.deltaY !== 0) {
+              element.scrollTop += e.deltaY;
+            }
+          }}
+        >
+          {examQuestions.length > 0 && examQuestions[currentQuestion] && (
+            <div className="question-container">
+              <h4 className="question-text">
+                Q{currentQuestion + 1}: {examQuestions[currentQuestion].question}
+              </h4>
+              
+              <div className="options-container">
+                {examQuestions[currentQuestion].options.map((option, idx) => (
+                  <label key={idx} className="option-label">
+                    <input
+                      type="radio"
+                      name={`question_${currentQuestion}`}
+                      value={option}
+                      checked={answers[currentQuestion] === option}
+                      onChange={() => handleAnswerSelect(currentQuestion, option)}
+                      className="option-radio"
+                    />
+                    <span className="option-text">{option}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
           )}
         </div>
+
+        {/* UPDATED navigation with restrictions */}
+        <div className="exam-navigation">
+          <button
+            onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
+            disabled={currentQuestion === 0}
+            className="nav-btn prev"
+          >
+            Previous
+          </button>
+          
+          {currentQuestion === examQuestions.length - 1 ? (
+            <button
+              onClick={handleExamSubmit}
+              disabled={loading || !answers[currentQuestion] || Object.keys(answers).length < examQuestions.length}
+              className="nav-btn submit-exam"
+            >
+              {loading ? <Loader2 className="spinner" /> : 'Submit Exam'}
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                // Only allow navigation if current question is answered
+                if (answers[currentQuestion]) {
+                  setCurrentQuestion(prev => Math.min(examQuestions.length - 1, prev + 1));
+                } else {
+                  showToast('Please answer the current question before proceeding.', 'error');
+                }
+              }}
+              disabled={!answers[currentQuestion]}
+              className={`nav-btn next ${!answers[currentQuestion] ? 'disabled' : ''}`}
+            >
+              Next
+            </button>
+          )}
+        </div>
+
+        <div className="exam-questions-status">
+          <div className="status-label">Questions:</div>
+          {examQuestions.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                // Allow clicking on status buttons only if question is answered
+                if (answers[idx] || idx === currentQuestion) {
+                  setCurrentQuestion(idx);
+                } else {
+                  showToast('Please answer the current question first.', 'error');
+                }
+              }}
+              className={`question-status-btn ${answers[idx] ? 'answered' : ''} ${currentQuestion === idx ? 'active' : ''}`}
+            >
+              {idx + 1}
+            </button>
+          ))}
+        </div>
+        
+        <div className="exam-footer">
+          <p className="exam-instructions">
+            Please answer all questions. You have {Math.floor(examTimer / 60)} minutes to complete the assessment.
+          </p>
+        </div>
+        {toast && (
+          <Toast 
+            message={toast.message} 
+            type={toast.type} 
+            onClose={() => setToast(null)} 
+          />
+        )}
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   // Render success/result state
   if (success || examSubmitted) {

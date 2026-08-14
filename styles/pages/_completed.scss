@@ -1,453 +1,1042 @@
 .completed {
-    $transition-speed: 0.2s;
-    .section-title {
-      // text-align:center;
-      margin: 0;
-      padding: 1rem 0;
-      background-color: white;
-      text-align: center;
-      h3 {
-        text-align: center;
-        line-height: 1;
-        padding-bottom: 1rem;
-        position: relative;
-        display: inline-block;
-        font-size: 2rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        margin-bottom: 1rem;
-        background:$secodary-bg-color;
-        // background: linear-gradient(
-        //   115deg,
-        //   var(--themeht-primary-color),
-        //   var(--themeht-secondary-color)
-        // );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        z-index: 9;
+  // =========================================================
+  // Variables
+  // =========================================================
 
-        /* ORANGE UNDERLINE (CENTERED) */
-        &::after {
-          content: "";
-          position: absolute;
-          left: 50%;
-          bottom: 0;
-          width: 90px;
-          height: 3px;
-          background: $secodary-bg-color;
-          border-radius: 4px;
-          transform: translateX(-45%);
-          overflow: hidden;
-        }
+  $transition-speed: 0.2s;
+  $scroll-speed: 0.6s;
 
-        /* SINGLE MOVING DOT (CENTERED FLOW) */
-        &::before {
-          content: "";
-          position: absolute;
-          bottom: -6px;
-          left: 50%;
-          width: 14px;
-          height: 14px;
-          background: #ffffff;
-          border: 3px solid $secodary-bg-color;
-          border-radius: 50%;
-          transform: translateX(-45px); // half of underline width
-          animation: dot-flow 3s linear infinite alternate;
-          z-index: 2;
-        }
-      }
-    }
-    .project-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 20px;
-    max-width: 1200px;
-    white-space: nowrap;
-    margin: 0 auto;
-    .grid-item {
-      background: transparent;
-      padding: 20px;
-      border-radius: 1.5rem;
-      box-shadow: 0px 25px 70px rgba(8, 10, 55, 0.08);
+  $primary-color: #0f172a;
+  $secondary-color: #e67e22;
+
+  $border-color: #e2e8f0;
+  $hover-bg: #f8fafc;
+
+  $text-primary: #17395f;
+  $text-secondary: #24476d;
+  $muted-color: #94a3b8;
+
+
+  // =========================================================
+  // Section Title
+  // =========================================================
+
+  .section-title {
+    margin: 0;
+    padding: 1rem 0;
+    background-color: #ffffff;
+    text-align: center;
+
+    h3 {
       position: relative;
-      overflow: hidden; 
-      transition: all 0.4s ease-in-out;
-      // z-index: 1;
 
-      // Base white background
-      &:before {
+      display: inline-block;
+
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+
+      font-size: 2rem;
+      font-weight: 600;
+      line-height: 1;
+
+      text-align: center;
+      text-transform: uppercase;
+
+      background: $secondary-color;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+
+      z-index: 9;
+
+      &::after {
         content: "";
-        display: block;
+
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        z-index: -1;
+        left: 50%;
+        bottom: 0;
+
+        width: 90px;
+        height: 3px;
+
+        background: $secondary-color;
+        border-radius: 4px;
+
+        transform: translateX(-45%);
       }
 
-      // The Gradient that grows from the CENTER
-      &:after {
+      &::before {
         content: "";
+
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background:lightgray;
-        // background: #FDC725;
-        // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
-        z-index: -1;
-        
-        // 1. Set initial scale to 0 (invisible at center)
-        transform: scale(0); 
-        
-        // 2. Set origin to center so it grows outward in all directions
-        transform-origin: center; 
-        
-        // 3. Use a cubic-bezier for a "bouncy" organic feel
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        
-        // Optional: make it a circle initially for a 'lens' effect
-        border-radius: 50%; 
-      }
+        left: 50%;
+        bottom: -6px;
 
-      &:hover {
-        // Slight zoom up of the entire card
-        // transform: scale(1.02); 
+        width: 14px;
+        height: 14px;
 
-        &:after {
-          // 4. Scale to 1 on hover
-          transform: scale(1.2); // Scale slightly past 1 to ensure edges are covered
-          border-radius: 0%; // Transition from circle to square to fill the box
-        }
+        background: #ffffff;
+        border: 3px solid $secondary-color;
+        border-radius: 50%;
 
-        ul li {
-          color: black;
-          &::before { color: black; }
-          strong { color: black; }
-          border-color: rgba(255, 255, 255, 0);
-        }
-      }
+        transform: translateX(-45px);
 
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        position: relative;
-        // z-index: 2; // Ensures text stays above the growing background
+        animation: dot-flow 3s linear infinite alternate;
 
-        li {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 0;
-          transition: color 0.4s ease;
-          // font-weight: 600;
-           img{
-            // background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
-            // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
-            background-color:  black;
-            border-radius: 50%;
-            width: 1.1rem;
-            height: 1.1rem;
-            margin-right: .5rem;
-            padding: .2rem;
-          }
-
-          &.header-row {
-            border-bottom: 1px solid #373737;
-            margin-bottom: 5px;
-          }
-
-          &::before {
-            // content: "•";
-            margin-right: 10px;
-            color: #333;
-            transition: color 0.4s ease;
-          }
-
-          &:first-child::before {
-            content: "";
-            margin: 0;
-          }
-        }
-      }
-    }
-    .page-wrapper{
-      min-height: calc(100vh - 250px);
-    }
-  }
-  .item-name {
-    flex: 1;
-    margin-left: 5px;
-    display: flex;
-    text-align: left;
-    flex:1;
-    min-width:0;          /* Important */
-    white-space:normal;
-    overflow-wrap:break-word;
-    text-wrap: wrap;
-  }
-  .item-price {
-    text-align: right;
-  }
-  table{
-    @media (max-width: 1024px){
-      width: 100% !important;
-      font-size: 1rem;
-    }
-    thead{
-      th:nth-child(2) {
-        // text-align:left;
-        padding:0.2rem;
-      }
-    }
-    tbody{
-      tr td:nth-child(2) {
-        // text-align:left;
-        padding:0.2rem;
+        z-index: 2;
       }
     }
   }
+
+
+  @keyframes dot-flow {
+    0% {
+      transform: translateX(-45px);
+    }
+
+    100% {
+      transform: translateX(45px);
+    }
+  }
+
+
+  // =========================================================
+  // Main Grid
+  // =========================================================
+
   .auto-grid {
     display: grid;
-    // grid-template-columns: repeat(auto-fit, minmax(250px, 2fr));
-    grid-template-columns: 35% 65%;
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+
+    width: 100%;
+
+    position: relative;
+
+    @media screen and (max-width: 768px) {
+      gap: 1.5rem;
+    }
+  }
+
+
+  // =========================================================
+  // Main Table Container
+  // =========================================================
+
+  .client-table-container {
+    width: 100%;
+
+    position: relative;
+
+    background: #ffffff;
+
+    // border: 1px solid $border-color;
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    // box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+
+  // =========================================================
+  // Filters
+  // =========================================================
+
+  .project-filters {
+    display: grid;
+
+    grid-template-columns:
+      minmax(260px, 1fr)
+      200px
+      220px
+      auto;
+
+    align-items: end;
+
+    gap: 16px;
+
+    padding: 20px 20px 14px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #edf1f5;
+  }
+
+
+  .project-search,
+  .project-filter {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+
+    min-width: 0;
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.3;
+
+      color: #334155;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 44px;
+
+      padding: 0 14px;
+
+      border: 1px solid #d9d9d9;
+      border-radius: 6px;
+
+      background: #ffffff;
+
+      color: #222222;
+
+      font-size: 14px;
+
+      outline: none;
+
+      transition:
+        border-color $transition-speed ease,
+        box-shadow $transition-speed ease,
+        background-color $transition-speed ease;
+
+      &:hover {
+        border-color: #b8c1cc;
+      }
+
+      &:focus {
+        border-color: #222222;
+
+        box-shadow:
+          0 0 0 2px rgba(0, 0, 0, 0.06);
+      }
+    }
+
+    input {
+      &::placeholder {
+        color: #999999;
+      }
+    }
+
+    select {
+      cursor: pointer;
+    }
+  }
+
+
+  // =========================================================
+  // Clear Filters Button
+  // =========================================================
+
+  .clear-filters-btn {
+    height: 44px;
+
+    padding: 0 18px;
+
+    border: 1px solid #222222;
+    border-radius: 6px;
+
+    background: #222222;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+      background-color $transition-speed ease,
+      border-color $transition-speed ease,
+      transform $transition-speed ease;
+
+    &:hover {
+      background: #444444;
+      border-color: #444444;
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $primary-color;
+      outline-offset: 2px;
+    }
+  }
+
+
+  // =========================================================
+  // Filter Result Information
+  // =========================================================
+
+  .project-results-info {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 30px;
+
+    margin: 0;
+    padding: 10px 20px;
+
+    background: #ffffff;
+
+    font-size: 13px;
+
+    color: #777777;
+
+    strong {
+      color: #222222;
+      font-weight: 600;
+    }
+  }
+
+
+  .filter-active-text {
+    font-size: 12px;
+    color: #777777;
+  }
+
+
+  // =========================================================
+  // Empty Filter State
+  // =========================================================
+
+  .project-filter-empty {
+    display: flex;
+
     align-items: center;
     justify-content: center;
-    @media (max-width: 1024px) {
-      grid-template-columns:repeat(auto-fit, minmax(350px, 1fr))
-    }
-    @media (max-width: 600px) {
-      grid-template-columns:repeat(auto-fit, minmax(350px, 1fr))
-    }
-     .grid-item {
-      background: transparent;
-      padding: 20px;
-      border-radius: 1.5rem;
-      // box-shadow: 0px 25px 70px rgba(8, 10, 55, 0.08);
-      position: relative;
-      overflow: hidden; 
-      transition: all 0.4s ease-in-out;
-      // z-index: 1;
 
-      // Base white background
-      &:before {
-        content: "";
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        z-index: -1;
-      }
+    min-height: 260px;
 
-      // The Gradient that grows from the CENTER
-      &:after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background:lightgray;
-        // background: #FDC725;
-        // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
-        z-index: -1;
-        
-        // 1. Set initial scale to 0 (invisible at center)
-        transform: scale(0); 
-        
-        // 2. Set origin to center so it grows outward in all directions
-        transform-origin: center; 
-        
-        // 3. Use a cubic-bezier for a "bouncy" organic feel
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        
-        // Optional: make it a circle initially for a 'lens' effect
-        border-radius: 50%; 
-      }
+    margin: 0 20px 20px;
+    padding: 40px 20px;
 
-      &:hover {
-        // Slight zoom up of the entire card
-        // transform: scale(1.02); 
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
 
-        &:after {
-          // 4. Scale to 1 on hover
-          transform: scale(1.2); // Scale slightly past 1 to ensure edges are covered
-          border-radius: 0%; // Transition from circle to square to fill the box
-        }
+    background: #ffffff;
 
-        ul li {
-          color: black;
-          &::before { color: black; }
-          strong { color: black; }
-          border-color: rgba(255, 255, 255, 0);
-        }
-      }
-
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        position: relative;
-        // z-index: 2; // Ensures text stays above the growing background
-
-        li {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 0;
-          transition: color 0.4s ease;
-          // font-weight: 600;
-           img{
-            // background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
-            // background: radial-gradient(circle,rgba(253, 199, 37, 1) 15%, rgba(255, 139, 71, 1) 100%);
-            background-color:  black;
-            border-radius: 50%;
-            width: 1.1rem;
-            height: 1.1rem;
-            margin-right: .5rem;
-            padding: .2rem;
-          }
-
-          &.header-row {
-            border-bottom: 1px solid #373737;
-            margin-bottom: 5px;
-          }
-
-          &::before {
-            // content: "•";
-            margin-right: 10px;
-            color: #333;
-            transition: color 0.4s ease;
-          }
-
-          &:first-child::before {
-            content: "";
-            margin: 0;
-          }
-        }
-        &.scroll-wrapper {
-          height: 50px;
-          overflow: hidden;
-          position: relative;
-      
-        }
-       
-      }
-      .listItem{
-        height: 38rem;
-          overflow: hidden;
-        position: relative;
-          ul.scroll-list {
-            display: flex;
-            flex-direction: column;
-            animation: scrollUp 35s linear infinite;
-            will-change: transform;
-            height:3000px;
-              overflow: hidden;
-            position: relative; 
-
-            &:hover {
-              animation-play-state: paused;
-            }
-
-            li {
-              display: grid;
-              grid-template-columns: 30px 1fr 140px;
-              align-items: center;
-              gap: 5px;
-              padding: 5px 0;
-              flex-shrink: 0;
-            }
-              @keyframes scrollUp {
-              from {
-                transform: translateY(0);
-              }
-              to {
-                transform: translateY(-50%);
-              }
-            }
-          }
-      }
-    }
+    text-align: center;
   }
-  .mapWrapper{
-    position: relative;
 
-  }
-  .mapContainer {
-    position: relative;
-    width: 100%;
-    height: 650px;
 
-    .mapImage {
-      object-fit: cover;
-    }
+  .project-filter-empty-content {
+    h3 {
+      margin: 0 0 8px;
 
-    .pointer {
-      position: absolute;
-      top: 35%;
-      left: 42%;
-
-      width: 50px;
-      height: 50px;
-    }
-    .locPointer {
-      object-fit: contain;
-    }
-    .pointer {
-      position: absolute;
-      transform: translate(-50%, -100%);
-      cursor: pointer;
-      transition: transform 0.3s ease;
-      z-index: 10;
-    }
-
-    .pointer:hover {
-      transform: translate(-50%, -100%) scale(1.15);
-    }
-  }
-  .zoomControls {
-    position: absolute;
-    top: 1rem;
-    left: 1.5rem;
-    z-index: 9;
-
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-
-    button {
-      width: 36px;
-      height: 36px;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 600;
-      background: #fff;
-      box-shadow: 0 3px 10px rgba(0,0,0,.15);
+
+      color: $text-primary;
+    }
+
+    p {
+      margin: 0 0 20px;
+
+      color: #777777;
+
+      font-size: 14px;
+    }
+  }
+
+
+  // =========================================================
+  // Desktop Table Wrapper
+  // =========================================================
+
+  .client-table-wrapper {
+    width: 100%;
+
+    /*
+     * IMPORTANT:
+     * The table itself gets a fixed visible area.
+     * JavaScript moves tbody vertically for the
+     * automatic smooth scrolling.
+     */
+    max-height: 470px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    position: relative;
+
+    -webkit-overflow-scrolling: touch;
+
+    /*
+     * Smooth horizontal scrolling on touch devices
+     */
+    scroll-behavior: smooth;
+
+    /*
+     * Prevent vertical page scroll while interacting
+     * with horizontal table on touch devices.
+     */
+    touch-action: pan-x;
+  }
+
+
+  // =========================================================
+  // Table Scrollbar
+  // =========================================================
+
+  .client-table-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 20px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  }
+
+
+  // =========================================================
+  // Desktop Table
+  // =========================================================
+
+  .client-table {
+    width: 100%;
+
+    min-width: 700px;
+
+    margin: 0;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+    thead {
+      background: #f8fafc;
+
+      /*
+       * Keeps header visually separated from
+       * the scrolling tbody.
+       */
+      position: sticky;
+      top: 0;
+
+      z-index: 5;
+    }
+
+
+    .header-row {
+      height: 50px;
+
+      border-bottom: 1px solid $border-color;
+
+      th {
+        padding: 0 25px;
+
+        text-align: left;
+
+        font-size: 1rem;
+        font-weight: 600;
+
+        color: #1e3a5f;
+
+        white-space: nowrap;
+
+        background: #f8fafc;
+      }
+    }
+
+
+    tbody {
+      position: relative;
+
+      /*
+       * Hardware acceleration for smoother transform.
+       */
+      will-change: transform;
+
+      transform: translateZ(0);
+    }
+
+
+    .client-row {
+      height: 40px;
+
+      border-bottom: 1px solid #edf1f5;
+
+      background: #ffffff;
+
+      transition:
+        background-color $transition-speed ease;
+
+      &:last-child {
+        border-bottom: none;
+      }
 
       &:hover {
-        background: #f3f3f3;
+        background: $hover-bg;
+      }
+
+
+      td {
+        padding: 0 25px;
+
+        font-size: 16px;
+
+        color: $text-secondary;
+
+        vertical-align: middle;
+      }
+    }
+
+
+    // =======================================================
+    // Columns
+    // =======================================================
+
+    .item-name {
+      width: 32%;
+
+      font-weight: 600;
+
+      color: $text-primary;
+    }
+
+
+    .item-type {
+      width: 23%;
+    }
+
+
+    .item-status {
+      width: 20%;
+
+      color: #008f4c;
+
+      font-weight: 600;
+
+      /*
+       * MUI Chip alignment
+       */
+      .MuiChip-root {
+        vertical-align: middle;
+      }
+    }
+
+
+    .item-location {
+      width: 25%;
+    }
+  }
+
+
+  // =========================================================
+  // Mobile Cards
+  // =========================================================
+
+  .mobile-cards {
+    display: none;
+
+    flex-direction: column;
+
+    gap: 0.75rem;
+
+    padding: 1rem;
+
+    /*
+     * Needed because JS transforms this element.
+     */
+    will-change: transform;
+
+    transform: translateZ(0);
+
+    @media screen and (max-width: 768px) {
+      display: flex;
+
+      /*
+       * Mobile cards get their own scrolling viewport.
+       */
+      max-height: 470px;
+
+      overflow: hidden;
+    }
+  }
+
+
+  .mobile-card {
+    flex: 0 0 auto;
+
+    background: #ffffff;
+
+    border: 1px solid $border-color;
+    border-radius: 8px;
+
+    padding: 1rem;
+
+    transition:
+      background-color $transition-speed ease,
+      border-color $transition-speed ease,
+      box-shadow $transition-speed ease;
+
+    &:hover {
+      background: $hover-bg;
+
+      border-color: #cbd5e1;
+
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+  }
+
+
+  .mobile-card-content {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.5rem;
+  }
+
+
+  .mobile-card-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 0.5rem;
+  }
+
+
+  .mobile-card-title {
+    margin: 0;
+
+    font-size: 1rem;
+    font-weight: 600;
+
+    color: $text-primary;
+
+    line-height: 1.35;
+  }
+
+
+  .mobile-card-details {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 0.5rem 1rem;
+
+    font-size: 0.875rem;
+
+    color: #4a6f8e;
+  }
+
+
+  .mobile-card-type {
+    &::before {
+      content: "Category: ";
+
+      color: #94a3b8;
+    }
+  }
+
+
+  .mobile-card-location {
+    &::before {
+      content: "📍 ";
+    }
+  }
+
+
+  // =========================================================
+  // MUI Chip
+  // =========================================================
+
+  .MuiChip-root {
+    flex-shrink: 0;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    height: 28px;
+
+    .MuiChip-label {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+
+
+  // =========================================================
+  // Empty Table Row
+  // =========================================================
+
+  .empty-row {
+    height: 120px;
+
+    td {
+      text-align: center;
+
+      color: $muted-color !important;
+
+      font-size: 14px !important;
+    }
+  }
+
+
+  // =========================================================
+  // Pagination
+  // =========================================================
+
+  .pagination {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    width: 100%;
+
+    min-height: 82px;
+
+    padding: 18px 24px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border-top: 1px solid $border-color;
+
+    flex-wrap: wrap;
+    position:relative;
+    bottom: 0;
+  }
+
+
+  .pagination-pages {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+  }
+
+
+  .pagination-btn,
+  .pagination-page {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    height: 46px;
+
+    min-width: 46px;
+
+    padding: 0 14px;
+
+    border: 1px solid #dbe3ec;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: $text-primary;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+      background-color $transition-speed ease,
+      border-color $transition-speed ease,
+      color $transition-speed ease;
+
+    &:hover:not(:disabled) {
+      background: #f5f7fa;
+
+      border-color: #cbd5e1;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $primary-color;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.45;
+
+      cursor: not-allowed;
+    }
+  }
+
+
+  .pagination-page {
+    &.active {
+      background: $primary-color;
+
+      border-color: $primary-color;
+
+      color: #ffffff;
+
+      &:hover {
+        background: #020617;
+
+        border-color: #020617;
       }
     }
   }
-  .react-transform-wrapper {
-  width: 100%;
-  height: 100%;
-}
 
-.react-transform-component {
-  width: 100%;
-  height: 100%;
-}
 
+  // =========================================================
+  // Tablet
+  // =========================================================
+
+  @media screen and (max-width: 1199px) {
+    .project-filters {
+      grid-template-columns:
+        minmax(220px, 1fr)
+        180px
+        200px
+        auto;
+
+      gap: 12px;
+    }
+  }
+
+
+  @media screen and (max-width: 1024px) {
+    .client-table {
+      min-width: 750px;
+    }
+
+    .client-table-wrapper {
+      max-height: 450px;
+    }
+
+    .pagination {
+      overflow-x: auto;
+
+      justify-content: flex-start;
+    }
+
+    .pagination-pages {
+      flex-shrink: 0;
+    }
+  }
+
+
+  // =========================================================
+  // Tablet / Small Desktop Filters
+  // =========================================================
+
+  @media screen and (max-width: 991px) {
+    .project-filters {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .project-search {
+      grid-column: 1 / -1;
+    }
+
+    .clear-filters-btn {
+      width: fit-content;
+    }
+  }
+
+
+  // =========================================================
+  // Mobile
+  // =========================================================
+
+  @media screen and (max-width: 768px) {
+    .client-table-wrapper {
+      display: none;
+    }
+
+    .mobile-cards {
+      display: flex;
+    }
+
+    .pagination {
+      min-height: 70px;
+
+      padding: 14px 16px;
+
+      overflow-x: auto;
+
+      justify-content: flex-start;
+
+      flex-wrap: nowrap;
+    }
+
+    .pagination-pages {
+      flex-shrink: 0;
+    }
+
+    .pagination-btn,
+    .pagination-page {
+      height: 40px;
+
+      min-width: 40px;
+
+      padding: 0 10px;
+
+      font-size: 13px;
+
+      flex-shrink: 0;
+    }
+  }
+
+
+  // =========================================================
+  // Small Mobile
+  // =========================================================
+
+  @media screen and (max-width: 575px) {
+    .project-filters {
+      grid-template-columns: 1fr;
+
+      gap: 12px;
+
+      padding: 16px;
+    }
+
+    .project-search {
+      grid-column: auto;
+    }
+
+    .clear-filters-btn {
+      width: 100%;
+    }
+
+    .project-results-info {
+      align-items: flex-start;
+
+      flex-direction: column;
+
+      gap: 4px;
+
+      padding: 10px 16px;
+    }
+
+    .mobile-cards {
+      padding: 12px;
+
+      max-height: 450px;
+    }
+
+    .mobile-card {
+      padding: 14px;
+    }
+
+    .mobile-card-header {
+      align-items: flex-start;
+    }
+
+    .mobile-card-title {
+      font-size: 0.95rem;
+    }
+
+    .mobile-card-details {
+      font-size: 0.8rem;
+    }
+
+    .pagination {
+      justify-content: flex-start;
+    }
+
+    .pagination-pages {
+      gap: 5px;
+    }
+
+    .pagination-btn {
+      padding: 0 12px;
+    }
+  }
+
+
+  // =========================================================
+  // Empty State
+  // =========================================================
+
+  .empty-state {
+    padding: 3rem 1rem;
+
+    text-align: center;
+
+    color: $muted-color;
+
+    p {
+      margin: 0;
+
+      font-size: 1.125rem;
+    }
+  }
+
+
+  // =========================================================
+  // Accessibility
+  // =========================================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .pagination-btn,
+    .pagination-page,
+    .client-row,
+    .mobile-card,
+    .project-search input,
+    .project-filter select,
+    .clear-filters-btn {
+      transition: none !important;
+    }
+
+    .section-title h3 {
+      animation: none !important;
+
+      &::before {
+        animation: none !important;
+      }
+    }
+  }
+
+
+  // =========================================================
+  // Print
+  // =========================================================
+
+  @media print {
+    .project-filters,
+    .project-results-info,
+    .pagination,
+    .mobile-cards {
+      display: none !important;
+    }
+
+    .client-table-wrapper {
+      max-height: none !important;
+
+      overflow: visible !important;
+    }
+
+    .client-row {
+      break-inside: avoid;
+    }
+  }
 }

@@ -298,7 +298,15 @@ export default function AuthModal({ isOpen, onClose, mode = 'login', onSuccess }
 
   return (
     <div className="auth-modal-overlay" onClick={onClose}>
-      <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="auth-modal" onClick={(e) => e.stopPropagation()}   onWheel={(e) => {
+                e.stopPropagation();
+ 
+                const element = e.currentTarget;
+ 
+                if (e.deltaY !== 0) {
+                  element.scrollTop += e.deltaY;
+                }
+              }}>
         <button className="auth-modal-close" onClick={onClose}>
           ✕
         </button>

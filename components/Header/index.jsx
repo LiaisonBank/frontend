@@ -89,7 +89,7 @@ export default function Header() {
   return (
     <>
       <header className={`fixed w-full z-50 py-2 transition-all ${isSticky ? "" : ""}`}>
-        <div className="max-w-7xl mx-auto">
+        <div className="container-fluid mx-auto">
           <nav key={pathname} className="flex items-center justify-between h-16">
 
             {/* LOGO: Left to Right Animation */}

@@ -1302,7 +1302,7 @@
   
   .services-slider {
     position: relative;
-    padding-left: 8.5rem;
+    // padding-left: 8.5rem;
       @media screen and (max-width: 1024px) {
         padding-bottom:2rem;
          padding-left: 1rem;
@@ -2412,11 +2412,14 @@
       }
     }
     .slider {
-      max-width: 1024px;
+      // max-width: 1024px;
+      width:90%;
       height: 300px;
       margin: auto;
       position: relative;
       overflow: hidden;
+      padding-right:20px;
+      padding-left: 20px;
       padding-bottom: 40px; 
       overflow: hidden;
       touch-action: pan-y;

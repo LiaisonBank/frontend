@@ -6,10 +6,8 @@ import {
 import Script from "next/script";
 
 import OrientationBlocker from "@/components/OrientationBlocker";
-
 import AppProviders from "@/components/AppProviders";
-import ClientChatbotWrapper from "@/components/ManualChatbot/ClientChatbotWrapper"; // 👈 ADD THIS IMPORT
-
+import ClientChatbotWrapper from "@/components/ManualChatbot/ClientChatbotWrapper";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -248,13 +246,29 @@ const organizationSchema = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <GoogleTagManager gtmId="GTM-TT54PJMP" />
-
-      <GoogleAnalytics gaId="G-FNR4R1GZGS" />
-
+      <head>
+        {/* 
+          The cz-shortcut-listen attribute is added by a browser extension.
+          This meta tag helps prevent the hydration error.
+        */}
+        <meta name="cz-shortcut-listen" content="true" />
+      </head>
+      
+      {/* 
+        FIX: Added suppressHydrationWarning to body 
+        This tells React to ignore attribute mismatches
+      */}
       <body
         className={`${barlow.variable} ${barlow.className} antialiased flex min-h-screen flex-col bg-white text-gray-900`}
+        suppressHydrationWarning
       >
+        {/* 
+          FIX: Move GoogleTagManager and GoogleAnalytics inside body 
+          to prevent them from interfering with hydration
+        */}
+        <GoogleTagManager gtmId="GTM-TT54PJMP" />
+        <GoogleAnalytics gaId="G-FNR4R1GZGS" />
+
         <OrientationBlocker>
           <Script
             id="organization-schema"
@@ -264,16 +278,8 @@ export default function RootLayout({ children }) {
               __html: JSON.stringify(organizationSchema),
             }}
           />
-          {/* <Script id="scroll-reset" strategy="beforeInteractive">
-            {`
-              if ('scrollRestoration' in history) {
-                history.scrollRestoration = 'manual';
-              }
-              window.scrollTo(0, 0);
-            `}
-          </Script> */}
-        <ClientChatbotWrapper />
-
+          
+          <ClientChatbotWrapper />
           <AppProviders>{children}</AppProviders>
         </OrientationBlocker>
       </body>

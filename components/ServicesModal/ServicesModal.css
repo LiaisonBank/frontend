@@ -145,7 +145,7 @@
   display: flex;
   flex: 1;
   overflow: hidden;
-  background: #fafafa;
+  background: white;
   min-height: 0;
   height: 100%;
   position: relative;
@@ -175,7 +175,7 @@
 }
 
 .services-section-list {
-  padding: 8px 0;
+  /* padding: 8px 0; */
 }
 
 .services-section-btn {
@@ -240,7 +240,7 @@
    CENTER PANEL - Categories
 ======================================== */
 .services-center-panel {
-  width: 280px;
+  width: 400px;
   min-width: 200px;
   border-right: 1px solid #e5e7eb;
   overflow-y: auto;
@@ -259,7 +259,7 @@
 }
 
 .services-category-list {
-  padding: 8px 0;
+  /* padding: 8px 0; */
 }
 
 .services-category-btn {
@@ -267,7 +267,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 10px 20px;
+  padding: 13px 20px;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -276,7 +276,7 @@
   font-size: 13px;
   color: #4a4a5e;
   position: relative;
-  font-size: 18px;
+  font-size: 1rem;
 }
 
 .services-category-btn:hover {
@@ -326,8 +326,9 @@
   /* flex: 1; */
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 24px 20px  0 28px;
-  background: #fafafa;
+  margin: 0;
+  padding: 0;
+  background: white;
   height: 100%;
   position: relative;
   scrollbar-width: auto;
@@ -341,6 +342,7 @@
 
 .services-details {
   max-width: 900px;
+  padding: 1rem;
 }
 
 .services-details-title {
@@ -416,11 +418,11 @@
 .services-details-children {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  /* gap: 4px; */
 }
 
 .service-child {
-  border-bottom: 1px solid #f3f4f6;
+  /* border-bottom: 1px solid #f3f4f6; */
 }
 
 .service-child:last-child {
@@ -430,15 +432,16 @@
 .service-child-header {
   display: flex;
   align-items: center;
-  padding: 10px 12px;
+  padding: 14px 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border-radius: 6px;
-  gap: 8px;
+  border-right:1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+  /* border-radius: 6px; */
 }
 
 .service-child-header:hover {
-  background: #f3f4f6;
+  background: #eef2f6;
 }
 
 .service-child-header.has-children {
@@ -447,7 +450,7 @@
 
 .service-child-name {
   flex: 1;
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 500;
   color: #1a1a2e;
 }
@@ -501,9 +504,9 @@
 
 /* Service list under child */
 .service-services-list {
-  padding: 6px 12px 8px 40px;
-  border-left: 2px solid rgba(255, 107, 0, 0.2);
-  margin: 0 0 4px 12px;
+  margin:0px;
+  padding: 10px;
+  /* margin: 0 0 4px 12px; */
 }
 
 .service-service-item {
@@ -516,6 +519,7 @@
 }
 
 .service-service-dot {
+  display: none;
   color: #f97316;
   font-size: 12px;
   font-weight: 700;
@@ -523,6 +527,7 @@
 
 .service-service-name {
   flex: 1;
+  font-size: 1rem;
 }
 
 /* Category count badge */
@@ -886,7 +891,7 @@
   .services-section-list {
     display: flex;
     overflow-x: auto;
-    padding: 8px 12px;
+    /* padding: 8px 12px; */
     gap: 4px;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -915,7 +920,7 @@
   .services-category-list {
     display: flex;
     overflow-x: auto;
-    padding: 8px 12px;
+    /* padding: 8px 12px; */
     gap: 4px;
     scrollbar-width: none;
     -ms-overflow-style: none;

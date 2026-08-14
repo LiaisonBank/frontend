@@ -63,8 +63,8 @@ p {
   min-height: calc(100vh - 350px);
 }
 main {
-  margin: 0;
-  padding: 0;
+  margin: 0 !important;
+  padding: 0 !important;
   position: relative;
   // top: 5rem;
   margin-bottom: 5rem;
@@ -155,13 +155,9 @@ body:not(.home) {
       }
   }
 }
-// body.completed {
-//   main {
-//     padding-top: 80px;
-//     margin-bottom: 0;
-//       background: #78cbe5;
-//   }
-// }
+
+
+
 
 .page-header {
   position: relative;
@@ -742,8 +738,15 @@ body:has(.has-single-submenu:hover) .menu-overlay {
         color: transparent;
       }
     }
-
+    .css-t3ipsp-control{
+      border-color:#cdcdcd !important;
+      box-shadow: none !important;
+    }
     // ✅ Focus effect (auto float label)
+    input:focus{
+      box-shadow: none !important;
+      border:none;
+    }
     input:focus + span,
     textarea:focus + span {
       font-size: 13px;
@@ -779,6 +782,12 @@ body:has(.has-single-submenu:hover) .menu-overlay {
       font-weight: 600;
       font-size: 13px;
     }
+  }
+  .basic-multi-select .select__multi-value{
+     background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+  }
+  .enq-btn {
+     background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
   }
 }
 
