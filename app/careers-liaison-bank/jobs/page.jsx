@@ -1,6 +1,6 @@
 // app/careers-liaison-bank/jobs/page.jsx
 "use client";
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -20,7 +20,8 @@ import './jobs.scss';
 import JobDetailsModal from './JobDetailsModal';
 import AuthModal from '../AuthModal';
 
-export default function JobsPage() {
+ function JobsPageContent() {
+   
   const searchParams = useSearchParams();
   const serviceParam = searchParams.get('service');
   
@@ -594,5 +595,13 @@ export default function JobsPage() {
         onRequireLogin={() => setAuthModalOpen(true)}
       />
     </div>
+  );
+}
+
+export default function JobsPage() {
+  return (
+    <Suspense fallback={<div className="jobs-page-loading">Loading jobs...</div>}>
+      <JobsPageContent />
+    </Suspense>
   );
 }
