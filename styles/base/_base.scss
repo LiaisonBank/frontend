@@ -112,6 +112,9 @@ body.home {
   }
 }
 body.careers {
+  #sticky-icon {
+    display: none !important;
+  }
   .page-header {
     // height: calc(100vh - 5vh);
     // min-height: 95vh;
