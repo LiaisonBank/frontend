@@ -22,35 +22,35 @@ const services = [
   {
     id: 1,
     name: "Liaisoning",
-    slug: "liaisoning",
+    slug: "Linking Needs With The Right Solutions",
     image: "/liaisoning-in-real-estate.jpg",
     description: "____________________________"
   },
   {
     id: 2,
     name: "Licensing",
-    slug: "Licensing",
+    slug: "We Handle the Process. You Build the Future.",
     image: "/licensing-services.png",
     description: "_______________________________________________"
   },
     {
     id: 5,
     name: "Piped Natural Gas",
-    slug: "Piped Natural Gas",
+    slug: "Reliable Gas, Smarter Living.",
     image: "/PNG.png   ",
     description: "_____________________________________"
   },
     {
     id: 4,
     name: "Fire",
-    slug: "media",
+    slug: "Turning Safety into Security.",
     image: "/fire4.png",
     description: "____________________________________________"
   },
   {
     id: 3,
     name: "Electrical",
-    slug: "Electrical",
+    slug: "Powering Your Needs, Connecting Your Future.",
     image: "/Electrical.png",
     description: "________________________________________________"
   },
@@ -59,7 +59,7 @@ const services = [
   {
     id: 6,
     name: "AMC",
-    slug: "AMC",
+    slug: "Protect Performance. Preserve Value.",
     image: "/dummyAMC.png",
     description: "_______________________________________"
   }
@@ -633,11 +633,11 @@ export default function CareersLiaisonPage() {
           className="featured-image-img"
         />
         <div className="featured-overlay">
-          <h3>{activeService.name}</h3>
-          <p>{activeService.description}</p>
+          <h3>{activeService.slug}</h3>
+          {/* <p>{activeService.slug}</p> */}
 
           <Link
-            href="/careers-liaison-bank/jobs"
+            href={`/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.name)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="view-link featured-view"

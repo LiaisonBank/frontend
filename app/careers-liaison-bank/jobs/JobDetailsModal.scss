@@ -199,9 +199,9 @@
 
   .meta-item {
     display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
+    // align-items: center;
+    // gap: 6px;
+    // padding: 6px 10px;
     background: #f7f9fc;
     border-radius: 4px;
     font-size: 13px;
@@ -322,7 +322,7 @@
 
 .job-info-footer {
   margin-top: 4px;
-  margin-bottom: 12px;
+  // margin-bottom: 12px;
 
   h2 {
     font-size: 15px;
@@ -341,7 +341,7 @@
 
   .detail-item {
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between ;
     align-items: center;
     padding: 6px 10px;
     background: #f7f9fc;

@@ -405,12 +405,7 @@ const JobDetailsModal = ({ job, isOpen, onClose, onRequireLogin }) => {
             {/* --- JOB META --- */}
             {(company || location || jobType || openings || salary || experience) && (
               <div className="job-meta-grid">
-                {company && (
-                  <div className="meta-item">
-                    <span className="meta-label">Company:</span>
-                    <span>{company}</span>
-                  </div>
-                )}
+             
                 {location && (
                   <div className="meta-item">
                     <span className="meta-label">Location:</span>
@@ -430,7 +425,7 @@ const JobDetailsModal = ({ job, isOpen, onClose, onRequireLogin }) => {
                   </div>
                 )}
                 {salary && (
-                  <div className="meta-item highlight">
+                  <div className="meta-item">
                     <span className="meta-label">Salary:</span>
                     <span>{salary}</span>
                   </div>
@@ -515,25 +510,25 @@ const JobDetailsModal = ({ job, isOpen, onClose, onRequireLogin }) => {
                 <div className="details-list">
                   {jobId && (
                     <div className="detail-item">
-                      <span className="label">Job ID</span>
-                      <span className="value">{jobId}</span>
+                      <span className="label">Job ID : </span>
+                       <span className="value">{jobId}</span>
                     </div>
                   )}
                   {department && (
                     <div className="detail-item">
-                      <span className="label">Department</span>
+                      <span className="label">Department :</span>
                       <span className="value">{department}</span>
                     </div>
                   )}
                   {jobType && (
                     <div className="detail-item">
-                      <span className="label">Employment Type</span>
+                      <span className="label">Employment Type :</span>
                       <span className="value">{jobType}</span>
                     </div>
                   )}
                   {experience && (
                     <div className="detail-item">
-                      <span className="label">Experience</span>
+                      <span className="label">Experience :</span>
                       <span className="value">{experience}</span>
                     </div>
                   )}
