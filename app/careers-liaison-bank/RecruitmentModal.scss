@@ -19,45 +19,76 @@
   position: relative;
 
   width: min(100%, 500px);
-  padding: 25px 20px 0;
+  max-height: 90vh;
+  overflow-y: auto;
+  
+  padding: 40px 30px 35px;
 
   background: #fff;
-  border-radius: 20px;
+  // border-radius: 20px;
 
-  text-align: center;
+  text-align: left; // Changed from center for better readability
 
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
 
   animation: recruitmentModalIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+  }
+
   h2 {
     margin: 0 0 20px;
-
+    text-align: center;
     font-size: 30px;
     line-height: 1.25;
     font-weight: 600;
-
     color: #111;
   }
 
-  p {
-    margin: 0 auto 30px;
+  .popup-content {
+    text-align: left;
 
-    max-width: 450px;
+    p {
+      margin: 0 0 16px;
+      font-size: 16px;
+      line-height: 1.8;
+      color: #555;
 
-    font-size: 16px;
-    // line-height: 1.7;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
 
-    color: #555;
+  a {
+    color: #f97316;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #e0680e;
+      text-decoration: underline;
+    }
   }
 }
 
 /* Close Button */
-
 .career-popup-close {
   position: absolute;
-  top: 5px;
-    right: 5px;
+  top: 12px;
+  right: 12px;
 
   width: 40px;
   height: 40px;
@@ -98,7 +129,6 @@
 }
 
 /* Explore Careers Button */
-
 .career-popup-button {
   display: inline-flex;
   align-items: center;
@@ -106,6 +136,8 @@
 
   min-width: 180px;
   min-height: 48px;
+
+  margin-top: 10px;
 
   padding: 0 28px;
 
@@ -140,7 +172,6 @@
 }
 
 /* Overlay Animation */
-
 @keyframes recruitmentOverlayIn {
   from {
     opacity: 0;
@@ -152,7 +183,6 @@
 }
 
 /* Modal Animation */
-
 @keyframes recruitmentModalIn {
   from {
     opacity: 0;
@@ -166,10 +196,9 @@
 }
 
 /* Tablet */
-
 @media (max-width: 768px) {
   .recruitment-popup {
-    padding: 45px 30px 35px;
+    padding: 35px 25px 30px;
 
     h2 {
       font-size: 26px;
@@ -177,12 +206,12 @@
 
     p {
       font-size: 15px;
+      line-height: 1.7;
     }
   }
 }
 
 /* Mobile */
-
 @media (max-width: 480px) {
   .recruitment-popup-overlay {
     padding: 15px;
@@ -190,17 +219,20 @@
 
   .recruitment-popup {
     width: 100%;
-    padding: 45px 22px 30px;
+    max-height: 85vh;
+    padding: 35px 20px 25px;
 
     border-radius: 16px;
 
     h2 {
       font-size: 23px;
+      margin-bottom: 16px;
     }
 
     p {
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.7;
+      margin-bottom: 16px;
     }
   }
 
@@ -216,11 +248,11 @@
 
   .career-popup-button {
     width: 100%;
+    font-size: 14px;
   }
 }
 
 /* Reduced Motion */
-
 @media (prefers-reduced-motion: reduce) {
   .recruitment-popup-overlay,
   .recruitment-popup {

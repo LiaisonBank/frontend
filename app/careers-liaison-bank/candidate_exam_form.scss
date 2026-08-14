@@ -409,7 +409,7 @@
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      background: linear-gradient(90deg, #e58e46, #ed733a);
       transition: width 0.3s ease;
     }
   }
@@ -455,7 +455,7 @@
         .option-radio {
           width: 18px;
           height: 18px;
-          accent-color: #4f46e5;
+          accent-color: #c24d17;
           cursor: pointer;
           flex-shrink: 0;
         }
@@ -466,7 +466,7 @@
         }
 
         &:has(input:checked) {
-          border-color: #4f46e5;
+          border-color: #d46d19;
           background: #eef2ff;
           box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
@@ -500,11 +500,11 @@
     }
 
     &.next {
-      background: #4f46e5;
+      background: #e0740f;
       color: white;
 
       &:hover:not(:disabled) {
-        background: #4338ca;
+        background: #da4610;
       }
     }
 
@@ -565,15 +565,15 @@
     }
 
     &.answered {
-      background: #10b981;
-      border-color: #10b981;
+      background: #e16a0f;
+      border-color: #ea6a09;
       color: white;
     }
 
     &.active {
-      border-color: #4f46e5;
+      border-color: #d5720e;
       background: #eef2ff;
-      color: #4f46e5;
+      color: #e58346;
       box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
     }
   }
