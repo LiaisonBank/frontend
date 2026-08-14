@@ -1,3 +1,7 @@
+
+#sticky-icon {
+    display: none !important;
+}
 /* Reset & Base */
 .careers-page {
   background: #ffffff;
@@ -269,7 +273,7 @@
   .benefits-section {
     position: relative;
     z-index: 2;
-    padding: 80px 0 100px;
+    // padding: 80px 0 100px;
     background: #f8f9fa;
     overflow: visible;
 
@@ -540,153 +544,324 @@
     }
   }
 
-  // ---------- SERVICES SECTION (TABBED) ----------
-  .services-section {
-    position: relative;
-    z-index: 2;
-    padding: 60px 0 80px;
-    background: #faf8f6;
+// ---------- SERVICES SECTION (TABBED) ----------
+.services-section {
+  position: relative;
+  z-index: 2;
+  padding: 60px 0 80px;
+  background: #faf8f6;
 
-    .services-tabs {
-      display: flex;
-      align-items: stretch;
-      justify-content: flex-start;
-      flex-wrap: nowrap;
-      gap: 18px;
-      width: 100%;
-      margin-bottom: 40px;
-      border-bottom: 1px solid #d8d8d8;
-      padding-left: 100px;
+  .services-tabs {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 18px;
+    width: 100%;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #d8d8d8;
+    padding-left: 100px;
 
-      .tab-btn {
-        position: relative;
-        padding: 12px 28px 17px;
-        border: none;
-        outline: none;
-        background: transparent;
-        color: #686868;
-        font-size: 24px;
-        font-weight: 700;
-        font-family: inherit;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: color 0.3s ease;
+    .tab-btn {
+      position: relative;
+      padding: 12px 28px 17px;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #686868;
+      font-size: 24px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.3s ease;
 
-        &::after {
-          content: "";
-          position: absolute;
-          bottom: -1px;
-          left: 0;
-          width: 100%;
-          height: 5px;
-          background: #f97316;
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 0.35s ease;
-        }
-
-        &:hover {
-          color: #f97316;
-        }
-
-        &.active {
-          color: #f97316;
-
-          &::after {
-            transform: scaleX(1);
-          }
-        }
-      }
-    }
-
-    .featured-service {
-      margin-top: 8px;
-      padding-left: 100px;
-
-      .featured-image {
-        position: relative;
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
         width: 100%;
-        height: 500px;
-        background-size: cover;
-        background-position: center;
-        overflow: hidden;
-        transition: background-image 0.4s ease;
-        // padding-left: 1000px;
+        height: 5px;
+        background: #f97316;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.35s ease;
+      }
+
+      &:hover {
+        color: #f97316;
+      }
+
+      &.active {
+        color: #f97316;
 
         &::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
-          z-index: 1;
-        }
-
-        .featured-overlay {
-          position: absolute;
-          bottom: 60px;
-          left: 60px;
-          right: 60px;
-          z-index: 2;
-
-          h3 {
-            font-size: 42px;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 14px;
-            letter-spacing: -0.02em;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-          }
-
-          p {
-            font-size: 22px;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 24px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-          }
-
-          .featured-view {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            /* Button text size */
-            color: #f97316;
-            background: white;
-            padding: 10px 28px;
-            /* Button height ~40px */
-            text-decoration: none;
-            transition: all 0.3s ease;
-            min-height: 40px;
-            /* Exact 40px height */
-            line-height: 1;
-
-            &:hover {
-              gap: 14px;
-              background: #f97316;
-              color: white;
-            }
-
-            svg {
-              transition: transform 0.2s ease;
-              width: 18px;
-              height: 18px;
-            }
-
-            &:hover svg {
-              transform: translateX(4px);
-            }
-          }
+          transform: scaleX(1);
         }
       }
     }
   }
 
+  .featured-service {
+    margin-top: 8px;
+    // padding-left: 0px;
+
+    .featured-image {
+      position: relative;
+      width: 1000px; /* Fixed width */
+      height: 500px; /* Fixed height */
+      max-width: 100%; /* Responsive */
+      overflow: hidden;
+      background-color: #f5f0ea;
+      transition: all 0.4s ease;
+      margin: 0 auto; /* Center the container */
+
+      .featured-image-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.4s ease;
+      }
+
+      &:hover {
+        .featured-image-img {
+          transform: scale(1.05);
+        }
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .featured-overlay {
+        position: absolute;
+        bottom: 60px;
+        left: 60px;
+        right: 60px;
+        z-index: 2;
+
+        h3 {
+          font-size: 42px;
+          font-weight: 800;
+          color: #fff;
+          margin-bottom: 14px;
+          letter-spacing: -0.02em;
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        p {
+          font-size: 22px;
+          color: rgba(255, 255, 255, 0.9);
+          margin-bottom: 24px;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .featured-view {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-weight: 600;
+          font-size: 16px;
+          color: #f97316;
+          background: white;
+          padding: 10px 28px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          min-height: 40px;
+          line-height: 1;
+
+          &:hover {
+            gap: 14px;
+            background: #f97316;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3);
+          }
+
+          svg {
+            transition: transform 0.2s ease;
+            width: 18px;
+            height: 18px;
+          }
+
+          &:hover svg {
+            transform: translateX(4px);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive styles
+@media (max-width: 1200px) {
+  .services-section {
+    .featured-service {
+      .featured-image {
+        width: 90%; /* Responsive width */
+        height: 450px;
+
+        .featured-overlay {
+          bottom: 50px;
+          left: 50px;
+          right: 50px;
+
+          h3 {
+            font-size: 38px;
+          }
+
+          p {
+            font-size: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .services-section {
+    .featured-service {
+      padding-left: 50px;
+
+      .featured-image {
+        width: 95%;
+        height: 400px;
+
+        .featured-overlay {
+          bottom: 45px;
+          left: 45px;
+          right: 45px;
+
+          h3 {
+            font-size: 34px;
+          }
+
+          p {
+            font-size: 20px;
+          }
+
+          .featured-view {
+            font-size: 17px;
+            padding: 12px 28px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .services-section {
+    padding: 40px 0 60px;
+
+    .services-tabs {
+      gap: 6px;
+      padding-left: 20px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      
+      &::-webkit-scrollbar {
+        height: 2px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #f97316;
+      }
+
+      .tab-btn {
+        padding: 8px 16px;
+        font-size: 18px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+    }
+
+    .featured-service {
+      padding-left: 0;
+
+      .featured-image {
+        width: 100%;
+        height: 350px;
+
+        .featured-overlay {
+          bottom: 35px;
+          left: 35px;
+          right: 35px;
+
+          h3 {
+            font-size: 30px;
+          }
+
+          p {
+            font-size: 19px;
+          }
+
+          .featured-view {
+            font-size: 16px;
+            padding: 11px 24px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .services-section {
+    padding: 30px 0 40px;
+
+    .services-tabs {
+      gap: 4px;
+      padding-left: 10px;
+
+      .tab-btn {
+        padding: 6px 12px;
+        font-size: 15px;
+      }
+    }
+
+    .featured-service {
+      .featured-image {
+        width: 100%;
+        height: 280px;
+
+        .featured-overlay {
+          bottom: 25px;
+          left: 25px;
+          right: 25px;
+
+          h3 {
+            font-size: 24px;
+          }
+
+          p {
+            font-size: 17px;
+            margin-bottom: 14px;
+          }
+
+          .featured-view {
+            font-size: 15px;
+            padding: 9px 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
   // ---------- CTA SECTION ----------
   .cta-section {
     position: relative;
     z-index: 2;
-    padding: 60px 0 76px;
+    // padding: 60px 0 76px;
     background: #ffffff;
 
     .cta-box {
@@ -708,7 +883,7 @@
         background: linear-gradient(135deg, #f97316, #fb923c);
         color: #ffffff;
         padding: 6px 24px;
-        // border-radius: 50px;
+        border-radius: 50px;
         font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.8px;
@@ -746,7 +921,7 @@
             background: linear-gradient(135deg, #f97316, #fb923c);
             color: white;
             padding: 16px 42px;
-            // border-radius: 50px;
+            border-radius: 20px;
             font-weight: 600;
             text-decoration: none;
             display: inline-flex;

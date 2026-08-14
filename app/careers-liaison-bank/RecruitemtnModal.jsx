@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import "./RecruitmentModal.scss";
 
-export default function RecruitemtnModal() {
+export default function RecruitmentModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const timerRef = useRef(null);
@@ -14,7 +14,6 @@ export default function RecruitemtnModal() {
   useEffect(() => {
     setMounted(true);
 
-    // Clear any existing timer
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
@@ -30,13 +29,11 @@ export default function RecruitemtnModal() {
     };
   }, []);
 
-  // Don't render anything if not mounted or not open
   if (!mounted || !isOpen) return null;
 
-  // Use portal to render at document body level
   return createPortal(
-    <div className="recruitment-popup-overlay">
-      <div className="recruitment-popup">
+    <div className="recruitment-popup-overlay" onClick={() => setIsOpen(false)}>
+      <div className="recruitment-popup" onClick={(e) => e.stopPropagation()}>
         <button
           className="career-popup-close"
           onClick={() => setIsOpen(false)}
@@ -47,17 +44,26 @@ export default function RecruitemtnModal() {
 
         <h2>Recruitment Fraud Disclaimer</h2>
 
-        <p>
-          Liaison Bank follows a fair, transparent, and merit-based recruitment
-          process. We never charge candidates any fees for applications,
-          interviews, selection, or employment offers. Candidates should remain
-          cautious of fraudulent communications and must not share confidential
-          information, including passwords, PINs, OTPs, or banking details.
-          Liaison Bank is not responsible for losses arising from unauthorized
-          individuals or fraudulent job offers. Please verify suspicious
-          recruitment communications through our official channels at &nbsp;
-          <Link href="mailto:hr@liasionbank.com">hr@liasionbank.com</Link>.
-        </p>
+        <div className="popup-content">
+          <p>
+            Liaison Bank follows a fair, transparent, and merit-based recruitment process.
+          </p>
+          <p>
+            We never charge candidates any fees for applications, interviews, selection, or employment offers.
+          </p>
+          <p>
+            Candidates should remain cautious of fraudulent communications and must not share confidential information, including passwords, PINs, OTPs, or banking details.
+          </p>
+          <p>
+            Liaison Bank is not responsible for losses arising from unauthorized individuals or fraudulent job offers.
+          </p>
+          <p>
+            Please verify suspicious recruitment communications through our official channels at{" "}
+            <Link href="mailto:hr@liaisonbank.com">hr@liaisonbank.com</Link>.
+          </p>
+        </div>
+
+     
       </div>
     </div>,
     document.body

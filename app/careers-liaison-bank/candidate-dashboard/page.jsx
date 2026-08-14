@@ -695,12 +695,13 @@ export default function CandidateDashboard() {
     // ============================================================
     // HANDLE LOGOUT
     // ============================================================
-    const handleLogout = () => {
-        localStorage.removeItem('career_token');
-        localStorage.removeItem('career_user');
-        setIsAuthenticated(false);
-        router.push('/careers-liaison-bank');
-    };
+const handleLogout = () => {
+    localStorage.removeItem('career_token');
+    localStorage.removeItem('career_user');
+    setIsAuthenticated(false);
+
+    window.location.href = '/careers-liaison-bank';
+};
 
     // ============================================================
     // HANDLE AUTH SUCCESS
@@ -1104,7 +1105,6 @@ export default function CandidateDashboard() {
                 />
             )}
 
-\
             <div className="dashboard-layout">
                 <aside className={`dashboard-sidebar ${showMobileMenu ? 'mobile-open' : ''}`}>
                     <nav className="sidebar-nav">
@@ -1791,7 +1791,7 @@ export default function CandidateDashboard() {
                                                         <div className="info-item full-width">
                                                             <span className="info-label">Resume</span>
                                                             <span className="info-value">
-                                                                <a href={user.resume} target="_blank" rel="noopener noreferrer" className="view-resume-link">
+                                                                <a href={`${process.env.NEXT_PUBLIC_LOCAL_API_URL}${user.resume}`} target="_blank" rel="noopener noreferrer" className="view-resume-link">
                                                                     <Eye size={14} /> View Resume
                                                                 </a>
                                                             </span>
@@ -2042,14 +2042,14 @@ export default function CandidateDashboard() {
                                                 )}
                                             </div>
                                         )}
-                                        {job.has_taken_exam && job.exam_result && (
+                                        {/* {job.has_taken_exam && job.exam_result && (
                                             <div className="exam-result-info">
                                                 <span className={`exam-status ${job.exam_result.status === 'Pass' || job.exam_result.status === 'pass' || job.exam_result.status === 'PASS' ? 'passed' : 'failed'}`}>
                                                     {job.exam_result.status === 'Pass' || job.exam_result.status === 'pass' || job.exam_result.status === 'PASS' ? '✅ Passed' : '❌ Failed'}
                                                     Score: {job.exam_result.score || job.exam_result.percentage || job.exam_result.marks_obtained || 'N/A'}%
                                                 </span>
                                             </div>
-                                        )}
+                                        )} */}
                                     </div>
                                     <div className="job-card-footer">
                                         <button
