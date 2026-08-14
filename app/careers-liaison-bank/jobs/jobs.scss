@@ -1,4 +1,19 @@
 // app/careers-liaison-bank/jobs/jobs.scss
+header {
+  display: none !important;
+}
+
+
+
+#sticky-icon {
+  display: none !important;
+}
+
+footer {
+  display: none !important;
+}
+
+
 .jobs-page {
   background: #f5f6fa;
   min-height: 100vh;
@@ -284,7 +299,9 @@
       }
 
       @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+          transform: rotate(360deg);
+        }
       }
     }
 
@@ -362,21 +379,21 @@
     }
 
     // Jobs Grid - Simple grid
-.jobs-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-  width: 100%;
-  margin-bottom: 40px;
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+      width: 100%;
+      margin-bottom: 40px;
 
 
       .job-card {
         background: #ffffff;
-        border-radius: 16px;
+        border-radius: 6px;
         overflow: hidden;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         transition: all 0.3s ease;
-        border: 1px solid #eef2f7;
+        border: 1px solid #6c757d;
 
         &:hover {
           transform: translateY(-6px);
@@ -385,7 +402,7 @@
 
           .view-job-btn {
             gap: 12px;
-            
+
             svg {
               transform: translateX(4px);
             }
@@ -398,6 +415,8 @@
           justify-content: space-between;
           align-items: center;
           min-height: 56px;
+          color: whitesmoke;
+          font-weight: bold;
 
           .job-card-badge {
             display: flex;
@@ -514,17 +533,17 @@
     }
 
     // Pagination - Separated from grid, always at bottom
-.pagination-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  clear: both;
-  position: relative;
-  padding-top: 24px;
-  margin-top: 0;
-  border-top: 1px solid #e8e2da;
-}
+    .pagination-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      clear: both;
+      position: relative;
+      padding-top: 24px;
+      margin-top: 0;
+      border-top: 1px solid #e8e2da;
+    }
 
     .pagination {
       display: flex;

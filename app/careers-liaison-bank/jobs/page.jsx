@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import './jobs.scss';
 import JobDetailsModal from './JobDetailsModal';
+import AuthModal from '../AuthModal';
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState([]);
@@ -28,25 +29,19 @@ export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
-  const [selectedType, setSelectedType] = useState('');
-  const [selectedCompany, setSelectedCompany] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState('newest');
-    const [selectedJob, setSelectedJob] = useState(null);
+  const [selectedJob, setSelectedJob] = useState(null);
   const [selectedJobIndex, setSelectedJobIndex] = useState(0);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-  
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 6;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   // Fetch jobs from API
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8000/api/erp-jobs');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/erp-jobs`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch jobs: ${response.status}`);
@@ -85,47 +80,101 @@ export default function JobsPage() {
     fetchJobs();
   }, []);
 
-
-
-    const handleViewDetails = (job, index) => {
+  const handleViewDetails = (job, index) => {
     setSelectedJob(job);
     setSelectedJobIndex(index);
     setIsModalOpen(true);
   };
- const handleCloseModal = () => {
+
+  const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedJob(null);
   };
 
-const handlePreviousJob = () => {
-  if (selectedJobIndex > 0) {
-    setSelectedJobIndex(selectedJobIndex - 1);
-    setSelectedJob(jobs[selectedJobIndex - 1]);
-  }
-};
+  const handlePreviousJob = () => {
+    if (selectedJobIndex > 0) {
+      setSelectedJobIndex(selectedJobIndex - 1);
+      setSelectedJob(jobs[selectedJobIndex - 1]);
+    }
+  };
 
-const handleNextJob = () => {
-  if (selectedJobIndex < jobs.length - 1) {
-    setSelectedJobIndex(selectedJobIndex + 1);
-    setSelectedJob(jobs[selectedJobIndex + 1]);
-  }
-};
+  const handleNextJob = () => {
+    if (selectedJobIndex < jobs.length - 1) {
+      setSelectedJobIndex(selectedJobIndex + 1);
+      setSelectedJob(jobs[selectedJobIndex + 1]);
+    }
+  };
+
+  // Helper function to extract skills from job
+  const getJobSkills = (job) => {
+    const skills = [];
+    
+    if (job.custom_skills) {
+      if (typeof job.custom_skills === 'string') {
+        skills.push(...job.custom_skills.split('\n').filter(s => s.trim()));
+      } else if (Array.isArray(job.custom_skills)) {
+        skills.push(...job.custom_skills.filter(s => s));
+      }
+    }
+    
+    if (job.skills_required) {
+      if (typeof job.skills_required === 'string') {
+        skills.push(...job.skills_required.split('\n').filter(s => s.trim()));
+      } else if (Array.isArray(job.skills_required)) {
+        skills.push(...job.skills_required.filter(s => s));
+      }
+    }
+    
+    if (job.skills) {
+      if (typeof job.skills === 'string') {
+        skills.push(...job.skills.split('\n').filter(s => s.trim()));
+      } else if (Array.isArray(job.skills)) {
+        skills.push(...job.skills.filter(s => s));
+      }
+    }
+    
+    return skills;
+  };
+
+  // Helper function to get job title
+  const getJobTitle = (job) => {
+    return job.job_title || job.title || job.job_opening_template || job.designation || '';
+  };
 
   // Filter and sort jobs
   useEffect(() => {
     let result = jobs;
 
-    // Search filter
+    // Search filter - Priority: Title > Department > Skills
     if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      result = result.filter(job => 
-        (job.job_title || job.title || '')?.toLowerCase().includes(term) ||
-        (job.department || '')?.toLowerCase().includes(term) ||
-        (job.description || '')?.toLowerCase().includes(term) ||
-        (job.location || '')?.toLowerCase().includes(term) ||
-        (job.company || '')?.toLowerCase().includes(term) ||
-        (job.job_opening_template || '')?.toLowerCase().includes(term)
-      );
+      const term = searchTerm.toLowerCase().trim();
+      
+      if (term === '') {
+        // No filtering needed
+      } else {
+        const searchWords = term.split(' ').filter(word => word.length > 0);
+        
+        result = result.filter(job => {
+          const title = getJobTitle(job).toLowerCase();
+          const department = (job.department || '').toLowerCase();
+          const skills = getJobSkills(job);
+          const skillsString = skills.join(' ').toLowerCase();
+          
+          const titleMatch = title.includes(term);
+          const departmentMatch = department.includes(term);
+          const skillMatch = skillsString.includes(term);
+          
+          if (searchWords.length > 1) {
+            const allWordsMatchTitle = searchWords.every(word => title.includes(word));
+            const allWordsMatchDept = searchWords.every(word => department.includes(word));
+            const allWordsMatchSkills = searchWords.every(word => skillsString.includes(word));
+            
+            return allWordsMatchTitle || allWordsMatchDept || allWordsMatchSkills;
+          }
+          
+          return titleMatch || departmentMatch || skillMatch;
+        });
+      }
     }
 
     // Location filter
@@ -142,20 +191,6 @@ const handleNextJob = () => {
       );
     }
 
-    // Job type filter
-    if (selectedType) {
-      result = result.filter(job => 
-        (job.employment_type || job.type || '') === selectedType
-      );
-    }
-
-    // Company filter
-    if (selectedCompany) {
-      result = result.filter(job => 
-        (job.company || '') === selectedCompany
-      );
-    }
-
     // Sort
     if (sortOrder === 'newest') {
       result = [...result].sort((a, b) => 
@@ -168,8 +203,7 @@ const handleNextJob = () => {
     }
 
     setFilteredJobs(result);
-    setCurrentPage(1);
-  }, [searchTerm, selectedLocation, selectedDepartment, selectedType, selectedCompany, sortOrder, jobs]);
+  }, [searchTerm, selectedLocation, selectedDepartment, sortOrder, jobs]);
 
   // Get unique values for filters
   const locations = useMemo(() => 
@@ -181,33 +215,18 @@ const handleNextJob = () => {
     [...new Set(jobs.map(job => job.department).filter(Boolean))],
     [jobs]
   );
-  
-  const jobTypes = useMemo(() => 
-    [...new Set(jobs.map(job => job.employment_type || job.type).filter(Boolean))],
-    [jobs]
-  );
-  
-  const companies = useMemo(() => 
-    [...new Set(jobs.map(job => job.company).filter(Boolean))],
-    [jobs]
-  );
-
-  // Pagination
-  const indexOfLastJob = currentPage * jobsPerPage;
-  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Clear all filters
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedLocation('');
     setSelectedDepartment('');
-    setSelectedType('');
-    setSelectedCompany('');
     setSortOrder('newest');
+  };
+
+  // Toggle sort order
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest');
   };
 
   // Format date
@@ -221,9 +240,18 @@ const handleNextJob = () => {
     });
   };
 
-  // Helper to get job title
-  const getJobTitle = (job) => {
-    return job.job_title || job.title || job.job_opening_template || job.designation || 'Position';
+  // Helper to get job title (formatted)
+  const getFormattedJobTitle = (job) => {
+    const title =
+      job.job_title ||
+      job.title ||
+      job.job_opening_template ||
+      job.designation ||
+      'Position';
+
+    return title
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
   // Helper to get job description
@@ -238,12 +266,24 @@ const handleNextJob = () => {
 
   // Helper to get company
   const getCompany = (job) => {
-    return job.company || 'Company';
+    return 'Liaison Bank';
   };
 
-  // Toggle sort order
-  const toggleSortOrder = () => {
-    setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest');
+  // Helper to get experience
+  const getExperience = (job) => {
+    if (job.custom_min_experience !== undefined && job.custom_max_experience !== undefined) {
+      const min = job.custom_min_experience;
+      const max = job.custom_max_experience;
+      if (min && max) return `${min} - ${max} years`;
+      if (min) return `${min}+ years`;
+      if (max) return `Up to ${max} years`;
+    }
+    return job.experience_level || job.experience || 'Not specified';
+  };
+
+  // Helper to get openings
+  const getOpenings = (job) => {
+    return job.vacancies || job.openings || 1;
   };
 
   // Get orange shade for card header
@@ -276,7 +316,7 @@ const handleNextJob = () => {
                 <Search className="search-icon" size={20} />
                 <input
                   type="text"
-                  placeholder="Job title, skill, keyword"
+                  placeholder="Search by job title, skills, or department..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
@@ -324,18 +364,6 @@ const handleNextJob = () => {
                 Work Locations ▼
               </button>
               <button 
-                className={`filter-chip ${selectedType ? 'active' : ''}`}
-                onClick={() => setShowFilters(!showFilters)}
-              >
-                Job Functions ▼
-              </button>
-              <button 
-                className={`filter-chip ${selectedCompany ? 'active' : ''}`}
-                onClick={() => setShowFilters(!showFilters)}
-              >
-                Organizations ▼
-              </button>
-              <button 
                 className="filter-chip sort-chip"
                 onClick={toggleSortOrder}
               >
@@ -368,32 +396,6 @@ const handleNextJob = () => {
                     <option value="">All Departments</option>
                     {departments.map(dept => (
                       <option key={dept} value={dept}>{dept}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <label>Job Function</label>
-                  <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                  >
-                    <option value="">All Types</option>
-                    {jobTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <label>Organization</label>
-                  <select
-                    value={selectedCompany}
-                    onChange={(e) => setSelectedCompany(e.target.value)}
-                  >
-                    <option value="">All Companies</option>
-                    {companies.map(company => (
-                      <option key={company} value={company}>{company}</option>
                     ))}
                   </select>
                 </div>
@@ -434,56 +436,45 @@ const handleNextJob = () => {
             </div>
           ) : (
             <>
-              {/* Jobs Grid */}
+              {/* Jobs Grid - Simplified Job Cards */}
               <div className="jobs-grid">
-                {currentJobs.map((job, index) => {
+                {filteredJobs.map((job, index) => {
                   const orangeShade = getOrangeShade(index);
                   return (
-                    <div key={job.name || job.id} className="job-card">
+                    <div key={job.name || job.id || index} className="job-card">
                       <div className="job-card-header" style={{ backgroundColor: orangeShade }}>
-                        <div className="job-card-badge">
-                          <Building2 size={16} />
-                          <span>{getCompany(job)}</span>
-                        </div>
-                        {index < 2 && (
-                          <span className="trending-badge">
-                            <TrendingUp size={12} />
-                            TRENDING
-                          </span>
-                        )}
+                        {getFormattedJobTitle(job)}
                       </div>
                       
                       <div className="job-card-body">
-                        <h3 className="job-title">{getJobTitle(job)}</h3>
-                        
+                        {/* Job Meta - Only Openings and Experience */}
                         <div className="job-meta">
-                          <div className="job-meta-item">
-                            <MapPin size={14} />
-                            <span>{getJobLocation(job) || 'Location not specified'}</span>
-                          </div>
-                          <div className="job-meta-item">
-                            <Calendar size={14} />
-                            <span>Posted: {formatDate(job.posted_on || job.creation)}</span>
-                          </div>
-                          {job.vacancies && (
+                          {getOpenings(job) && (
                             <div className="job-meta-item">
                               <Users size={14} />
-                              <span>{job.vacancies} {job.vacancies === 1 ? 'position' : 'positions'}</span>
+                              <span>{getOpenings(job)} {getOpenings(job) === 1 ? 'Opening' : 'Openings'}</span>
+                            </div>
+                          )}
+                          
+                          {getExperience(job) && (
+                            <div className="job-meta-item">
+                              <Briefcase size={14} />
+                              <span>{getExperience(job)}</span>
                             </div>
                           )}
                         </div>
                         
+                        {/* Job Description */}
                         <p className="job-description">
                           {getJobDescription(job).length > 120 
                             ? `${getJobDescription(job).substring(0, 120)}...` 
                             : getJobDescription(job) || 'No description available'}
                         </p>
                         
-                        <div className="job-footer"      onClick={() => handleViewDetails(job, index)}
->
-        
-                            View Details
-                            <ArrowUpRight size={16} />
+                        {/* View Details Button */}
+                        <div className="job-footer" onClick={() => handleViewDetails(job, index)}>
+                          View Details
+                          <ArrowUpRight size={16} />
                         </div>
                       </div>
                     </div>
@@ -491,62 +482,32 @@ const handleNextJob = () => {
                 })}
               </div>
 
-              {/* Pagination - Separated from grid */}
-              {totalPages > 1 && (
-                <div className="pagination-wrapper">
-                  <div className="pagination">
-                    <button
-                      onClick={() => paginate(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="pagination-btn prev"
-                    >
-                      ← Previous
-                    </button>
-                    
-                    <div className="pagination-numbers">
-                      {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-                        let pageNum;
-                        if (totalPages <= 7) {
-                          pageNum = i + 1;
-                        } else if (currentPage <= 4) {
-                          pageNum = i + 1;
-                        } else if (currentPage >= totalPages - 3) {
-                          pageNum = totalPages - 6 + i;
-                        } else {
-                          pageNum = currentPage - 3 + i;
-                        }
-                        return (
-                          <button
-                            key={pageNum}
-                            onClick={() => paginate(pageNum)}
-                            className={`pagination-number ${currentPage === pageNum ? 'active' : ''}`}
-                          >
-                            {pageNum}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    
-                    <button
-                      onClick={() => paginate(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="pagination-btn next"
-                    >
-                      Next →
-                    </button>
-                  </div>
-                </div>
-              )}
-               <JobDetailsModal
-  job={selectedJob}
-  isOpen={isModalOpen}
-  onClose={handleCloseModal}
-  onPrevious={handlePreviousJob}
-  onNext={handleNextJob}
-  hasPrevious={selectedJobIndex > 0}
-  hasNext={selectedJobIndex < jobs.length - 1}
-/>
-
+              {/* Auth Modal */}
+              <AuthModal
+                isOpen={authModalOpen}
+                onClose={() => setAuthModalOpen(false)}
+                mode="login"
+                onSuccess={(userData) => {
+                  setAuthModalOpen(false);
+                  window.open(
+                    '/careers-liaison-bank/candidate-dashboard',
+                    '_blank',
+                    'noopener,noreferrer'
+                  );
+                }}
+              />
+              
+              {/* Job Details Modal */}
+              <JobDetailsModal
+                job={selectedJob}
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onPrevious={handlePreviousJob}
+                onNext={handleNextJob}
+                hasPrevious={selectedJobIndex > 0}
+                hasNext={selectedJobIndex < jobs.length - 1}
+                onRequireLogin={() => setAuthModalOpen(true)}
+              />
             </>
           )}
         </div>

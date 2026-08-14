@@ -23,42 +23,44 @@ const services = [
     id: 1,
     name: "Liaisoning",
     slug: "liaisoning",
-    image: "/commitment.webp",
+    image: "/liaisoning-in-real-estate.jpg",
     description: "____________________________"
   },
   {
     id: 2,
     name: "Licensing",
     slug: "Licensing",
-    image: "/LicensingCareer.jpg",
+    image: "/licensing-services.png",
     description: "_______________________________________________"
+  },
+    {
+    id: 5,
+    name: "Piped Natural Gas",
+    slug: "Piped Natural Gas",
+    image: "/PNG.png   ",
+    description: "_____________________________________"
+  },
+    {
+    id: 4,
+    name: "Fire",
+    slug: "media",
+    image: "/fire4.png",
+    description: "____________________________________________"
   },
   {
     id: 3,
     name: "Electrical",
     slug: "Electrical",
-    image: "/ElectricalCareer.jpg",
+    image: "/Electrical.png",
     description: "________________________________________________"
   },
-  {
-    id: 4,
-    name: "Fire",
-    slug: "media",
-    image: "/FireCareer.jpg",
-    description: "____________________________________________"
-  },
-  {
-    id: 5,
-    name: "Piped Natural Gas",
-    slug: "Piped Natural Gas",
-    image: "/pipedNaturalGas.jpg",
-    description: "_____________________________________"
-  },
+
+
   {
     id: 6,
     name: "AMC",
     slug: "AMC",
-    image: "/AMCCareer.jpg",
+    image: "/dummyAMC.png",
     description: "_______________________________________"
   }
 ];
@@ -134,6 +136,7 @@ export default function CareersLiaisonPage() {
         ease: "power2.out",
       }, "-=0.4");
 
+      
       // 2. SCROLL ANIMATION - Scale back to 0 from center
       const setupScrollAnimation = () => {
         // Kill any existing scroll triggers
@@ -321,7 +324,7 @@ export default function CareersLiaisonPage() {
           scrollTrigger: {
             trigger: servicesRef.current,
             start: "top 85%",
-            end: "top 40%",
+            end: "top 40%", 
             toggleActions: "play none none reverse",
             invalidateOnRefresh: true,
           },
@@ -380,7 +383,7 @@ export default function CareersLiaisonPage() {
         {
           opacity: 1,
           y: 0,
-          duration: 1.2,
+          duration: 0.2,
           ease: "power3.out",
           scrollTrigger: {
             trigger: ctaRef.current,
@@ -500,6 +503,8 @@ export default function CareersLiaisonPage() {
     }
   }, []);
 
+
+  
   const handleApplyClick = (job) => {
     if (isAuthenticated) {
       router.push('/careers-liaison-bank/candidate-dashboard');
@@ -599,48 +604,51 @@ export default function CareersLiaisonPage() {
         </div>
       </section>
       
-      {/* Services Section */}
-      <section ref={servicesRef} className="services-section" id="openings">
-        <div className="container">
-          <div className="section-header">
-            <h2 className="job-header">Current Openings</h2>
-          </div>
+{/* Services Section */}
+<section ref={servicesRef} className="services-section" id="openings">
+  <div className="container">
+    <div className="section-header">
+      <h2 className="job-header">Current Openings</h2>
+    </div>
 
-          <div className="services-tabs">
-            {services.map((service) => (
-              <button
-                key={service.id}
-                className={`tab-btn ${activeService.id === service.id ? 'active' : ''}`}
-                onClick={() => setActiveService(service)}
-              >
-                {service.name}
-              </button>
-            ))}
-          </div>
+    <div className="services-tabs">
+      {services.map((service) => (
+        <button
+          key={service.id}
+          className={`tab-btn ${activeService.id === service.id ? 'active' : ''}`}
+          onClick={() => setActiveService(service)}
+        >
+          {service.name}
+        </button>
+        
+      ))}
+      
+    </div>
 
-          <div className="featured-service">
-            <div
-              className="featured-image"
-              style={{ backgroundImage: `url(${activeService.image})` }}
-            >
-              <div className="featured-overlay">
-                <h3>{activeService.name}</h3>
-                <p>{activeService.description}</p>
+    <div className="featured-service">
+      <div className="featured-image">
+        <img 
+          src={activeService.image} 
+          alt={activeService.name}
+          className="featured-image-img"
+        />
+        <div className="featured-overlay">
+          <h3>{activeService.name}</h3>
+          <p>{activeService.description}</p>
 
-                <Link
-                  href="/careers-liaison-bank/jobs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="view-link featured-view"
-                >
-                  View Openings <ArrowUpRight size={18} />
-                </Link>
-              </div>
-            </div>
-          </div>
+          <Link
+            href="/careers-liaison-bank/jobs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="view-link featured-view"
+          >
+            View Openings <ArrowUpRight size={18} />
+          </Link>
         </div>
-      </section>
-
+      </div>
+    </div>
+  </div>
+</section>
       {/* CTA Section */}
       <section ref={ctaRef} className="cta-section">
         <div className="container">
@@ -648,9 +656,12 @@ export default function CareersLiaisonPage() {
             <div className="cta-content">
               <span className="cta-tag">Join Our Team</span>
               <h3>Ready to make an impact?</h3>
-              <p>Explore our current openings and become part of a team that values innovation and growth.</p>
               <div className="cta-actions">
-                <Link href="#openings" className="btn-primary">
+                <Link 
+                  href="/careers-liaison-bank/jobs"
+                  target="_blank"
+                  rel="noopener noreferrer"                
+                className="btn-primary">
                   View All Openings <ArrowUpRight />
                 </Link>
               </div>
