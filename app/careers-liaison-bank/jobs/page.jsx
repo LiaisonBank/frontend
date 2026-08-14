@@ -2,6 +2,7 @@
 "use client";
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   Search,
   MapPin,
@@ -20,6 +21,9 @@ import JobDetailsModal from './JobDetailsModal';
 import AuthModal from '../AuthModal';
 
 export default function JobsPage() {
+  const searchParams = useSearchParams();
+  const serviceParam = searchParams.get('service');
+  
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,6 +33,7 @@ export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [selectedServiceType, setSelectedServiceType] = useState(serviceParam || '');
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState('newest');
   const [selectedJob, setSelectedJob] = useState(null);
@@ -80,29 +85,16 @@ export default function JobsPage() {
     fetchJobs();
   }, []);
 
-  const handleViewDetails = (job, index) => {
-    setSelectedJob(job);
-    setSelectedJobIndex(index);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedJob(null);
-  };
-
-  const handlePreviousJob = () => {
-    if (selectedJobIndex > 0) {
-      setSelectedJobIndex(selectedJobIndex - 1);
-      setSelectedJob(jobs[selectedJobIndex - 1]);
-    }
-  };
-
-  const handleNextJob = () => {
-    if (selectedJobIndex < jobs.length - 1) {
-      setSelectedJobIndex(selectedJobIndex + 1);
-      setSelectedJob(jobs[selectedJobIndex + 1]);
-    }
+  // Helper function to extract service type from job
+  const getServiceType = (job) => {
+    console.log("results",job)
+    // Check various possible field names for service type
+    return job.custom_service_type || 
+           job.serviceType || 
+          //  job.service_category || 
+          //  job.category || 
+          //  job.department || 
+           '';
   };
 
   // Helper function to extract skills from job
@@ -145,13 +137,22 @@ export default function JobsPage() {
   useEffect(() => {
     let result = jobs;
 
-    // Search filter - Priority: Title > Department > Skills
+    // Service Type filter (applied first, before search)
+    if (selectedServiceType) {
+      const serviceTypeLower = selectedServiceType.toLowerCase().trim();
+      result = result.filter(job => {
+        const serviceType = getServiceType(job).toLowerCase();
+        // Check if job's service type matches the selected service
+        return serviceType.includes(serviceTypeLower) || 
+               serviceType === serviceTypeLower;
+      });
+    }
+
+    // Search filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase().trim();
       
-      if (term === '') {
-        // No filtering needed
-      } else {
+      if (term !== '') {
         const searchWords = term.split(' ').filter(word => word.length > 0);
         
         result = result.filter(job => {
@@ -159,20 +160,23 @@ export default function JobsPage() {
           const department = (job.department || '').toLowerCase();
           const skills = getJobSkills(job);
           const skillsString = skills.join(' ').toLowerCase();
+          const serviceType = getServiceType(job).toLowerCase();
           
           const titleMatch = title.includes(term);
           const departmentMatch = department.includes(term);
           const skillMatch = skillsString.includes(term);
+          const serviceMatch = serviceType.includes(term);
           
           if (searchWords.length > 1) {
             const allWordsMatchTitle = searchWords.every(word => title.includes(word));
             const allWordsMatchDept = searchWords.every(word => department.includes(word));
             const allWordsMatchSkills = searchWords.every(word => skillsString.includes(word));
+            const allWordsMatchService = searchWords.every(word => serviceType.includes(word));
             
-            return allWordsMatchTitle || allWordsMatchDept || allWordsMatchSkills;
+            return allWordsMatchTitle || allWordsMatchDept || allWordsMatchSkills || allWordsMatchService;
           }
           
-          return titleMatch || departmentMatch || skillMatch;
+          return titleMatch || departmentMatch || skillMatch || serviceMatch;
         });
       }
     }
@@ -203,7 +207,7 @@ export default function JobsPage() {
     }
 
     setFilteredJobs(result);
-  }, [searchTerm, selectedLocation, selectedDepartment, sortOrder, jobs]);
+  }, [searchTerm, selectedLocation, selectedDepartment, selectedServiceType, sortOrder, jobs]);
 
   // Get unique values for filters
   const locations = useMemo(() => 
@@ -216,11 +220,17 @@ export default function JobsPage() {
     [jobs]
   );
 
+  const serviceTypes = useMemo(() => 
+    [...new Set(jobs.map(job => getServiceType(job)).filter(Boolean))],
+    [jobs]
+  );
+
   // Clear all filters
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedLocation('');
     setSelectedDepartment('');
+    setSelectedServiceType('');
     setSortOrder('newest');
   };
 
@@ -299,6 +309,32 @@ export default function JobsPage() {
     return shades[index % shades.length];
   };
 
+  // Handle view details
+  const handleViewDetails = (job, index) => {
+    setSelectedJob(job);
+    setSelectedJobIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedJob(null);
+  };
+
+  const handlePreviousJob = () => {
+    if (selectedJobIndex > 0) {
+      setSelectedJobIndex(selectedJobIndex - 1);
+      setSelectedJob(filteredJobs[selectedJobIndex - 1]);
+    }
+  };
+
+  const handleNextJob = () => {
+    if (selectedJobIndex < filteredJobs.length - 1) {
+      setSelectedJobIndex(selectedJobIndex + 1);
+      setSelectedJob(filteredJobs[selectedJobIndex + 1]);
+    }
+  };
+
   return (
     <div className="jobs-page">
       {/* Hero Section */}
@@ -351,6 +387,23 @@ export default function JobsPage() {
             {/* Filter Chips */}
             <div className="filter-chips">
               <span className="jobs-count">{filteredJobs.length} Open Jobs</span>
+              
+              {serviceParam && (
+                <span className="filter-chip active service-chip">
+                  {serviceParam}
+                  <button 
+                    className="remove-filter"
+                    onClick={() => {
+                      setSelectedServiceType('');
+                      // Optionally update URL to remove query param
+                      window.history.replaceState({}, '', '/careers-liaison-bank/jobs');
+                    }}
+                  >
+                    <X size={14} />
+                  </button>
+                </span>
+              )}
+              
               <button 
                 className={`filter-chip ${selectedLocation ? 'active' : ''}`}
                 onClick={() => setShowFilters(!showFilters)}
@@ -375,6 +428,19 @@ export default function JobsPage() {
             {showFilters && (
               <div className="filters-expanded">
                 <div className="filter-group">
+                  <label>Service Type</label>
+                  <select
+                    value={selectedServiceType}
+                    onChange={(e) => setSelectedServiceType(e.target.value)}
+                  >
+                    <option value="">All Services</option>
+                    {serviceTypes.map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filter-group">
                   <label>Location</label>
                   <select
                     value={selectedLocation}
@@ -388,7 +454,7 @@ export default function JobsPage() {
                 </div>
 
                 <div className="filter-group">
-                  <label>Work Location</label>
+                  <label>Department</label>
                   <select
                     value={selectedDepartment}
                     onChange={(e) => setSelectedDepartment(e.target.value)}
@@ -429,14 +495,26 @@ export default function JobsPage() {
             <div className="empty-state">
               <Briefcase size={56} className="empty-icon" />
               <h3>No jobs found</h3>
-              <p>Try adjusting your search or filter criteria</p>
+              <p>
+                {serviceParam 
+                  ? `No openings available for ${serviceParam} at the moment. Try exploring other services.`
+                  : 'Try adjusting your search or filter criteria'}
+              </p>
               <button onClick={clearFilters} className="clear-filters-btn primary">
                 Clear all filters
               </button>
             </div>
           ) : (
             <>
-              {/* Jobs Grid - Simplified Job Cards */}
+              {/* Service Type Header */}
+              {serviceParam && (
+                <div className="service-type-header">
+                  <h2>Jobs in {serviceParam}</h2>
+                  <p>Showing {filteredJobs.length} opportunities</p>
+                </div>
+              )}
+
+              {/* Jobs Grid */}
               <div className="jobs-grid">
                 {filteredJobs.map((job, index) => {
                   const orangeShade = getOrangeShade(index);
@@ -447,7 +525,10 @@ export default function JobsPage() {
                       </div>
                       
                       <div className="job-card-body">
-                        {/* Job Meta - Only Openings and Experience */}
+                        {/* Service Type Badge */}
+                       
+                        
+                        {/* Job Meta */}
                         <div className="job-meta">
                           {getOpenings(job) && (
                             <div className="job-meta-item">
@@ -481,37 +562,37 @@ export default function JobsPage() {
                   );
                 })}
               </div>
-
-              {/* Auth Modal */}
-              <AuthModal
-                isOpen={authModalOpen}
-                onClose={() => setAuthModalOpen(false)}
-                mode="login"
-                onSuccess={(userData) => {
-                  setAuthModalOpen(false);
-                  window.open(
-                    '/careers-liaison-bank/candidate-dashboard',
-                    '_blank',
-                    'noopener,noreferrer'
-                  );
-                }}
-              />
-              
-              {/* Job Details Modal */}
-              <JobDetailsModal
-                job={selectedJob}
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onPrevious={handlePreviousJob}
-                onNext={handleNextJob}
-                hasPrevious={selectedJobIndex > 0}
-                hasNext={selectedJobIndex < jobs.length - 1}
-                onRequireLogin={() => setAuthModalOpen(true)}
-              />
             </>
           )}
         </div>
       </section>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        mode="login"
+        onSuccess={(userData) => {
+          setAuthModalOpen(false);
+          window.open(
+            '/careers-liaison-bank/candidate-dashboard',
+            '_blank',
+            'noopener,noreferrer'
+          );
+        }}
+      />
+      
+      {/* Job Details Modal */}
+      <JobDetailsModal
+        job={selectedJob}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onPrevious={handlePreviousJob}
+        onNext={handleNextJob}
+        hasPrevious={selectedJobIndex > 0}
+        hasNext={selectedJobIndex < filteredJobs.length - 1}
+        onRequireLogin={() => setAuthModalOpen(true)}
+      />
     </div>
   );
 }
