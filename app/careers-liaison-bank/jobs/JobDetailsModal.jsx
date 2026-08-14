@@ -139,67 +139,45 @@ const JobDetailsModal = ({ job, isOpen, onClose, onRequireLogin }) => {
     return safeString(summary);
   };
 
-  const getResponsibilities = () => {
-    const fields = [
-      job?.custom_roles_and_responsibilities,
-      job?.custom_responsibilities,
-      job?.responsibilities,
-      job?.duties,
-      job?.roles_and_responsibilities,
-      job?.job_roles
-    ];
-    
-    for (const field of fields) {
-      if (field) {
-        const arr = safeArray(field);
-        if (arr && arr.length > 0) {
-          return arr.map(item => safeString(item));
-        }
-      }
-    }
-    
-    return [];
-  };
+ const getResponsibilities = () => {
+  const data = job?.custom_roles_and_responsibilities;
 
-  const getSkills = () => {
-    const fields = [
-      job?.custom_required_skills,
-      job?.custom_skills,
-      job?.skills_required,
-      job?.skills,
-      job?.required_skills
-    ];
-    
-    for (const field of fields) {
-      if (field) {
-        const arr = safeArray(field);
-        if (arr && arr.length > 0) {
-          return arr.map(item => safeString(item));
-        }
-      }
-    }
-    
+  if (!Array.isArray(data)) {
     return [];
-  };
+  }
 
-  const getEducation = () => {
-    const fields = [
-      job?.education,
-      job?.educational_requirements,
-      job?.education_requirements
-    ];
-    
-    for (const field of fields) {
-      if (field) {
-        const arr = safeArray(field);
-        if (arr && arr.length > 0) {
-          return arr.map(item => safeString(item));
-        }
-      }
-    }
-    
+  return data
+    .map(item => safeString(item?.roles_and_responsibilities))
+    .filter(Boolean);
+};
+
+
+const getSkills = () => {
+  const data = job?.custom_required_skills;
+
+  if (!Array.isArray(data)) {
     return [];
-  };
+  }
+
+  return data
+    .map(item => safeString(item?.required_skills))
+    .filter(Boolean);
+};
+  
+    
+    
+
+ const getEducation = () => {
+  const data = job?.custom_education;
+
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
+  return data
+    .map(item => safeString(item?.education))
+    .filter(Boolean);
+};
 
   const getRequirements = () => {
     const fields = [
@@ -471,9 +449,9 @@ const JobDetailsModal = ({ job, isOpen, onClose, onRequireLogin }) => {
             {skills.length > 0 && (
               <div className="info-section">
                 <h2>Required Skills</h2>
-                <div className="skills-grid">
+                <div className="list-items">
                   {skills.map((skill, index) => (
-                    <span key={index} className="skill-tag">{safeString(skill)}</span>
+                    <li key={index} className="skill-tag">{safeString(skill)}</li>
                   ))}
                 </div>
               </div>
@@ -483,7 +461,7 @@ const JobDetailsModal = ({ job, isOpen, onClose, onRequireLogin }) => {
             {education.length > 0 && (
               <div className="info-section">
                 <h2>Education</h2>
-                <ul className="list-items education-list">
+                <ul className="list-items">
                   {education.map((edu, index) => (
                     <li key={index}>{safeString(edu)}</li>
                   ))}
@@ -491,17 +469,7 @@ const JobDetailsModal = ({ job, isOpen, onClose, onRequireLogin }) => {
               </div>
             )}
 
-            {/* --- QUALIFICATIONS --- */}
-            {requirements.length > 0 && (
-              <div className="info-section">
-                <h2>Qualifications</h2>
-                <ul className="list-items qualifications-list">
-                  {requirements.map((req, index) => (
-                    <li key={index}>{safeString(req)}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+
 
             {/* --- JOB INFO --- */}
             {(jobId || department || jobType || experience || applyBefore) && (
