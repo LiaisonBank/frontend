@@ -58,7 +58,7 @@ const Home = () => {
       </div>
       <section className="ceo-message ">
         <div className="container-fluid px-5">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
                <div className="lg:col-span-1">
                   <Image
                     src={devaImg}

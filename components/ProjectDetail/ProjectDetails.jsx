@@ -84,14 +84,14 @@ export default function ProjectDetails() {
     return projectsData.map((project, index) => ({
       ...project,
       id: project.id || project.project_id || `project-${pageNum}-${index}`,
-      client_name: project.client_name || project.name || "Unknown Client",
-      project_status: project.project_status || project.status || "Unknown",
+      client_name: project.client_name || project.name,
+      project_status: project.project_status || project.status,
       projectsCategory:
         project.projectsCategory || 
         project.type || 
         project.category || 
         "Uncategorized",
-      location: project.location || "Unknown Location",
+      location: project.location,
     }));
   }, []);
 
