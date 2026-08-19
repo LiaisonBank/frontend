@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 
 const UnderDevelopment = ({
   section = null,
@@ -17,29 +16,15 @@ const UnderDevelopment = ({
       data-category-id={category?.id ?? ""}
       data-category-name={category?.name ?? ""}
     >
-      {/* Left Column - Illustration */}
-      <div className="under-development__visual">
-        <Image
-          src="/images/under-development.webp"
-          alt="Under Development"
-          width={1152}
-          height={922}
-          priority
-          className="under-development__image"
-        />
-      </div>
-
-      {/* Right Column - Content */}
+      {/* Left Column - Content */}
       <div className="under-development__content">
-        <h3>
-          {/* {category?.name } <br/> */}
+        {/* <h3>
           {section?.name }<br/>
-          Website Under Development</h3>
-
-        <p className="under-development__description">
-          Our website is getting a fresh look, but our services
-          are running as usual. Thanks for your patience!
-          
+          Website Under Development</h3> */}
+        <p className="under-development__description glass-card">
+          A new chapter is about to begin… Stay tuned!
+          {/* Our Services Is Getting A Fresh Look, But Our Services
+          Are Running As Usual. Thanks For Your Patience! */}
         </p>
 
         {/* Parent information is available here */}
@@ -68,6 +53,18 @@ const UnderDevelopment = ({
             </Link>
           </span>
         </p> */}
+      </div>
+
+      {/* Right Column - Illustration */}
+      <div className="under-development__visual invisible">
+        <Image
+          src="/images/under-development.webp"
+          alt="Under Development"
+          width={1152}
+          height={922}
+          priority
+          className="under-development__image hidden"
+        />
       </div>
     </section>
   );
