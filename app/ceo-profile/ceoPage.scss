@@ -1,0 +1,386 @@
+// ceoPage.scss
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+  scroll-behavior: smooth;
+  background: #f5f6fa;
+}
+
+/* ===== ABOUT SECTION ===== */
+.ceo-profile-about-section {
+  background: #f5f6fa;
+  padding: 60px 20px;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(60px);
+  transition: all 0.9s ease;
+}
+
+.ceo-profile-about-section.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ceo-profile-about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+/* ===== GRID ===== */
+.ceo-profile-about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 50px;
+  align-items: start;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 45px 45px 45px 35px;
+  box-shadow: 0 10px 60px rgba(0, 0, 0, 0.06);
+}
+
+/* ===== LEFT - IMAGE ===== */
+.ceo-profile-about-left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+padding-top: 8px; 
+}
+
+.ceo-profile-about-image-wrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+.ceo-profile-image-border {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(222, 107, 19, 0.10);
+  border: 1px solid rgba(222, 107, 19, 0.06);
+}
+
+.ceo-profile-about-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.ceo-profile-image-border:hover .ceo-profile-about-image {
+  transform: scale(1.02);
+}
+
+/* ===== RIGHT - CONTENT ===== */
+.ceo-profile-about-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.ceo-profile-content-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ceo-profile-section-label {
+  display: inline-block;
+  color: #de6b13;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.ceo-profile-about-title {
+  font-size: 42px;
+  font-weight: 700;
+  color: #de6b13;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin: 0;
+}
+
+.ceo-profile-about-title-sub {
+  font-size: 26px;
+  color: #0b0a09;
+  font-weight: 400;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
+}
+
+.ceo-profile-about-divider {
+  width: 45px;
+  height: 3px;
+  background: #de6b13;
+  border-radius: 2px;
+  margin: 8px 0 18px 0;
+}
+
+.ceo-profile-about-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.ceo-profile-about-text {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #4a4a5a;
+  font-weight: 400;
+  margin: 0;
+}
+
+.ceo-profile-about-text:last-of-type {
+  margin-bottom: 0;
+}
+
+/* ===== STATS ===== */
+.ceo-profile-about-stats {
+  display: flex;
+  gap: 40px;
+  margin: 18px 0 26px;
+  padding: 16px 0;
+  border-top: 1px solid #eef0f5;
+  border-bottom: 1px solid #eef0f5;
+}
+
+.ceo-profile-about-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.ceo-profile-about-stat .stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: #de6b13;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.ceo-profile-about-stat .stat-label {
+  font-size: 11px;
+  color: #999;
+  margin-top: 3px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* ===== BACK BUTTON ===== */
+.ceo-profile-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #1a1a2e;
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  padding: 10px 26px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  background: transparent;
+  align-self: flex-start;
+  letter-spacing: 0.3px;
+}
+
+.ceo-profile-back-link:hover {
+  background: #de6b13;
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(26, 26, 46, 0.12);
+//   border-color: #1a1a2e;
+}
+
+.ceo-profile-back-link svg {
+  transition: transform 0.3s ease;
+}
+
+.ceo-profile-back-link:hover svg {
+  transform: translateX(-4px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .ceo-profile-about-grid {
+    gap: 35px;
+    padding: 35px 30px;
+  }
+
+  .ceo-profile-about-title {
+    font-size: 42px;
+  }
+
+  .ceo-profile-about-title-sub {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 991px) {
+  .ceo-profile-about-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 35px 30px;
+  }
+
+  .ceo-profile-about-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ceo-profile-about-image-wrapper {
+    max-width: 400px;
+  }
+
+  .ceo-profile-about-image {
+    height: 450px;
+  }
+
+  .ceo-profile-about-right {
+    text-align: center;
+    align-items: center;
+  }
+
+  .ceo-profile-about-divider {
+    margin: 8px auto 18px;
+  }
+
+  .ceo-profile-about-stats {
+    justify-content: center;
+  }
+
+  .ceo-profile-back-link {
+    align-self: center;
+  }
+
+  .ceo-profile-about-title {
+    font-size: 38px;
+  }
+
+  .ceo-profile-about-title-sub {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ceo-profile-about-section {
+    padding: 30px 12px;
+    min-height: auto;
+  }
+
+  .ceo-profile-about-container {
+    padding: 0 8px;
+  }
+
+  .ceo-profile-about-grid {
+    padding: 25px 18px;
+    gap: 25px;
+    border-radius: 14px;
+  }
+
+  .ceo-profile-about-image-wrapper {
+    max-width: 320px;
+  }
+
+  .ceo-profile-about-image {
+    height: 350px;
+  }
+
+  .ceo-profile-about-title {
+    font-size: 30px;
+    letter-spacing: -0.5px;
+  }
+
+  .ceo-profile-about-title-sub {
+    font-size: 16px;
+  }
+
+  .ceo-profile-about-text {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .ceo-profile-about-stats {
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 14px 0;
+  }
+
+  .ceo-profile-about-stat .stat-number {
+    font-size: 20px;
+  }
+
+  .ceo-profile-about-stat .stat-label {
+    font-size: 10px;
+  }
+
+  .ceo-profile-section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+  }
+
+  .ceo-profile-back-link {
+    font-size: 13px;
+    padding: 9px 20px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .ceo-profile-about-grid {
+    padding: 18px 14px;
+    border-radius: 12px;
+  }
+
+  .ceo-profile-about-image-wrapper {
+    max-width: 250px;
+  }
+
+  .ceo-profile-about-image {
+    height: 300px;
+  }
+
+  .ceo-profile-about-title {
+    font-size: 24px;
+  }
+
+  .ceo-profile-about-title-sub {
+    font-size: 14px;
+  }
+
+  .ceo-profile-about-text {
+    font-size: 13.5px;
+  }
+
+  .ceo-profile-about-stats {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+  }
+
+  .ceo-profile-about-stat {
+    align-items: center;
+  }
+}

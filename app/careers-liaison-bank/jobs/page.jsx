@@ -496,7 +496,7 @@ import AuthModal from '../AuthModal';
             <div className="empty-state">
               <Briefcase size={56} className="empty-icon" />
               <h3>No jobs found</h3>
-              <p>
+              <p className='error of filter'>
                 {serviceParam 
                   ? `No openings available for ${serviceParam} at the moment. Try exploring other services.`
                   : 'Try adjusting your search or filter criteria'}

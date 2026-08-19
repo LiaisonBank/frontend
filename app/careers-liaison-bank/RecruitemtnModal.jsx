@@ -20,7 +20,7 @@ export default function RecruitmentModal() {
 
     timerRef.current = setTimeout(() => {
       setIsOpen(true);
-    }, 10000);
+    }, 9000);
 
     return () => {
       if (timerRef.current) {
@@ -62,8 +62,6 @@ export default function RecruitmentModal() {
             <Link href="mailto:hr@liaisonbank.com">hr@liaisonbank.com</Link>.
           </p>
         </div>
-
-     
       </div>
     </div>,
     document.body

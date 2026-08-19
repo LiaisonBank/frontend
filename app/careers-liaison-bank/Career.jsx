@@ -527,19 +527,21 @@ export default function CareersLiaisonPage() {
       title: "Career Advancement",
       tag: "Inclusive Culture",
       description: "Build a strong foundation for your future with industry exposure, valuable experience, and opportunities for long-term growth.",
-      image: "../mahadev_Rupali_Arvind.webp"
+      // image: "/CareerAdvancement.png"
+      image: "/meaningfullWork.jpg"
     },
       {
       title: "Meaningful Work",
       tag: "ESG Initiatives",
       description: "Contribute to real projects thatcreate business impact whilegaining practical, hands-on experience.",
-      image: "/meaningfullWork.jpg"
+      // image: "/meaningfullWork.jpg"
+      image: "/CareerAdvancement.png"
     },
     {
       title: "Continuous Learning",
       tag: "Fair Opportunity",
       description: "Develop technical and professional skills through mentorship, collaboration, and continuous learning opportunities.",
-      image: "/expert.jpg"
+      image: "/ContinuousLearning.png"
     }
   
   ];
@@ -617,12 +619,12 @@ export default function CareersLiaisonPage() {
           key={service.id}
           className={`tab-btn ${activeService.id === service.id ? 'active' : ''}`}
           onClick={() => setActiveService(service)}
+          onMouseEnter={() => setActiveService(service)} // Add hover support
+          onFocus={() => setActiveService(service)} // For accessibility
         >
           {service.name}
         </button>
-        
       ))}
-      
     </div>
 
     <div className="featured-service">
@@ -634,8 +636,7 @@ export default function CareersLiaisonPage() {
         />
         <div className="featured-overlay">
           <h3>{activeService.slug}</h3>
-          {/* <p>{activeService.slug}</p> */}
-
+          
           <Link
             href={`/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.name)}`}
             target="_blank"
@@ -649,6 +650,8 @@ export default function CareersLiaisonPage() {
     </div>
   </div>
 </section>
+
+
       {/* CTA Section */}
       <section ref={ctaRef} className="cta-section">
         <div className="container">
