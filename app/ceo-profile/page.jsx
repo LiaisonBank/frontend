@@ -109,7 +109,7 @@ const CeoProfile = () => {
                     <span className="stat-label">Founded DBRE India</span>
                   </div>
                   <div className="ceo-profile-about-stat">
-                    <span className="stat-number">2021</span>
+                    <span className="stat-number">2023</span>
                     <span className="stat-label">Liaison Bank</span>
                   </div>
                 </div>
