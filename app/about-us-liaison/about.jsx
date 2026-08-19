@@ -147,21 +147,18 @@ export default function AboutUsLiaisonPage() {
             <div className="row">
               <div className="col-lg-10 mx-auto">
                 <div className="hero-text-wrapper">
-                  <div className="hero-top-bar">
-                   
-                  
-                  </div>
+                
 
                   <div className="hero-main-content">
                     <div className="welcome-badge-full motion-text">
-                      WELCOME TO LIAISON BANK
+                      Your Trusted Partner for Liaisoning & Licensing
                     </div>
-                    <div className="welcome-header">Your Trusted Partner for Liaisoning & Licensing</div>
-                    <h1 className="hero-title-full motion-text-delay">
+                    {/* <div className="welcome-header">Your Trusted Partner for Liaisoning & Licensing</div> */}
+                    {/* <h1 className="hero-title-full motion-text-delay">
                       Your Trusted Partner for <br />
                       <span className="title-highlight-full">Liaisoning &amp; Licensing</span>
                     </h1>
-                 
+                  */}
                   </div>
                 </div>
               </div>
@@ -253,7 +250,7 @@ export default function AboutUsLiaisonPage() {
                 </div>
                 <div className="sectors-footer">
                   <p>
-                    We are committed to expanding our reach across India and internationally, 
+                    We are committed to expanding our reach across India, 
                     supporting businesses with reliable liaisoning, compliance, and regulatory services.
                   </p>
                 </div>
@@ -499,6 +496,7 @@ export default function AboutUsLiaisonPage() {
           font-size: 2.75rem;
           font-weight: 800;
           color: #f97316;
+          // color: white;
           letter-spacing: 3px;
           text-transform: uppercase;
           // background: rgba(201, 168, 76, 0.1);

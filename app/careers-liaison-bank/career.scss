@@ -1,25 +1,24 @@
-
-
 /* Reset & Base */
 .careers-page {
   background: #ffffff;
   padding-top: 80px;
+  overflow-x: hidden;
+  max-width: 100vw;
 
   // ---------- HERO BANNER ----------
   .hero-banner {
     width: 100%;
-    position: relative; // Changed from fixed to relative
+    position: relative;
     z-index: 1;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    padding: 8rem 0; // Reduced significantly
-    min-height: auto; // Remove min-height
-    height: 80vh; // Set a specific height
+    padding: 8rem 0;
+    min-height: auto;
+    height: 80vh;
     overflow: hidden;
 
-    // PROPERTIES FOR SMOOTH SCROLL ANIMATION
     transform-origin: top center;
     will-change: transform, opacity, border-radius;
     backface-visibility: hidden;
@@ -56,7 +55,7 @@
     padding: 0 24px;
 
     .page-title {
-      transform: translateY(0); // Remove negative transform
+      transform: translateY(0);
       color: white;
       text-align: center;
 
@@ -73,17 +72,13 @@
 
   // ---------- HERO SPACER ----------
   .hero-section {
-    margin-top: 0; // Remove margin
+    margin-top: 0;
     position: relative;
-    // padding: 0px 0 60px;
     background: #ffffff;
     border-bottom: 1px solid #f0ece6;
     overflow: hidden;
     z-index: 2;
   }
-
-  // ... rest of the styles remain the same
-
 
   // ---------- SECTION HEADER ----------
   .section-header {
@@ -95,7 +90,6 @@
       background: #f5f0ea;
       color: #f97316;
       padding: 4px 18px;
-      // border-radius: 50px;
       font-size: 22px;
       font-weight: 700;
       letter-spacing: 0.5px;
@@ -123,9 +117,8 @@
     }
   }
 
-  // ---------- CULTURE SECTION (Employee Benefits Style) ----------
+  // ---------- CULTURE SECTION ----------
   .culture-section {
-    // padding: 0px 0 60px;
     background: #ffffff;
     z-index: 2;
     position: relative;
@@ -138,8 +131,6 @@
         display: inline-block;
         background: #f5f0ea;
         color: #f97316;
-        // padding: 6px 20px;
-        // border-radius: 50px;
         font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.8px;
@@ -173,7 +164,6 @@
       .culture-card {
         padding: 40px 32px 36px;
         background: #ffffff;
-        // border-radius: 16px;
         text-align: left;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         border: 1px solid #eef2f7;
@@ -205,7 +195,6 @@
           height: 56px;
           margin-bottom: 20px;
           background: #fef5ed;
-          // border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -267,11 +256,10 @@
     }
   }
 
-   // ---------- BENEFITS SECTION ----------
+  // ---------- BENEFITS SECTION ----------
   .benefits-section {
     position: relative;
     z-index: 2;
-    // padding: 80px 0 100px;
     background: #f8f9fa;
     overflow: visible;
 
@@ -310,9 +298,6 @@
           transform 0.5s ease,
           opacity 0.5s ease;
 
-        // --------------------------------
-        // ACTIVE / HOVERED CARD
-        // --------------------------------
         &.active {
           flex: 2;
           max-width: 55%;
@@ -323,13 +308,11 @@
             box-shadow: 0 30px 80px rgba(52, 48, 48, 0.20);
           }
 
-          // HIDE the label completely on hover
           .benefit-card-label {
             opacity: 0 !important;
             pointer-events: none !important;
           }
 
-          // Show the full overlay
           .benefit-card-overlay {
             opacity: 1 !important;
             transform: translateY(0) !important;
@@ -337,14 +320,33 @@
             pointer-events: auto !important;
           }
 
-          .benefit-card-image img {
-            transform: scale(1.1);
-          }
+          // In your SCSS
+.benefit-card-image {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  // Specific fix for Career Advancement image - show the left side
+  .career-advancement-img {
+    object-position: 50% center !important; // Increased from 20% to 40% to show more left side
+    // Try these values:
+    // 30% - shows a bit more left
+    // 40% - shows more left side (recommended)
+    // 50% - centers the image
+    // left center - shows far left of the image
+  }
+
+}
         }
 
-        // --------------------------------
-        // SHRINK OTHER CARDS
-        // --------------------------------
         .benefits-grid-cards:has(.active) & {
           flex: 0.7;
           max-width: 22.5%;
@@ -352,9 +354,6 @@
           transform: scale(0.94);
         }
 
-        // --------------------------------
-        // ACTIVE CARD MUST OVERRIDE ABOVE
-        // --------------------------------
         &.active {
           flex: 2;
           max-width: 55%;
@@ -405,20 +404,19 @@
               transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            // 1. THE SHORT VERTICAL LABEL (Centered, Not full height)
             .benefit-card-label {
               position: absolute;
-              top: 50%;
+              top: 70%;
               left: 0;
-              transform: translateY(-50%); // Centers it vertically
-              width: 60px; // Narrow width
-              height: 260px; // Fixed height (matches the "Equity" style)
-              background: rgba(0, 0, 0, 0.8); // Dark background
+              transform: translateY(-50%);
+              width: 60px;
+              height: 260px;
+              background: rgba(0, 0, 0, 0.8);
               backdrop-filter: blur(2px);
               display: flex;
               align-items: center;
               justify-content: center;
-              z-index: 2; 
+              z-index: 2;
               transition: opacity 0.4s ease, transform 0.4s ease;
 
               span {
@@ -427,18 +425,17 @@
                 font-weight: 700;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                writing-mode: vertical-rl; // Rotates text vertically
+                writing-mode: vertical-rl;
                 text-orientation: mixed;
                 text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
               }
             }
 
-            // 2. THE HOVER OVERLAY (Takes full width now)
             .benefit-card-overlay {
               position: absolute;
               inset: 0;
               background-color: rgba(0, 0, 0, 0.85);
-              padding: 48px 36px; // No left padding needed anymore since label is gone
+              padding: 48px 36px;
               display: flex;
               flex-direction: column;
               justify-content: center;
@@ -503,369 +500,173 @@
       }
     }
   }
-  // ---------- SERVICES SECTION (TABBED) ----------
-  .section-header {
-    text-align: center;
-    margin-bottom: 48px;
 
-    .section-tag {
-      display: inline-block;
-      background: #f5f0ea;
-      color: #f97316;
-      padding: 4px 18px;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
+  // ---------- SERVICES SECTION ----------
+  .services-section {
+    position: relative;
+    z-index: 2;
+    padding: 60px 0 80px;
+    background: #faf8f6;
 
-    h2 {
-      font-size: 36px;
-      font-weight: 800;
-      margin-bottom: 6px;
-      color: #1a1a2e;
-      letter-spacing: -0.02em;
-    }
+    .services-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 18px 24px;
+      width: 100%;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #d8d8d8;
+      padding: 0 20px 0 20px;
 
-    p {
-      color: #5a6a7e;
-      font-size: 16px;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    .job-header {
-      margin-bottom: 4px;
-      font-size: 56px !important;
-      /* Current Openings text at 56px */
-    }
-  }
-
-// ---------- SERVICES SECTION (TABBED) ----------
-.services-section {
-  position: relative;
-  z-index: 2;
-  padding: 60px 0 80px;
-  background: #faf8f6;
-
-  .services-tabs {
-    display: flex;
-    align-items: stretch;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    gap: 18px;
-    width: 100%;
-    margin-bottom: 40px;
-    border-bottom: 1px solid #d8d8d8;
-    padding-left: 100px;
-
-    .tab-btn {
-      position: relative;
-      padding: 12px 28px 17px;
-      border: none;
-      outline: none;
-      background: transparent;
-      color: #686868;
-      font-size: 24px;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: color 0.3s ease;
-
-      &::after {
-        content: "";
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        width: 100%;
-        height: 5px;
-        background: #f97316;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.35s ease;
-      }
-
-      &:hover {
-        color: #f97316;
-      }
-
-      &.active {
-        color: #f97316;
+      .tab-btn {
+        position: relative;
+        padding: 12px 20px 17px;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #686868;
+        font-size: 24px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: color 0.3s ease;
 
         &::after {
-          transform: scaleX(1);
-        }
-      }
-    }
-  }
-
-  .featured-service {
-    margin-top: 8px;
-    // padding-left: 0px;
-
-    .featured-image {
-      position: relative;
-      width: 1000px; /* Fixed width */
-      height: 500px; /* Fixed height */
-      max-width: 100%; /* Responsive */
-      overflow: hidden;
-      background-color: #f5f0ea;
-      transition: all 0.4s ease;
-      margin: 0 auto; /* Center the container */
-
-      .featured-image-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        transition: transform 0.4s ease;
-      }
-
-      &:hover {
-        .featured-image-img {
-          transform: scale(1.05);
-        }
-      }
-
-      &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
-        z-index: 1;
-        pointer-events: none;
-      }
-
-      .featured-overlay {
-        position: absolute;
-        bottom: 60px;
-        left: 60px;
-        right: 60px;
-        z-index: 2;
-
-        h3 {
-          font-size: 42px;
-          font-weight: 800;
-          color: #fff;
-          margin-bottom: 14px;
-          letter-spacing: -0.02em;
-          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          content: "";
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          width: 100%;
+          height: 5px;
+          background: #f97316;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.35s ease;
         }
 
-        p {
-          font-size: 22px;
-          color: rgba(255, 255, 255, 0.9);
-          margin-bottom: 24px;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .featured-view {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          font-weight: 600;
-          font-size: 16px;
+        &:hover {
           color: #f97316;
-          background: white;
-          padding: 10px 28px;
-          text-decoration: none;
-          transition: all 0.3s ease;
-          min-height: 40px;
-          line-height: 1;
+        }
 
-          &:hover {
-            gap: 14px;
-            background: #f97316;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3);
-          }
+        &.active {
+          color: #f97316;
 
-          svg {
-            transition: transform 0.2s ease;
-            width: 18px;
-            height: 18px;
-          }
-
-          &:hover svg {
-            transform: translateX(4px);
+          &::after {
+            transform: scaleX(1);
           }
         }
       }
     }
-  }
-}
 
-// Responsive styles
-@media (max-width: 1200px) {
-  .services-section {
     .featured-service {
+      margin-top: 8px;
+
       .featured-image {
-        width: 90%; /* Responsive width */
-        height: 450px;
+        position: relative;
+        width: 1000px;
+        height: 500px;
+        max-width: 100%;
+        overflow: hidden;
+        background-color: #f5f0ea;
+        transition: all 0.4s ease;
+        margin: 0 auto;
 
-        .featured-overlay {
-          bottom: 50px;
-          left: 50px;
-          right: 50px;
+        .featured-image-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          transition: transform 0.4s ease;
+        }
 
-          h3 {
-            font-size: 38px;
-          }
-
-          p {
-            font-size: 20px;
+        &:hover {
+          .featured-image-img {
+            transform: scale(1.05);
           }
         }
-      }
-    }
-  }
-}
 
-@media (max-width: 1024px) {
-  .services-section {
-    .featured-service {
-      padding-left: 50px;
-
-      .featured-image {
-        width: 95%;
-        height: 400px;
-
-        .featured-overlay {
-          bottom: 45px;
-          left: 45px;
-          right: 45px;
-
-          h3 {
-            font-size: 34px;
-          }
-
-          p {
-            font-size: 20px;
-          }
-
-          .featured-view {
-            font-size: 17px;
-            padding: 12px 28px;
-          }
+        &::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
+          z-index: 1;
+          pointer-events: none;
         }
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .services-section {
-    padding: 40px 0 60px;
-
-    .services-tabs {
-      gap: 6px;
-      padding-left: 20px;
-      overflow-x: auto;
-      flex-wrap: nowrap;
-      
-      &::-webkit-scrollbar {
-        height: 2px;
-      }
-      
-      &::-webkit-scrollbar-thumb {
-        background: #f97316;
-      }
-
-      .tab-btn {
-        padding: 8px 16px;
-        font-size: 18px;
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
-    }
-
-    .featured-service {
-      padding-left: 0;
-
-      .featured-image {
-        width: 100%;
-        height: 350px;
 
         .featured-overlay {
-          bottom: 35px;
-          left: 35px;
-          right: 35px;
+          position: absolute;
+          bottom: 60px;
+          left: 60px;
+          right: 60px;
+          z-index: 2;
 
           h3 {
-            font-size: 30px;
-          }
-
-          p {
-            font-size: 19px;
-          }
-
-          .featured-view {
-            font-size: 16px;
-            padding: 11px 24px;
-          }
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .services-section {
-    padding: 30px 0 40px;
-
-    .services-tabs {
-      gap: 4px;
-      padding-left: 10px;
-
-      .tab-btn {
-        padding: 6px 12px;
-        font-size: 15px;
-      }
-    }
-
-    .featured-service {
-      .featured-image {
-        width: 100%;
-        height: 280px;
-
-        .featured-overlay {
-          bottom: 25px;
-          left: 25px;
-          right: 25px;
-
-          h3 {
-            font-size: 24px;
-          }
-
-          p {
-            font-size: 17px;
+            font-size: 42px;
+            font-weight: 800;
+            color: #fff;
             margin-bottom: 14px;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          }
+
+          p {
+            font-size: 22px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 24px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
           }
 
           .featured-view {
-            font-size: 15px;
-            padding: 9px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #f97316;
+            background: white;
+            padding: 10px 28px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            min-height: 40px;
+            line-height: 1;
+            border-radius: 50px; // Added rounded corners
+
+            &:hover {
+              gap: 14px;
+              background: #f97316;
+              color: white;
+              transform: translateY(-2px);
+              box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3);
+              border-radius: 50px; // Maintain rounded corners on hover
+            }
+
+            svg {
+              transition: transform 0.2s ease;
+              width: 18px;
+              height: 18px;
+            }
+
+            &:hover svg {
+              transform: translateX(4px);
+            }
           }
         }
       }
     }
   }
-}
 
   // ---------- CTA SECTION ----------
   .cta-section {
     position: relative;
     z-index: 2;
-    // padding: 60px 0 76px;
     background: #ffffff;
 
     .cta-box {
       background: linear-gradient(135deg, #faf8f6, #f5f0ea);
       padding: 56px 48px;
-      // border-radius: 20px;
       border: 1px solid #e8e2da;
       text-align: center;
       transition: all 0.3s ease;
@@ -919,7 +720,7 @@
             background: linear-gradient(135deg, #f97316, #fb923c);
             color: white;
             padding: 16px 42px;
-            border-radius: 20px;
+            border-radius: 50px; // Rounded corners
             font-weight: 600;
             text-decoration: none;
             display: inline-flex;
@@ -946,7 +747,7 @@
             background: transparent;
             color: #f97316;
             padding: 16px 42px;
-            // border-radius: 50px;
+            border-radius: 50px; // Rounded corners
             font-weight: 600;
             text-decoration: none;
             border: 2px solid #f97316;
@@ -974,176 +775,119 @@
   }
 }
 
-// ---------- RESPONSIVE ----------
-@media (max-width: 1200px) {
-  .culture-section {
-    .culture-grid {
-      gap: 24px;
-
-      .culture-card {
-        padding: 32px 24px 28px;
-      }
-    }
-  }
-
-  .benefits-section {
-    .benefits-grid-cards {
-      gap: 24px;
-
-      .benefit-card-wrapper {
-        .benefit-card-hover {
-          height: 440px;
-        }
-
-        &.active {
-          flex: 1.3;
-          max-width: 38%;
-        }
-
-        .benefits-grid-cards:has(.active) &:not(.active) {
-          flex: 0.85;
-          max-width: 27%;
-        }
-      }
-    }
-  }
-
-  .services-section {
-    .featured-service {
-      .featured-image {
-        height: 460px;
-        /* Increased from 360px (+100px) */
-
-        .featured-overlay {
-          bottom: 50px;
-          left: 50px;
-          right: 50px;
-
-          h3 {
-            font-size: 38px;
-          }
-
-          p {
-            font-size: 20px;
-          }
-        }
-      }
-    }
-  }
-}
-
+// ---------- RESPONSIVE: TABLETS (1024px and below) ----------
 @media (max-width: 1024px) {
-  .culture-section {
-    padding: 60px 0 40px;
+  .careers-page {
+    .culture-section {
+      padding: 60px 0 40px;
 
-    .section-header {
-      margin-bottom: 40px;
+      .section-header {
+        margin-bottom: 40px;
 
-      h2 {
-        font-size: 56px;
+        h2 {
+          font-size: 56px;
+        }
       }
 
+      .culture-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
 
-    }
+        .culture-card {
+          padding: 28px 24px 24px;
 
-    .culture-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-
-      .culture-card {
-        padding: 28px 24px 24px;
-
-        .culture-description {
-          min-height: 60px;
-          font-size: 14px;
+          .culture-description {
+            min-height: 60px;
+            font-size: 14px;
+          }
         }
       }
     }
-  }
 
-  .benefits-section {
-    padding: 60px 0 80px;
+    .benefits-section {
+      padding: 60px 0 80px;
 
-    .benefits-header {
-      margin-bottom: 48px;
+      .benefits-header {
+        margin-bottom: 48px;
 
-      h2 {
-        font-size: 44px;
+        h2 {
+          font-size: 44px;
+        }
       }
-    }
 
-    .benefits-grid-cards {
-      gap: 20px;
+      .benefits-grid-cards {
+        gap: 20px;
 
-      .benefit-card-wrapper {
-        .benefit-card-hover {
-          height: 400px;
+        .benefit-card-wrapper {
+          .benefit-card-hover {
+            height: 400px;
 
-          .benefit-card-image {
-            .benefit-card-overlay {
-              padding: 32px 28px;
+            .benefit-card-image {
+              .benefit-card-overlay {
+                padding: 32px 28px;
 
-              .benefit-tag {
-                font-size: 12px;
-                padding: 4px 16px;
+                .benefit-tag {
+                  font-size: 12px;
+                  padding: 4px 16px;
+                }
+
+                .benefit-title {
+                  font-size: 30px;
+                  margin-bottom: 14px;
+                }
+
+                .benefit-description {
+                  font-size: 15px;
+                  line-height: 1.6;
+                }
               }
+            }
 
-              .benefit-title {
-                font-size: 30px;
-                margin-bottom: 14px;
-              }
+            .benefit-card-label {
+              padding: 28px;
 
-              .benefit-description {
-                font-size: 15px;
-                line-height: 1.6;
+              span {
+                font-size: 24px;
               }
             }
           }
 
-          .benefit-card-label {
-            padding: 28px;
-
-            span {
-              font-size: 24px;
-            }
+          &.active {
+            flex: 1.25;
+            max-width: 36%;
           }
-        }
 
-        &.active {
-          flex: 1.25;
-          max-width: 36%;
-        }
-
-        .benefits-grid-cards:has(.active) &:not(.active) {
-          flex: 0.85;
-          max-width: 28%;
+          .benefits-grid-cards:has(.active) &:not(.active) {
+            flex: 0.85;
+            max-width: 28%;
+          }
         }
       }
     }
-  }
 
-  .services-section {
-    .featured-service {
-      .featured-image {
-        height: 420px;
-        /* Increased from 320px (+100px) */
+    .services-section {
+      .featured-service {
+        .featured-image {
+          height: 420px;
 
-        .featured-overlay {
-          bottom: 45px;
-          left: 45px;
-          right: 45px;
+          .featured-overlay {
+            bottom: 45px;
+            left: 45px;
+            right: 45px;
 
-          h3 {
-            font-size: 34px;
-          }
+            h3 {
+              font-size: 34px;
+            }
 
-          p {
-            font-size: 20px;
-          }
+            p {
+              font-size: 20px;
+            }
 
-          .featured-view {
-            font-size: 17px;
-            padding: 12px 28px;
+            .featured-view {
+              font-size: 17px;
+              padding: 12px 28px;
+              border-radius: 50px;
+            }
           }
         }
       }
@@ -1151,326 +895,509 @@
   }
 }
 
+// ---------- RESPONSIVE: MOBILE (768px and below) ----------
 @media (max-width: 768px) {
-  .culture-section {
-    padding: 48px 0 32px;
+  .careers-page {
+    padding-top: 60px;
 
-    .section-header {
-      margin-bottom: 32px;
+    // HERO BANNER - Mobile Fix
+    .hero-banner {
+      height: 60vh !important;
+      min-height: 350px !important;
+      padding: 4rem 0 !important;
 
-      h2 {
-        font-size: 28px;
-      }
+      .container {
+        padding: 0 16px;
 
-      p {
-        font-size: 14px;
-      }
-    }
-
-    .culture-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-
-      .culture-card {
-        padding: 24px 20px 20px;
-        text-align: left;
-
-        .culture-description {
-          min-height: auto;
-          font-size: 14px;
-          margin-bottom: 16px;
-        }
-
-        .culture-icon {
-          width: 48px;
-          height: 48px;
-          margin-bottom: 16px;
-
-          svg {
-            width: 24px;
-            height: 24px;
-          }
-        }
-
-        h5 {
-          font-size: 18px;
-        }
-      }
-    }
-  }
-
-  .benefits-section {
-    padding: 48px 0 60px;
-
-    .benefits-header {
-      margin-bottom: 40px;
-
-      h2 {
-        font-size: 32px;
-      }
-    }
-
-    .benefits-grid-cards {
-      flex-direction: column;
-      gap: 20px;
-
-      .benefit-card-wrapper {
-        max-width: 100% !important;
-        flex: 1 !important;
-        min-width: 100% !important;
-        opacity: 1 !important;
-        transform: none !important;
-        filter: none !important;
-
-        .benefit-card-hover {
-          height: 340px;
-
-          .benefit-card-image {
-            .benefit-card-overlay {
-              padding: 28px 24px;
-
-              .benefit-title {
-                font-size: 26px;
-              }
-
-              .benefit-description {
-                font-size: 15px;
-              }
-            }
-          }
-
-          .benefit-card-label {
-            padding: 24px;
-
-            span {
-              font-size: 22px;
-            }
-          }
-        }
-
-        &.active {
-          .benefit-card-hover {
-            transform: scale(1.02) translateY(-5px);
+        .page-title {
+          h2 {
+            font-size: 1.5rem !important;
+            line-height: 1.4 !important;
+            max-width: 100% !important;
+            padding: 0 8px;
           }
         }
       }
-    }
-  }
 
-  .services-section {
-    .services-tabs {
-      gap: 6px;
-
-      .tab-btn {
-        padding: 8px 18px;
-        font-size: 25px;
+      &::before {
+        background-position: center 20% !important;
       }
     }
 
-    .featured-service .featured-image {
-      height: 380px;
-      /* Increased from 280px (+100px) */
+    // CULTURE SECTION - Mobile Fix
+    .culture-section {
+      padding: 48px 0 32px;
 
-      .featured-overlay {
-        bottom: 35px;
-        left: 35px;
-        right: 35px;
+      .section-header {
+        margin-bottom: 32px;
 
-        h3 {
-          font-size: 30px;
+        h2 {
+          font-size: 28px;
         }
 
         p {
-          font-size: 19px;
+          font-size: 14px;
         }
+      }
 
-        .featured-view {
-          font-size: 16px;
-          padding: 11px 24px;
+      .culture-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+
+        .culture-card {
+          padding: 24px 20px 20px;
+          text-align: left;
+
+          .culture-description {
+            min-height: auto;
+            font-size: 14px;
+            margin-bottom: 16px;
+          }
+
+          .culture-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+
+            svg {
+              width: 24px;
+              height: 24px;
+            }
+          }
+
+          h5 {
+            font-size: 18px;
+          }
         }
       }
     }
-  }
 
-  .section-header h2 {
-    font-size: 28px;
-  }
+    // BENEFITS SECTION - Mobile Fix
+    .benefits-section {
+      padding: 40px 0 50px !important;
 
-  .cta-section .cta-box {
-    padding: 36px 24px;
+      .benefits-header {
+        margin-bottom: 32px !important;
 
-    .cta-content h3 {
-      font-size: 26px;
+        h2 {
+          font-size: 28px !important;
+          line-height: 1.2 !important;
+        }
+      }
+
+      .benefits-grid-cards {
+        flex-direction: column !important;
+        gap: 16px !important;
+
+        .benefit-card-wrapper {
+          max-width: 100% !important;
+          flex: 1 !important;
+          min-width: 100% !important;
+          opacity: 1 !important;
+          transform: none !important;
+
+          .benefit-card-hover {
+            height: 300px !important;
+
+            .benefit-card-image {
+              .benefit-card-label {
+                width: 50px !important;
+                height: 200px !important;
+
+                span {
+                  font-size: 15px !important;
+                }
+              }
+
+              .benefit-card-overlay {
+                padding: 24px 20px !important;
+
+                .benefit-title {
+                  font-size: 24px !important;
+                  margin-bottom: 10px !important;
+                }
+
+                .benefit-description {
+                  font-size: 14px !important;
+                  line-height: 1.5 !important;
+                }
+              }
+            }
+          }
+
+          &.active {
+            flex: 1 !important;
+            max-width: 100% !important;
+
+            .benefit-card-hover {
+              border-color: #f97316;
+            }
+          }
+        }
+
+        .benefits-grid-cards:has(.active) & {
+          flex: 1 !important;
+          max-width: 100% !important;
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      }
     }
 
-    .cta-content .cta-actions {
-      flex-direction: column;
-      align-items: center;
+    // SERVICES SECTION - Mobile Fix (NO SCROLLBAR)
+    .services-section {
+      padding: 30px 0 40px !important;
 
-      .btn-primary,
-      .btn-secondary-cta {
-        width: 100%;
-        justify-content: center;
+      .section-header {
+        margin-bottom: 24px !important;
+
+        .job-header {
+          font-size: 32px !important;
+        }
+      }
+
+      .services-tabs {
+        padding: 0 12px !important;
+        gap: 6px 12px !important;
+        flex-wrap: wrap !important;
+        overflow: visible !important;
+        justify-content: center !important;
+        border-bottom: 1px solid #d8d8d8;
+        
+        &::-webkit-scrollbar {
+          display: none !important;
+        }
+
+        .tab-btn {
+          padding: 8px 16px !important;
+          font-size: 15px !important;
+          white-space: nowrap !important;
+          flex-shrink: 0 !important;
+          min-height: 44px !important;
+        }
+      }
+
+      .featured-service {
+        padding-left: 0 !important;
+
+        .featured-image {
+          width: 100% !important;
+          height: 280px !important;
+          margin: 0 !important;
+
+          .featured-image-img {
+            object-fit: cover !important;
+          }
+
+          .featured-overlay {
+            bottom: 20px !important;
+            left: 20px !important;
+            right: 20px !important;
+
+            h3 {
+              font-size: 22px !important;
+              margin-bottom: 8px !important;
+            }
+
+            p {
+              font-size: 15px !important;
+              margin-bottom: 14px !important;
+            }
+
+            .featured-view {
+              font-size: 14px !important;
+              padding: 8px 18px !important;
+              min-height: 44px !important;
+              border-radius: 50px !important;
+            }
+          }
+        }
+      }
+    }
+
+    // CTA SECTION - Mobile Fix
+    .cta-section {
+      padding: 30px 0 !important;
+
+      .cta-box {
+        padding: 30px 20px !important;
+
+        .cta-tag {
+          font-size: 12px !important;
+          padding: 4px 18px !important;
+        }
+
+        .cta-content {
+          h3 {
+            font-size: 24px !important;
+          }
+
+          p {
+            font-size: 15px !important;
+            margin-bottom: 24px !important;
+          }
+
+          .cta-actions {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+
+            .btn-primary {
+              font-size: 18px !important;
+              padding: 14px 24px !important;
+              justify-content: center !important;
+              min-height: 44px !important;
+              border-radius: 50px !important;
+            }
+
+            .btn-secondary-cta {
+              font-size: 14px !important;
+              padding: 14px 24px !important;
+              justify-content: center !important;
+              min-height: 44px !important;
+              border-radius: 50px !important;
+            }
+          }
+        }
       }
     }
   }
 }
 
+// ---------- RESPONSIVE: EXTRA SMALL (480px and below) ----------
 @media (max-width: 480px) {
-  .culture-section {
-    padding: 40px 0 24px;
+  .careers-page {
+    padding-top: 50px;
 
-    .section-header {
-      margin-bottom: 24px;
+    .hero-banner {
+      height: 50vh !important;
+      min-height: 280px !important;
+      padding: 2rem 0 !important;
 
-      h2 {
-        font-size: 24px;
-      }
-
-      p {
-        font-size: 13px;
-      }
-    }
-
-    .culture-grid {
-      gap: 12px;
-
-      .culture-card {
-        padding: 20px 16px 18px;
-
-        .culture-icon {
-          width: 44px;
-          height: 44px;
-          margin-bottom: 12px;
-
-          svg {
-            width: 20px;
-            height: 20px;
-          }
-        }
-
-        h5 {
-          font-size: 16px;
-          margin-bottom: 8px;
-        }
-
-        .culture-description {
-          font-size: 13px;
-          margin-bottom: 12px;
-        }
-
-        .know-more {
-          font-size: 13px;
-
-          svg {
-            width: 16px;
-            height: 16px;
+      .container {
+        .page-title {
+          h2 {
+            font-size: 1.2rem !important;
           }
         }
       }
     }
-  }
 
-  .benefits-section {
-    .benefits-header {
-      h2 {
-        font-size: 24px;
-      }
-    }
+    .culture-section {
+      padding: 40px 0 24px;
 
-    .benefits-grid-cards {
-      gap: 16px;
+      .section-header {
+        margin-bottom: 24px;
 
-      .benefit-card-wrapper {
-        .benefit-card-hover {
-          height: 280px;
-          border-radius: 16px;
-
-          .benefit-card-image {
-            .benefit-card-overlay {
-              padding: 20px 18px;
-
-              .benefit-tag {
-                font-size: 11px;
-                padding: 3px 14px;
-                margin-bottom: 10px;
-              }
-
-              .benefit-title {
-                font-size: 22px;
-                margin-bottom: 10px;
-              }
-
-              .benefit-description {
-                font-size: 13px;
-                line-height: 1.5;
-              }
-            }
-          }
-
-          .benefit-card-label {
-            padding: 16px;
-
-            span {
-              font-size: 18px;
-            }
-          }
-        }
-
-        &.active {
-          .benefit-card-hover {
-            transform: scale(1.01) translateY(-3px);
-          }
-        }
-      }
-    }
-  }
-
-  .services-section {
-    .services-tabs {
-      .tab-btn {
-        padding: 6px 14px;
-        font-size: 25px;
-      }
-    }
-
-    .featured-service .featured-image {
-      height: 320px;
-      /* Increased from 220px (+100px) */
-
-      .featured-overlay {
-        bottom: 25px;
-        left: 25px;
-        right: 25px;
-
-        h3 {
+        h2 {
           font-size: 24px;
         }
 
         p {
-          font-size: 17px;
-          margin-bottom: 14px;
+          font-size: 13px;
         }
+      }
 
-        .featured-view {
-          font-size: 15px;
-          padding: 9px 20px;
+      .culture-grid {
+        gap: 12px;
+
+        .culture-card {
+          padding: 20px 16px 18px;
+
+          .culture-icon {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 12px;
+
+            svg {
+              width: 20px;
+              height: 20px;
+            }
+          }
+
+          h5 {
+            font-size: 16px;
+            margin-bottom: 8px;
+          }
+
+          .culture-description {
+            font-size: 13px;
+            margin-bottom: 12px;
+          }
+
+          .know-more {
+            font-size: 13px;
+
+            svg {
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+      }
+    }
+
+    .benefits-section {
+      .benefits-header {
+        h2 {
+          font-size: 24px !important;
+        }
+      }
+
+      .benefits-grid-cards {
+        gap: 16px !important;
+
+        .benefit-card-wrapper {
+          .benefit-card-hover {
+            height: 260px !important;
+
+            .benefit-card-image {
+              .benefit-card-label {
+                width: 40px !important;
+                height: 160px !important;
+
+                span {
+                  font-size: 13px !important;
+                }
+              }
+
+              .benefit-card-overlay {
+                padding: 18px 16px !important;
+
+                .benefit-title {
+                  font-size: 20px !important;
+                }
+
+                .benefit-description {
+                  font-size: 13px !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .services-section {
+      .services-tabs {
+        gap: 4px 8px !important;
+        padding: 0 8px !important;
+
+        .tab-btn {
+          font-size: 13px !important;
+          padding: 6px 12px !important;
+          min-height: 36px !important;
+        }
+      }
+
+      .featured-service {
+        .featured-image {
+          height: 220px !important;
+
+          .featured-overlay {
+            bottom: 16px !important;
+            left: 16px !important;
+            right: 16px !important;
+
+            h3 {
+              font-size: 18px !important;
+            }
+
+            p {
+              font-size: 13px !important;
+            }
+
+            .featured-view {
+              font-size: 13px !important;
+              padding: 6px 14px !important;
+              border-radius: 50px !important;
+            }
+          }
+        }
+      }
+    }
+
+    .cta-section {
+      .cta-box {
+        padding: 24px 16px !important;
+
+        .cta-content {
+          h3 {
+            font-size: 20px !important;
+          }
+
+          .cta-actions {
+            .btn-primary {
+              font-size: 16px !important;
+              padding: 12px 20px !important;
+              border-radius: 50px !important;
+            }
+          }
         }
       }
     }
   }
+}
 
-  .cta-section .cta-box {
-    padding: 28px 16px;
+// ---------- RESPONSIVE: LARGE SCREENS (1200px and above) ----------
+@media (max-width: 1200px) {
+  .careers-page {
+    .culture-section {
+      .culture-grid {
+        gap: 24px;
 
-    .cta-content h3 {
-      font-size: 22px;
+        .culture-card {
+          padding: 32px 24px 28px;
+        }
+      }
     }
 
-    .cta-content .cta-actions .btn-primary,
-    .cta-content .cta-actions .btn-secondary-cta {
-      padding: 14px 24px;
-      font-size: 15px;
+    .benefits-section {
+      .benefits-grid-cards {
+        gap: 24px;
+
+        .benefit-card-wrapper {
+          .benefit-card-hover {
+            height: 440px;
+          }
+
+          &.active {
+            flex: 1.3;
+            max-width: 38%;
+          }
+
+          .benefits-grid-cards:has(.active) &:not(.active) {
+            flex: 0.85;
+            max-width: 27%;
+          }
+        }
+      }
+    }
+
+    .services-section {
+      .featured-service {
+        .featured-image {
+          height: 460px;
+
+          .featured-overlay {
+            bottom: 50px;
+            left: 50px;
+            right: 50px;
+
+            h3 {
+              font-size: 38px;
+            }
+
+            p {
+              font-size: 20px;
+            }
+
+            .featured-view {
+              border-radius: 50px;
+            }
+          }
+        }
+      }
     }
   }
 }

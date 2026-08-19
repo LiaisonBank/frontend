@@ -10,6 +10,7 @@
    @import "./base/base";
    @import "./base/buttons";
    @import "./base/forms";
+   @import "./base/introloader";
 
 /* ==========================================
    LAYOUT
@@ -30,6 +31,7 @@
 @import "./pages/completed";
 @import "./pages/contactus";
 @import "./pages/home";
+@import "./pages/servicemodal";
 @import "./pages/ongoing";
 @import "./pages/ourclients";
 @import "./pages/phonographic";

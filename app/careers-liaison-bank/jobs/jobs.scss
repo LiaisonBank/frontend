@@ -357,6 +357,12 @@ footer {
       p {
         color: #7a8a9e;
         margin-bottom: 24px;
+        font-size: 26px;
+        display: flex;
+
+        align-items: center;
+       justify-content: center;
+       color: #e0680e;
       }
 
       .clear-filters-btn.primary {

@@ -1,0 +1,46 @@
+name: Deploy Liaison Bank Frontend
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy to Hostinger VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            set -e
+
+            echo "Starting Liaison Bank deployment..."
+
+            cd /root/frontend
+
+            echo "Fetching latest code..."
+            git fetch origin master
+
+            echo "Updating source code..."
+            git reset --hard origin/master
+
+            echo "Installing dependencies..."
+            npm ci
+
+            echo "Building Next.js..."
+            npm run build
+
+            echo "Restarting PM2..."
+            pm2 restart frontend
+
+            echo "Saving PM2..."
+            pm2 save
+
+            echo "Deployment completed successfully!"
