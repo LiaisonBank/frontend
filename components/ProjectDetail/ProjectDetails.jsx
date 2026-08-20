@@ -564,7 +564,6 @@ useEffect(() => {
           <span>
             Showing <strong>{visibleProjects.length}</strong> of{" "}
             <strong>{filteredProjects.length}</strong> projects
-            {totalProjects > 0 && ` (${totalProjects} total)`}
           </span>
           {hasActiveFilters && (
             <span className="filter-active">Filters applied</span>

@@ -61,7 +61,18 @@
     justify-content: space-between;
     // flex-flow: column;
     text-align: left;
+        color: #ef6f1f;
+    opacity: 1;
+    width: 100%;
     height:auto !important;
+    &:before{
+      content: "";
+      backdrop-filter: blur(0);
+      z-index: -1;
+      position: absolute;
+      background: transparent;
+      inset: 0px;
+    }
   }
 
   .category {
@@ -89,9 +100,14 @@
     font-weight: 600;
     transition: color 0.3s;
   }
+ 
 }
 
-
+ .footer{
+        background: none;
+    border: 0;
+    color: black;
+  }
 
 
   .card{
