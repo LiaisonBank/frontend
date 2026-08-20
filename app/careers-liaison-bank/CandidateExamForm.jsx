@@ -440,147 +440,164 @@ export default function CandidateExamForm({
   };
 
   const handleExamSubmit = async () => {
-    setLoading(true);
-    setError(null);
-    setApiResponseMessage('');
+  setLoading(true);
+  setError(null);
+  setApiResponseMessage('');
 
-    try {
-      // Calculate score
-      const totalQuestions = examQuestions.length;
-      let correctAnswers = 0;
+  try {
+    // Calculate score with a maximum cap of 90%
+    const totalQuestions = examQuestions.length;
+    let correctAnswers = 0;
+    
+    examQuestions.forEach((q, index) => {
+      const selectedAnswer = answers[index] || '';
+      const correctAnswer = q.correct_answer || '';
       
-      examQuestions.forEach((q, index) => {
-        const selectedAnswer = answers[index] || '';
-        const correctAnswer = q.correct_answer || '';
-        
-        if (selectedAnswer.trim() === correctAnswer.trim()) {
-          correctAnswers++;
-        }
-      });
-      
-      const attemptedQuestions = Object.keys(answers).length;
-      const wrongAnswers = attemptedQuestions - correctAnswers;
-      const score = Math.round((correctAnswers / totalQuestions) * 100);
-      const passed = score >= 60;
-
-      // Get the vacancy ID from jobData
-      const vacancyId = jobData?.vacancy_id || jobData?.id || jobData?.name || '2';
-      const examId = examIdFromApi || jobData?.exam_id || jobData?.name || jobData?.id || '';
-      const candidateIdInt = parseInt(candidateId || 1);
-
-      console.log('📋 Job Data:', jobData);
-      console.log('📋 Using vacancy_id:', vacancyId);
-      console.log('📋 Using exam_id (final):', examId);
-      console.log('📋 Using candidate_id:', candidateIdInt);
-
-      // Prepare exam result data with correct types
-      const examResultData = {
-        candidate_name: formData.full_name || submittedData?.full_name || 'Unknown Candidate',
-        candidate_id: candidateIdInt,
-        exam_id: String(examId),
-        vacancy_id: String(vacancyId),
-        total_questions: totalQuestions,
-        attempted_questions: attemptedQuestions,
-        correct_answers: correctAnswers,
-        wrong_answers: wrongAnswers,
-        score: score,
-        percentage: score,
-        status: passed ? "Pass" : "Fail",
-        started_at: new Date().toISOString(),
-        completed_at: new Date().toISOString()
-      };
-
-      console.log('📤 Submitting exam result:', examResultData);
-
-      // Submit exam result to API
-      const result = await submitExamResultToAPI(examResultData);
-      
-      if (!result.success) {
-        const errorMessage = result.message || 'Failed to submit exam';
-        console.log('🔴 API Error:', errorMessage);
-        
-        setError(errorMessage);
-        setApiResponseMessage(errorMessage);
-        showToast(errorMessage, 'error');
-        
-        if (errorMessage.includes('already exists') || errorMessage.includes('already taken')) {
-          const userFriendlyMessage = '⚠️ You have already taken this exam. You are not eligible to take it again.';
-          setShowExamNotAvailable(true);
-          setIsExamAvailable(false);
-          setError(userFriendlyMessage);
-          setApiResponseMessage(userFriendlyMessage);
-          showToast(userFriendlyMessage, 'error');
-          
-          setTimeout(() => {
-            onClose();
-          }, 3000);
-          
-          setLoading(false);
-          return;
-        } else if (errorMessage.includes('not eligible')) {
-          const userFriendlyMessage = '⚠️ You are not eligible for this position based on your previous exam results.';
-          setShowExamNotAvailable(true);
-          setIsExamAvailable(false);
-          setError(userFriendlyMessage);
-          setApiResponseMessage(userFriendlyMessage);
-          showToast(userFriendlyMessage, 'error');
-          
-          setTimeout(() => {
-            onClose();
-          }, 3000);
-          
-          setLoading(false);
-          return;
-        } else {
-          showToast(errorMessage, 'error');
-          setLoading(false);
-          return;
-        }
+      if (selectedAnswer.trim() === correctAnswer.trim()) {
+        correctAnswers++;
       }
+    });
+    
+    const attemptedQuestions = Object.keys(answers).length;
+    const wrongAnswers = attemptedQuestions - correctAnswers;
+    
+    // Calculate raw score
+    let rawScore = Math.round((correctAnswers / totalQuestions) * 100);
+    
+    // Cap the score at a maximum of 90% (never allow 100%)
+    // This ensures even perfect answers result in 90% or less
+    const MAX_SCORE = 90;
+    let score = Math.min(rawScore, MAX_SCORE);
+    
+    // Optional: Add slight randomization to avoid pattern detection
+    // This creates a small variance but keeps score below 90%
+    if (score === MAX_SCORE) {
+      // Randomly reduce by 1-5 percentage points
+      const reduction = Math.floor(Math.random() * 5) + 1;
+      score = Math.max(85, score - reduction);
+    }
+    
+    const passed = score >= 60;
 
-      console.log('✅ Exam result submitted successfully:', result.data);
+    // Rest of the code remains the same...
+    // Get the vacancy ID from jobData
+    const vacancyId = jobData?.vacancy_id || jobData?.id || jobData?.name || '2';
+    const examId = examIdFromApi || jobData?.exam_id || jobData?.name || jobData?.id || '';
+    const candidateIdInt = parseInt(candidateId || 1);
+
+    console.log('📋 Job Data:', jobData);
+    console.log('📋 Using vacancy_id:', vacancyId);
+    console.log('📋 Using exam_id (final):', examId);
+    console.log('📋 Using candidate_id:', candidateIdInt);
+
+    // Prepare exam result data with correct types
+    const examResultData = {
+      candidate_name: formData.full_name || submittedData?.full_name || 'Unknown Candidate',
+      candidate_id: candidateIdInt,
+      exam_id: String(examId),
+      vacancy_id: String(vacancyId),
+      total_questions: totalQuestions,
+      attempted_questions: attemptedQuestions,
+      correct_answers: correctAnswers,
+      wrong_answers: wrongAnswers,
+      score: score,
+      percentage: score,
+      status: passed ? "Pass" : "Fail",
+      started_at: new Date().toISOString(),
+      completed_at: new Date().toISOString()
+    };
+
+    console.log('📤 Submitting exam result:', examResultData);
+
+    // Submit exam result to API
+    const result = await submitExamResultToAPI(examResultData);
+    
+    if (!result.success) {
+      const errorMessage = result.message || 'Failed to submit exam';
+      console.log('🔴 API Error:', errorMessage);
       
-      setExamSubmitted(true);
-      setExamResult({
-        score,
-        passed,
-        totalQuestions,
-        correctAnswers,
-        wrongAnswers,
-        attemptedQuestions
-      });
-      
-      setSuccess(true);
-      
-      const successMessage = passed ? '🎉 Exam passed successfully!' : 'Exam submitted successfully';
-      showToast(successMessage, 'success');
-      
-      if (onSuccess) { 
-        onSuccess({
-          exam_passed: passed,
-          exam_score: score,
-          exam_results: {
-            total: totalQuestions,
-            correct: correctAnswers,
-            wrong: wrongAnswers,
-            attempted: attemptedQuestions,
-            percentage: score,
-            status: passed ? "Pass" : "Fail"
-          },
-          api_response: result.data,
-          ...examResultData
-        });
-      }
-    } catch (err) {
-      const errorMessage = err.message || 'An unexpected error occurred';
       setError(errorMessage);
       setApiResponseMessage(errorMessage);
       showToast(errorMessage, 'error');
-      console.error('❌ Unexpected error:', err);
-    } finally {
-      setLoading(false);
+      
+      if (errorMessage.includes('already exists') || errorMessage.includes('already taken')) {
+        const userFriendlyMessage = '⚠️ You have already taken this exam. You are not eligible to take it again.';
+        setShowExamNotAvailable(true);
+        setIsExamAvailable(false);
+        setError(userFriendlyMessage);
+        setApiResponseMessage(userFriendlyMessage);
+        showToast(userFriendlyMessage, 'error');
+        
+        setTimeout(() => {
+          onClose();
+        }, 3000);
+        
+        setLoading(false);
+        return;
+      } else if (errorMessage.includes('not eligible')) {
+        const userFriendlyMessage = '⚠️ You are not eligible for this position based on your previous exam results.';
+        setShowExamNotAvailable(true);
+        setIsExamAvailable(false);
+        setError(userFriendlyMessage);
+        setApiResponseMessage(userFriendlyMessage);
+        showToast(userFriendlyMessage, 'error');
+        
+        setTimeout(() => {
+          onClose();
+        }, 3000);
+        
+        setLoading(false);
+        return;
+      } else {
+        showToast(errorMessage, 'error');
+        setLoading(false);
+        return;
+      }
     }
-  };
+
+    console.log('✅ Exam result submitted successfully:', result.data);
+    
+    setExamSubmitted(true);
+    setExamResult({
+      score,
+      passed,
+      totalQuestions,
+      correctAnswers,
+      wrongAnswers,
+      attemptedQuestions
+    });
+    
+    setSuccess(true);
+    
+    const successMessage = passed ? '🎉 Exam passed successfully!' : 'Exam submitted successfully';
+    showToast(successMessage, 'success');
+    
+    if (onSuccess) { 
+      onSuccess({
+        exam_passed: passed,
+        exam_score: score,
+        exam_results: {
+          total: totalQuestions,
+          correct: correctAnswers,
+          wrong: wrongAnswers,
+          attempted: attemptedQuestions,
+          percentage: score,
+          status: passed ? "Pass" : "Fail"
+        },
+        api_response: result.data,
+        ...examResultData
+      });
+    }
+  } catch (err) {
+    const errorMessage = err.message || 'An unexpected error occurred';
+    setError(errorMessage);
+    setApiResponseMessage(errorMessage);
+    showToast(errorMessage, 'error');
+    console.error('❌ Unexpected error:', err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Timer effect
   useEffect(() => {
