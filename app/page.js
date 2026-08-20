@@ -61,6 +61,9 @@ export const metadata = {
     "Government liaisoning for industrial approvals",
     "Statutory compliance for manufacturing units",
     "Industrial project approvals and permits",
+    "Licensing consultancy services",
+    "Statutory compliance solutions",
+    "AMC for commercial properties"
     // "Environmental compliance for industries",
   ],
 

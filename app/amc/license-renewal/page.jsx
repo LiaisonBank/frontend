@@ -33,7 +33,13 @@ export const metadata = {
     "Mumbai License Renewal",
     "Maharashtra License Renewal",
     "Business Compliance India",
-    "Liaison Bank"
+    "Liaison Bank",
+    "AMC for residential societies",
+    "Residential building compliance ",
+    "Hospital fire safety solutions",
+    "Hotel licensing services",
+    "Commercial property maintenance",
+    "Restaurant AMC services"
   ],
 
   alternates: {
