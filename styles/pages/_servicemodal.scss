@@ -465,78 +465,760 @@ $border-left-color_2: rgba(255, 107, 0, 0.3);
 		background: rgba(0, 82, 161, 0.1);
 	}
 }
+// ========================================
+// RIGHT PANEL - Scrollbar Only on Children
+// ========================================
+
 .services-right-panel {
-	overflow-y: auto;
-	overflow-x: hidden;
-	margin: 0;
-	padding: 0;
-	background: white;
-	height: 100%;
-	position: relative;
-	scrollbar-width: auto;
-	scrollbar-color: #c1c7cd #f1f1f1;
-	touch-action: pan-y;
-	width: 100%;
-	min-width: 200px;
-	&:hover {
-		scrollbar-color: #9ca3af #f1f1f1;
-	}
-	&::-webkit-scrollbar {
-		width: .5em;
-		height: 1em;
-	}
-	&::-webkit-scrollbar-track {
-		background: #000;
-		border-radius: 0;
-		border: none;
-	}
-	&::-webkit-scrollbar-thumb {
-		background: #ef7f1a;
-		border-radius: 0;
-		border: none;
-		min-height: 40px;
-		min-width: 40px;
-		transition: background 0.2s ease;
-		&:hover {
-			background: #9ca3af;
-		}
-		&:active {
-			background: #6b7280;
-		}
-	}
-	&::-webkit-scrollbar-button {
-		background: #ef7f1a;
-		height: 16px;
-		width: 16px;
-		display: block;
-		cursor: pointer;
-		transition: background 0.2s ease;
-		&:hover {
-			background: #d1d5db;
-		}
-		&:active {
-			background: #9ca3af;
-		}
-		&:decrement {
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M4 1L7 5H1L4 1z' fill='%236b7280'/%3E%3C/svg%3E");
-			background-repeat: no-repeat;
-			background-position: center;
-			&:hover {
-				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M4 1L7 5H1L4 1z' fill='%234b5563'/%3E%3C/svg%3E");
-			}
-		}
-		&:increment {
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M4 7L1 3H7L4 7z' fill='%236b7280'/%3E%3C/svg%3E");
-			background-repeat: no-repeat;
-			background-position: center;
-			&:hover {
-				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M4 7L1 3H7L4 7z' fill='%234b5563'/%3E%3C/svg%3E");
-			}
-		}
-	}
-	&::-webkit-scrollbar-corner {
-		background: #f1f1f1;
-	}
+  width: 100%;
+  min-width: 200px;
+  height: 430px;
+  overflow: hidden; // Changed from auto to hidden - no scroll on parent
+  flex-shrink: 0;
+  position: relative;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+// ========================================
+// DETAILS CONTAINER
+// ========================================
+
+.services-details {
+  max-width: 900px;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow: hidden; // Prevent overflow on parent
+
+  // ========================================
+  // SERVICE OFFERINGS SECTION - Fixed height with scroll
+  // ========================================
+
+  &-services {
+    margin: 0;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(255, 107, 0, 0.03), rgba(255, 165, 0, 0.03));
+    border-radius: 10px;
+    border: 1px solid rgba(255, 107, 0, 0.12);
+    flex-shrink: 0;
+
+    &-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      max-height: 150px;
+      overflow-y: auto;
+      padding-right: 4px;
+      margin: 0;
+      list-style: none;
+
+      // Scrollbar for service list
+      scrollbar-width: thin;
+      scrollbar-color: #ef7f1a transparent;
+
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #ef7f1a;
+        border-radius: 2px;
+
+        &:hover {
+          background: #d97706;
+        }
+      }
+
+      &::-webkit-scrollbar-button {
+        display: none;
+      }
+    }
+  }
+
+  &-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #f97316;
+    margin: 0 0 12px 0;
+  }
+
+  &-service-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 107, 0, 0.06);
+    }
+  }
+
+  &-service-dot {
+    color: #f97316;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &-service-name {
+    font-size: 13px;
+    color: #374151;
+    flex: 1;
+  }
+
+  // ========================================
+  // CHILDREN CONTAINER - NO SCROLL ON PARENT
+  // ========================================
+
+  &-children {
+    flex: 1;
+    overflow: hidden; // No scroll on parent container
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Important for flex children
+    padding-right: 0;
+  }
+
+  &-no-content {
+    flex: 1;
+    min-height: 100px;
+  }
+
+  &-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 430px;
+    color: #9ca3af;
+    font-size: 16px;
+  }
+
+  &-under-development {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 300px;
+    padding: 2rem;
+  }
+}
+
+// ========================================
+// SERVICE CHILD - Scroll Only on Individual Children
+// ========================================
+
+.service-child {
+  border-bottom: 1px solid #f3f4f6;
+  flex-shrink: 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  // ========================================
+  // CHILD HEADER - Always visible
+  // ========================================
+
+  &-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-right: 1px solid #f3f4f6;
+    border-bottom: 1px solid #f3f4f6;
+    gap: 8px;
+    background: #ffffff;
+
+    &:hover {
+      background: #f8fafc;
+      
+      .service-services-badge {
+        background: rgba(255, 107, 0, 0.15);
+      }
+    }
+
+    &.has-children {
+      cursor: pointer;
+    }
+
+    &.active {
+      background-color: #f0f7ff;
+      color: #ff6004;
+      font-weight: 600;
+
+      .service-child-name {
+        color: #ff6004;
+      }
+
+      .service-services-badge {
+        background-color: #ff6004;
+        color: white;
+      }
+    }
+  }
+
+  &-name {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1a1a2e;
+    word-break: break-word;
+  }
+
+  &-toggle {
+    display: flex;
+    align-items: center;
+    color: #6b7280;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+
+    &.has-children {
+      cursor: pointer;
+    }
+
+    &.active {
+      color: #ff6004;
+    }
+  }
+
+  // ========================================
+  // NESTED CHILDREN - Scrollable individual items
+  // ========================================
+
+  &-children {
+    padding-left: 28px;
+    overflow-y: auto; // Scroll on individual child
+    max-height: 300px; // Limit height
+    margin: 4px 0;
+    // background: #fafafa;
+    border-radius: 4px;
+
+    // Scrollbar for nested children - VISIBLE
+    scrollbar-width: thin;
+    scrollbar-color: #ef7f1a transparent;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #ef7f1a;
+      border-radius: 2px;
+
+      &:hover {
+        background: #d97706;
+      }
+    }
+
+    &::-webkit-scrollbar-button {
+      display: none;
+    }
+
+    // When deeply nested, adjust max-height
+    .level-2 & {
+      max-height: 250px;
+    }
+
+    .level-3 & {
+      max-height: 200px;
+    }
+
+    .level-4 & {
+      max-height: 150px;
+    }
+  }
+
+  // ========================================
+  // LEVEL STYLES
+  // ========================================
+
+  &.level-1 {
+    .service-child-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .service-child-header {
+      background: #ffffff;
+    }
+
+    .service-child-children {
+    //   background: #f8fafc;
+    }
+  }
+
+  &.level-2 {
+    .service-child-name {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: #374151;
+    }
+
+    .service-child-header {
+      padding-left: 16px;
+      background: #fafafa;
+    }
+
+    .service-child-children {
+    //   background: #f5f7fa;
+      max-height: 250px;
+    }
+  }
+
+  &.level-3 {
+    .service-child-name {
+      font-weight: 400;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .service-child-header {
+      padding-left: 20px;
+      background: #f5f7fa;
+    }
+
+    .service-child-children {
+      background: #f0f2f5;
+      max-height: 200px;
+    }
+  }
+
+  &.level-4 {
+    .service-child-name {
+      font-weight: 400;
+      font-size: 0.8125rem;
+      color: #9ca3af;
+    }
+
+    .service-child-header {
+      padding-left: 24px;
+      background: #f0f2f5;
+    }
+
+    .service-child-children {
+    //   background: #ebedf0;
+      max-height: 150px;
+    }
+  }
+}
+
+// ========================================
+// SERVICE BADGE
+// ========================================
+
+.service-services-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 107, 0, 0.1);
+  color: #f97316;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  min-width: 20px;
+  justify-content: center;
+}
+
+// ========================================
+// SERVICE LIST - Scrollable
+// ========================================
+
+.service-services-list {
+  margin: 0;
+  padding: 4px 0 8px 0;
+  list-style: none;
+  max-height: 180px;
+  overflow-y: auto;
+
+  // Scrollbar for service items list
+  scrollbar-width: thin;
+  scrollbar-color: #ef7f1a transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ef7f1a;
+    border-radius: 2px;
+
+    &:hover {
+      background: #d97706;
+    }
+  }
+
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+}
+
+.service-service-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.4rem 1rem;
+  font-size: 13px;
+  color: #4b5563;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 107, 0, 0.06);
+    color: #f97316;
+  }
+}
+
+.service-service-dot {
+  color: #f97316;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.service-service-name {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #f97316;
+  }
+}
+
+// ========================================
+// PDF LINK
+// ========================================
+
+.service-pdf-link {
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+  text-decoration: none;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    color: #0052a1;
+    background: rgba(0, 82, 161, 0.1);
+  }
+}
+
+// ========================================
+// SCREEN READER ONLY
+// ========================================
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ========================================
+// DARK THEME
+// ========================================
+
+.dark-theme {
+  .services-right-panel {
+    background: #16162a;
+    border-right-color: #2d2d44;
+  }
+
+  .services-details {
+    &-services {
+      background: rgba(255, 107, 0, 0.08);
+      border-color: rgba(255, 107, 0, 0.2);
+
+      &-list {
+        scrollbar-color: #2d2d44 transparent;
+
+        &::-webkit-scrollbar-thumb {
+          background: #2d2d44;
+        }
+      }
+    }
+
+    &-service-name {
+      color: #e5e7eb;
+    }
+
+    &-service-item {
+      &:hover {
+        background: rgba(255, 107, 0, 0.1);
+      }
+    }
+  }
+
+  .service-child {
+    border-bottom-color: #2d2d44;
+
+    &-header {
+      border-right-color: #2d2d44;
+      border-bottom-color: #2d2d44;
+      background: #1a1a2e;
+
+      &:hover {
+        background: #2d2d44;
+      }
+
+      &.active {
+        background-color: #1a1a2e;
+        color: #ff6004;
+      }
+    }
+
+    &-name {
+      color: #e5e7eb;
+    }
+
+    &-children {
+      background: #12121f;
+      scrollbar-color: #2d2d44 transparent;
+
+      &::-webkit-scrollbar-thumb {
+        background: #2d2d44;
+      }
+    }
+
+    &.level-1 {
+      .service-child-header {
+        background: #1a1a2e;
+      }
+
+      .service-child-children {
+        // background: #16162a;
+      }
+    }
+
+    &.level-2 {
+      .service-child-name {
+        color: #d1d5db;
+      }
+
+      .service-child-header {
+        background: #16162a;
+      }
+
+      .service-child-children {
+        background: #12121f;
+      }
+    }
+
+    &.level-3 {
+      .service-child-name {
+        color: #9ca3af;
+      }
+
+      .service-child-header {
+        background: #12121f;
+      }
+
+      .service-child-children {
+        background: #0e0e1a;
+      }
+    }
+  }
+
+  .service-services-badge {
+    background: rgba(255, 107, 0, 0.2);
+  }
+
+  .service-service-item {
+    color: #9ca3af;
+
+    &:hover {
+      background: rgba(255, 107, 0, 0.1);
+      color: #f97316;
+    }
+  }
+
+  .service-service-name {
+    color: #e5e7eb;
+
+    &:hover {
+      color: #f97316;
+    }
+  }
+}
+
+// ========================================
+// RESPONSIVE
+// ========================================
+
+@media (max-width: 768px) {
+  .services-right-panel {
+    flex: 1;
+    padding: 0;
+    height: auto;
+    min-height: 300px;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .services-details {
+    padding: 16px;
+
+    &-services {
+      padding: 12px 16px;
+
+      &-list {
+        max-height: 120px;
+      }
+    }
+
+    &-children {
+      min-height: 80px;
+    }
+  }
+
+  .service-child {
+    &-children {
+      padding-left: 16px;
+      max-height: 250px;
+    }
+
+    &-header {
+      padding: 10px 12px;
+    }
+
+    &.level-2 .service-child-header {
+      padding-left: 12px;
+    }
+
+    &.level-3 .service-child-header {
+      padding-left: 16px;
+    }
+
+    &.level-1 .service-child-children {
+      max-height: 250px;
+    }
+
+    &.level-2 .service-child-children {
+      max-height: 200px;
+    }
+
+    &.level-3 .service-child-children {
+      max-height: 150px;
+    }
+  }
+
+  .service-services-list {
+    max-height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .services-right-panel {
+    min-height: 250px;
+  }
+
+  .services-details {
+    padding: 12px;
+
+    &-services {
+      padding: 10px 12px;
+
+      &-list {
+        max-height: 100px;
+      }
+    }
+
+    &-service-item {
+      padding: 4px 8px;
+    }
+
+    &-service-name {
+      font-size: 12px;
+    }
+  }
+
+  .service-child {
+    &-name {
+      font-size: 13px;
+    }
+
+    &-children {
+      padding-left: 12px;
+      max-height: 200px;
+    }
+
+    &.level-1 .service-child-name {
+      font-size: 0.95rem;
+    }
+
+    &.level-2 .service-child-name {
+      font-size: 0.875rem;
+    }
+
+    &.level-3 .service-child-name {
+      font-size: 0.8125rem;
+    }
+
+    &.level-1 .service-child-children {
+      max-height: 200px;
+    }
+
+    &.level-2 .service-child-children {
+      max-height: 150px;
+    }
+
+    &.level-3 .service-child-children {
+      max-height: 120px;
+    }
+  }
+
+  .service-service-item {
+    font-size: 12px;
+    padding: 0.3rem 0.75rem;
+  }
+
+  .service-service-name {
+    font-size: 13px;
+  }
+
+  .service-services-list {
+    max-height: 120px;
+  }
 }
 .services-details {
 	max-width: 900px;
@@ -637,7 +1319,7 @@ $border-left-color_2: rgba(255, 107, 0, 0.3);
 	border-right: 1px solid #f3f4f6;
 	border-bottom: 1px solid #f3f4f6;
 	&:hover {
-		background: #eef2f6;
+		// background: #eef2f6;
 		.service-services-badge {
 			background: rgba(255, 107, 0, 0.15);
 		}
@@ -672,9 +1354,9 @@ $border-left-color_2: rgba(255, 107, 0, 0.3);
 	}
 }
 .service-child-children {
-	padding-left: 28px;
-	border-left: 2px solid #e5e7eb;
-	margin-left: 12px;
+	padding-left: 0.5rem;
+	// border-left: 2px solid #e5e7eb;
+	// margin-left: 12px;
 }
 .service-services-badge {
 	display: inline-flex;
@@ -701,7 +1383,7 @@ $border-left-color_2: rgba(255, 107, 0, 0.3);
 	color: $color_10;
 }
 .service-service-dot {
-	display: none;
+	// display: none;
 	color: $color_5;
 	font-size: 12px;
 	font-weight: 700;
@@ -892,21 +1574,7 @@ section[data-section-name="Equipment Solution Department"] {
 			}
 		}
 	}
-	.services-right-panel {
-		background: #16162a;
-		&::-webkit-scrollbar-track {
-			background: #1a1a2e;
-		}
-		&::-webkit-scrollbar-thumb {
-			background: #2d2d44;
-		}
-		&::-webkit-scrollbar-button {
-			background: #2d2d44;
-			&:hover {
-				background: #3d3d5c;
-			}
-		}
-	}
+
 	.services-section-btn {
 		color: $color_12;
 		&:hover {
@@ -959,7 +1627,7 @@ section[data-section-name="Equipment Solution Department"] {
 		color: $color_13;
 	}
 	.service-child-children {
-		border-left-color: $border-left-color_1;
+		// border-left-color: $border-left-color_1;
 	}
 	.service-services-list {
 		border-left-color: $border-left-color_2;
@@ -1200,7 +1868,7 @@ section[data-section-name="Equipment Solution Department"] {
 		font-size: 18px;
 	}
 	.service-child-children {
-		padding-left: 16px;
+		padding-left: 0;
 	}
 	.services-details-services {
 		padding: 12px 16px;

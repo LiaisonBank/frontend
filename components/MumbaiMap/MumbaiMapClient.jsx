@@ -45,16 +45,13 @@ const MAP_CONFIG = {
   scrollOffset: 120,
   scrollDelay: 450,
   animationEaseLinearity: 0.5,
+  cardCloseDelay: 300,
 };
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_LOCAL_API_URL ||
   process.env.NEXT_PUBLIC_BACKEND_URL ||
   "http://localhost:8000";
-
-// ============================================================
-// FALLBACK COORDINATES
-// ============================================================
 
 const FALLBACK_COORDINATES = {
   Mumbai: { lat: 19.076, long: 72.8777 },
@@ -359,14 +356,12 @@ function MapController({ controllerRef, onZoomStateChange }) {
 
         if (!isValidCoordinate(lat, lng)) return;
 
-        // Stop any ongoing animations
         map.stop();
         if (animationRef.current) {
           clearTimeout(animationRef.current);
           animationRef.current = null;
         }
 
-        // Disable zoom controls
         map.scrollWheelZoom.disable();
         map.doubleClickZoom.disable();
         map.keyboard.disable();
@@ -383,7 +378,6 @@ function MapController({ controllerRef, onZoomStateChange }) {
           noMoveStart: true,
         });
 
-        // Notify zoom state change after animation completes
         animationRef.current = setTimeout(() => {
           onZoomStateChange?.(true);
           animationRef.current = null;
@@ -391,14 +385,12 @@ function MapController({ controllerRef, onZoomStateChange }) {
       },
 
       reset() {
-        // Stop any ongoing animations
         map.stop();
         if (animationRef.current) {
           clearTimeout(animationRef.current);
           animationRef.current = null;
         }
 
-        // Re-enable zoom controls before animation
         map.scrollWheelZoom.enable();
         map.doubleClickZoom.enable();
         map.keyboard.enable();
@@ -410,7 +402,6 @@ function MapController({ controllerRef, onZoomStateChange }) {
           noMoveStart: true,
         });
 
-        // Notify zoom state change after animation completes
         animationRef.current = setTimeout(() => {
           onZoomStateChange?.(false);
           animationRef.current = null;
@@ -463,7 +454,6 @@ function MarkerLayer({ projects, selectedProject, onSelect }) {
   const groupRef = useRef(null);
   const markersRef = useRef(new Map());
 
-  // Create marker layer
   useEffect(() => {
     if (!map) return;
 
@@ -484,7 +474,6 @@ function MarkerLayer({ projects, selectedProject, onSelect }) {
     };
   }, [map]);
 
-  // Render markers
   useEffect(() => {
     const group = groupRef.current;
     if (!group) return;
@@ -500,9 +489,7 @@ function MarkerLayer({ projects, selectedProject, onSelect }) {
       const lat = Number(project.lat);
       const lng = Number(project.long ?? project.lng);
 
-      // Skip only if coordinates are invalid, but still keep the project in the list
       if (!isValidCoordinate(lat, lng)) {
-        // Log but don't skip - we'll still show the project without a marker
         console.warn("Project has invalid coordinates:", {
           id: project.id,
           location: project.location,
@@ -540,7 +527,6 @@ function MarkerLayer({ projects, selectedProject, onSelect }) {
     });
   }, [projects, selectedProject, onSelect]);
 
-  // Update marker icons when selection changes
   useEffect(() => {
     if (!groupRef.current) return;
 
@@ -587,7 +573,6 @@ function SelectedProjectPosition({ project, onPositionChange }) {
         const newPosition = { x: point.x, y: point.y };
         const oldPosition = positionRef.current;
 
-        // Only update if position changed significantly
         if (
           !oldPosition ||
           Math.abs(oldPosition.x - newPosition.x) > 1 ||
@@ -636,15 +621,65 @@ function SelectedProjectPosition({ project, onPositionChange }) {
 }
 
 // ============================================================
-// PROJECT CARD
+// PROJECT CARD - FIXED HOOKS ORDER
 // ============================================================
 
 const ProjectCard = React.forwardRef(function ProjectCard(
-  { project, onClose, position },
+  { project, onClose, position, isVisible = true },
   ref
 ) {
+  // ✅ ALL HOOKS MUST BE CALLED FIRST, BEFORE ANY CONDITIONAL RETURNS
+  const [showTooltip, setShowTooltip] = useState(false);
+  const closeTimeoutRef = useRef(null);
+  const isClosingRef = useRef(false);
+
+  // ✅ useEffect called BEFORE conditional return
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  // ✅ useCallback hooks called BEFORE conditional return
+  const handleMouseEnter = useCallback(() => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    isClosingRef.current = false;
+  }, []);
+
+  const handleMouseLeave = useCallback(
+    (e) => {
+      if (isClosingRef.current) return;
+
+      const relatedTarget = e.relatedTarget;
+      
+      if (!relatedTarget || !e.currentTarget.contains(relatedTarget)) {
+        if (closeTimeoutRef.current) {
+          clearTimeout(closeTimeoutRef.current);
+          closeTimeoutRef.current = null;
+        }
+
+        isClosingRef.current = true;
+
+        closeTimeoutRef.current = setTimeout(() => {
+          onClose();
+          closeTimeoutRef.current = null;
+          isClosingRef.current = false;
+        }, MAP_CONFIG.cardCloseDelay || 300);
+      }
+    },
+    [onClose]
+  );
+
+  // ✅ NOW conditional return is safe (all hooks already called)
   if (!project) return null;
 
+  // Compute values after conditional return
   const imageUrl = getImageUrl(project.featured_image);
   const statusColor =
     project.project_status === "Completed"
@@ -656,7 +691,7 @@ const ProjectCard = React.forwardRef(function ProjectCard(
   return (
     <article
       ref={ref}
-      className="project-info-card is-visible"
+      className={`project-info-card ${isVisible ? "is-visible" : "is-hidden"}`}
       role="dialog"
       aria-modal="true"
       aria-label={
@@ -672,6 +707,8 @@ const ProjectCard = React.forwardRef(function ProjectCard(
             }
           : {}
       }
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="project-card-arrow-down" />
       <div className="project-card-header">
@@ -717,7 +754,7 @@ const ProjectCard = React.forwardRef(function ProjectCard(
           </div>
         )}
         {project.completion_date && (
-          <div className="project-completion-date">
+          <div className="project-completion-date d-none">
             {project.completion_date
               ? new Date(project.completion_date).toLocaleDateString("en-GB", {
                   day: "2-digit",
@@ -728,14 +765,28 @@ const ProjectCard = React.forwardRef(function ProjectCard(
           </div>
         )}
         <div className="learnmore">
-          <Link href={`/projects/${project.id}`} className="learn-more-link">
-            Learn More
-          </Link>
+          <div className="tooltip-wrapper">
+            <button
+              type="button"
+              onClick={() => setShowTooltip((prev) => !prev)}
+              aria-label="Learn more about this project"
+            >
+              Learn more
+            </button>
+
+            {showTooltip && (
+              <div className="custom-tooltip" role="tooltip">
+                Coming Soon
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </article>
   );
 });
+
+ProjectCard.displayName = "ProjectCard";
 
 // ============================================================
 // LOADING SKELETON
@@ -876,15 +927,12 @@ function useProjects() {
 
   const resolveApiProjectCoordinates = useCallback(
     async (project) => {
-      // 1. API LATITUDE/LONGITUDE (primary)
       const apiCoordinates = getApiCoordinates(project);
       if (apiCoordinates) return apiCoordinates;
 
-      // 2. NOMINATIM
       const nominatimCoordinates = await geocodeWithNominatim(project.location);
       if (nominatimCoordinates) return nominatimCoordinates;
 
-      // 3. LOCAL FALLBACK
       const fallbackCoordinates = getFallbackCoordinates(project.location);
       if (fallbackCoordinates) return fallbackCoordinates;
 
@@ -922,7 +970,6 @@ function useProjects() {
           ? result.projects
           : [];
 
-        // Process ALL projects without skipping any
         const resolvedApiProjects = [];
         const projectsWithCoords = [];
         const projectsWithoutCoords = [];
@@ -930,10 +977,8 @@ function useProjects() {
         for (const project of apiProjects) {
           if (cancelled) return;
 
-          // Create base project object
           const baseProject = {
             ...project,
-            // Normalize coordinate properties
             lat: project.latitude ?? project.lat ?? null,
             long: project.longitude ?? project.long ?? project.lng ?? null,
             lng: project.longitude ?? project.long ?? project.lng ?? null,
@@ -943,19 +988,15 @@ function useProjects() {
             is_fallback: false,
           };
 
-          // Check if project has valid API coordinates
           const hasApiCoords = isValidCoordinate(baseProject.lat, baseProject.long);
 
           if (hasApiCoords) {
-            // Project has valid coordinates - mark as API source
             baseProject.coordinate_source = "api";
             projectsWithCoords.push(baseProject);
           } else {
-            // Project doesn't have API coordinates - try to resolve
             const resolvedCoords = await resolveApiProjectCoordinates(project);
             
             if (resolvedCoords) {
-              // Successfully resolved coordinates
               baseProject.lat = resolvedCoords.lat;
               baseProject.long = resolvedCoords.long;
               baseProject.lng = resolvedCoords.long;
@@ -964,7 +1005,6 @@ function useProjects() {
               baseProject.is_fallback = resolvedCoords.source === "fallback";
               projectsWithCoords.push(baseProject);
             } else {
-              // No coordinates found - still keep the project but without coordinates
               baseProject.coordinate_source = "none";
               projectsWithoutCoords.push(baseProject);
               console.warn("Project has no coordinates:", {
@@ -978,7 +1018,6 @@ function useProjects() {
 
         if (cancelled) return;
 
-        // Combine ALL projects - projects with coordinates first, then without
         const allProjects = [...projectsWithCoords, ...projectsWithoutCoords];
         
         setProjects(allProjects);
@@ -988,7 +1027,6 @@ function useProjects() {
           `No Coords: ${projectsWithoutCoords.length})`
         );
 
-        // Only show error if there are no projects at all
         if (allProjects.length === 0) {
           setError("No projects found.");
         } else if (allProjects.length > 0 && projectsWithCoords.length === 0) {
@@ -1021,15 +1059,17 @@ function useProjects() {
 }
 
 // ============================================================
-// MAIN COMPONENT
+// MAIN COMPONENT - FIXED HOOKS ORDER
 // ============================================================
 
 export default function MumbaiMapClient() {
+  // ✅ ALL HOOKS MUST BE CALLED FIRST, BEFORE ANY CONDITIONAL RETURNS
   const { projects, loading, error, dataSource, setError } = useProjects();
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedProjectPosition, setSelectedProjectPosition] = useState(null);
   const [isZoomDisabled, setIsZoomDisabled] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isCardVisible, setIsCardVisible] = useState(false);
 
   const controllerRef = useRef(null);
   const selectedProjectIdRef = useRef(null);
@@ -1038,8 +1078,8 @@ export default function MumbaiMapClient() {
 
   const playAudio = useAudio();
   const scrollToCard = useScrollToCard();
-
-  // Cleanup on unmount
+  
+  // ✅ useEffect called BEFORE conditional returns
   useEffect(() => {
     return () => {
       if (closeTimeoutRef.current) {
@@ -1053,10 +1093,7 @@ export default function MumbaiMapClient() {
     };
   }, []);
 
-  // ==========================================================
-  // SELECT PROJECT
-  // ==========================================================
-
+  // ✅ All useCallback hooks called BEFORE conditional returns
   const selectProject = useCallback(
     (project) => {
       if (!project) return;
@@ -1064,7 +1101,6 @@ export default function MumbaiMapClient() {
       const projectId = String(project.id);
       if (selectedProjectIdRef.current === projectId) return;
 
-      // Clear any pending close operations
       if (closeTimeoutRef.current) {
         clearTimeout(closeTimeoutRef.current);
         closeTimeoutRef.current = null;
@@ -1072,6 +1108,7 @@ export default function MumbaiMapClient() {
 
       playAudio();
       setIsClosing(false);
+      setIsCardVisible(true);
 
       selectedProjectIdRef.current = projectId;
       setSelectedProject(project);
@@ -1088,35 +1125,27 @@ export default function MumbaiMapClient() {
         }
       }, MAP_CONFIG.scrollDelay);
     },
-    [playAudio, scrollToCard]
+    [playAudio, scrollToCard],
   );
 
-  // ==========================================================
-  // CLOSE PROJECT
-  // ==========================================================
-
   const closeProject = useCallback(() => {
-    // Prevent multiple close operations
     if (isClosing) return;
     setIsClosing(true);
+    setIsCardVisible(false);
 
     playAudio();
 
-    // Clear any pending timeouts
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
 
-    // Stop any ongoing animations
     controllerRef.current?.stop();
 
-    // Reset state immediately
     selectedProjectIdRef.current = null;
     setSelectedProject(null);
     setSelectedProjectPosition(null);
 
-    // Reset zoom after a small delay to ensure smooth transition
     closeTimeoutRef.current = setTimeout(() => {
       controllerRef.current?.reset();
       closeTimeoutRef.current = null;
@@ -1124,35 +1153,20 @@ export default function MumbaiMapClient() {
     }, 150);
   }, [playAudio, isClosing]);
 
-  // ==========================================================
-  // MAP CLICK
-  // ==========================================================
-
   const handleMapClick = useCallback(() => {
     if (!selectedProject || isClosing) return;
     closeProject();
   }, [selectedProject, closeProject, isClosing]);
 
-  // ==========================================================
-  // ZOOM STATE CHANGE
-  // ==========================================================
-
   const handleZoomStateChange = useCallback((disabled) => {
     setIsZoomDisabled(disabled);
   }, []);
-
-  // ==========================================================
-  // RETRY
-  // ==========================================================
 
   const handleRetry = useCallback(() => {
     window.location.reload();
   }, []);
 
-  // ==========================================================
-  // RENDER STATES
-  // ==========================================================
-
+  // ✅ NOW conditional returns are safe (all hooks already called)
   if (loading) {
     return <LoadingSkeleton />;
   }
@@ -1253,6 +1267,7 @@ export default function MumbaiMapClient() {
             project={selectedProject}
             onClose={closeProject}
             position={selectedProjectPosition}
+            isVisible={isCardVisible}
           />
         )}
       </div>

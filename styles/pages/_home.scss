@@ -3010,11 +3010,11 @@ section.ceo-message-full {
         text-transform: uppercase;
         margin-bottom: 1rem;
         background:$secodary-bg-color;
-        // background: linear-gradient(
-        //   115deg,
-        //   var(--themeht-primary-color),
-        //   var(--themeht-secondary-color)
-        // );
+        background: linear-gradient(
+          115deg,
+          var(--themeht-primary-color),
+          var(--themeht-secondary-color)
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         // z-index: 9;

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-  useEffect,
-} from "react";
+import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import Chip from "@mui/material/Chip";
 import "./ProjectDetails.scss";
 
@@ -43,7 +37,7 @@ export default function ProjectDetails() {
   // =========================================================
   // SCROLL FUNCTIONS
   // =========================================================
-  
+
   // Scroll to top of table body (keeps header visible)
   const scrollTableToTop = useCallback(() => {
     if (tableBodyRef.current) {
@@ -58,13 +52,13 @@ export default function ProjectDetails() {
       const wrapperRect = tableWrapperRef.current.getBoundingClientRect();
       const offset = 80; // Adjust this value based on your header height
       const targetPosition = window.scrollY + wrapperRect.top - offset;
-      
+
       // Smooth scroll to the table wrapper
       window.scrollTo({
         top: targetPosition,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
-      
+
       // Also scroll table body to top
       setTimeout(scrollTableToTop, 100);
     }
@@ -74,7 +68,9 @@ export default function ProjectDetails() {
   // NORMALIZE HELPER
   // =========================================================
   const normalize = useCallback((value) => {
-    return String(value ?? "").trim().toLowerCase();
+    return String(value ?? "")
+      .trim()
+      .toLowerCase();
   }, []);
 
   // =========================================================
@@ -87,175 +83,184 @@ export default function ProjectDetails() {
       client_name: project.client_name || project.name,
       project_status: project.project_status || project.status,
       projectsCategory:
-        project.projectsCategory || 
-        project.type || 
-        project.category || 
+        project.projectsCategory ||
+        project.type ||
+        project.category ||
         "Uncategorized",
       location: project.location,
     }));
   }, []);
 
   // =========================================================
-// FETCH PROJECTS - INITIAL LOAD
-// =========================================================
-useEffect(() => {
-  let isMounted = true;
-  let abortController = new AbortController();
+  // FETCH PROJECTS - INITIAL LOAD
+  // =========================================================
+  useEffect(() => {
+    let isMounted = true;
+    let abortController = new AbortController();
 
-  const fetchProjects = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/projects/distinct?page=1&limit=${ITEMS_PER_LOAD}`,
-        {
-          method: "GET",
-          cache: "no-store",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `${API_BASE_URL}/api/projects/distinct?page=1&limit=${ITEMS_PER_LOAD}`,
+          {
+            method: "GET",
+            cache: "no-store",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            signal: abortController.signal,
           },
-          signal: abortController.signal,
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch projects: ${response.status} ${response.statusText}`
         );
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch projects: ${response.status} ${response.statusText}`,
+          );
+        }
+
+        const data = await response.json();
+
+        // Only update state if component is still mounted
+        if (!isMounted) return;
+
+        const projectsData = Array.isArray(data)
+          ? data
+          : data.projects || data.data || [];
+
+        const total = data.total || data.count;
+        setTotalProjects(total);
+
+        const hasMoreItems =
+          data.hasMore !== undefined
+            ? data.hasMore
+            : data.next_page !== null
+              ? true
+              : projectsData.length === ITEMS_PER_LOAD;
+        setHasMore(hasMoreItems);
+
+        const normalizedProjects = normalizeProjects(projectsData, 1);
+        setProjects(normalizedProjects);
+        setVisibleCount(Math.min(ITEMS_PER_LOAD, normalizedProjects.length));
+        setPage(1);
+      } catch (err) {
+        if (err.name === "AbortError") {
+          console.log("Fetch aborted");
+          return;
+        }
+        if (!isMounted) return;
+        console.error("Error fetching projects:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to load projects",
+        );
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
+    };
 
-      const data = await response.json();
-      
-      // Only update state if component is still mounted
-      if (!isMounted) return;
-      
-      const projectsData = Array.isArray(data)
-        ? data
-        : data.projects || data.data || [];
-      
-      const total = data.total || data.count || projectsData.length;
-      setTotalProjects(total);
+    fetchProjects();
 
-      const hasMoreItems = data.hasMore !== undefined 
-        ? data.hasMore 
-        : data.next_page !== null 
-        ? true 
-        : projectsData.length === ITEMS_PER_LOAD;
-      setHasMore(hasMoreItems);
-
-      const normalizedProjects = normalizeProjects(projectsData, 1);
-      setProjects(normalizedProjects);
-      setVisibleCount(Math.min(ITEMS_PER_LOAD, normalizedProjects.length));
-      setPage(1);
-    } catch (err) {
-      if (err.name === 'AbortError') {
-        console.log('Fetch aborted');
-        return;
+    return () => {
+      isMounted = false;
+      if (abortController) {
+        abortController.abort();
       }
-      if (!isMounted) return;
-      console.error("Error fetching projects:", err);
-      setError(err instanceof Error ? err.message : "Failed to load projects");
-    } finally {
-      if (isMounted) {
-        setLoading(false);
-      }
-    }
-  };
-
-  fetchProjects();
-
-  return () => {
-    isMounted = false;
-    if (abortController) {
-      abortController.abort();
-    }
-  };
-}, [normalizeProjects]);
+    };
+  }, [normalizeProjects]);
 
   // =========================================================
   // FETCH MORE PROJECTS - LOAD MORE
   // =========================================================
-  const fetchMoreProjects = useCallback(async (pageNum) => {
-    // Prevent multiple simultaneous load more requests
-    if (loadingMore) {
-      return;
-    }
-
-    try {
-      setLoadingMore(true);
-      setError(null);
-
-      const response = await fetch(
-        `${API_BASE_URL}/api/projects/distinct?page=${pageNum}&limit=${ITEMS_PER_LOAD}`,
-        {
-          method: "GET",
-          cache: "no-store",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch more projects: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      
-      // Handle different response structures
-      const projectsData = Array.isArray(data)
-        ? data
-        : data.projects || data.data || [];
-      
-      // Update total if available
-      if (data.total || data.count) {
-        setTotalProjects(data.total || data.count);
-      }
-
-      // Check if there are more items
-      const hasMoreItems = data.hasMore !== undefined
-        ? data.hasMore
-        : data.next_page !== null
-        ? true
-        : projectsData.length === ITEMS_PER_LOAD;
-      setHasMore(hasMoreItems);
-
-      // If no projects returned, there's nothing more to load
-      if (projectsData.length === 0) {
-        setHasMore(false);
-        setLoadingMore(false);
+  const fetchMoreProjects = useCallback(
+    async (pageNum) => {
+      // Prevent multiple simultaneous load more requests
+      if (loadingMore) {
         return;
       }
 
-      const normalizedProjects = normalizeProjects(projectsData, pageNum);
-      
-      // Append new projects to existing ones
-      setProjects(prev => {
-        // Avoid duplicates by checking IDs
-        const existingIds = new Set(prev.map(p => p.id));
-        const uniqueNewProjects = normalizedProjects.filter(
-          p => !existingIds.has(p.id)
-        );
-        return [...prev, ...uniqueNewProjects];
-      });
-      
-      // Update visible count to show all loaded projects
-      setVisibleCount(prev => prev + projectsData.length);
-      
-      setPage(pageNum);
+      try {
+        setLoadingMore(true);
+        setError(null);
 
-      // Scroll to table wrapper after loading more
-      setTimeout(scrollToTableWrapper, 150);
-    } catch (err) {
-      console.error("Error fetching more projects:", err);
-      setError(err instanceof Error ? err.message : "Failed to load more projects");
-    } finally {
-      setLoadingMore(false);
-    }
-  }, [loadingMore, normalizeProjects, scrollToTableWrapper]);
+        const response = await fetch(
+          `${API_BASE_URL}/api/projects/distinct?page=${pageNum}&limit=${ITEMS_PER_LOAD}`,
+          {
+            method: "GET",
+            cache: "no-store",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch more projects: ${response.status} ${response.statusText}`,
+          );
+        }
+
+        const data = await response.json();
+
+        // Handle different response structures
+        const projectsData = Array.isArray(data)
+          ? data
+          : data.projects || data.data || [];
+
+        // Update total if available
+        if (data.total || data.count) {
+          setTotalProjects(data.total || data.count);
+        }
+
+        // Check if there are more items
+        const hasMoreItems =
+          data.hasMore !== undefined
+            ? data.hasMore
+            : data.next_page !== null
+              ? true
+              : projectsData.length === ITEMS_PER_LOAD;
+        setHasMore(hasMoreItems);
+
+        // If no projects returned, there's nothing more to load
+        if (projectsData.length === 0) {
+          setHasMore(false);
+          setLoadingMore(false);
+          return;
+        }
+
+        const normalizedProjects = normalizeProjects(projectsData, pageNum);
+
+        // Append new projects to existing ones
+        setProjects((prev) => {
+          // Avoid duplicates by checking IDs
+          const existingIds = new Set(prev.map((p) => p.id));
+          const uniqueNewProjects = normalizedProjects.filter(
+            (p) => !existingIds.has(p.id),
+          );
+          return [...prev, ...uniqueNewProjects];
+        });
+
+        // Update visible count to show all loaded projects
+        setVisibleCount((prev) => prev + projectsData.length);
+
+        setPage(pageNum);
+
+        // Scroll to table wrapper after loading more
+        setTimeout(scrollToTableWrapper, 150);
+      } catch (err) {
+        console.error("Error fetching more projects:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to load more projects",
+        );
+      } finally {
+        setLoadingMore(false);
+      }
+    },
+    [loadingMore, normalizeProjects, scrollToTableWrapper],
+  );
 
   // =========================================================
   // CATEGORY OPTIONS
@@ -311,36 +316,48 @@ useEffect(() => {
   // =========================================================
   // STATUS COLOR
   // =========================================================
-  const getStatusClass = useCallback((status) => {
-    const normalizedStatus = normalize(status);
+  const getStatusClass = useCallback(
+    (status) => {
+      const normalizedStatus = normalize(status);
 
-    if (normalizedStatus === "completed") return "status-completed";
-    if (normalizedStatus === "upcoming") return "status-upcoming";
-    if (normalizedStatus === "in progress") return "status-in-progress";
+      if (normalizedStatus === "completed") return "status-completed";
+      if (normalizedStatus === "upcoming") return "status-upcoming";
+      if (normalizedStatus === "in progress") return "status-in-progress";
 
-    return "status-default";
-  }, [normalize]);
+      return "status-default";
+    },
+    [normalize],
+  );
 
   // =========================================================
   // FILTER HANDLERS
   // =========================================================
-  const handleLocationChange = useCallback((event) => {
-    setLocationFilter(event.target.value);
-    setVisibleCount(ITEMS_PER_LOAD);
-    scrollToTableWrapper(); // Scroll to table when filtering
-  }, [scrollToTableWrapper]);
+  const handleLocationChange = useCallback(
+    (event) => {
+      setLocationFilter(event.target.value);
+      setVisibleCount(ITEMS_PER_LOAD);
+      scrollToTableWrapper(); // Scroll to table when filtering
+    },
+    [scrollToTableWrapper],
+  );
 
-  const handleStatusChange = useCallback((event) => {
-    setStatusFilter(event.target.value);
-    setVisibleCount(ITEMS_PER_LOAD);
-    scrollToTableWrapper(); // Scroll to table when filtering
-  }, [scrollToTableWrapper]);
+  const handleStatusChange = useCallback(
+    (event) => {
+      setStatusFilter(event.target.value);
+      setVisibleCount(ITEMS_PER_LOAD);
+      scrollToTableWrapper(); // Scroll to table when filtering
+    },
+    [scrollToTableWrapper],
+  );
 
-  const handleCategoryChange = useCallback((event) => {
-    setCategoryFilter(event.target.value);
-    setVisibleCount(ITEMS_PER_LOAD);
-    scrollToTableWrapper(); // Scroll to table when filtering
-  }, [scrollToTableWrapper]);
+  const handleCategoryChange = useCallback(
+    (event) => {
+      setCategoryFilter(event.target.value);
+      setVisibleCount(ITEMS_PER_LOAD);
+      scrollToTableWrapper(); // Scroll to table when filtering
+    },
+    [scrollToTableWrapper],
+  );
 
   const handleClearFilters = useCallback(() => {
     setLocationFilter("");
@@ -358,7 +375,7 @@ useEffect(() => {
     const currentVisible = visibleCount;
     const totalAvailable = filteredProjects.length;
     const needed = currentVisible + ITEMS_PER_LOAD;
-    
+
     // If we need more items than currently available AND there are more on server
     if (needed > totalAvailable && hasMore) {
       // Fetch next page from API
@@ -370,7 +387,14 @@ useEffect(() => {
       // Scroll to table wrapper after updating
       setTimeout(scrollToTableWrapper, 100);
     }
-  }, [visibleCount, filteredProjects.length, hasMore, page, fetchMoreProjects, scrollToTableWrapper]);
+  }, [
+    visibleCount,
+    filteredProjects.length,
+    hasMore,
+    page,
+    fetchMoreProjects,
+    scrollToTableWrapper,
+  ]);
 
   const handleLoadLess = useCallback(() => {
     setVisibleCount(ITEMS_PER_LOAD);
@@ -382,65 +406,68 @@ useEffect(() => {
   // PREVENT OVERSCROLL BUBBLING
   // =========================================================
   // =========================================================
-// =========================================================
-// HANDLE TABLE SCROLL WITH BODY SCROLL PASS-THROUGH
-// =========================================================
-const handleTableWheel = useCallback((e) => {
-  const element = e.currentTarget;
-  const { scrollTop, scrollHeight, clientHeight } = element;
-  
-  // Check if we're at boundaries
-  const atTop = scrollTop === 0;
-  const atBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
-  
-  // If at boundary and scrolling in the direction of the boundary,
-  // let the event bubble to the page body
-  if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
-    // Don't prevent default - allow body scroll
-    return;
-  }
-  
-  // Otherwise, prevent body scroll and let table scroll
-  e.preventDefault();
-  e.stopPropagation();
-}, []);
+  // =========================================================
+  // HANDLE TABLE SCROLL WITH BODY SCROLL PASS-THROUGH
+  // =========================================================
+  const handleTableWheel = useCallback((e) => {
+    const element = e.currentTarget;
+    const { scrollTop, scrollHeight, clientHeight } = element;
 
-// Add native event listener with passive: false
-useEffect(() => {
-  const tableBody = tableBodyRef.current;
-  if (!tableBody) return;
-
-  // Use native event listener with passive: false
-  const wheelHandler = (e) => {
-    const { scrollTop, scrollHeight, clientHeight } = tableBody;
-    
+    // Check if we're at boundaries
     const atTop = scrollTop === 0;
     const atBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
-    
+
+    // If at boundary and scrolling in the direction of the boundary,
+    // let the event bubble to the page body
     if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
-      return; // Allow body scroll
+      // Don't prevent default - allow body scroll
+      return;
     }
-    
+
+    // Otherwise, prevent body scroll and let table scroll
     e.preventDefault();
     e.stopPropagation();
-  };
+  }, []);
 
-  tableBody.addEventListener('wheel', wheelHandler, { passive: false });
-  
-  return () => {
-    tableBody.removeEventListener('wheel', wheelHandler);
-  };
-}, []);
+  // Add native event listener with passive: false
+  useEffect(() => {
+    const tableBody = tableBodyRef.current;
+    if (!tableBody) return;
+
+    // Use native event listener with passive: false
+    const wheelHandler = (e) => {
+      const { scrollTop, scrollHeight, clientHeight } = tableBody;
+
+      const atTop = scrollTop === 0;
+      const atBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
+
+      if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
+        return; // Allow body scroll
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    tableBody.addEventListener("wheel", wheelHandler, { passive: false });
+
+    return () => {
+      tableBody.removeEventListener("wheel", wheelHandler);
+    };
+  }, []);
 
   // =========================================================
   // KEYBOARD ACCESSIBILITY FOR LOAD MORE BUTTON
   // =========================================================
-  const handleKeyDown = useCallback((e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleLoadMore();
-    }
-  }, [handleLoadMore]);
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleLoadMore();
+      }
+    },
+    [handleLoadMore],
+  );
 
   // =========================================================
   // LOADING STATE
@@ -493,11 +520,11 @@ useEffect(() => {
           <div className="project-filter location-filter">
             <label htmlFor="project-location">Location</label>
             <div className="filter-input">
-              <svg 
-                className="filter-icon" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="filter-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
                 strokeWidth="1.8"
                 aria-hidden="true"
               >
@@ -518,9 +545,9 @@ useEffect(() => {
 
           <div className="project-filter">
             <label htmlFor="project-status">Status</label>
-            <select 
-              id="project-status" 
-              value={statusFilter} 
+            <select
+              id="project-status"
+              value={statusFilter}
               onChange={handleStatusChange}
               aria-label="Filter by status"
             >
@@ -533,9 +560,9 @@ useEffect(() => {
 
           <div className="project-filter">
             <label htmlFor="project-category">Category Type</label>
-            <select 
-              id="project-category" 
-              value={categoryFilter} 
+            <select
+              id="project-category"
+              value={categoryFilter}
               onChange={handleCategoryChange}
               aria-label="Filter by category"
             >
@@ -549,8 +576,8 @@ useEffect(() => {
           </div>
 
           {hasActiveFilters && (
-            <button 
-              className="clear-filters-btn" 
+            <button
+              className="clear-filters-btn"
               onClick={handleClearFilters}
               aria-label="Clear all filters"
             >
@@ -579,20 +606,14 @@ useEffect(() => {
           <div className="project-empty" role="status">
             <h3>No projects found</h3>
             <p>Try changing your filters.</p>
-            <button 
-              onClick={handleClearFilters}
-              aria-label="Clear all filters"
-            >
+            <button onClick={handleClearFilters} aria-label="Clear all filters">
               Clear Filters
             </button>
           </div>
         ) : (
           <>
             {/* TABLE WITH FIXED HEADER - Added ref */}
-            <div 
-              className="table-wrapper" 
-              ref={tableWrapperRef}
-            >
+            <div className="table-wrapper" ref={tableWrapperRef}>
               <div className="table-container">
                 {/* FIXED HEADER - STICKY AT TOP */}
                 <div className="table-header" role="row">
@@ -603,22 +624,26 @@ useEffect(() => {
                 </div>
 
                 {/* SCROLLABLE BODY */}
-                <div 
-                  className="table-body" 
+                <div
+                  className="table-body"
                   ref={tableBodyRef}
                   onWheel={handleTableWheel}
                   role="rowgroup"
                 >
                   {visibleProjects.map((project) => (
-                    <div 
-                      key={project.id} 
-                      className="table-row" 
-                      role="row"
-                    >
-                      <div className="item-name" title={project.client_name} role="cell">
+                    <div key={project.id} className="table-row" role="row">
+                      <div
+                        className="item-name"
+                        title={project.client_name}
+                        role="cell"
+                      >
                         {project.client_name}
                       </div>
-                      <div className="item-type" title={project.projectsCategory} role="cell">
+                      <div
+                        className="item-type"
+                        title={project.projectsCategory}
+                        role="cell"
+                      >
                         {project.projectsCategory}
                       </div>
                       <div className="item-status" role="cell">
@@ -629,7 +654,11 @@ useEffect(() => {
                           aria-label={`Status: ${project.project_status}`}
                         />
                       </div>
-                      <div className="item-location" title={project.location} role="cell">
+                      <div
+                        className="item-location"
+                        title={project.location}
+                        role="cell"
+                      >
                         {project.location}
                       </div>
                     </div>
@@ -643,19 +672,23 @@ useEffect(() => {
               <div className="load-more-wrapper">
                 {/* Show Load More if there are more items to show */}
                 {hasMoreToLoad && visibleCount < filteredProjects.length && (
-                  <button 
-                    className="load-more-btn" 
+                  <button
+                    className="load-more-btn"
                     onClick={handleLoadMore}
                     onKeyDown={handleKeyDown}
                     disabled={loadingMore}
-                    aria-label={loadingMore ? "Loading more projects" : "Load more projects"}
+                    aria-label={
+                      loadingMore
+                        ? "Loading more projects"
+                        : "Load more projects"
+                    }
                   >
-                    <span>{loadingMore ? 'Loading...' : 'Load More'}</span>
+                    <span>{loadingMore ? "Loading..." : "Load More"}</span>
                     {!loadingMore && (
-                      <svg 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
-                        stroke="currentColor" 
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
                         strokeWidth="2"
                         aria-hidden="true"
                       >
@@ -665,22 +698,26 @@ useEffect(() => {
                     )}
                   </button>
                 )}
-                
+
                 {/* Show Load More when there are server items even if filtered shows all */}
                 {hasMore && visibleCount >= filteredProjects.length && (
-                  <button 
-                    className="load-more-btn" 
+                  <button
+                    className="load-more-btn"
                     onClick={handleLoadMore}
                     onKeyDown={handleKeyDown}
                     disabled={loadingMore}
-                    aria-label={loadingMore ? "Loading more projects" : "Load more projects"}
+                    aria-label={
+                      loadingMore
+                        ? "Loading more projects"
+                        : "Load more projects"
+                    }
                   >
-                    <span>{loadingMore ? 'Loading...' : 'Load More'}</span>
+                    <span>{loadingMore ? "Loading..." : "Load More"}</span>
                     {!loadingMore && (
-                      <svg 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
-                        stroke="currentColor" 
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
                         strokeWidth="2"
                         aria-hidden="true"
                       >
@@ -690,18 +727,18 @@ useEffect(() => {
                     )}
                   </button>
                 )}
-                
+
                 {canLoadLess && (
-                  <button 
-                    className="load-less-btn" 
+                  <button
+                    className="load-less-btn"
                     onClick={handleLoadLess}
                     aria-label="Show fewer projects"
                   >
                     <span>Load Less</span>
-                    <svg 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
                       strokeWidth="2"
                       aria-hidden="true"
                     >

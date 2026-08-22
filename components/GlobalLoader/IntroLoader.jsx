@@ -140,7 +140,7 @@ export default function IntroLoader() {
     const hideTimer = setTimeout(() => {
       setShow(false);
       setIsLoading(false);
-    }, 3800);
+    }, 3000);
 
     return () => {
       clearTimeout(slideTimer);
