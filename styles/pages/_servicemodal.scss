@@ -707,7 +707,7 @@ $border-left-color_2: rgba(255, 107, 0, 0.3);
   &-children {
     padding-left: 28px;
     overflow-y: auto; // Scroll on individual child
-    max-height: 300px; // Limit height
+    max-height: 150px; // Limit height
     margin: 4px 0;
     // background: #fafafa;
     border-radius: 4px;
@@ -784,7 +784,7 @@ $border-left-color_2: rgba(255, 107, 0, 0.3);
 
     .service-child-children {
     //   background: #f5f7fa;
-      max-height: 250px;
+      max-height: 150px;
     }
   }
 
@@ -802,7 +802,7 @@ $border-left-color_2: rgba(255, 107, 0, 0.3);
 
     .service-child-children {
       background: #f0f2f5;
-      max-height: 200px;
+      max-height: 150px;
     }
   }
 
