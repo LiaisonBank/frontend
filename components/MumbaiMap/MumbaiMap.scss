@@ -441,7 +441,8 @@
       align-items: flex-start;
     }
     .project-category {
-      position: relative;
+      position: absolute;
+      top: 5%;
       margin:5px 0;
       color: white;
       font-size: 14px;
@@ -481,15 +482,112 @@
         width: 16px;
         height: 16px;
       }
-      .learn-more-link{
-        font-size: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content:flex-end;
-        padding: 1rem 0 0;
+     
+    }
+    .learnmore{
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content:flex-end;
+      padding: 0;
+    }
+    .tooltip-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .tooltip-trigger {
+      width: 24px;
+      height: 24px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+
+      background: #222;
+      color: #fff;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+
+      &:hover {
+        background: #ff6004;
+        transform: scale(1.08);
+      }
+
+      &:focus-visible {
+        outline: 2px solid #ff6004;
+        outline-offset: 2px;
       }
     }
 
+    .custom-tooltip {
+      position: absolute;
+
+      /*
+      * Position tooltip above the button
+      */
+      bottom: calc(100% + 10px);
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      min-width: 140px;
+      max-width: 220px;
+
+      padding: 8px 12px;
+
+      border-radius: 6px;
+
+      background: #222;
+      color: #fff;
+
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.4;
+
+      text-align: center;
+      white-space: normal;
+
+      z-index: 9999;
+
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+
+      /*
+      * Small arrow
+      */
+      &::after {
+        content: "";
+
+        position: absolute;
+
+        top: 100%;
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        border-width: 5px;
+        border-style: solid;
+
+        border-color:
+          #222
+          transparent
+          transparent
+          transparent;
+      }
+    }
     .project-card-zone {
       display: inline-block;
       background: linear-gradient(90deg, #FFD600, #FF4D00);
