@@ -20,21 +20,27 @@ const quotes = [
     text: "We believe every business deserves the freedom to grow without being held back by complexity. Our role is to bring the right expertise, guidance, and solutions to every challenge, so businesses can focus on their vision, strengthen their foundations, and move forward with confidence.",
     author: "Mahadev Biradar",
     title: "Founder & CEO, Liaison Bank"
-  },{
-    text:"Our clients are at the heart of everything we do. We don't just provide services; we build lasting relationships based on trust, transparency, and a genuine commitment to their success. When our clients succeed, we succeed."
   },
   {
-    text:"Leadership is not about having all the answers. It's about creating an environment where people feel empowered to find solutions, take ownership, and grow together. A true leader builds trust, inspires confidence, and leads by example."
+    text: "Our clients are at the heart of everything we do. We don't just provide services; we build lasting relationships based on trust, transparency, and a genuine commitment to their success. When our clients succeed, we succeed.",
+    author: "Mahadev Biradar",
+    title: "Founder & CEO, Liaison Bank"
+  },
+  {
+    text: "Leadership is not about having all the answers. It's about creating an environment where people feel empowered to find solutions, take ownership, and grow together. A true leader builds trust, inspires confidence, and leads by example.",
+    author: "Mahadev Biradar",
+    title: "Founder & CEO, Liaison Bank"
   }
 ];
 
 const Home = () => {
-  // const [currentQuote, setCurrentQuote] = useState(0);
-const [currentQuote, setCurrentQuote] = useState(0);
-
-useEffect(() => {
-  setCurrentQuote(Math.floor(Math.random() * quotes.length));
-}, []);
+  // Use a ref to track if we're on the client
+  const isClientRef = useRef(false);
+  
+  // Initialize with first quote (0) for SSR, will update on client
+  const [currentQuote, setCurrentQuote] = useState(0);
+  // Track if we should show the random quote
+  const [showRandomQuote, setShowRandomQuote] = useState(false);
 
   const sectionRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -44,44 +50,48 @@ useEffect(() => {
     Thumbs: false,
   });
 
-  // // Quote rotation
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setCurrentQuote((prev) => (prev + 1) % quotes.length);
-  //   }, 6000);
-  //   return () => clearInterval(interval);
-  // }, []);
+  // Handle client-side initialization without cascading renders
+  useEffect(() => {
+    // Only run once on client mount
+    if (!isClientRef.current) {
+      isClientRef.current = true;
+      // Set random quote after client-side hydration
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      setCurrentQuote(randomIndex);
+      // Enable showing random quote
+      setShowRandomQuote(true);
+    }
+  }, []); // Empty dependency array - runs once after mount
 
-
-
-// Scroll detection - triggers only once when section first comes into view
-useEffect(() => {
-  let hasTriggered = false; // Flag to prevent re-triggering
-  
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting && !hasTriggered) {
-        setIsVisible(true);
-        hasTriggered = true;
-        // Optionally disconnect observer after triggering
-        observer.disconnect();
+  // Scroll detection - triggers only once when section first comes into view
+  useEffect(() => {
+    let hasTriggered = false;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasTriggered) {
+          setIsVisible(true);
+          hasTriggered = true;
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.1,
       }
-    },
-    {
-      threshold: 0.1,
-    }
-  );
+    );
 
-  if (sectionRef.current) {
-    observer.observe(sectionRef.current);
-  }
-
-  return () => {
-    if (sectionRef.current) {
-      observer.unobserve(sectionRef.current);
+    const currentSection = sectionRef.current;
+    if (currentSection) {
+      observer.observe(currentSection);
     }
-  };
-}, []);
+
+    return () => {
+      if (currentSection) {
+        observer.unobserve(currentSection);
+      }
+    };
+  }, []);
+
   return (
     <>
       <div className="hero-section page-header">
@@ -124,51 +134,55 @@ useEffect(() => {
 
                 {/* Quote Container */}
                 <div className="ceo-full-quote-container">
-                  {quotes.map((quote, index) => (
-                    <div
-                      key={index}
-                      className={`ceo-full-quote-item ${index === currentQuote ? 'active' : ''}`}
-                    >
-                      <div className="ceo-full-quote-text">
+                  {quotes.map((quote, index) => {
+                    // Use showRandomQuote flag to determine which quote to show
+                    const isActive = showRandomQuote ? index === currentQuote : index === 0;
+                    return (
+                      <div
+                        key={index}
+                        className={`ceo-full-quote-item ${isActive ? 'active' : ''}`}
+                      >
+                        <div className="ceo-full-quote-text">
 
-                        {/* Top-left decoration */}
-                        <div className="quote-decoration-top">
-                          <span className="quote-symbol">“</span>
-                          <span className="quote-line quote-line-horizontal"></span>
-                          <span className="quote-line quote-line-vertical"></span>
+                          {/* Top-left decoration */}
+                          <div className="quote-decoration-top">
+                            <span className="quote-symbol">“</span>
+                            <span className="quote-line quote-line-horizontal"></span>
+                            <span className="quote-line quote-line-vertical"></span>
+                          </div>
+
+                          {/* Quote content */}
+                          <p className="ceo-full-quote-paragraph">
+                            {quote.text}
+                          </p>
+
+                          {/* Bottom-right decoration */}
+                          <div className="quote-decoration-bottom">
+                            <span className="quote-line quote-line-horizontal"></span>
+                            <span className="quote-line quote-line-vertical"></span>
+                            <span className="quote-symbol">”</span>
+                          </div>
+
                         </div>
 
-                        {/* Quote content */}
-                        <p className="ceo-full-quote-paragraph">
-                          {quote.text}
-                        </p>
-
-                        {/* Bottom-right decoration */}
-                        <div className="quote-decoration-bottom">
-                          <span className="quote-line quote-line-horizontal"></span>
-                          <span className="quote-line quote-line-vertical"></span>
-                          <span className="quote-symbol">”</span>
+                        {/* View Profile Link */}
+                        <div className="ceo-full-view-profile">
+                          <Link href="/ceo-profile" className="ceo-full-profile-link">
+                            <span>View Profile</span>
+                            <svg
+                              className="ceo-full-profile-icon"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                          </Link>
                         </div>
 
                       </div>
-
-                      {/* View Profile Link */}
-                      <div className="ceo-full-view-profile">
-                        <Link href="/ceo-profile" className="ceo-full-profile-link">
-                          <span>View Profile</span>
-                          <svg
-                            className="ceo-full-profile-icon"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                          </svg>
-                        </Link>
-                      </div>
-
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
               </div>
