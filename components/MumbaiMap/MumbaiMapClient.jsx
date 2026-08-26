@@ -762,7 +762,7 @@ const ProjectCard = React.forwardRef(function ProjectCard(
             )}
           </div>
         )}
-        {/* {project.completion_date && (
+        {project.completion_date && (
           <div className="project-completion-date">
             {project.completion_date
               ? new Date(project.completion_date).toLocaleDateString("en-GB", {
