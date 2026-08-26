@@ -332,7 +332,6 @@ export default function AuthModal({ isOpen, onClose, mode = 'login', onSuccess }
             <>
               <div className="auth-header">
                 <h2>{currentMode === 'login' ? 'Welcome Back' : 'Create Account'}</h2>
-                <p>{currentMode === 'login' ? 'Sign in to apply for positions' : 'Join our talent community'}</p>
               </div>
 
               {error && (

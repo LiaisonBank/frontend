@@ -14,13 +14,37 @@ const FloatingChatbot = () => {
   const [flowHistory, setFlowHistory] = useState([]);
   const [expandedMessages, setExpandedMessages] = useState({});
   const [showGlobalActions, setShowGlobalActions] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
   const chatMessagesRef = useRef(null);
   const globalActionsRef = useRef(null);
+  const inputRef = useRef(null);
+  
+  // ============================================================
+  // UNIQUE ID GENERATOR
+  // ============================================================
+  const idCounter = useRef(0);
+  
+  const generateUniqueId = () => {
+    idCounter.current += 1;
+    return `${Date.now()}-${idCounter.current}-${Math.random().toString(36).substr(2, 9)}`;
+  };
 
   // ============================================================
-  // SCROLL FIX - Prevent body scroll when chat is open
+  // SCROLL TO BOTTOM
+  // ============================================================
+  const scrollToBottom = () => {
+    if (chatMessagesRef.current) {
+      setTimeout(() => {
+        chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+      }, 50);
+    }
+  };
+
+  // ============================================================
+  // SCROLL FIX
   // ============================================================
   useEffect(() => {
     if (isOpen) {
@@ -47,82 +71,6 @@ const FloatingChatbot = () => {
     };
   }, [isOpen]);
 
-  // ============================================================
-  // IMPROVED SCROLL HANDLING
-  // ============================================================
-  useEffect(() => {
-    const messagesElement = chatMessagesRef.current;
-
-    const handleWheel = (e) => {
-      const target = e.currentTarget;
-      if (!target) return;
-      
-      const { scrollTop, scrollHeight, clientHeight } = target;
-      const isAtTop = scrollTop <= 1;
-      const isAtBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 1;
-      
-      const deltaY = e.deltaY || 0;
-      const isScrollingUp = deltaY < 0;
-      const isScrollingDown = deltaY > 0;
-      
-      if ((isAtTop && isScrollingUp) || (isAtBottom && isScrollingDown)) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-
-    const handleTouchStart = (e) => {
-      const target = e.currentTarget;
-      if (!target) return;
-      
-      target._touchStartY = e.touches[0].clientY;
-      target._touchStartScrollTop = target.scrollTop;
-    };
-
-    const handleTouchMove = (e) => {
-      const target = e.currentTarget;
-      if (!target || target._touchStartY === undefined) return;
-      
-      const touchY = e.touches[0].clientY;
-      const deltaY = target._touchStartY - touchY;
-      const { scrollTop, scrollHeight, clientHeight } = target;
-      const isAtTop = scrollTop <= 1;
-      const isAtBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 1;
-      
-      if ((isAtTop && deltaY < 0) || (isAtBottom && deltaY > 0)) {
-        e.preventDefault();
-        e.stopPropagation();
-        return;
-      }
-      
-      target._touchStartY = touchY;
-    };
-
-    const handleTouchEnd = (e) => {
-      const target = e.currentTarget;
-      if (target) {
-        target._touchStartY = undefined;
-        target._touchStartScrollTop = undefined;
-      }
-    };
-
-    if (messagesElement) {
-      messagesElement.addEventListener('wheel', handleWheel, { passive: false });
-      messagesElement.addEventListener('touchstart', handleTouchStart, { passive: true });
-      messagesElement.addEventListener('touchmove', handleTouchMove, { passive: false });
-      messagesElement.addEventListener('touchend', handleTouchEnd, { passive: true });
-    }
-
-    return () => {
-      if (messagesElement) {
-        messagesElement.removeEventListener('wheel', handleWheel);
-        messagesElement.removeEventListener('touchstart', handleTouchStart);
-        messagesElement.removeEventListener('touchmove', handleTouchMove);
-        messagesElement.removeEventListener('touchend', handleTouchEnd);
-      }
-    };
-  }, [isOpen]);
-
   // Close global actions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -137,18 +85,23 @@ const FloatingChatbot = () => {
     };
   }, []);
 
+  // Focus input when chat opens
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      loadRootOptions();
+    if (isOpen && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 300);
     }
   }, [isOpen]);
 
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
-    if (isOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (isOpen && messages.length > 0) {
+      scrollToBottom();
     }
-  }, [messages, isOpen]);
+  }, [messages, isOpen, loading]);
 
+  // Click outside to close
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (chatContainerRef.current && !chatContainerRef.current.contains(event.target)) {
@@ -169,43 +122,91 @@ const FloatingChatbot = () => {
     };
   }, [isOpen]);
 
-  const loadRootOptions = async () => {
+  // ============================================================
+  // SHOW WELCOME MESSAGE
+  // ============================================================
+  useEffect(() => {
+    if (isOpen && messages.length === 0 && !hasStarted) {
+      showWelcomeMessage();
+    }
+  }, [isOpen]);
+
+  const showWelcomeMessage = () => {
+    const welcomeMessage = {
+      id: generateUniqueId(),
+      type: 'bot',
+      text: `👋 Welcome to Liaison Bank!\nHow may we help you today? 😊`,
+      options: [],
+      showOptions: false
+    };
+    setMessages([welcomeMessage]);
+    setHasStarted(true);
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+  };
+
+  // ============================================================
+  // SEND USER MESSAGE TO BACKEND
+  // ============================================================
+  const sendUserMessage = async (userMessage) => {
     try {
       setLoading(true);
-      setFlowHistory([]);
       setShowGlobalActions(false);
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/chatbot/start`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/chatbot/user-message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage
+        }),
+      });
       
       if (!response.ok) {
-        throw new Error('Failed to fetch options');
+        throw new Error('Failed to send message');
       }
       
       const data = await response.json();
       
-      if (data && data.message) {
-        setMessages([{
-          id: Date.now(),
-          type: 'bot',
-          text: data.message,
-          options: data.options || [],
-          showOptions: true
-        }]);
+      console.log('Response from backend:', data);
+      
+      if (data) {
+        const isEnd = data.is_end || false;
+        const hasOptions = data.options && data.options.length > 0;
         
-        if (data.options && data.options.length > 0) {
-          setFlowHistory([{ 
+        const botMessage = {
+          id: generateUniqueId(),
+          type: 'bot',
+          text: data.message || 'How can I help you?',
+          options: data.options || [],
+          showOptions: hasOptions
+        };
+        
+        setMessages(prev => [...prev, botMessage]);
+        
+        if (data.id) {
+          setCurrentMessageId(data.id);
+        }
+        
+        if (hasOptions) {
+          setFlowHistory(prev => [...prev, { 
             options: data.options, 
-            label: 'Main Menu' 
+            label: userMessage || 'Options' 
           }]);
         }
         
-        setCurrentMessageId(data.id);
         setConversationEnded(data.is_end || false);
+        
+        if (data.matched === false) {
+          console.log('No semantic match found, showing default options');
+        }
       } else {
-        setMessages([{
-          id: Date.now(),
+        setMessages(prev => [...prev, {
+          id: generateUniqueId(),
           type: 'bot',
-          text: '👋 Hi! How can I help you today?',
+          text: 'I received your message. How can I help you further?',
           options: [],
           showOptions: false
         }]);
@@ -213,9 +214,9 @@ const FloatingChatbot = () => {
       
       setUnreadCount(prev => prev + 1);
     } catch (error) {
-      console.error('Error loading options:', error);
-      setMessages([{
-        id: Date.now(),
+      console.error('Error sending message:', error);
+      setMessages(prev => [...prev, {
+        id: generateUniqueId(),
         type: 'bot',
         text: 'Sorry, I\'m having trouble connecting. Please try again.',
         options: [],
@@ -223,18 +224,54 @@ const FloatingChatbot = () => {
       }]);
     } finally {
       setLoading(false);
+      setTimeout(() => {
+        scrollToBottom();
+      }, 150);
     }
   };
 
+  // ============================================================
+  // HANDLE SEND MESSAGE
+  // ============================================================
+  const handleSendMessage = async () => {
+    const trimmedMessage = inputValue.trim();
+    if (!trimmedMessage || loading) return;
+
+    const userMessageObj = {
+      id: generateUniqueId(),
+      type: 'user',
+      text: trimmedMessage,
+      options: [],
+      showOptions: false
+    };
+    
+    setMessages(prev => [...prev, userMessageObj]);
+    setInputValue('');
+    
+    setTimeout(() => {
+      scrollToBottom();
+    }, 50);
+
+    await sendUserMessage(trimmedMessage);
+  };
+
+  // ============================================================
+  // HANDLE OPTION CLICK
+  // ============================================================
   const handleOptionClick = async (optionId, optionText, messageIndex) => {
-    // Add user message
-    setMessages(prev => [...prev, {
-      id: Date.now(),
+    const userMessageObj = {
+      id: generateUniqueId(),
       type: 'user',
       text: optionText,
       options: [],
       showOptions: false
-    }]);
+    };
+    
+    setMessages(prev => [...prev, userMessageObj]);
+    
+    setTimeout(() => {
+      scrollToBottom();
+    }, 50);
 
     setLoading(true);
 
@@ -250,7 +287,7 @@ const FloatingChatbot = () => {
       if (data && data.message) {
         const isEnd = data.is_end || false;
         const newMessage = {
-          id: Date.now(),
+          id: generateUniqueId(),
           type: 'bot',
           text: data.message,
           options: isEnd ? [] : (data.options || []),
@@ -266,7 +303,7 @@ const FloatingChatbot = () => {
           
           setTimeout(() => {
             setMessages(prev => [...prev, {
-              id: Date.now(),
+              id: generateUniqueId(),
               type: 'bot',
               text: '✨ Conversation ended. Click "New Chat" to start again.',
               options: [],
@@ -283,29 +320,27 @@ const FloatingChatbot = () => {
         }
       } else {
         setMessages(prev => [...prev, {
-          id: Date.now(),
+          id: generateUniqueId(),
           type: 'bot',
           text: 'I received your response. How can I help you further?',
           options: [],
           showOptions: false
         }]);
-        await loadRootOptions();
       }
     } catch (error) {
       console.error('Error loading node:', error);
       setMessages(prev => [...prev, {
-        id: Date.now(),
+        id: generateUniqueId(),
         type: 'bot',
         text: 'Sorry, I encountered an error. Please try again.',
         options: [],
         showOptions: false
       }]);
-      
-      setTimeout(() => {
-        loadRootOptions();
-      }, 1000);
     } finally {
       setLoading(false);
+      setTimeout(() => {
+        scrollToBottom();
+      }, 150);
     }
   };
 
@@ -315,7 +350,16 @@ const FloatingChatbot = () => {
   
   const handleStartAPI = () => {
     setShowGlobalActions(false);
-    loadRootOptions();
+    setMessages([]);
+    setConversationEnded(false);
+    setCurrentMessageId(null);
+    setFlowHistory([]);
+    setExpandedMessages({});
+    setHasStarted(false);
+    setInputValue('');
+    setTimeout(() => {
+      showWelcomeMessage();
+    }, 100);
   };
 
   const handleExitBot = () => {
@@ -332,10 +376,11 @@ const FloatingChatbot = () => {
     setFlowHistory([]);
     setExpandedMessages({});
     setShowGlobalActions(false);
-    
+    setHasStarted(false);
+    setInputValue('');
     setTimeout(() => {
-      loadRootOptions();
-    }, 300);
+      showWelcomeMessage();
+    }, 100);
   };
 
   const handleRestart = () => {
@@ -346,7 +391,11 @@ const FloatingChatbot = () => {
     setFlowHistory([]);
     setExpandedMessages({});
     setShowGlobalActions(false);
-    loadRootOptions();
+    setHasStarted(false);
+    setInputValue('');
+    setTimeout(() => {
+      showWelcomeMessage();
+    }, 100);
   };
 
   const toggleChat = () => {
@@ -361,7 +410,7 @@ const FloatingChatbot = () => {
   };
 
   // ============================================================
-  // MESSAGE RENDERER WITH INLINE OPTIONS
+  // MESSAGE RENDERER
   // ============================================================
   const toggleMessageExpand = (messageId) => {
     setExpandedMessages(prev => ({
@@ -382,12 +431,11 @@ const FloatingChatbot = () => {
       <div
         key={message.id}
         className={`message ${isBot ? 'bot-message' : 'user-message'}`}
-        style={{
-          animationDelay: `${index * 0.05}s`
-        }}
       >
         {isBot && (
-          <span className="message-avatar">🤖</span>
+          <div className="message-avatar bot-avatar">
+            <span></span>
+          </div>
         )}
         <div className="message-wrapper">
           <div className="message-content">
@@ -395,7 +443,6 @@ const FloatingChatbot = () => {
               {displayText}
             </div>
             
-            {/* Inline Options - WhatsApp Style */}
             {hasOptions && (
               <div className="inline-options">
                 {message.options.map((option, optIndex) => (
@@ -407,9 +454,6 @@ const FloatingChatbot = () => {
                       option.option_text || option.title || option.text,
                       index
                     )}
-                    style={{
-                      animationDelay: `${optIndex * 0.08}s`
-                    }}
                   >
                     <span className="option-text">
                       {option.option_text || option.title || option.text}
@@ -420,25 +464,32 @@ const FloatingChatbot = () => {
               </div>
             )}
             
-            {/* Message Action Buttons */}
-            {isBot && (
+            {isBot && needsExpansion && (
               <div className="message-actions-bar">
-                {needsExpansion && (
-                  <button 
-                    className="action-chip"
-                    onClick={() => toggleMessageExpand(message.id)}
-                    title={isExpanded ? 'Show less' : 'Show more'}
-                  >
-                    <span className="action-icon">{isExpanded ? '🔼' : '🔽'}</span>
-                    {isExpanded ? 'Show Less' : 'Show More'}
-                  </button>
-                )}
+                <button 
+                  className="action-chip"
+                  onClick={() => toggleMessageExpand(message.id)}
+                  title={isExpanded ? 'Show less' : 'Show more'}
+                >
+                  <span className="action-icon">{isExpanded ? '−' : '+'}</span>
+                  {isExpanded ? 'Show Less' : 'Show More'}
+                </button>
               </div>
             )}
           </div>
         </div>
       </div>
     );
+  };
+
+  // ============================================================
+  // HANDLE ENTER KEY
+  // ============================================================
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   return (
@@ -464,14 +515,13 @@ const FloatingChatbot = () => {
         <div className="chat-window">
           <div className="chat-header">
             <div className="header-content">
-              <span className="bot-avatar">🤖</span>
+              <div className="brand-icon">LB</div>
               <div className="header-info">
-                <h3>Chat Assistant</h3>
+                <h3>Liaison Bank</h3>
                 <p className="status">Online</p>
               </div>
             </div>
             <div className="header-actions">
-              {/* Global Actions Button */}
               <button 
                 className="global-actions-btn"
                 onClick={toggleGlobalActions}
@@ -481,7 +531,6 @@ const FloatingChatbot = () => {
                 ⋮
               </button>
               
-              {/* Global Actions Dropdown */}
               {showGlobalActions && (
                 <div className="global-actions-dropdown" ref={globalActionsRef}>
                   <button 
@@ -516,54 +565,79 @@ const FloatingChatbot = () => {
           </div>
           
           <div
-              className="chat-messages"
-              onWheel={(e) => {
-                e.stopPropagation();
-
-                const element = e.currentTarget;
-
-                if (e.deltaY !== 0) {
-                  element.scrollTop += e.deltaY;
-                }
-              }}
-            >
+            className="chat-messages"
+            ref={chatMessagesRef}
+            onWheel={(e) => {
+              e.stopPropagation();
+              const element = e.currentTarget;
+              if (e.deltaY !== 0) {
+                element.scrollTop += e.deltaY;
+              }
+            }}
+          >
             {messages.length === 0 && !loading ? (
               <div className="empty-state">
-                <span className="empty-icon">🤖</span>
-                <p>Start a conversation</p>
+                <div className="empty-icon">🏦</div>
+                <p>Welcome to Liaison Bank</p>
+                <span className="empty-subtext">Type a message to start the conversation</span>
               </div>
             ) : (
               messages.map(renderMessage)
             )}
             {loading && (
               <div className="message bot-message">
-                <span className="message-avatar">🤖</span>
-                <div className="message-content">
-                  <span className="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </span>
+                <div className="message-avatar bot-avatar">
+                  <span>🤖</span>
+                </div>
+                <div className="message-wrapper">
+                  <div className="message-content">
+                    <span className="typing-indicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </span>
+                  </div>
                 </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
           
-          {conversationEnded && (
+          {conversationEnded ? (
             <div className="chat-footer">
               <button onClick={handleRestart} className="new-chat-btn">
-                <span className="btn-icon">🗨️</span>
+                <span className="btn-icon">🔄</span>
                 New Chat
               </button>
+              
+
+            </div>
+          ) : (
+            <div className="chat-input-area">
+              <div className="input-wrapper">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className="chat-input"
+                  placeholder="Type your message..."
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={loading}
+                />
+                <button 
+                  className="send-btn"
+                  onClick={handleSendMessage}
+                  disabled={!inputValue.trim() || loading}
+                  aria-label="Send message"
+                >
+                  <span className="send-icon">➤</span>
+                </button>
+              </div>
             </div>
           )}
           
           <div className="chat-footer-bar">
-            <span className="footer-text">
-              <span className="footer-icon">⚡</span>
-              Powered by AI
-            </span>
             <span className="flow-indicator">
               {messages.length} messages
             </span>
