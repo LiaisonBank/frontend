@@ -772,7 +772,7 @@ const ProjectCard = React.forwardRef(function ProjectCard(
                 })
               : "-"}
           </div>
-        )} */}
+        )} 
         <div className="learnmore">
           <div className="tooltip-wrapper">
             <button
