@@ -82,7 +82,57 @@
     background-position: 100% 0;
   }
 }
+/* globals.css */
 
+/* Full Screen Map Dialog Override */
+.MuiDialog-paperFullScreen {
+  margin: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  border-radius: 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.mumbai-map-fullscreen {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.mumbai-map-fullscreen > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* For the map container inside */
+.mumbai-map-fullscreen .leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0 !important;
+}
+
+/* Close button floating */
+.fullscreen-close-btn {
+  position: absolute !important;
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 1000 !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.2s ease !important;
+}
+
+.fullscreen-close-btn:hover {
+  background-color: #ffffff !important;
+  transform: scale(1.05) !important;
+}
 // ============ MAIN SECTION ============
 .mumbai-map-section {
   width: 100%;

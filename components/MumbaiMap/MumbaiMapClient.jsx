@@ -32,6 +32,10 @@ const MAP_CONFIG = {
   bounds: [
     [18.8, 72.7],
     [19.5, 73.2],
+    // [19.10, 72.78], // North-West: Andheri
+    // [19.00, 72.88], // South-East: Dadar
+    // [19.105, 72.825], // North: Santacruz 
+    // [19.025, 72.875], // South: Mahim
   ],
   initialZoom: 11.5,
   resetZoom: 11.5,
@@ -1229,7 +1233,8 @@ export default function MumbaiMapClient() {
 
   return (
     <section
-      className="mumbai-map-section"
+      // className="mumbai-map-section"
+      className="mumbai-map-fullscreen"
       aria-label="Mumbai project locations"
     >
       <div className="mumbai-map-container">

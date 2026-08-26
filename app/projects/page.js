@@ -1,6 +1,15 @@
 "use client";
 
+import * as React from "react";
+import { useState } from "react";
 import Link from "next/link";
+import {
+  Button,
+  Dialog,
+  Box,
+  IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 import useBodyClass from "@/components/useBodyClass";
 import MumbaiMap from "@/components/MumbaiMap/MumbaiMap";
@@ -8,6 +17,11 @@ import ProjectDetails from "@/components/ProjectDetail/ProjectDetails";
 
 export default function ProjectsPage() {
   useBodyClass("completed");
+  const [openPopup, setOpenPopup] = useState(false);
+
+  const handleOpenPopup = () => setOpenPopup(true);
+  const handleClosePopup = () => setOpenPopup(false);
+
   return (
     <>
       <div className="page-header">
@@ -26,7 +40,6 @@ export default function ProjectsPage() {
                             Home
                           </Link>
                         </li>
-
                         <li
                           className="breadcrumb-item active"
                           aria-current="page"
@@ -44,12 +57,41 @@ export default function ProjectsPage() {
       </div>
 
       <section className="container py-4" aria-label="Projects section">
+        <div className="mb-4 text-end">
+          <Button variant="outlined" onClick={handleOpenPopup}>
+            View Full Screen Map
+          </Button>
+        </div>
         <div className="auto-grid">
           <ProjectDetails />
-          <MumbaiMap />
-
         </div>
       </section>
+
+      {/* Full Screen Map Dialog */}
+      <Dialog
+        fullScreen
+        open={openPopup}
+        onClose={handleClosePopup}
+        sx={{
+          "& .MuiDialog-paper": {
+            backgroundColor: "#f5f5f5",
+            position: "relative",
+            overflow: "hidden",
+          },
+        }}
+      >
+        <IconButton
+          className="fullscreen-close-btn"
+          onClick={handleClosePopup}
+          aria-label="close"
+        >
+          <CloseIcon />
+        </IconButton>
+
+        <Box className="mumbai-map-fullscreen">
+          <MumbaiMap />
+        </Box>
+      </Dialog>
     </>
   );
 }
