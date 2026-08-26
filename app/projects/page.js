@@ -43,11 +43,11 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      <section className="container pb-4" aria-label="Projects section">
+      <section className="container py-4" aria-label="Projects section">
         <div className="auto-grid">
+          <ProjectDetails />
           <MumbaiMap />
 
-          <ProjectDetails />
         </div>
       </section>
     </>
