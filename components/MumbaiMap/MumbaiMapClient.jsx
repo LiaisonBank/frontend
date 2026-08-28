@@ -30,8 +30,12 @@ import Link from "next/link";
 const MAP_CONFIG = {
   center: [19.14, 72.93],
   bounds: [
-    [18.8, 72.7],
-    [19.5, 73.2],
+    // [18.8, 72.7],
+    // [19.5, 73.2],
+    // [18.85, 72.77], // Southwest — South Mumbai / Colaba side
+    // [19.55, 73.10], // Northeast — Vasai-Virar / Kharghar side
+    [18.82, 72.78], // South-West
+    [19.38, 73.15], // North-East
     // [19.10, 72.78], // North-West: Andheri
     // [19.00, 72.88], // South-East: Dadar
     // [19.105, 72.825], // North: Santacruz 
@@ -1262,20 +1266,11 @@ export default function MumbaiMapClient() {
           <ProjectMarkerPane />
           <MapResizeObserver />
 
-          <TileLayer
-            attribution="&copy; OpenStreetMap &copy; CARTO"
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png"
-            maxZoom={20}
+         <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maxZoom={22}
             tileSize={256}
-            subdomains={["a", "b", "c", "d"]}
-          />
-
-          <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
-            maxZoom={20}
-            tileSize={256}
-            subdomains={["a", "b", "c", "d"]}
-            pane="overlayPane"
           />
 
           <MapController

@@ -721,7 +721,7 @@ export default function ServicesModal() {
             <span className="service-child-name" style={{ flex: 1, fontSize: '14px' }}>
               {child.name}
             </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {hasChildren && (
                 <span className="service-child-toggle" style={{ color: '#666' }}>
                   {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
@@ -739,7 +739,7 @@ export default function ServicesModal() {
                   <FileText size={14} />
                 </a>
               )}
-            </div>
+            </div> */}
           </div>
           {hasChildren && isExpanded && (
             <div className="service-child-children">

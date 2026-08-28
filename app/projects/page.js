@@ -58,7 +58,7 @@ export default function ProjectsPage() {
 
       <section className="container py-4" aria-label="Projects section">
         <div className="mb-4 text-end">
-          <Button variant="outlined" onClick={handleOpenPopup}>
+          <Button variant="outlined" className="outline-theme-btn" onClick={handleOpenPopup}>
             View Full Screen Map
           </Button>
         </div>
@@ -72,6 +72,7 @@ export default function ProjectsPage() {
         fullScreen
         open={openPopup}
         onClose={handleClosePopup}
+        className="fullscreen-map-dialog"
         sx={{
           "& .MuiDialog-paper": {
             backgroundColor: "#f5f5f5",

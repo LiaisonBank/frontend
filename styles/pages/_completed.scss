@@ -117,7 +117,23 @@
       gap: 1.5rem;
     }
   }
+.outline-theme-btn {
+  color: #fe6e00 !important;
+  border-color: #fe6e00 !important;
+  background-color: transparent;
 
+  &:hover {
+    color: #fe6e00 !important;
+    border-color: #fe6e00 !important;
+    background-color: rgba(254, 110, 0, 0.08) !important;
+  }
+
+  &:active {
+    color: #fe6e00 !important;
+    border-color: #fe6e00 !important;
+    background-color: rgba(254, 110, 0, 0.12) !important;
+  }
+}
 
   // =========================================================
   // Main Table Container
