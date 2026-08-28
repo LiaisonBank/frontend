@@ -1,58 +1,26 @@
-
 "use client";
 
-import { useEffect, useRef } from "react";
-import Image from "next/image";
+import * as React from "react";
+import { useState } from "react";
 import Link from "next/link";
+import {
+  Button,
+  Dialog,
+  Box,
+  IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 import useBodyClass from "@/components/useBodyClass";
-import rightTick from "@/assets/images/rightTick.svg";
-import { completedList } from "@/lib/data/completedList";
 import MumbaiMap from "@/components/MumbaiMap/MumbaiMap";
+import ProjectDetails from "@/components/ProjectDetail/ProjectDetails";
 
 export default function ProjectsPage() {
   useBodyClass("completed");
+  const [openPopup, setOpenPopup] = useState(false);
 
-  const listRef = useRef(null);
-
-  useEffect(() => {
-    const list = listRef.current;
-
-    if (!list || completedList.length <= 1) return;
-
-    const scroll = () => {
-      const first = list.firstElementChild;
-
-      if (!first) return;
-
-      const height = first.getBoundingClientRect().height;
-
-      list.style.transition = "transform .6s linear";
-      list.style.transform = `translateY(-${height}px)`;
-
-      const onTransitionEnd = () => {
-        list.appendChild(first);
-
-        list.style.transition = "none";
-        list.style.transform = "translateY(0)";
-
-        // Force reflow
-        list.offsetHeight;
-
-        list.removeEventListener("transitionend", onTransitionEnd);
-      };
-
-      list.addEventListener("transitionend", onTransitionEnd, {
-        once: true,
-      });
-    };
-
-    const interval = setInterval(scroll, 2000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  const handleOpenPopup = () => setOpenPopup(true);
+  const handleClosePopup = () => setOpenPopup(false);
 
   return (
     <>
@@ -63,12 +31,8 @@ export default function ProjectsPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1>Completed</h1>
-
-                    <nav
-                      aria-label="breadcrumb"
-                      className="page-breadcrumb"
-                    >
+                    <h1>Projects</h1>
+                    <nav aria-label="breadcrumb" className="page-breadcrumb">
                       <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
@@ -76,12 +40,11 @@ export default function ProjectsPage() {
                             Home
                           </Link>
                         </li>
-
                         <li
                           className="breadcrumb-item active"
                           aria-current="page"
                         >
-                          Completed Projects
+                          Projects
                         </li>
                       </ol>
                     </nav>
@@ -93,60 +56,43 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      <section className="container py-5">
+      <section className="container py-4" aria-label="Projects section">
+        <div className="mb-4 text-end">
+          <Button variant="outlined" className="outline-theme-btn" onClick={handleOpenPopup}>
+            View Full Screen Map
+          </Button>
+        </div>
         <div className="auto-grid">
-
-          {/* CLIENT LIST */}
-
-          <div className="grid-item">
-
-            <ul className="scroll-wrapper">
-              <li className="header-row">
-                <strong className="item-name">
-                  Client Name
-                </strong>
-
-                <strong className="item-price">
-                  Location
-                </strong>
-              </li>
-            </ul>
-
-            <div className="listItem">
-              <ul
-                ref={listRef}
-                className="scroll-list"
-              >
-                {[...completedList, ...completedList].map(
-                  (item, index) => (
-                    <li key={`client-${index}`}>
-                      <Image
-                        src={rightTick}
-                        alt=""
-                        className="item-icon"
-                      />
-
-                      <span className="item-name">
-                        {item.clientName}
-                      </span>
-
-                      <span className="item-price">
-                        {item.location}
-                      </span>
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
-
-          </div>
-
-          {/* MAP */}
-
-          <MumbaiMap />
-
+          <ProjectDetails />
         </div>
       </section>
+
+      {/* Full Screen Map Dialog */}
+      <Dialog
+        fullScreen
+        open={openPopup}
+        onClose={handleClosePopup}
+        className="fullscreen-map-dialog"
+        sx={{
+          "& .MuiDialog-paper": {
+            backgroundColor: "#f5f5f5",
+            position: "relative",
+            overflow: "hidden",
+          },
+        }}
+      >
+        <IconButton
+          className="fullscreen-close-btn"
+          onClick={handleClosePopup}
+          aria-label="close"
+        >
+          <CloseIcon />
+        </IconButton>
+
+        <Box className="mumbai-map-fullscreen">
+          <MumbaiMap />
+        </Box>
+      </Dialog>
     </>
   );
 }

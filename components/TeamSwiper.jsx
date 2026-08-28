@@ -128,7 +128,7 @@ function TeamMemberModal({ member, isOpen, onClose }) {
 
 export default function TeamSection() {
   const [selectedMember, setSelectedMember] = useState(null);
-    const [teamData, setTeamData] = useState([]);
+  const [teamData, setTeamData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -152,8 +152,6 @@ export default function TeamSection() {
 
     fetchTeam();
   }, []);
-
-
 
   return (
     <section className="w-full py-8">
@@ -180,7 +178,7 @@ export default function TeamSection() {
             <SwiperSlide key={index}>
               <TeamCard
                 member={member}
-              // onClick={() => setSelectedMember(member)}
+                onClick={() => setSelectedMember(member)}
               />
             </SwiperSlide>
           ))}

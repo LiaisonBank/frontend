@@ -1,17 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
-export default function LenisProvider() {
+const LenisContext = createContext(null);
+
+export function useLenis() {
+  return useContext(LenisContext);
+}
+
+export default function LenisProvider({ children }) {
   const lenisRef = useRef(null);
   const rafIdRef = useRef(null);
+
   const pathname = usePathname();
 
-  // Initialize Lenis only once
   useEffect(() => {
-    // Prevent browser from restoring previous scroll position
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
@@ -32,17 +44,10 @@ export default function LenisProvider() {
 
     rafIdRef.current = requestAnimationFrame(raf);
 
-    // Always start from the top after initial load/refresh
-    requestAnimationFrame(() => {
-      lenis.scrollTo(0, {
-        immediate: true,
-        force: true,
-      });
-    });
-
     return () => {
-      if (rafIdRef.current) {
+      if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
       }
 
       lenis.destroy();
@@ -50,29 +55,73 @@ export default function LenisProvider() {
     };
   }, []);
 
-    // Scroll to top on every route change
-    useEffect(() => {
+  // Route change
+  useEffect(() => {
     const scrollToTop = () => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          lenisRef.current?.scrollTo(0, {
+          const lenis = lenisRef.current;
+
+          if (!lenis) return;
+
+          lenis.scrollTo(0, {
             immediate: true,
             force: true,
           });
-
-          window.scrollTo(0, 0);
         });
       });
     };
 
-    // Initial load
     scrollToTop();
 
-    // Mobile browsers / BFCache
     window.addEventListener("pageshow", scrollToTop);
 
     return () => {
       window.removeEventListener("pageshow", scrollToTop);
     };
+  }, [pathname]);
+
+  const stopLenis = useCallback(() => {
+    lenisRef.current?.stop();
   }, []);
+
+  const startLenis = useCallback(() => {
+    lenisRef.current?.start();
+  }, []);
+
+  const getLenisScroll = useCallback(() => {
+    return lenisRef.current?.scroll ?? window.scrollY;
+  }, []);
+
+  const restoreLenisScroll = useCallback((position) => {
+    const lenis = lenisRef.current;
+
+    if (!lenis) return;
+
+    lenis.scrollTo(position, {
+      immediate: true,
+      force: true,
+    });
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      stopLenis,
+      startLenis,
+      getLenisScroll,
+      restoreLenisScroll,
+    }),
+    [
+      stopLenis,
+      startLenis,
+      getLenisScroll,
+      restoreLenisScroll,
+    ]
+  );
+
+  return (
+    <LenisContext.Provider value={contextValue}>
+      {children}
+    </LenisContext.Provider>
+  );
 }

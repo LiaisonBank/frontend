@@ -1,0 +1,1403 @@
+/* Reset & Base */
+.careers-page {
+  background: #ffffff;
+  padding-top: 80px;
+  // overflow-x: hidden;
+  max-width: 100vw;
+
+  // ---------- HERO BANNER ----------
+  .hero-banner {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: 8rem 0;
+    min-height: auto;
+    height: 80vh;
+    overflow: hidden;
+
+    transform-origin: top center;
+    will-change: transform, opacity, border-radius;
+    backface-visibility: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: -5% -10%;
+      background: url("/teams/groupPhotoBlure.jpeg") center center / cover no-repeat;
+      z-index: -2;
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: -1;
+      opacity: 1;
+    }
+
+    >* {
+      position: relative;
+      z-index: 2;
+      opacity: 1;
+    }
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+
+    .page-title {
+      transform: translateY(0);
+      color: white;
+      text-align: center;
+
+      h2 {
+        opacity: 1;
+        transform: translateY(0);
+        font-size: 2.5rem;
+        max-width: 1000px;
+        margin: 0 auto;
+        line-height: 1.3;
+      }
+    }
+  }
+
+  // ---------- HERO SPACER ----------
+  .hero-section {
+    margin-top: 0;
+    position: relative;
+    background: #ffffff;
+    border-bottom: 1px solid #f0ece6;
+    overflow: hidden;
+    z-index: 2;
+  }
+
+  // ---------- SECTION HEADER ----------
+  .section-header {
+    text-align: center;
+    margin-bottom: 48px;
+
+    .section-tag {
+      display: inline-block;
+      background: #f5f0ea;
+      color: #f97316;
+      padding: 4px 18px;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #1a1a2e;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      color: #5a6a7e;
+      font-size: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .job-header {
+      margin-bottom: 4px;
+    }
+  }
+
+  // ---------- CULTURE SECTION ----------
+  .culture-section {
+    background: #ffffff;
+    z-index: 2;
+    position: relative;
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 56px;
+
+      .section-tag {
+        display: inline-block;
+        background: #f5f0ea;
+        color: #f97316;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      h2 {
+        font-size: 42px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        color: #1a1a2e;
+        letter-spacing: -0.02em;
+      }
+
+      p {
+        color: #5a6a7e;
+        font-size: 18px;
+        max-width: 520px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+    }
+
+    .culture-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-top: 12px;
+
+      .culture-card {
+        padding: 40px 32px 36px;
+        background: #ffffff;
+        text-align: left;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #eef2f7;
+        position: relative;
+
+        &:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+          border-color: #f97316;
+
+          .culture-icon {
+            background: #f97316;
+            color: #ffffff;
+            transform: scale(1.05);
+          }
+
+          .know-more {
+            color: #f97316;
+            gap: 12px;
+
+            svg {
+              transform: translateX(4px);
+            }
+          }
+        }
+
+        .culture-icon {
+          width: 56px;
+          height: 56px;
+          margin-bottom: 20px;
+          background: #fef5ed;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #f97316;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+          svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 1.5;
+          }
+        }
+
+        h5 {
+          font-size: 20px;
+          font-weight: 700;
+          margin-bottom: 12px;
+          color: #1a1a2e;
+        }
+
+        .culture-description {
+          color: #5a6a7e;
+          font-size: 15px;
+          line-height: 1.7;
+          margin: 0 0 20px 0;
+          min-height: 80px;
+        }
+
+        .know-more {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          color: #f97316;
+          font-weight: 600;
+          font-size: 14px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          border: none;
+          background: none;
+          padding: 0;
+
+          svg {
+            width: 18px;
+            height: 18px;
+            transition: all 0.3s ease;
+          }
+
+          &:hover {
+            color: #e0680e;
+            gap: 12px;
+
+            svg {
+              transform: translateX(4px);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // ---------- BENEFITS SECTION ----------
+  .benefits-section {
+    position: relative;
+    z-index: 2;
+    background: #f8f9fa;
+    overflow: visible;
+
+    .benefits-header {
+      text-align: center;
+      margin-bottom: 64px;
+
+      h2 {
+        font-size: 56px;
+        font-weight: 800;
+        margin: 0;
+        line-height: 1.1;
+        color: #1a1a2e;
+        letter-spacing: -0.02em;
+      }
+    }
+
+    .benefits-grid-cards {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: stretch;
+      margin-top: 32px;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+      .benefit-card-wrapper {
+        flex: 1;
+        min-width: 0;
+        max-width: 33.333%;
+        position: relative;
+        z-index: 1;
+
+        transition:
+          flex 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+          max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.5s ease,
+          opacity 0.5s ease;
+
+        &.active {
+          flex: 2;
+          max-width: 55%;
+          z-index: 10;
+
+          .benefit-card-hover {
+            border-color: #f97316;
+            box-shadow: 0 30px 80px rgba(52, 48, 48, 0.20);
+          }
+
+          .benefit-card-label {
+            opacity: 0 !important;
+            pointer-events: none !important;
+          }
+
+          .benefit-card-overlay {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+          }
+
+          // In your SCSS
+.benefit-card-image {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  // Specific fix for Career Advancement image - show the left side
+  .career-advancement-img {
+    object-position: 50% center !important; // Increased from 20% to 40% to show more left side
+    // Try these values:
+    // 30% - shows a bit more left
+    // 40% - shows more left side (recommended)
+    // 50% - centers the image
+    // left center - shows far left of the image
+  }
+
+}
+        }
+
+        .benefits-grid-cards:has(.active) & {
+          flex: 0.7;
+          max-width: 22.5%;
+          opacity: 0.7;
+          transform: scale(0.94);
+        }
+
+        &.active {
+          flex: 2;
+          max-width: 55%;
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        .benefit-card-hover {
+          position: relative;
+          overflow: hidden;
+          cursor: pointer;
+          background: #ffffff;
+          border: 2px solid #e8e2da;
+          transition:
+            border-color 0.4s ease,
+            box-shadow 0.5s ease;
+          height: 520px;
+          width: 100%;
+
+          &:hover {
+            .benefit-card-overlay {
+              opacity: 1 !important;
+              transform: translateY(0) !important;
+              visibility: visible !important;
+              pointer-events: auto !important;
+            }
+
+            .benefit-card-label {
+              opacity: 0 !important;
+              pointer-events: none !important;
+            }
+
+            .benefit-card-image img {
+              transform: scale(1.1);
+            }
+          }
+
+          .benefit-card-image {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .benefit-card-label {
+              position: absolute;
+              top: 70%;
+              left: 0;
+              transform: translateY(-50%);
+              width: 60px;
+              height: 260px;
+              background: rgba(0, 0, 0, 0.8);
+              backdrop-filter: blur(2px);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              z-index: 2;
+              transition: opacity 0.4s ease, transform 0.4s ease;
+
+              span {
+                color: #ffffff;
+                font-size: 18px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+              }
+            }
+
+            .benefit-card-overlay {
+              position: absolute;
+              inset: 0;
+              background-color: rgba(0, 0, 0, 0.85);
+              padding: 48px 36px;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: flex-start;
+              text-align: left;
+
+              opacity: 0;
+              transform: translateY(20px);
+              visibility: hidden;
+              pointer-events: none;
+
+              transition:
+                opacity 0.5s ease,
+                transform 0.5s ease,
+                visibility 0.5s ease;
+
+              overflow-y: auto;
+
+              &::-webkit-scrollbar {
+                width: 4px;
+              }
+              &::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.1);
+              }
+              &::-webkit-scrollbar-thumb {
+                background: #f97316;
+              }
+
+              .benefit-tag {
+                display: inline-block;
+                background: rgba(249, 115, 22, 0.25);
+                color: #f97316;
+                padding: 6px 18px;
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                margin-bottom: 16px;
+                border: 1px solid rgba(249, 115, 22, 0.30);
+              }
+
+              .benefit-title {
+                font-size: 34px;
+                font-weight: 800;
+                color: #ffffff;
+                margin-bottom: 18px;
+                letter-spacing: -0.02em;
+                line-height: 1.2;
+              }
+
+              .benefit-description {
+                font-size: 17px;
+                color: rgba(255, 255, 255, 0.95);
+                line-height: 1.8;
+                margin: 0;
+                max-width: 100%;
+                text-align: left;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // ---------- SERVICES SECTION ----------
+  .services-section {
+    position: relative;
+    z-index: 2;
+    padding: 60px 0 80px;
+    background: #faf8f6;
+
+    .services-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 18px 24px;
+      width: 100%;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #d8d8d8;
+      padding: 0 20px 0 20px;
+
+      .tab-btn {
+        position: relative;
+        padding: 12px 20px 17px;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #686868;
+        font-size: 24px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: color 0.3s ease;
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          width: 100%;
+          height: 5px;
+          background: #f97316;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.35s ease;
+        }
+
+        &:hover {
+          color: #f97316;
+        }
+
+        &.active {
+          color: #f97316;
+
+          &::after {
+            transform: scaleX(1);
+          }
+        }
+      }
+    }
+
+    .featured-service {
+      margin-top: 8px;
+
+      .featured-image {
+        position: relative;
+        width: 1000px;
+        height: 500px;
+        max-width: 100%;
+        overflow: hidden;
+        background-color: #f5f0ea;
+        transition: all 0.4s ease;
+        margin: 0 auto;
+
+        .featured-image-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          transition: transform 0.4s ease;
+        }
+
+        &:hover {
+          .featured-image-img {
+            transform: scale(1.05);
+          }
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
+          z-index: 1;
+          pointer-events: none;
+        }
+
+        .featured-overlay {
+          position: absolute;
+          bottom: 60px;
+          left: 60px;
+          right: 60px;
+          z-index: 2;
+
+          h3 {
+            font-size: 42px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 14px;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          }
+
+          p {
+            font-size: 22px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 24px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          }
+
+          .featured-view {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #f97316;
+            background: white;
+            padding: 10px 28px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            min-height: 40px;
+            line-height: 1;
+            border-radius: 50px; // Added rounded corners
+
+            &:hover {
+              gap: 14px;
+              background: #f97316;
+              color: white;
+              transform: translateY(-2px);
+              box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3);
+              border-radius: 50px; // Maintain rounded corners on hover
+            }
+
+            svg {
+              transition: transform 0.2s ease;
+              width: 18px;
+              height: 18px;
+            }
+
+            &:hover svg {
+              transform: translateX(4px);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // ---------- CTA SECTION ----------
+  .cta-section {
+    position: relative;
+    z-index: 2;
+    background: #ffffff;
+
+    .cta-box {
+      background: linear-gradient(135deg, #faf8f6, #f5f0ea);
+      padding: 56px 48px;
+      border: 1px solid #e8e2da;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+
+      &:hover {
+        border-color: #f97316;
+        box-shadow: 0 8px 32px rgba(249, 115, 22, 0.10);
+      }
+
+      .cta-tag {
+        display: inline-block;
+        background: linear-gradient(135deg, #f97316, #fb923c);
+        color: #ffffff;
+        padding: 6px 24px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+      }
+
+      .cta-content {
+        h3 {
+          font-size: 34px;
+          font-weight: 800;
+          margin-bottom: 12px;
+          color: #1a1a2e;
+          letter-spacing: -0.02em;
+          line-height: 1.2;
+        }
+
+        p {
+          color: #5a6a7e;
+          margin-bottom: 32px;
+          font-size: 17px;
+          max-width: 480px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .cta-actions {
+          display: flex;
+          gap: 16px;
+          justify-content: center;
+          flex-wrap: wrap;
+
+          .btn-primary {
+            background: linear-gradient(135deg, #f97316, #fb923c);
+            color: white;
+            padding: 16px 42px;
+            border-radius: 50px; // Rounded corners
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 26px;
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.30);
+
+            &:hover {
+              transform: translateY(-3px);
+              box-shadow: 0 12px 36px rgba(249, 115, 22, 0.40);
+            }
+
+            svg {
+              width: 20px;
+              height: 20px;
+            }
+          }
+
+          .btn-secondary-cta {
+            background: transparent;
+            color: #f97316;
+            padding: 16px 42px;
+            border-radius: 50px; // Rounded corners
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid #f97316;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+
+            &:hover {
+              background: #f97316;
+              color: white;
+              transform: translateY(-3px);
+              box-shadow: 0 8px 24px rgba(249, 115, 22, 0.20);
+            }
+
+            svg {
+              width: 20px;
+              height: 20px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ---------- RESPONSIVE: TABLETS (1024px and below) ----------
+@media (max-width: 1024px) {
+  .careers-page {
+    .culture-section {
+      padding: 60px 0 40px;
+
+      .section-header {
+        margin-bottom: 40px;
+
+        h2 {
+          font-size: 56px;
+        }
+      }
+
+      .culture-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+
+        .culture-card {
+          padding: 28px 24px 24px;
+
+          .culture-description {
+            min-height: 60px;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+
+    .benefits-section {
+      padding: 60px 0 80px;
+
+      .benefits-header {
+        margin-bottom: 48px;
+
+        h2 {
+          font-size: 44px;
+        }
+      }
+
+      .benefits-grid-cards {
+        gap: 20px;
+
+        .benefit-card-wrapper {
+          .benefit-card-hover {
+            height: 400px;
+
+            .benefit-card-image {
+              .benefit-card-overlay {
+                padding: 32px 28px;
+
+                .benefit-tag {
+                  font-size: 12px;
+                  padding: 4px 16px;
+                }
+
+                .benefit-title {
+                  font-size: 30px;
+                  margin-bottom: 14px;
+                }
+
+                .benefit-description {
+                  font-size: 15px;
+                  line-height: 1.6;
+                }
+              }
+            }
+
+            .benefit-card-label {
+              padding: 28px;
+
+              span {
+                font-size: 24px;
+              }
+            }
+          }
+
+          &.active {
+            flex: 1.25;
+            max-width: 36%;
+          }
+
+          .benefits-grid-cards:has(.active) &:not(.active) {
+            flex: 0.85;
+            max-width: 28%;
+          }
+        }
+      }
+    }
+
+    .services-section {
+      .featured-service {
+        .featured-image {
+          height: 420px;
+
+          .featured-overlay {
+            bottom: 45px;
+            left: 45px;
+            right: 45px;
+
+            h3 {
+              font-size: 34px;
+            }
+
+            p {
+              font-size: 20px;
+            }
+
+            .featured-view {
+              font-size: 17px;
+              padding: 12px 28px;
+              border-radius: 50px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ---------- RESPONSIVE: MOBILE (768px and below) ----------
+@media (max-width: 768px) {
+  .careers-page {
+    padding-top: 60px;
+
+    // HERO BANNER - Mobile Fix
+    .hero-banner {
+      height: 60vh !important;
+      min-height: 350px !important;
+      padding: 4rem 0 !important;
+
+      .container {
+        padding: 0 16px;
+
+        .page-title {
+          h2 {
+            font-size: 1.5rem !important;
+            line-height: 1.4 !important;
+            max-width: 100% !important;
+            padding: 0 8px;
+          }
+        }
+      }
+
+      &::before {
+        background-position: center 20% !important;
+      }
+    }
+
+    // CULTURE SECTION - Mobile Fix
+    .culture-section {
+      padding: 48px 0 32px;
+
+      .section-header {
+        margin-bottom: 32px;
+
+        h2 {
+          font-size: 28px;
+        }
+
+        p {
+          font-size: 14px;
+        }
+      }
+
+      .culture-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+
+        .culture-card {
+          padding: 24px 20px 20px;
+          text-align: left;
+
+          .culture-description {
+            min-height: auto;
+            font-size: 14px;
+            margin-bottom: 16px;
+          }
+
+          .culture-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+
+            svg {
+              width: 24px;
+              height: 24px;
+            }
+          }
+
+          h5 {
+            font-size: 18px;
+          }
+        }
+      }
+    }
+
+    // BENEFITS SECTION - Mobile Fix
+    .benefits-section {
+      padding: 40px 0 50px !important;
+
+      .benefits-header {
+        margin-bottom: 32px !important;
+
+        h2 {
+          font-size: 28px !important;
+          line-height: 1.2 !important;
+        }
+      }
+
+      .benefits-grid-cards {
+        flex-direction: column !important;
+        gap: 16px !important;
+
+        .benefit-card-wrapper {
+          max-width: 100% !important;
+          flex: 1 !important;
+          min-width: 100% !important;
+          opacity: 1 !important;
+          transform: none !important;
+
+          .benefit-card-hover {
+            height: 300px !important;
+
+            .benefit-card-image {
+              .benefit-card-label {
+                width: 50px !important;
+                height: 200px !important;
+
+                span {
+                  font-size: 15px !important;
+                }
+              }
+
+              .benefit-card-overlay {
+                padding: 24px 20px !important;
+
+                .benefit-title {
+                  font-size: 24px !important;
+                  margin-bottom: 10px !important;
+                }
+
+                .benefit-description {
+                  font-size: 14px !important;
+                  line-height: 1.5 !important;
+                }
+              }
+            }
+          }
+
+          &.active {
+            flex: 1 !important;
+            max-width: 100% !important;
+
+            .benefit-card-hover {
+              border-color: #f97316;
+            }
+          }
+        }
+
+        .benefits-grid-cards:has(.active) & {
+          flex: 1 !important;
+          max-width: 100% !important;
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      }
+    }
+
+    // SERVICES SECTION - Mobile Fix (NO SCROLLBAR)
+    .services-section {
+      padding: 30px 0 40px !important;
+
+      .section-header {
+        margin-bottom: 24px !important;
+
+        .job-header {
+          font-size: 32px !important;
+        }
+      }
+
+      .services-tabs {
+        padding: 0 12px !important;
+        gap: 6px 12px !important;
+        flex-wrap: wrap !important;
+        overflow: visible !important;
+        justify-content: center !important;
+        border-bottom: 1px solid #d8d8d8;
+        
+        &::-webkit-scrollbar {
+          display: none !important;
+        }
+
+        .tab-btn {
+          padding: 8px 16px !important;
+          font-size: 15px !important;
+          white-space: nowrap !important;
+          flex-shrink: 0 !important;
+          min-height: 44px !important;
+        }
+      }
+
+      .featured-service {
+        padding-left: 0 !important;
+
+        .featured-image {
+          width: 100% !important;
+          height: 280px !important;
+          margin: 0 !important;
+
+          .featured-image-img {
+            object-fit: cover !important;
+          }
+
+          .featured-overlay {
+            bottom: 20px !important;
+            left: 20px !important;
+            right: 20px !important;
+
+            h3 {
+              font-size: 22px !important;
+              margin-bottom: 8px !important;
+            }
+
+            p {
+              font-size: 15px !important;
+              margin-bottom: 14px !important;
+            }
+
+            .featured-view {
+              font-size: 14px !important;
+              padding: 8px 18px !important;
+              min-height: 44px !important;
+              border-radius: 50px !important;
+            }
+          }
+        }
+      }
+    }
+
+    // CTA SECTION - Mobile Fix
+    .cta-section {
+      padding: 30px 0 !important;
+
+      .cta-box {
+        padding: 30px 20px !important;
+
+        .cta-tag {
+          font-size: 12px !important;
+          padding: 4px 18px !important;
+        }
+
+        .cta-content {
+          h3 {
+            font-size: 24px !important;
+          }
+
+          p {
+            font-size: 15px !important;
+            margin-bottom: 24px !important;
+          }
+
+          .cta-actions {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+
+            .btn-primary {
+              font-size: 18px !important;
+              padding: 14px 24px !important;
+              justify-content: center !important;
+              min-height: 44px !important;
+              border-radius: 50px !important;
+            }
+
+            .btn-secondary-cta {
+              font-size: 14px !important;
+              padding: 14px 24px !important;
+              justify-content: center !important;
+              min-height: 44px !important;
+              border-radius: 50px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ---------- RESPONSIVE: EXTRA SMALL (480px and below) ----------
+@media (max-width: 480px) {
+  .careers-page {
+    padding-top: 50px;
+
+    .hero-banner {
+      height: 50vh !important;
+      min-height: 280px !important;
+      padding: 2rem 0 !important;
+
+      .container {
+        .page-title {
+          h2 {
+            font-size: 1.2rem !important;
+          }
+        }
+      }
+    }
+
+    .culture-section {
+      padding: 40px 0 24px;
+
+      .section-header {
+        margin-bottom: 24px;
+
+        h2 {
+          font-size: 24px;
+        }
+
+        p {
+          font-size: 13px;
+        }
+      }
+
+      .culture-grid {
+        gap: 12px;
+
+        .culture-card {
+          padding: 20px 16px 18px;
+
+          .culture-icon {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 12px;
+
+            svg {
+              width: 20px;
+              height: 20px;
+            }
+          }
+
+          h5 {
+            font-size: 16px;
+            margin-bottom: 8px;
+          }
+
+          .culture-description {
+            font-size: 13px;
+            margin-bottom: 12px;
+          }
+
+          .know-more {
+            font-size: 13px;
+
+            svg {
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+      }
+    }
+
+    .benefits-section {
+      .benefits-header {
+        h2 {
+          font-size: 24px !important;
+        }
+      }
+
+      .benefits-grid-cards {
+        gap: 16px !important;
+
+        .benefit-card-wrapper {
+          .benefit-card-hover {
+            height: 260px !important;
+
+            .benefit-card-image {
+              .benefit-card-label {
+                width: 40px !important;
+                height: 160px !important;
+
+                span {
+                  font-size: 13px !important;
+                }
+              }
+
+              .benefit-card-overlay {
+                padding: 18px 16px !important;
+
+                .benefit-title {
+                  font-size: 20px !important;
+                }
+
+                .benefit-description {
+                  font-size: 13px !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .services-section {
+      .services-tabs {
+        gap: 4px 8px !important;
+        padding: 0 8px !important;
+
+        .tab-btn {
+          font-size: 13px !important;
+          padding: 6px 12px !important;
+          min-height: 36px !important;
+        }
+      }
+
+      .featured-service {
+        .featured-image {
+          height: 220px !important;
+
+          .featured-overlay {
+            bottom: 16px !important;
+            left: 16px !important;
+            right: 16px !important;
+
+            h3 {
+              font-size: 18px !important;
+            }
+
+            p {
+              font-size: 13px !important;
+            }
+
+            .featured-view {
+              font-size: 13px !important;
+              padding: 6px 14px !important;
+              border-radius: 50px !important;
+            }
+          }
+        }
+      }
+    }
+
+    .cta-section {
+      .cta-box {
+        padding: 24px 16px !important;
+
+        .cta-content {
+          h3 {
+            font-size: 20px !important;
+          }
+
+          .cta-actions {
+            .btn-primary {
+              font-size: 16px !important;
+              padding: 12px 20px !important;
+              border-radius: 50px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ---------- RESPONSIVE: LARGE SCREENS (1200px and above) ----------
+@media (max-width: 1200px) {
+  .careers-page {
+    .culture-section {
+      .culture-grid {
+        gap: 24px;
+
+        .culture-card {
+          padding: 32px 24px 28px;
+        }
+      }
+    }
+
+    .benefits-section {
+      .benefits-grid-cards {
+        gap: 24px;
+
+        .benefit-card-wrapper {
+          .benefit-card-hover {
+            height: 440px;
+          }
+
+          &.active {
+            flex: 1.3;
+            max-width: 38%;
+          }
+
+          .benefits-grid-cards:has(.active) &:not(.active) {
+            flex: 0.85;
+            max-width: 27%;
+          }
+        }
+      }
+    }
+
+    .services-section {
+      .featured-service {
+        .featured-image {
+          height: 460px;
+
+          .featured-overlay {
+            bottom: 50px;
+            left: 50px;
+            right: 50px;
+
+            h3 {
+              font-size: 38px;
+            }
+
+            p {
+              font-size: 20px;
+            }
+
+            .featured-view {
+              border-radius: 50px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

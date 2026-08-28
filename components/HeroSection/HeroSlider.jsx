@@ -100,22 +100,14 @@ export default function HeroSlider() {
 
       {/* NAVIGATION */}
       <div className="slider-nav">
-      <button className="hero-nav hero-prev d-none d-sm-block d-md-none d-lg-block" onClick={prevSlide}>
-        ‹
-      </button>
-      <button className="hero-nav hero-next d-none d-sm-block d-md-none d-lg-block" onClick={nextSlide}>
-        ›
-      </button>
+        <button className="hero-nav hero-prev d-none d-sm-block d-md-none d-lg-block" onClick={prevSlide}>‹</button>
+        <button className="hero-nav hero-next d-none d-sm-block d-md-none d-lg-block" onClick={nextSlide}>›</button>
       </div>
 
       {/* DOTS */}
       <div className="hero-dots d-none d-sm-block d-md-none">
         {slides.map((_, i) => (
-          <button
-            key={i}
-            className={`hero-dot ${i === current ? 'active' : ''}`}
-            onClick={() => setCurrent(i)}
-          />
+          <button key={i} className={`hero-dot ${i === current ? 'active' : ''}`} onClick={() => setCurrent(i)} />
         ))}
       </div>
     </section>

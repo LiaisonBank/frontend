@@ -4,89 +4,99 @@ header {
   left: 0;
   width: 100%;
   z-index: 99;
+
   min-height: 5rem;
   padding: 0.2rem 1rem 0;
-  background: transparent;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  background: white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.1) inset;
-  .brand-logo {
-    > img{
-      @media (max-width: 767px) {
-        width: 70px;
-      }
-    }
-  }
-  &:before {
-    // content: "";
-    position: absolute;
-    top: -100%;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
-    transition: top 0.5s ease;
-  }
-  &:after{
-    //  content: "";
-      position: absolute;
-      left: 50%;
-      bottom: -25px;
-      transform: translateX(-50%);
-      
-      width: 90%;
-      height: 40px;
 
-      background: radial-gradient(
-        ellipse at center,
-        rgba(0, 0, 0, 0.25) 0%,
-        rgba(0, 0, 0, 0.15) 40%,
-        rgba(0, 0, 0, 0.05) 70%,
-        transparent 100%
-      );
+  background: #fff;
 
-      filter: blur(8px);
-      border-radius: 50%;
-      pointer-events: none;
-  }
-  &.sticky {
-    &:before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
-      transition: top 0.5s ease;
-    }
-    nav {
-      a {
-        color: rgb(255, 255, 255);
-      }
-      .submenu {
-        a {
-          color: rgb(0, 0, 0);
-        }
-      }
+  .lg-1 {
+    margin: 0;
+    padding: 0;
+
+    @media (max-width: 767px) {
+      width: 70px;
+      height: auto;
     }
   }
-  .lg-1{ 
-    margin:0;
-    padding:0;
-  }
-  .lg-2{
+
+  .lg-2 {
     margin-left: 0.2rem;
     margin-top: 0.3rem;
   }
- .nav-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* -------------------------------------------------------------------------- */
+  /* Navigation                                                                  */
+  /* -------------------------------------------------------------------------- */
+
+  nav {
+    margin: 0;
+    position: relative;
+    z-index: 1;
   }
+
+  .menu {
+    > ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    > ul > li {
+      position: relative;
+      margin: 0;
+      padding: 2rem 1rem;
+
+      list-style: none;
+    }
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Navigation Link                                                             */
+  /* -------------------------------------------------------------------------- */
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 0;
+    margin: 0;
+
+    overflow: hidden;
+
+    color: $text-color;
+    font-size: var(--menu-font-size);
+
+    text-decoration: none;
+
+    background: transparent;
+    border: 0;
+
+    cursor: pointer;
+
+    transition:
+      color 0.25s ease,
+      transform 0.3s ease;
+  }
+
+  .nav-link svg {
+    flex-shrink: 0;
+
+    transform-origin: center;
+
+    transition:
+      transform 0.3s ease;
+  }
+
+  .has-submenu:hover .nav-arrow,
+  .mega-active .nav-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Nav Text Animation                                                          */
+  /* -------------------------------------------------------------------------- */
 
   .nav-word {
     display: flex;
@@ -95,16 +105,22 @@ header {
 
   .nav-letter {
     position: relative;
+
     display: inline-block;
-    overflow: hidden;
+
     height: 1.2em;
+
     line-height: 1.2em;
+
+    overflow: hidden;
+
     font-weight: 600;
   }
 
   .letter-top,
   .letter-bottom {
     display: block;
+
     will-change: transform;
 
     transition:
@@ -115,10 +131,10 @@ header {
 
   .letter-bottom {
     position: absolute;
-    left: 0;
-    top: 100%;
-  }
 
+    top: 100%;
+    left: 0;
+  }
 
   .nav-link:hover {
     .letter-top,
@@ -127,8 +143,6 @@ header {
     }
   }
 
-  /* REVERSE WAVE ON MOUSE OUT */
-
   .nav-link:not(:hover) {
     .letter-top,
     .letter-bottom {
@@ -136,479 +150,494 @@ header {
     }
   }
 
-  .has-submenu:hover,
-  .has-single-submenu:hover {
-    .nav-arrow {
-      transform: rotate(180deg);
-    }
+  /* -------------------------------------------------------------------------- */
+  /* Mega Menu                                                                    */
+  /* -------------------------------------------------------------------------- */
+
+  .mega-menu {
+    position: fixed;
+
+    top: 80px;
+    left: 0;
+
+    width: 100vw;
+
+    max-height: calc(100vh - 80px);
+
+    overflow-y: auto;
+
+    overscroll-behavior: contain;
+
+    -webkit-overflow-scrolling: touch;
+
+    background: transparent;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translate3d(0, -8px, 0);
+
+    z-index: 98;
+
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0s linear 0.2s;
   }
-  .letter-top,
-  .letter-bottom {
-    transition-delay: var(--delay);
+
+  .mega-menu.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: translate3d(0, 0, 0);
+
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0s linear 0s;
   }
-  nav {
+
+  /* -------------------------------------------------------------------------- */
+  /* Mega Menu Inner                                                              */
+  /* -------------------------------------------------------------------------- */
+
+  .mega-menu-inner {
+    width: 100%;
+    max-width: 1400px;
+
+    margin: 0 auto;
+    padding: 2rem;
+
+    display: grid;
+
+    gap: 20px;
+
+    background: #fff;
+
+    border: 2px solid $primary-color1;
+    border-top: none;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Mega Top                                                                     */
+  /* -------------------------------------------------------------------------- */
+
+  .mega-top {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-bottom: 10px;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Mega Card                                                                    */
+  /* -------------------------------------------------------------------------- */
+
+  .mega-card {
+    min-width: 0;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Mega Title                                                                   */
+  /* -------------------------------------------------------------------------- */
+
+  .mega-title {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
     margin: 0;
-    z-index: 1;
-    position: relative;
-    .menu > li > a {
-        position: relative;
-        &::after {
-          content: "";
-          position: absolute;
-          bottom: 4px;
-          right: 0;
-          width: 0;
-          height: 2px;
-          background: $primary-color1;
-          transition: all 0.32s ease-out;
-        }
+    padding: 10px 2rem 10px 10px;
 
-        &:hover::after {
-          width: 100%;
-          left: 0;
-          right: auto;
-        }
-      }
-    ul {
-      // Variables for easy branding updates
-      $primary-orange: #ef7f1a;
-      $hover-white: white;
-      $mobile-breakpoint: 1280px;
-      list-style: none;
-      &.custom-counter-list {
-        // counter-reset: service-item;
-        li {
-          // counter-increment: service-item;
-          position: relative;
-          list-style: none; // Ensuring clean appearance
+    color: $text-color;
 
-          &::before {
-            // content: counter(service-item, decimal-leading-zero);
-            font-size: 24px;
-            font-weight: 900;
-            margin-right: 20px;
-            line-height: 1;
-            // Default: Orange Outline
-            color: transparent;
-            -webkit-text-stroke: 1px $primary-orange;
-            transition: all 0.2s ease;
-            @media (max-width: $mobile-breakpoint) {
-              font-size: 18px;
-            }
-          }
+    border-bottom: 1px solid $text-color;
 
-          // Hover state nested within the li
-          &:hover::before {
-            -webkit-text-stroke: 1px $hover-white;
-          }
-        }
-      }
-      
-      > li {
-        margin: 0;
-        padding: 2rem 1rem;
-        position:relative;
-        color: $text-color;
-       > a {
-          outline: none;
-          font-size: var(--menu-font-size);
-          color: $text-color;
-          text-decoration: none;
-          // font-weight:600;
-          position:relative;
-          padding:1rem 0;
-          // letter-spacing: 0.5px;
-          &:after{  
-            content: "";
-            position: absolute;
-            bottom: 4px;
-            right: 0;
-            width: 0%;
-            height: 2px;
-            background: $primary-color1;
-            transition: all 0.32s ease-out;
-          }
-        }
-        
-        button{
-          color:$text-color;
-          font-size: var(--font-size);
-        }
-        &.has-single-submenu{
-            position: relative;
-            // font-weight:600;
-            span {
-              display: flex;
-              align-items: center;
-              font-size: var(--font-size);
-              // font-weight: 600; 
-            svg {
-              margin:0.2rem 0 0 .5rem;
-              transition: all .5s ease;
-            }
-          }
-          &:hover{
-             .mega-menu {
-              opacity: 1;
-              visibility: visible;
-            }
-             span svg {
-              transform: rotate(180deg);
-            }
-          }
-          .mega-menu{
-            position: absolute;
-            top: 84px;
-            left: 0;
-            width: 250px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 9999;   
-            .mega-menu-inner{
-              padding: 1rem;
-              button{
-                text-align: left;
-                color:gray !important;
-                font-weight:600;
-                font-size: var(--font-size);
-              }
-            }
-          }
-        }
-        &.has-submenu {
-          position: relative;
-          // font-weight:600;
-          span {
-            text-align: left;
-            display: flex;
-            align-items: center;
-            font-size: var(--menu-font-sizefont-size);
-            // font-weight: 600; 
-            svg {
-              margin:0.2rem 0 0 .5rem;
-              transition: all .5s ease;
-            }
-          }
-          &:hover {
-            span svg {
-              transform: rotate(180deg);
-            }
-            .mega-menu {
-              opacity: 1;
-              visibility: visible;
-            }
-             ~ .menu-overlay {
-              opacity: 1;
-              visibility: visible;
-            }
-          }
-        }
-        .mega-menu {
-          position: fixed; // 🔥 key change
-          top: 80px; // match your header height
-          left: 0;
-          width: 100vw; // full screen width
-          max-height: 100vh;
-          overflow-y: auto;
-          /* 🔥 THIS FIXES YOUR ISSUE */
-          overscroll-behavior: contain;
-          /* smooth scroll */
-          -webkit-overflow-scrolling: touch;
-          opacity: 0;
-          visibility: hidden;
-          transition: all 0.3s ease;
-          z-index: 98;
-        
-          &.active{
-            opacity: 1;
-            visibility: visible;  
-          }
-        }
-        .mega-menu-inner {
-          max-width: 1400px; // control content width
-          margin: 0 auto; // center horizontally
-          padding: 2rem;
-          background: #fff;
+    button {
+      padding: 0;
 
-          display: grid;
-          gap: 20px;
+      color: $text-color;
 
-          border: 2px solid $primary-color1;
-          border-top: none;
-        }
-        .mega-menu-heading {
-          text-align: center;
-          margin-bottom: 40px;
-          h3 {
-            font-size: 28px;
-            font-weight: 600;
-          }
-          p {
-            opacity: 0.8;
-          }
-        }
-              
-        /* TOP 3 CARDS */
-        .mega-top{
-          display:grid;
-          grid-template-columns:repeat(3,1fr);
-          gap:10px;
-          margin-bottom:10px;
+      font-size: 1.2rem;
 
-        .pdf-download {
-          margin-left: 10px;
-          display: flex;
-          align-items: center;
-        }
+      text-align: left;
 
-        .pdf-download img {
-          transition: transform 0.3s ease;
-        }
+      background: transparent;
+      border: 0;
 
-        }
-
-        .mega-link{
-          color: $text-color;
-          font-size: var(--font-size);
-        }
-
-        .mega-title{
-          padding:10px;
-          border-bottom:1px solid $text-color;
-          // font-weight:600;
-          display: flex;
-          justify-content: space-between;
-          padding-right: 2rem;
-          a{
-            font-size: 1.2rem;
-            // background-image: linear-gradient(105deg, #a83939 5.15%, #8d2d33 69.93%);
-            // background-image: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);            
-            color: $text-color;
-            background-clip: text;
-          }
-        }
-        .mega-link-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .mega-children {
-          padding-left: 14px;
-          margin-top: 4px;
-        }
-        ul.mega-section{
-          height: 220px;
-          padding: 0px 8px 0;
-
-          &.has-more{
-            overflow-y: scroll;
-            ::-webkit-scrollbar {
-                display: none;
-              }
-              /* For IE, Edge, and Firefox */
-              -ms-overflow-style: none;  /* IE and Edge */
-              scrollbar-width: none;  /* Firefox */
-          }
-          // border-bottom:1px solid #555;
-          li.mega-item{
-            margin:0;
-            padding:0.4rem 1.6rem 0.4rem 0px;
-            display: flex;
-            justify-content: space-between;
-            position:relative;
-            button {
-              text-align: left;
-            }
-            a{
-              padding: 0;
-              margin: 0;
-              font-weight: 600;
-            }
-                          
-            .mega-row {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              padding: 0;
-            }
-             
-            &.has-child{
-              display:block;
-              cursor: pointer;
-              &:after{
-                content: "+";
-                width: 1rem;
-                position: absolute;
-                top: 0.2rem;
-                right: 0.9em;
-                font-size: 1.5rem;
-              }
-              &:hover{
-                &:after{
-                  content:"-";
-                }
-              }
-            }
-            .mega-link {
-              text-decoration: none;
-              color: $text-color;
-              position: relative;
-              display: grid;
-              
-            }
-
-            /* SUBMENU */
-            .mega-submenu {
-              margin: 0;
-              padding: 0;
-              max-height: 0;
-              overflow: hidden;
-              opacity: 0;
-              transform: translateY(1rem);
-              transition: 
-              max-height 0.6s ease,
-              opacity 0.3s ease,
-              transform 0.3s ease;
-              // overflow: visible;
-              ::-webkit-scrollbar {
-                display: none;
-              }
-              /* For IE, Edge, and Firefox */
-              -ms-overflow-style: none;  /* IE and Edge */
-              scrollbar-width: none;  /* Firefox */
-            } 
-            /* HOVER EXPAND */
-            &:hover > .mega-submenu {
-              max-height: 1000px; // adjust based on content
-              opacity: 1;
-              transform: translateY(0);
-            }
-            .mega-submenu li {
-              padding: 0;
-              font-size: 14px;
-              display: block;
-              margin-left: 1.2rem;
-            }
-       
-            .has-child2  {
-              position:relative;
-              margin-left:1rem;
-              &:before{
-                content: "+";
-                position: absolute;
-                left: 0;
-                transform: translateX(-1.1rem);
-                font-size: 1.5rem;
-                width: 1rem;
-                top: -8px;
-
-              }
-              &:hover {
-                 &:before{
-                  content: "-";
-                 }
-              }
-              
-            .mega-submenu-level2 {
-              max-height: 0;
-              padding-left: 15px;
-              transition: max-height .3s ease;
-              list-style: none;
-              padding-left: 15px;
-              margin: 5px 0;
-              max-height: 0;
-              overflow: hidden;
-              opacity: 0;
-              transform: translateY(10px);
-
-              transition: 
-                max-height 0.6s ease,
-                opacity 0.3s ease,
-                transform 0.3s ease;
-                li{
-                  margin:0;
-                  padding:0.2rem 0 0.5rem;
-                }
-              }
-                &:hover >  .mega-submenu-level2 {
-                max-height: 1000px;
-                opacity: 1;
-                transform: translateY(0);
-                margin-top: 0px;
-                padding: 0;
-              }
-            }
-          }
-          
-        }
-
-        /* BOTTOM VALUES */
-        .mega-bottom {
-          grid-template-columns: repeat(3, 1fr);
-          padding: 10px;
-          display: grid;
-          gap: 10px;
-        }
-
-        /* each item */
-        .mega-bottom-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 6px 2.3rem 6px 0px;
-          color: $text-color;
-          &:nth-child(2){
-            padding:6px 1.8rem 6px 0px;
-          }
-          &:nth-child(3) {
-            padding: 6px 1.8rem 6px 10px;
-          }
-          &:nth-child(5){
-            padding: 6px 1.8rem 6px 0px;
-          }
-        }
-
-        /* service link */
-        .mega-bottom-link {
-          text-decoration: none;
-          color: $text-color;
-          // color: inherit;
-          // font-weight: 500;
-        }
-
-        /* pdf icon */
-        .pdf-download {
-          margin-left: 10px;
-          display: flex;
-          align-items: center;
-        }
-
-        /* icon animation */
-        .pdf-download img {
-          filter:grayscale(1);
-          // transition: transform 0.25s ease;
-        }
-      }
+      cursor: pointer;
     }
-    a {
-      outline: none;
-      font-size: var(--font-size);
-      color: rgb(0, 0, 0);
-          font-weight: 600;
-    }
-    
   }
+
+  /* -------------------------------------------------------------------------- */
+  /* Mega Links                                                                   */
+  /* -------------------------------------------------------------------------- */
+
+  .mega-link {
+    display: block;
+
+    padding: 0;
+
+    color: $text-color;
+
+    font-size: var(--font-size);
+
+    line-height: 1.4;
+
+    text-align: left;
+
+    text-decoration: none;
+
+    background: transparent;
+    border: 0;
+
+    cursor: pointer;
+  }
+
+  .mega-link:hover,
+  .mega-title button:hover,
+  .mega-bottom-link:hover {
+    color: $primary-color1;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Mega Section                                                                 */
+  /* -------------------------------------------------------------------------- */
+
+  ul.mega-section {
+    height: 220px;
+
+    margin: 0;
+    padding: 0 8px;
+
+    list-style: none;
+
+    &.has-more {
+      overflow-y: auto;
+
+      scrollbar-width: none;
+
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Mega Item                                                                    */
+  /* -------------------------------------------------------------------------- */
+
+  li.mega-item {
+    position: relative;
+
+    display: block;
+
+    margin: 0;
+    padding: 0.4rem 1.6rem 0.4rem 0;
+
+    list-style: none;
+
+    button {
+      text-align: left;
+    }
+
+    &.has-child {
+      cursor: pointer;
+
+      &::after {
+        content: "+";
+
+        position: absolute;
+
+        top: 0.2rem;
+        right: 0.9rem;
+
+        width: 1rem;
+
+        font-size: 1.5rem;
+
+        text-align: center;
+      }
+
+      &:hover::after {
+        content: "-";
+      }
+    }
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Second-Level Mega Menu                                                      */
+  /* -------------------------------------------------------------------------- */
+
+  .mega-submenu {
+    max-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    transform: translateY(1rem);
+
+    list-style: none;
+
+    transition:
+      max-height 0.6s ease,
+      opacity 0.3s ease,
+      transform 0.3s ease;
+
+    scrollbar-width: none;
+
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .mega-item:hover > .mega-submenu {
+    max-height: 1000px;
+
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+
+  .mega-submenu li {
+    display: block;
+
+    margin-left: 1.2rem;
+    padding: 0;
+
+    font-size: 14px;
+
+    list-style: none;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Third-Level Mega Menu                                                       */
+  /* -------------------------------------------------------------------------- */
+
+  .has-child2 {
+    position: relative;
+
+    margin-left: 1rem !important;
+
+    &::before {
+      content: "+";
+
+      position: absolute;
+
+      top: -8px;
+      left: 0;
+
+      width: 1rem;
+
+      font-size: 1.5rem;
+
+      transform: translateX(-1.1rem);
+    }
+
+    &:hover::before {
+      content: "-";
+    }
+  }
+
+  .mega-submenu-level2 {
+    max-height: 0;
+
+    margin: 5px 0;
+    padding: 0 0 0 15px;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    transform: translateY(10px);
+
+    list-style: none;
+
+    transition:
+      max-height 0.6s ease,
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .has-child2:hover > .mega-submenu-level2 {
+    max-height: 1000px;
+
+    margin-top: 0;
+    padding: 0;
+
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+
+  .mega-submenu-level2 li {
+    margin: 0;
+    padding: 0.2rem 0 0.5rem;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Mega Bottom                                                                  */
+  /* -------------------------------------------------------------------------- */
+
+  .mega-bottom {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 10px;
+
+    padding: 10px;
+  }
+
+  .mega-bottom-item {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    min-width: 0;
+
+    padding: 6px 2.3rem 6px 0;
+
+    color: $text-color;
+
+    &:nth-child(2) {
+      padding-right: 1.8rem;
+    }
+
+    &:nth-child(3) {
+      padding: 6px 1.8rem 6px 10px;
+    }
+
+    &:nth-child(5) {
+      padding-right: 1.8rem;
+    }
+  }
+
+  .mega-bottom-link {
+    padding: 0;
+
+    color: $text-color;
+
+    font-size: var(--font-size);
+
+    text-align: left;
+
+    text-decoration: none;
+
+    background: transparent;
+    border: 0;
+
+    cursor: pointer;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* PDF                                                                         */
+  /* -------------------------------------------------------------------------- */
+
+  .pdf-download {
+    display: flex;
+
+    align-items: center;
+
+    flex-shrink: 0;
+
+    margin-left: 10px;
+  }
+
+  .pdf-download img {
+    display: block;
+
+    filter: grayscale(1);
+
+    transition:
+      transform 0.25s ease;
+  }
+
+  .pdf-download:hover img {
+    transform: scale(1.08);
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Mobile Menu                                                                 */
+  /* -------------------------------------------------------------------------- */
+
+  #myNav {
+    z-index: 100;
+
+    background: #fff;
+
+    overscroll-behavior: contain;
+  }
+
+  #myNav .overlay-content {
+    min-height: 100%;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Hamburger                                                                    */
+  /* -------------------------------------------------------------------------- */
+
   .menu-icon {
     width: 120px;
+
     display: flex;
     flex-direction: column;
+
     gap: 22px;
+
     span {
       height: 22px;
+
       border-radius: 50px;
-      background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+
+      background: linear-gradient(
+        0deg,
+        #be2a2a -86.4%,
+        #ef7f1a 94.15%
+      );
+    }
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Responsive                                                                   */
+  /* -------------------------------------------------------------------------- */
+
+  @media (max-width: 1279px) {
+    .menu {
+      display: none;
+    }
+
+    .mega-menu {
+      display: none;
+    }
+  }
+
+  @media (max-width: 767px) {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+
+    .mega-menu-inner {
+      padding: 1rem;
+    }
+
+    .mega-top,
+    .mega-bottom {
+      grid-template-columns: 1fr;
     }
   }
 }

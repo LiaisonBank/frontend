@@ -1,3 +1,4 @@
+
 .hero {
   position: relative;
   width: 100%;
@@ -64,10 +65,10 @@
 .content {
   position: relative;
 
-  width: min(75%, 1400px);
+  width: 100%;
 
   margin: auto;
-  padding: 30px 40px;
+  padding: 30px 0;
 
   color: #fff;
 
@@ -186,8 +187,8 @@
   }
 
   .content {
-    width: calc(100% - 40px);
-    padding: 20px;
+    width: 100%;
+    padding: 20px 0;
   }
 
   .content h2 {
@@ -211,5 +212,16 @@
   .activeDot {
     width: 30px;
     height: 10px;
+  }
+}
+
+@media (max-width:800px) {
+  .content {
+    width: 100%;
+    padding: 20px 0;
+  }
+
+  .content h2 {
+    font-size: clamp(1.75rem,8vw,1.25rem);
   }
 }
