@@ -587,7 +587,7 @@ export default function ProjectDetails() {
         </div>
 
         {/* RESULTS INFO */}
-        <div className="project-results-info" role="status" aria-live="polite">
+        <div className="project-results-info d-none" role="status" aria-live="polite">
           <span>
             Showing <strong>{visibleProjects.length}</strong> of{" "}
             <strong>{filteredProjects.length}</strong> projects
