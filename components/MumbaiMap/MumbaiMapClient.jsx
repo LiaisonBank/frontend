@@ -1,3 +1,5 @@
+// MumbaiMapClient.tsx - Complete Single File
+
 "use client";
 
 import React, {
@@ -6,54 +8,39 @@ import React, {
   useRef,
   useState,
   useMemo,
-  lazy,
-  Suspense,
 } from "react";
-
 import {
   MapContainer,
   TileLayer,
   useMap,
   useMapEvents,
 } from "react-leaflet";
-
 import L from "leaflet";
-
 import "leaflet/dist/leaflet.css";
 import "./MumbaiMap.scss";
-import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 // ============================================================
-// CONFIGURATION
+// CONFIGURATION - ZOOMED IN ON SANTACRUZ-MAHIM AREA
 // ============================================================
 
 const MAP_CONFIG = {
-  center: [19.14, 72.93],
-  bounds: [
-    // [18.8, 72.7],
-    // [19.5, 73.2],
-    // [18.85, 72.77], // Southwest — South Mumbai / Colaba side
-    // [19.55, 73.10], // Northeast — Vasai-Virar / Kharghar side
-    [18.82, 72.78], // South-West
-    [19.38, 73.15], // North-East
-    // [19.10, 72.78], // North-West: Andheri
-    // [19.00, 72.88], // South-East: Dadar
-    // [19.105, 72.825], // North: Santacruz 
-    // [19.025, 72.875], // South: Mahim
-  ],
-  initialZoom: 11.5,
-  resetZoom: 11.5,
-  minZoom: 10.5,
+  center: [19.064, 72.848], // Centered between Santacruz and Mahim
+  initialZoom: 14.5, // Zoomed in to show the Santacruz-Mahim area
+  minZoom: 12, // Prevent zooming out too far - keeps focus on the area
   maxZoom: 18,
   projectZoom: 16,
   projectAnimationDuration: 0.65,
   resetAnimationDuration: 0.75,
-  projectCameraOffsetY: 145,
   markerPaneZIndex: 1300,
-  scrollOffset: 120,
-  scrollDelay: 450,
-  animationEaseLinearity: 0.5,
+  cardOffsetX: 40,
 };
+
+// Restrict map view to Santacruz-Mahim area
+const MAP_BOUNDS = [
+  [19.03, 72.80], // Southwest (Mahim / Bandra area)
+  [19.10, 72.89], // Northeast (Santacruz / Vile Parle area)
+];
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_LOCAL_API_URL ||
@@ -84,6 +71,13 @@ const FALLBACK_COORDINATES = {
   Panvel: { lat: 18.9894, long: 73.1175 },
   Uran: { lat: 18.8788, long: 72.9392 },
   Alibag: { lat: 18.6414, long: 72.8722 },
+  "Santacruz East": { lat: 19.0857, long: 72.8547 },
+  "Santacruz West": { lat: 19.0815, long: 72.8475 },
+  "Santacruz": { lat: 19.0835, long: 72.851 },
+  "Mahim": { lat: 19.0432, long: 72.8393 },
+  "Khar": { lat: 19.0705, long: 72.8398 },
+  "Bandra East": { lat: 19.0544, long: 72.8434 },
+  "Bandra West": { lat: 19.0584, long: 72.831 },
 };
 
 // ============================================================
@@ -166,6 +160,8 @@ const getStatusColors = (status, active = false) => {
       gradientEnd: "#FF2D00",
       shadowColor: "#FFE6A0",
       strokeColor: "#FF6B00",
+      bg: "rgba(255, 107, 0, 0.15)",
+      text: "#FF6B00",
     },
     "In Progress": {
       statusColor: "#FFB700",
@@ -173,6 +169,8 @@ const getStatusColors = (status, active = false) => {
       gradientEnd: "#FFB700",
       shadowColor: "#FFF3CC",
       strokeColor: "#FFB700",
+      bg: "rgba(255, 183, 0, 0.15)",
+      text: "#FFB700",
     },
     Upcoming: {
       statusColor: "#FFB700",
@@ -180,30 +178,34 @@ const getStatusColors = (status, active = false) => {
       gradientEnd: "#FFB700",
       shadowColor: "#FFF3CC",
       strokeColor: "#FFB700",
+      bg: "rgba(255, 183, 0, 0.15)",
+      text: "#FFB700",
     },
   };
   return colors[status] || colors.Completed;
 };
 
 // ============================================================
-// CUSTOM PIN ICON
+// CUSTOM PIN ICON - MODERN MINIMALIST
 // ============================================================
 
-const createCustomPinIcon = (active = false, project = null) => {
+const createCustomPinIcon = (active = false, project = null, isHovered = false) => {
   const colors = getStatusColors(project?.project_status, active);
   const uniqueId = `pin_${String(project?.id || "project").replace(
     /[^a-zA-Z0-9_-]/g,
     "_"
   )}_${Math.random().toString(36).slice(2, 8)}`;
 
+  const size = active ? 48 : isHovered ? 46 : 42;
+  const iconSize = [size, size + 12];
+
   return L.divIcon({
-    className: `liaison-pin-icon ${active ? "active" : ""}`,
+    className: `liaison-pin-icon ${active ? "active" : ""} ${isHovered ? "hovered" : ""}`,
     html: `
       <div class="liaison-pin-wrapper">
         <div
-          class="custom-pin ${active ? "is-active" : ""}"
+          class="custom-pin ${active ? "is-active" : ""} ${isHovered ? "is-hovered" : ""}"
           data-project-id="${project?.id || ""}"
-          data-project-source="${project?.coordinate_source || ""}"
           style="
             --gradient-start: ${colors.gradientStart};
             --gradient-end: ${colors.gradientEnd};
@@ -214,8 +216,8 @@ const createCustomPinIcon = (active = false, project = null) => {
           <svg
             class="location-pin"
             viewBox="0 0 512 512"
-            width="42"
-            height="52"
+            width="${size}"
+            height="${size + 12}"
             preserveAspectRatio="xMidYMid meet"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -228,53 +230,50 @@ const createCustomPinIcon = (active = false, project = null) => {
                 y2="453"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop
-                  offset="0%"
-                  stop-color="${colors.gradientStart}"
-                />
-                <stop
-                  offset="100%"
-                  stop-color="${colors.gradientEnd}"
-                />
+                <stop offset="0%" stop-color="${colors.gradientStart}" />
+                <stop offset="100%" stop-color="${colors.gradientEnd}" />
               </linearGradient>
+              <filter id="shadow_${uniqueId}" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="4" stdDeviation="${active ? 8 : 4}" 
+                  flood-color="rgba(0,0,0,${active ? 0.4 : 0.2})"/>
+              </filter>
             </defs>
 
-            <path
-              class="pin-outline"
-              d="
-                M256 0
-                C164.7 0 91 73.7 91 165
-                C91 226 130 282 170 340
-                L244 447
-                C249.8 455.3 262.2 455.3 268 447
-                L342 340
-                C382 282 421 226 421 165
-                C421 73.7 347.3 0 256 0 Z
-              "
-              fill="url(#${uniqueId})"
-              stroke="${colors.strokeColor}"
-              stroke-width="5"
-              stroke-linejoin="round"
-            />
-
-            <circle
-              cx="256"
-              cy="165"
-              r="105"
-              fill="#FFFDEB"
-            />
+            <g filter="url(#shadow_${uniqueId})">
+              <path
+                class="pin-outline"
+                d="M256 0 C164.7 0 91 73.7 91 165 C91 226 130 282 170 340 L244 447 C249.8 455.3 262.2 455.3 268 447 L342 340 C382 282 421 226 421 165 C421 73.7 347.3 0 256 0 Z"
+                fill="url(#${uniqueId})"
+                stroke="${colors.strokeColor}"
+                stroke-width="4"
+                stroke-linejoin="round"
+              />
+              <circle
+                cx="256"
+                cy="165"
+                r="105"
+                fill="rgba(255,253,235,0.95)"
+                stroke="${colors.strokeColor}"
+                stroke-width="2"
+              />
+              ${active ? `<circle cx="256" cy="165" r="35" fill="${colors.statusColor}" opacity="0.15"/>` : ''}
+              <circle
+                cx="256"
+                cy="165"
+                r="${active ? 18 : 12}"
+                fill="${colors.statusColor}"
+                opacity="${active ? 1 : 0.8}"
+              />
+              ${active ? `<circle cx="256" cy="165" r="6" fill="#fff" opacity="0.8"/>` : ''}
+            </g>
           </svg>
-
-          <span
-            class="pin-status-dot"
-            style="background:${colors.statusColor};"
-          ></span>
+          <span class="pin-status-dot" style="background:${colors.statusColor};"></span>
         </div>
       </div>
     `,
-    iconSize: [42, 52],
-    iconAnchor: [21, 52],
-    popupAnchor: [0, -52],
+    iconSize: iconSize,
+    iconAnchor: [size / 2, size + 12],
+    popupAnchor: [0, -(size + 12)],
   });
 };
 
@@ -367,31 +366,28 @@ function MapController({ controllerRef, onZoomStateChange }) {
 
         if (!isValidCoordinate(lat, lng)) return;
 
-        // Stop any ongoing animations
         map.stop();
         if (animationRef.current) {
           clearTimeout(animationRef.current);
           animationRef.current = null;
         }
 
-        // Disable zoom controls
         map.scrollWheelZoom.disable();
         map.doubleClickZoom.disable();
         map.keyboard.disable();
 
         const targetPoint = map.project([lat, lng], MAP_CONFIG.projectZoom);
-        targetPoint.y -= MAP_CONFIG.projectCameraOffsetY;
+        targetPoint.y -= 120;
 
         const adjustedLatLng = map.unproject(targetPoint, MAP_CONFIG.projectZoom);
 
         map.flyTo(adjustedLatLng, MAP_CONFIG.projectZoom, {
           animate: true,
           duration: MAP_CONFIG.projectAnimationDuration,
-          easeLinearity: MAP_CONFIG.animationEaseLinearity,
+          easeLinearity: 0.3,
           noMoveStart: true,
         });
 
-        // Notify zoom state change after animation completes
         animationRef.current = setTimeout(() => {
           onZoomStateChange?.(true);
           animationRef.current = null;
@@ -399,26 +395,23 @@ function MapController({ controllerRef, onZoomStateChange }) {
       },
 
       reset() {
-        // Stop any ongoing animations
         map.stop();
         if (animationRef.current) {
           clearTimeout(animationRef.current);
           animationRef.current = null;
         }
 
-        // Re-enable zoom controls before animation
         map.scrollWheelZoom.enable();
         map.doubleClickZoom.enable();
         map.keyboard.enable();
 
-        map.flyTo(MAP_CONFIG.center, MAP_CONFIG.resetZoom, {
+        map.flyTo(MAP_CONFIG.center, MAP_CONFIG.initialZoom, {
           animate: true,
           duration: MAP_CONFIG.resetAnimationDuration,
-          easeLinearity: MAP_CONFIG.animationEaseLinearity,
+          easeLinearity: 0.3,
           noMoveStart: true,
         });
 
-        // Notify zoom state change after animation completes
         animationRef.current = setTimeout(() => {
           onZoomStateChange?.(false);
           animationRef.current = null;
@@ -455,7 +448,8 @@ function MapInteraction({ onMapClick }) {
       if (
         target?.closest?.(".liaison-pin-icon") ||
         target?.closest?.(".custom-pin") ||
-        target?.closest?.(".project-info-card")
+        target?.closest?.(".project-info-card") ||
+        target?.closest?.(".project-detail-panel")
       ) {
         return;
       }
@@ -466,12 +460,12 @@ function MapInteraction({ onMapClick }) {
   return null;
 }
 
-function MarkerLayer({ projects, selectedProject, onSelect }) {
+function MarkerLayer({ projects, selectedProject, onSelect, onHover }) {
   const map = useMap();
   const groupRef = useRef(null);
   const markersRef = useRef(new Map());
+  const hoveredIdRef = useRef(null);
 
-  // Create marker layer
   useEffect(() => {
     if (!map) return;
 
@@ -485,14 +479,13 @@ function MarkerLayer({ projects, selectedProject, onSelect }) {
           map.removeLayer(group);
         }
       } catch {
-        // Ignore cleanup errors
+        // Ignore
       }
       groupRef.current = null;
       markersRef.current.clear();
     };
   }, [map]);
 
-  // Render markers
   useEffect(() => {
     const group = groupRef.current;
     if (!group) return;
@@ -508,25 +501,17 @@ function MarkerLayer({ projects, selectedProject, onSelect }) {
       const lat = Number(project.lat);
       const lng = Number(project.long ?? project.lng);
 
-      // Skip only if coordinates are invalid, but still keep the project in the list
       if (!isValidCoordinate(lat, lng)) {
-        // Log but don't skip - we'll still show the project without a marker
-        console.warn("Project has invalid coordinates:", {
-          id: project.id,
-          location: project.location,
-          lat,
-          lng
-        });
         return;
       }
 
-      const isSelected =
-        selectedProject && String(selectedProject.id) === String(project.id);
+      const isSelected = selectedProject && String(selectedProject.id) === String(project.id);
+      const isHovered = hoveredIdRef.current === String(project.id);
 
       const marker = L.marker([lat, lng], {
-        icon: createCustomPinIcon(isSelected, project),
+        icon: createCustomPinIcon(isSelected, project, isHovered),
         pane: "projectMarkerPane",
-        zIndexOffset: isSelected ? 1000 : 0,
+        zIndexOffset: isSelected ? 1000 : isHovered ? 500 : 0,
         keyboard: true,
         title: project.client_name || project.location || "Project",
         alt: project.client_name || project.location || "Project",
@@ -543,12 +528,21 @@ function MarkerLayer({ projects, selectedProject, onSelect }) {
         onSelect?.(project);
       });
 
+      marker.on("mouseover", () => {
+        hoveredIdRef.current = String(project.id);
+        onHover?.(project);
+      });
+
+      marker.on("mouseout", () => {
+        hoveredIdRef.current = null;
+        onHover?.(null);
+      });
+
       group.addLayer(marker);
       markersRef.current.set(String(project.id), marker);
     });
-  }, [projects, selectedProject, onSelect]);
+  }, [projects, selectedProject, onSelect, onHover]);
 
-  // Update marker icons when selection changes
   useEffect(() => {
     if (!groupRef.current) return;
 
@@ -556,301 +550,171 @@ function MarkerLayer({ projects, selectedProject, onSelect }) {
       const project = marker.projectData;
       if (!project) return;
 
-      const isSelected =
-        selectedProject && String(selectedProject.id) === id;
+      const isSelected = selectedProject && String(selectedProject.id) === id;
+      const isHovered = hoveredIdRef.current === id;
 
-      marker.setIcon(createCustomPinIcon(isSelected, project));
-      marker.setZIndexOffset(isSelected ? 1000 : 0);
+      marker.setIcon(createCustomPinIcon(isSelected, project, isHovered));
+      marker.setZIndexOffset(isSelected ? 1000 : isHovered ? 500 : 0);
     });
   }, [selectedProject]);
 
   return null;
 }
 
-function SelectedProjectPosition({ project, onPositionChange }) {
-  const map = useMap();
-  const frameRef = useRef(null);
-  const positionRef = useRef(null);
-
-  useEffect(() => {
-    if (!project) {
-      onPositionChange(null);
-      return;
-    }
-
-    const lat = Number(project.lat);
-    const lng = Number(project.long ?? project.lng);
-
-    if (!isValidCoordinate(lat, lng)) {
-      onPositionChange(null);
-      return;
-    }
-
-    const updatePosition = () => {
-      if (!map) return;
-      try {
-        const point = map.latLngToContainerPoint([lat, lng]);
-        if (!point) return;
-
-        const newPosition = { x: point.x, y: point.y };
-        const oldPosition = positionRef.current;
-
-        // Only update if position changed significantly
-        if (
-          !oldPosition ||
-          Math.abs(oldPosition.x - newPosition.x) > 1 ||
-          Math.abs(oldPosition.y - newPosition.y) > 1
-        ) {
-          positionRef.current = newPosition;
-          onPositionChange(newPosition);
-        }
-      } catch {
-        // Ignore
-      }
-    };
-
-    const scheduleUpdate = () => {
-      if (frameRef.current !== null) {
-        cancelAnimationFrame(frameRef.current);
-      }
-      frameRef.current = requestAnimationFrame(() => {
-        frameRef.current = null;
-        updatePosition();
-      });
-    };
-
-    updatePosition();
-
-    map.on("move", scheduleUpdate);
-    map.on("zoom", scheduleUpdate);
-    map.on("moveend", scheduleUpdate);
-    map.on("zoomend", scheduleUpdate);
-
-    return () => {
-      map.off("move", scheduleUpdate);
-      map.off("zoom", scheduleUpdate);
-      map.off("moveend", scheduleUpdate);
-      map.off("zoomend", scheduleUpdate);
-
-      if (frameRef.current !== null) {
-        cancelAnimationFrame(frameRef.current);
-        frameRef.current = null;
-      }
-      positionRef.current = null;
-    };
-  }, [map, project, onPositionChange]);
-
-  return null;
-}
-
 // ============================================================
-// PROJECT CARD
+// PROJECT DETAIL PANEL - LEFT SIDE
 // ============================================================
 
-const ProjectCard = React.forwardRef(function ProjectCard(
-  { project, onClose, position },
-  ref
-) { // ✅ ALL HOOKS MUST BE CALLED FIRST, BEFORE ANY CONDITIONAL RETURNS
-  const [showTooltip, setShowTooltip] = useState(false);
-  const closeTimeoutRef = useRef(null);
-  const isClosingRef = useRef(false);
-
-  // ✅ useEffect called BEFORE conditional return
-  useEffect(() => {
-    return () => {
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
-        closeTimeoutRef.current = null;
-      }
-    };
-  }, []);
-
-  // ✅ useCallback hooks called BEFORE conditional return
-  const handleMouseEnter = useCallback(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-    isClosingRef.current = false;
-  }, []);
-
-  const handleMouseLeave = useCallback(
-    (e) => {
-      if (isClosingRef.current) return;
-
-      const relatedTarget = e.relatedTarget;
-      
-      if (!relatedTarget || !e.currentTarget.contains(relatedTarget)) {
-        if (closeTimeoutRef.current) {
-          clearTimeout(closeTimeoutRef.current);
-          closeTimeoutRef.current = null;
-        }
-
-        isClosingRef.current = true;
-
-        closeTimeoutRef.current = setTimeout(() => {
-          onClose();
-          closeTimeoutRef.current = null;
-          isClosingRef.current = false;
-        }, MAP_CONFIG.cardCloseDelay || 300);
-      }
-    },
-    [onClose]
-  );
+const ProjectDetailPanel = ({ project, onClose, onHover }) => {
   if (!project) return null;
 
   const imageUrl = getImageUrl(project.featured_image);
-  const statusColor =
-    project.project_status === "Completed"
-      ? "#FF6B00"
-      : project.project_status === "In Progress"
-      ? "#FFB700"
-      : "#f59e0b";
+  const statusColors = getStatusColors(project.project_status);
 
   return (
-    <article
-      ref={ref}
-      className="project-info-card is-visible"
-      role="dialog"
-      aria-modal="true"
-      aria-label={
-        project.client_name
-          ? `${project.client_name} information`
-          : "Project information"
-      }
-      style={
-        position
-          ? {
-              "--card-x": `${position.x}px`,
-              "--card-y": `${position.y}px`,
-            }
-          : {}
-      }
+    <motion.div
+      className="project-detail-panel"
+      initial={{ x: -420, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: -420, opacity: 0 }}
+      transition={{ type: "spring", damping: 30, stiffness: 300 }}
+      onMouseEnter={() => onHover?.(true)}
+      onMouseLeave={() => onHover?.(false)}
     >
-      <div className="project-card-arrow-down" />
-      <div className="project-card-header">
+      <button className="panel-close-btn" onClick={onClose}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div className="panel-content">
         {imageUrl && (
-          <div
-            className="project-card-image"
-            style={{ backgroundImage: `url("${imageUrl}")` }}
-            role="img"
-            aria-label={project.client_name || "Project"}
-          />
-        )}
-        <button
-          type="button"
-          className="project-card-close"
-          onClick={onClose}
-          aria-label="Close project"
-        >
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div className="project-card-content">
-        {project.client_name && (
-          <h2 className="project-client-name">{project.client_name}</h2>
-        )}
-        {project.project_status && (
-          <div className="project-status">
-            <span
-              className="status-indicator"
-              style={{ backgroundColor: statusColor }}
+          <div className="panel-image-wrapper">
+            <div
+              className="panel-image"
+              style={{ backgroundImage: `url("${imageUrl}")` }}
             />
-            <span className="status-text">{project.project_status}</span>
+            <div className="panel-image-overlay">
+              <span className="panel-status-badge" style={{ background: statusColors.statusColor }}>
+                {project.project_status || "Status"}
+              </span>
+            </div>
           </div>
         )}
-        {project.location && (
-          <div className="project-location-wrapper">
-            <span className="project-location">
-              {project.location}
-              {project.location !== "Navi Mumbai" && ", Mumbai"}
-            </span>
-            {project.category && (
-              <span className="project-category">{project.category}</span>
-            )}
+
+        <div className="panel-body">
+          <h2 className="panel-client-name">{project.client_name || "Project"}</h2>
+          
+          <div className="panel-location">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <span>{project.location || "Location"}</span>
           </div>
-        )}
-        {project.completion_date && (
-          <div className="project-completion-date">
-            {project.completion_date
-              ? new Date(project.completion_date).toLocaleDateString("en-GB", {
+
+          {project.category && (
+            <div className="panel-category">
+              <span className="category-tag">{project.category}</span>
+            </div>
+          )}
+
+          {project.completion_date && (
+            <div className="panel-date">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <span>
+                {new Date(project.completion_date).toLocaleDateString("en-GB", {
                   day: "2-digit",
                   month: "short",
-                  year: "2-digit",
-                })
-              : "-"}
-          </div>
-        )} 
-        <div className="learnmore">
-          <div className="tooltip-wrapper">
-            <button
-              type="button"
-              onClick={() => setShowTooltip((prev) => !prev)}
-              aria-label="Learn more about this project"
-            >
-              Learn more
-            </button>
+                  year: "numeric",
+                })}
+              </span>
+            </div>
+          )}
 
-            {showTooltip && (
-              <div className="custom-tooltip" role="tooltip">
-                Coming Soon
-              </div>
-            )}
+          <div className="panel-description">
+            <p>{project.description || "No description available."}</p>
           </div>
+
+          <button className="panel-learn-more">
+            Learn More
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
-    </article>
+    </motion.div>
   );
-});
+};
 
 // ============================================================
-// LOADING SKELETON
+// HOVER TOOLTIP
+// ============================================================
+
+const HoverTooltip = ({ project, position }) => {
+  if (!project || !position) return null;
+
+  return (
+    <motion.div
+      className="hover-tooltip"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      style={{
+        left: position.x + 16,
+        top: position.y - 40,
+      }}
+    >
+      <div className="tooltip-content">
+        <span className="tooltip-name">{project.client_name || project.location}</span>
+        {project.category && (
+          <span className="tooltip-category">{project.category}</span>
+        )}
+        {project.project_status && (
+          <span className="tooltip-status" style={{ 
+            background: getStatusColors(project.project_status).statusColor 
+          }}>
+            {project.project_status}
+          </span>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
+// ============================================================
+// LOADING & ERROR STATES
 // ============================================================
 
 const LoadingSkeleton = () => (
-  <section
-    className="mumbai-map-section"
-    aria-label="Loading project locations"
-  >
+  <section className="mumbai-map-section" aria-label="Loading project locations">
     <div className="mumbai-map-loading">
-      <div className="loading-spinner" aria-hidden="true" />
+      <div className="loading-spinner" />
       <p>Loading project locations...</p>
     </div>
   </section>
 );
 
-// ============================================================
-// ERROR STATE
-// ============================================================
-
 const ErrorState = ({ error, onRetry }) => (
-  <section
-    className="mumbai-map-section"
-    aria-label="Error loading project locations"
-  >
+  <section className="mumbai-map-section" aria-label="Error loading project locations">
     <div className="mumbai-map-error">
       <p>{error}</p>
-      <button type="button" onClick={onRetry}>
-        Retry
-      </button>
+      <button type="button" onClick={onRetry}>Retry</button>
     </div>
   </section>
 );
 
-// ============================================================
-// EMPTY STATE
-// ============================================================
-
 const EmptyState = ({ onRetry }) => (
-  <section
-    className="mumbai-map-section"
-    aria-label="No projects found"
-  >
+  <section className="mumbai-map-section" aria-label="No projects found">
     <div className="mumbai-map-error">
       <p>No projects found with valid coordinates.</p>
-      <button type="button" onClick={onRetry}>
-        Retry
-      </button>
+      <button type="button" onClick={onRetry}>Retry</button>
     </div>
   </section>
 );
@@ -859,58 +723,10 @@ const EmptyState = ({ onRetry }) => (
 // CUSTOM HOOKS
 // ============================================================
 
-function useScrollToCard() {
-  return useCallback((element, offset = MAP_CONFIG.scrollOffset) => {
-    if (!element) return;
-
-    requestAnimationFrame(() => {
-      const rect = element.getBoundingClientRect();
-      const isBelow = rect.bottom > window.innerHeight;
-      const isAbove = rect.top < 0;
-
-      if (isBelow || isAbove) {
-        const scrollPosition = window.scrollY + rect.top - offset;
-        window.scrollTo({
-          top: Math.max(0, scrollPosition),
-          behavior: "smooth",
-        });
-      }
-    });
-  }, []);
-}
-
-function useAudio() {
-  const audioRef = useRef(null);
-
-  useEffect(() => {
-    const audio = new Audio("/audio/computer-mouse-click-2.mp3");
-    audio.preload = "auto";
-    audioRef.current = audio;
-
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-      audioRef.current = null;
-    };
-  }, []);
-
-  const playAudio = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.pause();
-    audio.currentTime = 0;
-    audio.play().catch(() => {});
-  }, []);
-
-  return playAudio;
-}
-
 function useProjects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [dataSource, setDataSource] = useState("Loading...");
 
   const geocodeWithNominatim = useCallback(async (location) => {
     if (!location?.trim()) return null;
@@ -918,10 +734,7 @@ function useProjects() {
     try {
       const response = await fetch(
         `/api/geocode?location=${encodeURIComponent(location)}`,
-        {
-          method: "GET",
-          cache: "no-store",
-        }
+        { method: "GET", cache: "no-store" }
       );
 
       if (!response.ok) return null;
@@ -942,15 +755,12 @@ function useProjects() {
 
   const resolveApiProjectCoordinates = useCallback(
     async (project) => {
-      // 1. API LATITUDE/LONGITUDE (primary)
       const apiCoordinates = getApiCoordinates(project);
       if (apiCoordinates) return apiCoordinates;
 
-      // 2. NOMINATIM
       const nominatimCoordinates = await geocodeWithNominatim(project.location);
       if (nominatimCoordinates) return nominatimCoordinates;
 
-      // 3. LOCAL FALLBACK
       const fallbackCoordinates = getFallbackCoordinates(project.location);
       if (fallbackCoordinates) return fallbackCoordinates;
 
@@ -970,9 +780,7 @@ function useProjects() {
         const response = await fetch(`${API_BASE_URL}/api/projects/`, {
           method: "GET",
           cache: "no-store",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         });
 
         if (!response.ok) {
@@ -988,77 +796,42 @@ function useProjects() {
           ? result.projects
           : [];
 
-        // Process ALL projects without skipping any
-        const resolvedApiProjects = [];
-        const projectsWithCoords = [];
-        const projectsWithoutCoords = [];
+        const resolvedProjects = [];
 
         for (const project of apiProjects) {
           if (cancelled) return;
 
-          // Create base project object
           const baseProject = {
             ...project,
-            // Normalize coordinate properties
             lat: project.latitude ?? project.lat ?? null,
             long: project.longitude ?? project.long ?? project.lng ?? null,
             lng: project.longitude ?? project.long ?? project.lng ?? null,
             coordinate_source: null,
-            is_manual: false,
-            is_geocoded: false,
-            is_fallback: false,
           };
 
-          // Check if project has valid API coordinates
           const hasApiCoords = isValidCoordinate(baseProject.lat, baseProject.long);
 
           if (hasApiCoords) {
-            // Project has valid coordinates - mark as API source
             baseProject.coordinate_source = "api";
-            projectsWithCoords.push(baseProject);
+            resolvedProjects.push(baseProject);
           } else {
-            // Project doesn't have API coordinates - try to resolve
             const resolvedCoords = await resolveApiProjectCoordinates(project);
-            
             if (resolvedCoords) {
-              // Successfully resolved coordinates
               baseProject.lat = resolvedCoords.lat;
               baseProject.long = resolvedCoords.long;
               baseProject.lng = resolvedCoords.long;
               baseProject.coordinate_source = resolvedCoords.source;
-              baseProject.is_geocoded = resolvedCoords.source === "nominatim";
-              baseProject.is_fallback = resolvedCoords.source === "fallback";
-              projectsWithCoords.push(baseProject);
-            } else {
-              // No coordinates found - still keep the project but without coordinates
-              baseProject.coordinate_source = "none";
-              projectsWithoutCoords.push(baseProject);
-              console.warn("Project has no coordinates:", {
-                id: project.id,
-                location: project.location,
-                client: project.client_name
-              });
+              resolvedProjects.push(baseProject);
             }
           }
         }
 
         if (cancelled) return;
 
-        // Combine ALL projects - projects with coordinates first, then without
-        const allProjects = [...projectsWithCoords, ...projectsWithoutCoords];
-        
-        setProjects(allProjects);
-        setDataSource(
-          `Total: ${allProjects.length} projects ` +
-          `(Coords: ${projectsWithCoords.length}, ` +
-          `No Coords: ${projectsWithoutCoords.length})`
-        );
+        setProjects(resolvedProjects);
 
-        // Only show error if there are no projects at all
-        if (allProjects.length === 0) {
+        if (resolvedProjects.length === 0) {
           setError("No projects found.");
-        } else if (allProjects.length > 0 && projectsWithCoords.length === 0) {
-          setError("Projects found but none have valid coordinates.");
         } else {
           setError(null);
         }
@@ -1066,7 +839,6 @@ function useProjects() {
         console.error("Failed loading API projects:", error);
         if (!cancelled) {
           setProjects([]);
-          setDataSource("API: 0 projects");
           setError(`Failed to load projects: ${error.message}`);
         }
       } finally {
@@ -1083,7 +855,7 @@ function useProjects() {
     };
   }, [resolveApiProjectCoordinates]);
 
-  return { projects, loading, error, dataSource, setError };
+  return { projects, loading, error, setError };
 }
 
 // ============================================================
@@ -1091,133 +863,53 @@ function useProjects() {
 // ============================================================
 
 export default function MumbaiMapClient() {
-  const { projects, loading, error, dataSource, setError } = useProjects();
+  const { projects, loading, error, setError } = useProjects();
   const [selectedProject, setSelectedProject] = useState(null);
-  const [selectedProjectPosition, setSelectedProjectPosition] = useState(null);
+  const [hoveredProject, setHoveredProject] = useState(null);
+  const [hoverPosition, setHoverPosition] = useState(null);
   const [isZoomDisabled, setIsZoomDisabled] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
+  const [isPanelHovered, setIsPanelHovered] = useState(false);
 
   const controllerRef = useRef(null);
-  const selectedProjectIdRef = useRef(null);
-  const cardRef = useRef(null);
-  const closeTimeoutRef = useRef(null);
-
-  const playAudio = useAudio();
-  const scrollToCard = useScrollToCard();
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
-        closeTimeoutRef.current = null;
-      }
-      if (controllerRef.current) {
-        controllerRef.current.stop();
-      }
-      selectedProjectIdRef.current = null;
-    };
-  }, []);
-
-  // ==========================================================
-  // SELECT PROJECT
-  // ==========================================================
+  const mapRef = useRef(null);
 
   const selectProject = useCallback(
     (project) => {
       if (!project) return;
+      if (selectedProject?.id === project.id) return;
 
-      const projectId = String(project.id);
-      if (selectedProjectIdRef.current === projectId) return;
-
-      // Clear any pending close operations
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
-        closeTimeoutRef.current = null;
-      }
-
-      playAudio();
-      setIsClosing(false);
-
-      selectedProjectIdRef.current = projectId;
       setSelectedProject(project);
-      setSelectedProjectPosition(null);
       setIsZoomDisabled(true);
 
-      requestAnimationFrame(() => {
-        controllerRef.current?.select(project);
-      });
-
       setTimeout(() => {
-        if (cardRef.current) {
-          scrollToCard(cardRef.current);
-        }
-      }, MAP_CONFIG.scrollDelay);
+        controllerRef.current?.select(project);
+      }, 100);
     },
-    [playAudio, scrollToCard]
+    [selectedProject]
   );
 
-  // ==========================================================
-  // CLOSE PROJECT
-  // ==========================================================
-
   const closeProject = useCallback(() => {
-    // Prevent multiple close operations
-    if (isClosing) return;
-    setIsClosing(true);
+    if (!selectedProject) return;
 
-    playAudio();
-
-    // Clear any pending timeouts
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-
-    // Stop any ongoing animations
-    controllerRef.current?.stop();
-
-    // Reset state immediately
-    selectedProjectIdRef.current = null;
     setSelectedProject(null);
-    setSelectedProjectPosition(null);
+    controllerRef.current?.reset();
+    setIsZoomDisabled(false);
+  }, [selectedProject]);
 
-    // Reset zoom after a small delay to ensure smooth transition
-    closeTimeoutRef.current = setTimeout(() => {
-      controllerRef.current?.reset();
-      closeTimeoutRef.current = null;
-      setIsClosing(false);
-    }, 150);
-  }, [playAudio, isClosing]);
-
-  // ==========================================================
-  // MAP CLICK
-  // ==========================================================
+  const handleHover = useCallback((project) => {
+    if (selectedProject) return;
+    setHoveredProject(project);
+  }, [selectedProject]);
 
   const handleMapClick = useCallback(() => {
-    if (!selectedProject || isClosing) return;
-    closeProject();
-  }, [selectedProject, closeProject, isClosing]);
-
-  // ==========================================================
-  // ZOOM STATE CHANGE
-  // ==========================================================
-
-  const handleZoomStateChange = useCallback((disabled) => {
-    setIsZoomDisabled(disabled);
-  }, []);
-
-  // ==========================================================
-  // RETRY
-  // ==========================================================
+    if (selectedProject && !isPanelHovered) {
+      closeProject();
+    }
+  }, [selectedProject, closeProject, isPanelHovered]);
 
   const handleRetry = useCallback(() => {
     window.location.reload();
   }, []);
-
-  // ==========================================================
-  // RENDER STATES
-  // ==========================================================
 
   if (loading) {
     return <LoadingSkeleton />;
@@ -1231,42 +923,33 @@ export default function MumbaiMapClient() {
     return <EmptyState onRetry={handleRetry} />;
   }
 
-  // ==========================================================
-  // MAIN RENDER
-  // ==========================================================
-
   return (
-    <section
-      // className="mumbai-map-section"
-      className="mumbai-map-fullscreen"
-      aria-label="Mumbai project locations"
-    >
+    <section className="mumbai-map-fullscreen" aria-label="Mumbai project locations">
       <div className="mumbai-map-container">
         <MapContainer
+          key="mumbai-map"
           center={MAP_CONFIG.center}
           zoom={MAP_CONFIG.initialZoom}
           minZoom={MAP_CONFIG.minZoom}
           maxZoom={MAP_CONFIG.maxZoom}
-          maxBounds={MAP_CONFIG.bounds}
+          maxBounds={MAP_BOUNDS}
           maxBoundsViscosity={1}
           dragging
           inertia
           inertiaDeceleration={1400}
           inertiaMaxSpeed={1200}
-          easeLinearity={MAP_CONFIG.animationEaseLinearity}
           scrollWheelZoom={!isZoomDisabled}
           doubleClickZoom={!isZoomDisabled}
           keyboard={!isZoomDisabled}
-          wheelDebounceTime={40}
-          wheelPxPerZoomLevel={100}
           zoomControl={false}
-          attributionControl
+          attributionControl={false}
           className="mumbai-leaflet-map"
+          ref={mapRef}
         >
           <ProjectMarkerPane />
           <MapResizeObserver />
 
-         <TileLayer
+          <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             maxZoom={22}
@@ -1275,15 +958,10 @@ export default function MumbaiMapClient() {
 
           <MapController
             controllerRef={controllerRef}
-            onZoomStateChange={handleZoomStateChange}
+            onZoomStateChange={setIsZoomDisabled}
           />
 
           <MapZoomController disabled={isZoomDisabled} />
-
-          <SelectedProjectPosition
-            project={selectedProject}
-            onPositionChange={setSelectedProjectPosition}
-          />
 
           <MapInteraction onMapClick={handleMapClick} />
 
@@ -1291,28 +969,42 @@ export default function MumbaiMapClient() {
             projects={projects}
             selectedProject={selectedProject}
             onSelect={selectProject}
+            onHover={handleHover}
           />
 
-          <div className="map-location-badge">
+          <div className="map-controls">
             <button
               type="button"
-              className="mumbai-map-reset"
+              className="map-reset-btn"
               onClick={closeProject}
               aria-label="Reset map view"
             >
-              Reset Map
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 12a9 9 0 1 0 9-9m0 0v6m0-6h-6" />
+              </svg>
+              Reset View
             </button>
           </div>
         </MapContainer>
 
-        {selectedProject && (
-          <ProjectCard
-            ref={cardRef}
-            project={selectedProject}
-            onClose={closeProject}
-            position={selectedProjectPosition}
-          />
-        )}
+        <AnimatePresence>
+          {selectedProject && (
+            <ProjectDetailPanel
+              project={selectedProject}
+              onClose={closeProject}
+              onHover={setIsPanelHovered}
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {hoveredProject && !selectedProject && (
+            <HoverTooltip
+              project={hoveredProject}
+              position={hoverPosition}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

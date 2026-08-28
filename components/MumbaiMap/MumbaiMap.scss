@@ -1,193 +1,51 @@
-// MumbaiMap.scss - Production Ready
+// MumbaiMap.scss - Modern Premium UI
+
+// ============ CSS VARIABLES ============
+:root {
+  --primary-orange: #FF6B00;
+  --primary-gold: #FFB700;
+  --dark-bg: #0A0A0F;
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --shadow-glow: 0 8px 32px rgba(255, 107, 0, 0.25);
+  --text-primary: #1A1A2E;
+  --text-secondary: #4A4A6A;
+}
 
 // ============ KEYFRAMES ============
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-@keyframes growFromPin {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.3);
-    transform-origin: bottom center;
-  }
-  50% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1.05);
-    transform-origin: bottom center;
-  }
-  70% {
-    transform: translateX(-50%) scale(0.95);
-    transform-origin: bottom center;
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-    transform-origin: bottom center;
-  }
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(2); opacity: 0; }
 }
 
-@keyframes shrinkToPin {
-  0% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-    transform-origin: bottom center;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.3);
-    transform-origin: bottom center;
-  }
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
 }
 
-@keyframes pinJump {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
-@keyframes pin-ring-pulse {
-  0% {
-    transform: translate(-50%, -50%) scale(0.25);
-    opacity: 0.85;
-  }
-  70% {
-    transform: translate(-50%, -50%) scale(3.2);
-    opacity: 0.25;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(4);
-    opacity: 0;
-  }
+@keyframes fadeInUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes drawLocationPin {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes borderShine {
-  0% {
-    background-position: 100% 0;
-  }
-  50% {
-    background-position: 0% 0;
-  }
-  100% {
-    background-position: 100% 0;
-  }
-}
-
-
-
-// =========================================
-// SOFT & SMOOTH FULL SCREEN MAP DIALOG
-// Center → Full Screen Animation
-// =========================================
-
-.MuiDialog-root.fullscreen-map-dialog {
-  .MuiBackdrop-root {
-    background: rgba(0, 0, 0, 0.45);
-    opacity: 1;
-    transition: opacity 0.5s ease;
-  }
-
-  .MuiDialog-container {
-    padding: 0;
-    overflow: hidden;
-  }
-
-  .MuiDialog-paper {
-    margin: 0;
-    width: 80vw;
-    height: 80vh;
-    max-width: none;
-    max-height: none;
-    border-radius: 24px;
-    overflow: hidden;
-    transform: scale(0.08) translateY(20px);
-    transform-origin: center center;
-    opacity: 0;
-    animation: mapDialogOpen 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    will-change: transform, opacity, width, height, border-radius;
-    backface-visibility: hidden;
-  }
-
-  // Fullscreen final state
-  .MuiDialog-paperFullScreen {
-    width: 100vw !important;
-    height: 100vh !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    border-radius: 0 !important;
-  }
-}
-
-// =========================================
-// SOFT & SMOOTH DIALOG OPEN ANIMATION
-// =========================================
-@keyframes mapDialogOpen {
-  0% {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    transform: scale(0.15) translateY(30px);
-    opacity: 0;
-  }
-  25% {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    transform: scale(0.3) translateY(10px);
-    opacity: 0.6;
-  }
-  45% {
-    width: 40vw;
-    height: 40vh;
-    border-radius: 20px;
-    transform: scale(0.65) translateY(0px);
-    opacity: 0.9;
-  }
-  70% {
-    width: 70vw;
-    height: 70vh;
-    border-radius: 16px;
-    transform: scale(0.92);
-    opacity: 1;
-  }
-  85% {
-    width: 85vw;
-    height: 85vh;
-    border-radius: 8px;
-    transform: scale(0.97);
-  }
-  100% {
-    width: 100vw;
-    height: 100vh;
-    border-radius: 0;
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-// =========================================
-// MAP CONTAINERS
-// =========================================
+// ============ MAIN CONTAINER ============
 .mumbai-map-fullscreen {
   width: 100%;
   height: 100vh;
   position: relative;
   overflow: hidden;
+  background: #0A0A0F;
 
   > div {
     width: 100% !important;
@@ -195,71 +53,31 @@
   }
 }
 
-.mumbai-map-fullscreen .leaflet-container {
-  width: 100% !important;
-  height: 100% !important;
-  border-radius: 0 !important;
-}
-
-// Close button floating
-.fullscreen-close-btn {
-  position: absolute !important;
-  top: 20px !important;
-  right: 20px !important;
-  z-index: 1000 !important;
-  width: 48px !important;
-  height: 48px !important;
-  border-radius: 50% !important;
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15) !important;
-  transition: all 0.25s ease !important;
-  animation: closeBtnFadeIn 0.5s ease 0.5s both;
-
-  &:hover {
-    background-color: #ffffff !important;
-    transform: scale(1.05) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
-  }
-}
-
-@keyframes closeBtnFadeIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-// ============ MAIN SECTION ============
-.mumbai-map-section {
-  width: 100%;
-  position: relative;
-  z-index: 0;
-}
-
+// ============ MAP CONTAINER ============
 .mumbai-map-container {
   position: relative;
   width: 100%;
+  height: 100vh;
 }
 
 .mumbai-leaflet-map {
   width: 100%;
-  height: calc(100dvh - 80px);
-  min-height: 500px;
-  border-radius: 8px;
+  height: 100%;
+  border-radius: 0;
   overflow: hidden;
 }
 
-.sample-data-badge {
-  background: #f59e0b;
-  color: white;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  margin-right: 10px;
+// ============ MAP STYLES ============
+.leaflet-container {
+  background: #0A0A0F !important;
+
+  .leaflet-tile-pane {
+    filter: saturate(1.2) contrast(1.1) brightness(0.95);
+  }
+
+  .leaflet-control-attribution {
+    display: none !important;
+  }
 }
 
 // ============ LOADING & ERROR STATES ============
@@ -272,74 +90,78 @@
   height: 100%;
   min-height: 400px;
   text-align: center;
-}
+  background: linear-gradient(135deg, #0A0A0F 0%, #1A1A2E 100%);
+  color: white;
 
-.mumbai-map-loading {
   .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #FF4D00;
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255, 107, 0, 0.2);
+    border-top: 3px solid #FF6B00;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-}
-
-// ============ PROGRESS BAR ============
-.progress-bar {
-  width: 80%;
-  max-width: 300px;
-  height: 6px;
-  background: #e0e0e0;
-  border-radius: 3px;
-  margin: 15px auto 0;
-  position: relative;
-  overflow: hidden;
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #FFD600, #FF4D00);
-    border-radius: 3px;
-    transition: width 0.3s ease;
+    animation: spin 0.8s linear infinite;
   }
 
-  .progress-text {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    color: #7f8c8d;
+  p {
+    margin-top: 20px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  button {
+    margin-top: 20px;
+    padding: 12px 32px;
+    background: linear-gradient(135deg, #FF6B00, #FF4500);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 24px rgba(255, 107, 0, 0.4);
+    }
   }
 }
 
 // ============ MAP CONTROLS ============
-.map-location-badge {
+.map-controls {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1000;
+  display: flex;
+  gap: 12px;
+  align-items: center;
 
-  .mumbai-map-reset {
-    padding: 8px 16px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
+  .map-reset-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: #1A1A2E;
+    font-size: 13px;
     font-weight: 600;
-    color: #2c3e50;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 
     &:hover {
-      background: #f8f9fa;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      background: #ffffff;
     }
 
-    &:active {
-      transform: translateY(0);
+    svg {
+      flex-shrink: 0;
     }
   }
 }
@@ -348,11 +170,18 @@
 .liaison-pin-icon {
   cursor: pointer;
   display: block;
-  width: 42px;
-  height: 52px;
   position: relative;
   background: transparent !important;
   border: none !important;
+  transition: transform 0.2s ease;
+
+  &.active {
+    z-index: 999;
+  }
+
+  &.hovered {
+    z-index: 500;
+  }
 }
 
 .liaison-pin-wrapper {
@@ -366,447 +195,367 @@
 
 .custom-pin {
   position: relative;
-  width: 42px;
-  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
   cursor: pointer;
   transform-origin: bottom center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 80%;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 1px solid var(--status-color, #f97316);
-    transform: translate(-50%, -50%) scale(0.25);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
+  .location-pin {
+    display: block;
+    transition: all 0.3s ease;
+
+    .pin-outline {
+      transition: stroke-width 0.3s ease;
+    }
+  }
+
+  &.is-hovered {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 20px rgba(255, 107, 0, 0.3));
   }
 
   &.is-active {
-    transform: scale(1.15);
-    filter: drop-shadow(0 4px 20px rgba(255, 77, 0, 0.4));
+    transform: scale(1.2);
+    filter: drop-shadow(0 8px 40px rgba(255, 107, 0, 0.5));
+    z-index: 999;
 
     &::before {
-      animation: pin-ring-pulse 1.8s ease-out infinite;
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255, 107, 0, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0.5);
+      animation: pulse-ring 1.5s ease-out infinite;
+      pointer-events: none;
     }
-
-    &::after {
-      animation: pin-ring-pulse 1.8s ease-out 0.9s infinite;
-    }
-  }
-
-  .location-pin {
-    width: 42px;
-    height: 52px;
-    display: block;
-    transition: all 0.3s ease;
-  }
-
-  .pin-outline {
-    stroke: var(--stroke-color, #ff6b00);
-    stroke-width: 5;
-    stroke-linejoin: round;
-    stroke-linecap: round;
-    stroke-dasharray: 1200;
-    stroke-dashoffset: 1200;
-    animation: drawLocationPin 1.8s ease-out forwards;
-  }
-
-  &.is-active .location-pin {
-    animation: none;
   }
 }
 
 .pin-status-dot {
   display: none;
-  position: absolute;
-  top: 2px;
-  right: 0px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid white;
-  z-index: 2;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-// ============ PROJECT INFO CARD ============
-.project-info-card {
+// ============ PROJECT DETAIL PANEL ============
+.project-detail-panel {
   position: absolute;
-  bottom: 13rem;
-  left: 50%;
-  transform: translateX(-50%) scale(0.3);
-  transform-origin: bottom center;
-  background: white;
-  border: 2px solid #FF4D00;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  max-width: 400px;
-  width: 90%;
+  top: 0;
+  left: 0;
+  width: 420px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 4px 0 40px rgba(0, 0, 0, 0.15);
   z-index: 2000;
-  opacity: 0;
-  pointer-events: none;
-  overflow: visible;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow-y: auto;
+  padding: 32px 28px;
+  animation: slideInLeft 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 
-  &.is-visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(-50%) scale(1);
-    animation: growFromPin 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  &::-webkit-scrollbar {
+    width: 4px;
   }
 
-  &.is-visible.closing {
-    animation: shrinkToPin 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
 
-  &::before {
-    content: "";
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 107, 0, 0.3);
+    border-radius: 2px;
+  }
+
+  .panel-close-btn {
     position: absolute;
-    inset: -2px;
-    border-radius: inherit;
-    padding: 2px;
-    background: linear-gradient(30deg,
-        #ff5a00 0%,
-        #ff5a00 35%,
-        #ffd9c2 50%,
-        #ff5a00 65%,
-        #ff5a00 100%);
-    background-size: 250% 100%;
-    animation: borderShine 3s ease-in-out infinite;
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  .project-card-arrow-down {
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 14px solid #FF4D00;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-    opacity: 0;
-    transition: opacity 0.3s ease 0.3s;
-    display: none;
-  }
-
-  &.is-visible .project-card-arrow-down {
-    opacity: 0;
-  }
-
-  .project-card-header {
-    position: relative;
-    border-radius: 12px 12px 0 0;
-    overflow: hidden;
-  }
-
-  .project-card-image {
-    width: 100%;
-    height: 200px;
-    background-size: cover;
-    background-position: center;
-    background-color: #f5f5f5;
-    transition: transform 0.3s ease;
-  }
-
-  .project-card-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.06);
     border: none;
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    font-size: 22px;
+    color: #1A1A2E;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
-    z-index: 1;
+    transition: all 0.2s ease;
 
     &:hover {
-      background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+      background: rgba(255, 107, 0, 0.1);
+      transform: rotate(90deg);
     }
   }
 
-  .project-card-content {
-    padding: 20px;
-    background: linear-gradient(180deg, #ffffff 0%, #FFF4E6 100%);
-    border-radius: 0 0 12px 12px;
-    border-top: 3px solid transparent;
-    border-image: linear-gradient(90deg, #FFD600, #FF4D00);
-    border-image-slice: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
+  .panel-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
 
-    .project-client-name {
-      margin: 0 0 6px 0;
-      font-size: 22px;
-      font-weight: 700;
-      color: #2c3e50;
+  .panel-image-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 8px;
+
+    .panel-image {
+      width: 100%;
+      height: 280px;
+      background-size: cover;
+      background-position: center;
+      background-color: #f5f5f5;
+      transition: transform 0.4s ease;
+
+      &:hover {
+        transform: scale(1.02);
+      }
     }
 
-    .project-location {
-      margin: 0;
-      color: #2c3e50;
-      font-size: 14px;
-    }
-
-    .project-location-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .project-category {
+    .panel-image-overlay {
       position: absolute;
-      top: 5%;
-      margin: 5px 0;
-      color: white;
-      font-size: 14px;
-      padding: 2px 8px;
-      border-radius: 12px;
-      background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      .panel-status-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(8px);
+        background: rgba(255, 107, 0, 0.9);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+
+  .panel-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .panel-client-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1A1A2E;
+      margin: 0;
+      line-height: 1.2;
     }
 
-    .project-status {
+    .panel-location {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 10px;
-      justify-content: flex-end;
-
-      .status-indicator {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-      }
-
-      .status-text {
-        font-size: 13px;
-        font-weight: 600;
-        color: #2c3e50;
-      }
-    }
-
-    .project-completion-date {
-      margin: 0 0 10px 0;
-      color: #2c3e50;
-      font-size: 13px;
-      text-align: right;
+      color: #4A4A6A;
+      font-size: 15px;
 
       svg {
-        font-size: 12px;
-        width: 16px;
-        height: 16px;
+        flex-shrink: 0;
+        color: #FF6B00;
       }
     }
 
-    .learnmore {
-      font-size: 0.9rem;
-      font-weight: 600;
+    .panel-category {
+      .category-tag {
+        display: inline-block;
+        padding: 4px 14px;
+        background: linear-gradient(135deg, rgba(255, 107, 0, 0.1), rgba(255, 183, 0, 0.1));
+        border: 1px solid rgba(255, 107, 0, 0.2);
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #FF6B00;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+    }
+
+    .panel-date {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      padding: 0;
+      gap: 8px;
+      color: #6A6A8A;
+      font-size: 14px;
+
+      svg {
+        flex-shrink: 0;
+        color: #FF6B00;
+      }
     }
 
-    .tooltip-wrapper {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
+    .panel-description {
+      margin-top: 4px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+
+      p {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #4A4A6A;
+        margin: 0;
+      }
     }
 
-    .tooltip-trigger {
-      width: 24px;
-      height: 24px;
+    .panel-learn-more {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      padding: 0;
-      border: 0;
-      border-radius: 50%;
-      background: #222;
-      color: #fff;
-      font-size: 13px;
+      gap: 8px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #FF6B00, #FF4500);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition:
-        background 0.2s ease,
-        transform 0.2s ease;
+      transition: all 0.3s ease;
+      align-self: flex-start;
+      margin-top: 4px;
 
       &:hover {
-        background: #ff6004;
-        transform: scale(1.08);
+        transform: translateX(4px);
+        box-shadow: 0 8px 24px rgba(255, 107, 0, 0.4);
       }
 
-      &:focus-visible {
-        outline: 2px solid #ff6004;
-        outline-offset: 2px;
+      svg {
+        transition: transform 0.3s ease;
       }
-    }
 
-    .custom-tooltip {
-      position: absolute;
-      bottom: calc(100% + 10px);
-      left: 50%;
-      transform: translateX(-50%);
-      min-width: 140px;
-      max-width: 220px;
-      padding: 8px 12px;
-      border-radius: 6px;
-      background: #222;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 400;
-      line-height: 1.4;
-      text-align: center;
-      white-space: normal;
-      z-index: 9999;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
-
-      &::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border-width: 5px;
-        border-style: solid;
-        border-color:
-          #222 transparent transparent transparent;
+      &:hover svg {
+        transform: translateX(4px);
       }
     }
+  }
+}
 
-    .project-card-zone {
-      display: inline-block;
-      background: linear-gradient(90deg, #FFD600, #FF4D00);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 10px;
+// ============ HOVER TOOLTIP ============
+.hover-tooltip {
+  position: absolute;
+  z-index: 1500;
+  pointer-events: none;
+
+  .tooltip-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+
+    .tooltip-name {
+      font-size: 14px;
       font-weight: 600;
+      color: #ffffff;
     }
 
-    .project-card-coordinates {
-      display: none;
-      font-size: 12px;
-      color: #95a5a6;
-      font-family: monospace;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255, 77, 0, 0.2);
+    .tooltip-category {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      padding: 2px 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+    }
+
+    .tooltip-status {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: white;
     }
   }
 }
 
-// ============ TILE STYLES ============
-.leaflet-tile-pane {
-  filter: saturate(1.4) hue-rotate(-10deg);
+// ============ RESPONSIVE ============
+@media (max-width: 1024px) {
+  .project-detail-panel {
+    width: 380px;
+    padding: 24px 20px;
+
+    .panel-image-wrapper .panel-image {
+      height: 220px;
+    }
+
+    .panel-body .panel-client-name {
+      font-size: 24px;
+    }
+  }
 }
 
-.leaflet-control-attribution {
-  display: none !important;
-}
-
-// ============ MOBILE RESPONSIVE ============
 @media (max-width: 768px) {
-  .MuiDialog-root.fullscreen-map-dialog {
-    .MuiDialog-paper {
-      animation-duration: 0.6s;
+  .project-detail-panel {
+    width: 100%;
+    height: 60%;
+    bottom: 0;
+    top: auto;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px 24px 0 0;
+    animation: fadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    padding: 20px 16px;
+
+    .panel-image-wrapper .panel-image {
+      height: 180px;
     }
 
-    @keyframes mapDialogOpen {
-      0% {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        transform: scale(0.15) translateY(20px);
-        opacity: 0;
-      }
-      30% {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        transform: scale(0.3) translateY(5px);
-        opacity: 0.7;
-      }
-      50% {
-        width: 65vw;
-        height: 65vh;
-        border-radius: 16px;
-        transform: scale(0.7);
-        opacity: 0.9;
-      }
-      75% {
-        width: 80vw;
-        height: 80vh;
-        border-radius: 10px;
-        transform: scale(0.92);
-      }
-      100% {
-        width: 100vw;
-        height: 100vh;
-        border-radius: 0;
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .MuiBackdrop-root {
-      transition: opacity 0.4s ease;
+    .panel-body .panel-client-name {
+      font-size: 22px;
     }
   }
 
-  .project-info-card {
-    max-width: 100%;
-    bottom: 50px;
-    border-radius: 8px;
-    width: calc(100% - 20px);
-
-    .project-card-image {
-      height: 150px;
+  .map-controls {
+    bottom: 20px;
+    
+    .map-reset-btn {
+      padding: 8px 16px;
+      font-size: 12px;
     }
+  }
 
-    .project-card-content {
-      padding: 15px;
-
-      .project-client-name {
-        font-size: 18px;
-      }
+  .hover-tooltip .tooltip-content {
+    padding: 6px 12px;
+    
+    .tooltip-name {
+      font-size: 12px;
+    }
+    
+    .tooltip-category {
+      display: none;
     }
   }
 }
 
-.leaflet-control-attribution {
-  display: none !important;
+@media (max-width: 480px) {
+  .project-detail-panel {
+    height: 55%;
+    padding: 16px 14px;
+
+    .panel-image-wrapper .panel-image {
+      height: 140px;
+    }
+
+    .panel-body .panel-client-name {
+      font-size: 20px;
+    }
+  }
 }
