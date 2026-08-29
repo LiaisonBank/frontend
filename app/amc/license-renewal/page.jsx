@@ -39,7 +39,13 @@ export const metadata = {
     "Hospital fire safety solutions",
     "Hotel licensing services",
     "Commercial property maintenance",
-    "Restaurant AMC services"
+    "Restaurant AMC services",
+    "Healthcare regulatory compliance",
+    "Industrial facility management",
+    "Multi-specialty hospital safety",
+    "Shopping mall fire protection",
+    "Factory license compliance"
+
   ],
 
   alternates: {

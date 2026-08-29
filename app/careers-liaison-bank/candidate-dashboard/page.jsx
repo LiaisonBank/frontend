@@ -717,57 +717,100 @@ const handleLogout = () => {
     // ============================================================
     // HANDLE APPLY
     // ============================================================
-    const handleApply = (job) => {
-        // console.log('🔄 handleApply called for job:', job);
+const handleApply = (job) => {
+    // console.log('🔄 handleApply called for job:', job);
 
-        if (job.has_taken_exam) {
-            const examResult = job.exam_result;
-            let message = '❌ You have already taken the exam for this position.';
+    // Check if user has already taken the exam
+    if (job.has_taken_exam) {
+        const examResult = job.exam_result;
+        let message = '❌ You have already taken the exam for this position.';
 
-            if (examResult) {
-                const status = examResult.status || examResult.status_display || examResult.result;
-                const score = examResult.score || examResult.percentage || examResult.marks_obtained || 'N/A';
+        if (examResult) {
+            const status = examResult.status || examResult.status_display || examResult.result;
+            const score = examResult.score || examResult.percentage || examResult.marks_obtained || 'N/A';
 
-                if (status === 'Pass' || status === 'pass' || status === 'passed' || status === 'PASS') {
-                    message = `✅ You have already passed the exam for this position with a score of ${score}%. You are not eligible to take it again.`;
-                } else {
-                    message = `❌ You have already taken the exam for this position with a score of ${score}%. You are not eligible to take it again.`;
-                }
+            if (status === 'Pass' || status === 'pass' || status === 'passed' || status === 'PASS') {
+                message = `✅ You have already passed the exam for this position with a score of ${score}%. You are not eligible to take it again.`;
+            } else {
+                message = `❌ You have already taken the exam for this position with a score of ${score}%. You are not eligible to take it again.`;
             }
-
-            showNotification(message, 'warning');
-            return;
         }
 
-        if (job.is_eligible === false) {
-            showNotification('⚠️ This position is not available for application at this time.', 'error');
-            return;
-        }
+        showNotification(message, 'warning');
+        return;
+    }
 
-        if (!user || !user.id) {
-            showNotification('⚠️ Please log in to apply for this position.', 'error');
-            return;
-        }
+    // Check if job is eligible
+    if (job.is_eligible === false) {
+        showNotification('⚠️ This position is not available for application at this time.', 'error');
+        return;
+    }
 
-        // console.log('✅ All validations passed. Opening exam form for job:', job.title);
+    // Check if user is logged in
+    if (!user || !user.id) {
+        showNotification('⚠️ Please log in to apply for this position.', 'error');
+        return;
+    }
 
-        const jobData = {
-            ...job,
-            job_title: job.title,
-            title: job.title,
-            department: job.department,
-            designation: job.title,
-            custom_department: job.department,
-            original_data: job.original_data || job,
-            vacancy_id: job.id || job.name,
-            has_taken_exam: job.has_taken_exam || false,
-            exam_result: job.exam_result || null
-        };
+    // ============================================================
+    // PROFILE COMPLETENESS CHECK - ADD THIS SECTION
+    // ============================================================
+    const requiredProfileFields = [
+        { key: 'full_name', label: 'Full Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'phone', label: 'Phone Number' },
+        { key: 'current_designation', label: 'Current Designation' },
+        { key: 'total_experience', label: 'Total Experience' },
+        { key: 'highest_qualification', label: 'Highest Qualification' },
+        { key: 'skills', label: 'Skills' }
+    ];
 
-        setSelectedJob(jobData);
-        setShowExamForm(true);
+    const missingFields = requiredProfileFields.filter(field => {
+        const value = user[field.key];
+        return !value || value === '' || value === null || value === undefined;
+    });
+
+    if (missingFields.length > 0) {
+        const fieldNames = missingFields.map(f => f.label).join(', ');
+        const message = `⚠️ Please complete your profile before applying. Missing: ${fieldNames}`;
+        showNotification(message, 'error', 8000);
+        
+        // Optionally, switch to profile tab to help user complete it
+        setActiveTab('profile');
+        return;
+    }
+
+    // Optional: Check if resume is uploaded
+    if (!user.resume) {
+        showNotification('⚠️ Please upload your resume before applying.', 'error', 5000);
+        setActiveTab('profile');
+        setIsEditing(true); // Open edit mode so user can upload resume
+        return;
+    }
+
+    // Optional: Check for minimum experience requirements for the specific job
+    // This would require parsing the job requirements
+    // Example: if job has experience requirement, check if candidate meets it
+    // This is a more advanced check you can add later
+
+    // console.log('✅ All validations passed. Opening exam form for job:', job.title);
+
+    const jobData = {
+        ...job,
+        job_title: job.title,
+        title: job.title,
+        department: job.department,
+        designation: job.title,
+        custom_department: job.department,
+        original_data: job.original_data || job,
+        vacancy_id: job.id || job.name,
+        has_taken_exam: job.has_taken_exam || false,
+        exam_result: job.exam_result || null
     };
 
+    setSelectedJob(jobData);
+    setShowExamForm(true);
+};
     // ============================================================
     // HANDLE EXAM FORM CLOSE
     // ============================================================

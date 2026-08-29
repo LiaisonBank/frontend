@@ -1,7 +1,19 @@
 // ==========================================
 // Experience Popup
 // ==========================================
+/* Add to your global CSS or component styles */
+.fullscreen-map-dialog .MuiDialog-paper {
+  margin: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
 
+/* Prevent body scroll during transition */
+body.no-scroll {
+  overflow: hidden !important;
+  position: fixed;
+  width: 100%;
+}
 .experience-popup {
   position: fixed;
   inset: 0;

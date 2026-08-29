@@ -44,6 +44,35 @@ const Toast = ({ message, type, onClose }) => {
   );
 };
 
+// ============================================================
+// CONFIRMATION DIALOG COMPONENT - ADD THIS
+// ============================================================
+const ConfirmationDialog = ({ isOpen, onClose, onConfirm, title, message, confirmText, cancelText }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="confirmation-overlay">
+      <div className="confirmation-modal">
+        <div className="confirmation-header">
+          <AlertCircle size={28} className="confirmation-icon" />
+          <h3>{title || 'Confirm Action'}</h3>
+        </div>
+        <div className="confirmation-body">
+          <p>{message || 'Are you sure you want to proceed?'}</p>
+        </div>
+        <div className="confirmation-footer">
+          <button className="btn-confirm-cancel" onClick={onClose}>
+            {cancelText || 'Cancel'}
+          </button>
+          <button className="btn-confirm-submit" onClick={onConfirm}>
+            {confirmText || 'Confirm'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function CandidateExamForm({ 
   isOpen, 
   onClose, 
@@ -109,7 +138,13 @@ export default function CandidateExamForm({
   const [alreadyTakenExam, setAlreadyTakenExam] = useState(false);
   const [examIdFromApi, setExamIdFromApi] = useState('');
   const [apiResponseMessage, setApiResponseMessage] = useState('');
-  const [showErrorState, setShowErrorState] = useState(false); // New state for error display
+  const [showErrorState, setShowErrorState] = useState(false);
+  
+  // ============================================================
+  // CONFIRMATION DIALOG STATE - ADD THIS
+  // ============================================================
+  const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   // Show toast notification
   const showToast = (message, type = 'error') => {
@@ -369,7 +404,6 @@ export default function CandidateExamForm({
         setApiResponseMessage(errorMsg);
         setShowErrorState(true);
         showToast(errorMsg, 'error');
-        // Show error state in modal
         setShowExamNotAvailable(true);
       }
       
@@ -400,7 +434,6 @@ export default function CandidateExamForm({
       const data = await response.json();
       console.log('📥 API Response:', data);
 
-      // Check if the response contains a message
       if (data && data.message) {
         setApiResponseMessage(data.message);
         
@@ -429,9 +462,6 @@ export default function CandidateExamForm({
     }
   };
 
- 
- 
-
   const handleAnswerSelect = (questionIndex, answer) => {
     setAnswers(prev => ({
       ...prev,
@@ -439,165 +469,208 @@ export default function CandidateExamForm({
     }));
   };
 
+  // ============================================================
+  // HANDLE EXAM SUBMIT - UPDATED
+  // ============================================================
   const handleExamSubmit = async () => {
-  setLoading(true);
-  setError(null);
-  setApiResponseMessage('');
+    setLoading(true);
+    setError(null);
+    setApiResponseMessage('');
 
-  try {
-    // Calculate score with a maximum cap of 90%
-    const totalQuestions = examQuestions.length;
-    let correctAnswers = 0;
-    
-    examQuestions.forEach((q, index) => {
-      const selectedAnswer = answers[index] || '';
-      const correctAnswer = q.correct_answer || '';
+    try {
+      const totalQuestions = examQuestions.length;
+      let correctAnswers = 0;
       
-      if (selectedAnswer.trim() === correctAnswer.trim()) {
-        correctAnswers++;
+      examQuestions.forEach((q, index) => {
+        const selectedAnswer = answers[index] || '';
+        const correctAnswer = q.correct_answer || '';
+        
+        if (selectedAnswer.trim() === correctAnswer.trim()) {
+          correctAnswers++;
+        }
+      });
+      
+      const attemptedQuestions = Object.keys(answers).length;
+      const wrongAnswers = attemptedQuestions - correctAnswers;
+      
+      let rawScore = Math.round((correctAnswers / totalQuestions) * 100);
+      const MAX_SCORE = 90;
+      let score = Math.min(rawScore, MAX_SCORE);
+      
+      if (score === MAX_SCORE) {
+        const reduction = Math.floor(Math.random() * 5) + 1;
+        score = Math.max(85, score - reduction);
       }
-    });
-    
-    const attemptedQuestions = Object.keys(answers).length;
-    const wrongAnswers = attemptedQuestions - correctAnswers;
-    
-    // Calculate raw score
-    let rawScore = Math.round((correctAnswers / totalQuestions) * 100);
-    
-    // Cap the score at a maximum of 90% (never allow 100%)
-    // This ensures even perfect answers result in 90% or less
-    const MAX_SCORE = 90;
-    let score = Math.min(rawScore, MAX_SCORE);
-    
-    // Optional: Add slight randomization to avoid pattern detection
-    // This creates a small variance but keeps score below 90%
-    if (score === MAX_SCORE) {
-      // Randomly reduce by 1-5 percentage points
-      const reduction = Math.floor(Math.random() * 5) + 1;
-      score = Math.max(85, score - reduction);
-    }
-    
-    const passed = score >= 60;
-
-    // Rest of the code remains the same...
-    // Get the vacancy ID from jobData
-    const vacancyId = jobData?.vacancy_id || jobData?.id || jobData?.name || '2';
-    const examId = examIdFromApi || jobData?.exam_id || jobData?.name || jobData?.id || '';
-    const candidateIdInt = parseInt(candidateId || 1);
-
-    console.log('📋 Job Data:', jobData);
-    console.log('📋 Using vacancy_id:', vacancyId);
-    console.log('📋 Using exam_id (final):', examId);
-    console.log('📋 Using candidate_id:', candidateIdInt);
-
-    // Prepare exam result data with correct types
-    const examResultData = {
-      candidate_name: formData.full_name || submittedData?.full_name || 'Unknown Candidate',
-      candidate_id: candidateIdInt,
-      exam_id: String(examId),
-      vacancy_id: String(vacancyId),
-      total_questions: totalQuestions,
-      attempted_questions: attemptedQuestions,
-      correct_answers: correctAnswers,
-      wrong_answers: wrongAnswers,
-      score: score,
-      percentage: score,
-      status: passed ? "Pass" : "Fail",
-      started_at: new Date().toISOString(),
-      completed_at: new Date().toISOString()
-    };
-
-    console.log('📤 Submitting exam result:', examResultData);
-
-    // Submit exam result to API
-    const result = await submitExamResultToAPI(examResultData);
-    
-    if (!result.success) {
-      const errorMessage = result.message || 'Failed to submit exam';
-      console.log('🔴 API Error:', errorMessage);
       
+      const passed = score >= 60;
+
+      const vacancyId = jobData?.vacancy_id || jobData?.id || jobData?.name || '2';
+      const examId = examIdFromApi || jobData?.exam_id || jobData?.name || jobData?.id || '';
+      const candidateIdInt = parseInt(candidateId || 1);
+
+      console.log('📋 Job Data:', jobData);
+      console.log('📋 Using vacancy_id:', vacancyId);
+      console.log('📋 Using exam_id (final):', examId);
+      console.log('📋 Using candidate_id:', candidateIdInt);
+
+      const examResultData = {
+        candidate_name: formData.full_name || submittedData?.full_name || 'Unknown Candidate',
+        candidate_id: candidateIdInt,
+        exam_id: String(examId),
+        vacancy_id: String(vacancyId),
+        total_questions: totalQuestions,
+        attempted_questions: attemptedQuestions,
+        correct_answers: correctAnswers,
+        wrong_answers: wrongAnswers,
+        score: score,
+        percentage: score,
+        status: passed ? "Pass" : "Fail",
+        started_at: new Date().toISOString(),
+        completed_at: new Date().toISOString()
+      };
+
+      console.log('📤 Submitting exam result:', examResultData);
+
+      const result = await submitExamResultToAPI(examResultData);
+      
+      if (!result.success) {
+        const errorMessage = result.message || 'Failed to submit exam';
+        console.log('🔴 API Error:', errorMessage);
+        
+        setError(errorMessage);
+        setApiResponseMessage(errorMessage);
+        showToast(errorMessage, 'error');
+        
+        if (errorMessage.includes('already exists') || errorMessage.includes('already taken')) {
+          const userFriendlyMessage = '⚠️ You have already taken this exam. You are not eligible to take it again.';
+          setShowExamNotAvailable(true);
+          setIsExamAvailable(false);
+          setError(userFriendlyMessage);
+          setApiResponseMessage(userFriendlyMessage);
+          showToast(userFriendlyMessage, 'error');
+          
+          setTimeout(() => {
+            onClose();
+          }, 3000);
+          
+          setLoading(false);
+          return;
+        } else if (errorMessage.includes('not eligible')) {
+          const userFriendlyMessage = '⚠️ You are not eligible for this position based on your previous exam results.';
+          setShowExamNotAvailable(true);
+          setIsExamAvailable(false);
+          setError(userFriendlyMessage);
+          setApiResponseMessage(userFriendlyMessage);
+          showToast(userFriendlyMessage, 'error');
+          
+          setTimeout(() => {
+            onClose();
+          }, 3000);
+          
+          setLoading(false);
+          return;
+        } else {
+          showToast(errorMessage, 'error');
+          setLoading(false);
+          return;
+        }
+      }
+
+      console.log('✅ Exam result submitted successfully:', result.data);
+      
+      setExamSubmitted(true);
+      setExamResult({
+        score,
+        passed,
+        totalQuestions,
+        correctAnswers,
+        wrongAnswers,
+        attemptedQuestions
+      });
+      
+      setSuccess(true);
+      
+      const successMessage = passed ? '🎉 Exam passed successfully!' : 'Exam submitted successfully';
+      showToast(successMessage, 'success');
+      
+      if (onSuccess) { 
+        onSuccess({
+          exam_passed: passed,
+          exam_score: score,
+          exam_results: {
+            total: totalQuestions,
+            correct: correctAnswers,
+            wrong: wrongAnswers,
+            attempted: attemptedQuestions,
+            percentage: score,
+            status: passed ? "Pass" : "Fail"
+          },
+          api_response: result.data,
+          ...examResultData
+        });
+      }
+    } catch (err) {
+      const errorMessage = err.message || 'An unexpected error occurred';
       setError(errorMessage);
       setApiResponseMessage(errorMessage);
       showToast(errorMessage, 'error');
-      
-      if (errorMessage.includes('already exists') || errorMessage.includes('already taken')) {
-        const userFriendlyMessage = '⚠️ You have already taken this exam. You are not eligible to take it again.';
-        setShowExamNotAvailable(true);
-        setIsExamAvailable(false);
-        setError(userFriendlyMessage);
-        setApiResponseMessage(userFriendlyMessage);
-        showToast(userFriendlyMessage, 'error');
-        
-        setTimeout(() => {
-          onClose();
-        }, 3000);
-        
-        setLoading(false);
-        return;
-      } else if (errorMessage.includes('not eligible')) {
-        const userFriendlyMessage = '⚠️ You are not eligible for this position based on your previous exam results.';
-        setShowExamNotAvailable(true);
-        setIsExamAvailable(false);
-        setError(userFriendlyMessage);
-        setApiResponseMessage(userFriendlyMessage);
-        showToast(userFriendlyMessage, 'error');
-        
-        setTimeout(() => {
-          onClose();
-        }, 3000);
-        
-        setLoading(false);
-        return;
-      } else {
-        showToast(errorMessage, 'error');
-        setLoading(false);
-        return;
-      }
+      console.error('❌ Unexpected error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ============================================================
+  // HANDLE CLOSE WITH CONFIRMATION - ADD THIS
+  // ============================================================
+  const handleCloseClick = () => {
+    // If exam hasn't started or already submitted, close directly
+    if (!examStarted || examSubmitted || success) {
+      onClose();
+      return;
     }
 
-    console.log('✅ Exam result submitted successfully:', result.data);
+    // Check if any answers have been selected
+    const hasAnswers = Object.keys(answers).length > 0;
     
-    setExamSubmitted(true);
-    setExamResult({
-      score,
-      passed,
-      totalQuestions,
-      correctAnswers,
-      wrongAnswers,
-      attemptedQuestions
-    });
-    
-    setSuccess(true);
-    
-    const successMessage = passed ? '🎉 Exam passed successfully!' : 'Exam submitted successfully';
-    showToast(successMessage, 'success');
-    
-    if (onSuccess) { 
-      onSuccess({
-        exam_passed: passed,
-        exam_score: score,
-        exam_results: {
-          total: totalQuestions,
-          correct: correctAnswers,
-          wrong: wrongAnswers,
-          attempted: attemptedQuestions,
-          percentage: score,
-          status: passed ? "Pass" : "Fail"
-        },
-        api_response: result.data,
-        ...examResultData
-      });
+    if (hasAnswers) {
+      // Show confirmation dialog if answers exist
+      setShowCloseConfirmation(true);
+    } else {
+      // No answers selected, show warning but allow close
+      showToast('⚠️ You haven\'t answered any questions. Are you sure you want to leave?', 'warning');
+      // Give them a chance to reconsider, but allow close after a brief delay
+      setShowCloseConfirmation(true);
     }
-  } catch (err) {
-    const errorMessage = err.message || 'An unexpected error occurred';
-    setError(errorMessage);
-    setApiResponseMessage(errorMessage);
-    showToast(errorMessage, 'error');
-    console.error('❌ Unexpected error:', err);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+
+  // ============================================================
+  // CONFIRM CLOSE AND SUBMIT - ADD THIS
+  // ============================================================
+  const confirmCloseAndSubmit = async () => {
+    setShowCloseConfirmation(false);
+    setIsClosing(true);
+    
+    try {
+      // Submit the exam before closing
+      await handleExamSubmit();
+      // After submission, close will happen via the success state
+    } catch (err) {
+      console.error('Error submitting exam on close:', err);
+      // Even if error, close after a moment
+      setTimeout(() => {
+        setIsClosing(false);
+        onClose();
+      }, 1000);
+    }
+  };
+
+  // ============================================================
+  // CANCEL CLOSE - ADD THIS
+  // ============================================================
+  const cancelClose = () => {
+    setShowCloseConfirmation(false);
+  };
 
   // Timer effect
   useEffect(() => {
@@ -624,45 +697,57 @@ export default function CandidateExamForm({
   // Render error state when exam is not available
   if (showExamNotAvailable || alreadyTakenExam || showErrorState) {
     return (
-      <div className="exam-modal-overlay" >
-        <div className="exam-modal form-modal">
-          <div className="exam-modal-header">
-            <h3>{error?.includes('already') ? 'Exam Not Available' : 'Error'}</h3>
-            <button onClick={onClose} className="close-btn">
-              <X size={20} />
-            </button>
-          </div>
-          <div className="error-container">
-            <AlertCircle size={48} className="error-icon-large" />
-            <h4>{error?.includes('already') ? 'Cannot Start Exam' : 'Something Went Wrong'}</h4>
-            <p className="error-message-text">{error || apiResponseMessage || 'An error occurred. Please try again.'}</p>
-            {apiResponseMessage && apiResponseMessage !== error && (
-              <p className="api-response-message">Details: {apiResponseMessage}</p>
-            )}
-            <div className="error-actions">
-              <button onClick={onClose} className="btn-primary">
-                Close
+      <>
+        <div className="exam-modal-overlay">
+          <div className="exam-modal form-modal">
+            <div className="exam-modal-header">
+              <h3>{error?.includes('already') ? 'Exam Not Available' : 'Error'}</h3>
+              <button onClick={onClose} className="close-btn">
+                <X size={20} />
               </button>
-              {showErrorState && !error?.includes('already') && (
-                <button onClick={() => {
-                  setShowErrorState(false);
-                  setShowExamNotAvailable(false);
-                  fetchQuestionsAndStartExam();
-                }} className="btn-secondary">
-                  Retry
-                </button>
-              )}
             </div>
+            <div className="error-container">
+              <AlertCircle size={48} className="error-icon-large" />
+              <h4>{error?.includes('already') ? 'Cannot Start Exam' : 'Something Went Wrong'}</h4>
+              <p className="error-message-text">{error || apiResponseMessage || 'An error occurred. Please try again.'}</p>
+              {apiResponseMessage && apiResponseMessage !== error && (
+                <p className="api-response-message">Details: {apiResponseMessage}</p>
+              )}
+              <div className="error-actions">
+                <button onClick={onClose} className="btn-primary">
+                  Close
+                </button>
+                {showErrorState && !error?.includes('already') && (
+                  <button onClick={() => {
+                    setShowErrorState(false);
+                    setShowExamNotAvailable(false);
+                    fetchQuestionsAndStartExam();
+                  }} className="btn-secondary">
+                    Retry
+                  </button>
+                )}
+              </div>
+            </div>
+            {toast && (
+              <Toast 
+                message={toast.message} 
+                type={toast.type} 
+                onClose={() => setToast(null)} 
+              />
+            )}
           </div>
-          {toast && (
-            <Toast 
-              message={toast.message} 
-              type={toast.type} 
-              onClose={() => setToast(null)} 
-            />
-          )}
         </div>
-      </div>
+        {/* Confirmation Dialog */}
+        <ConfirmationDialog
+          isOpen={showCloseConfirmation}
+          onClose={cancelClose}
+          onConfirm={confirmCloseAndSubmit}
+          title="Submit Exam?"
+          message="If you close this window, your exam will be submitted with your current answers. Are you sure you want to proceed?"
+          confirmText="Yes, Submit Exam"
+          cancelText="Continue Exam"
+        />
+      </>
     );
   }
 
@@ -694,160 +779,171 @@ export default function CandidateExamForm({
   }
 
   // Render exam
- // Render exam
-if (examStarted && !examSubmitted) {
-  return (
-    <div className="exam-modal-overlay">
-      <div className="exam-modal">
-        <div className="exam-modal-header">
-          <h3>Technical Assessment - {jobData?.job_title || jobData?.title || 'Position'}</h3>
-          <button onClick={onClose} className="close-btn">
-            <X size={20} />
-          </button>
-        </div>
-        
-        <div className="exam-info-bar">
-          <div className="exam-info-item">
-            <User size={16} />
-            <span>{formData.full_name || 'Candidate'}</span>
-          </div>
-          <div className="exam-info-item">
-            <Mail size={16} />
-            <span>{formData.email || 'Email'}</span>
-          </div>
-          <div className="exam-info-item">
-            <Briefcase size={16} />
-            <span>{jobData?.job_title || jobData?.title || 'Position'}</span>
-          </div>
-        </div>
-        
-        <div className="exam-timer">
-          <span className="timer-label">⏱️ Time Remaining:</span>
-          <span className={`timer-value ${examTimer < 300 ? 'warning' : ''}`}>
-            {formatTime(examTimer)}
-          </span>
-        </div>
-
-        <div className="exam-progress">
-          <div className="progress-bar">
-            <div 
-              className="progress-fill"
-              style={{ width: `${((currentQuestion + 1) / examQuestions.length) * 100}%` }}
-            />
-          </div>
-          <span className="progress-text">
-            Question {currentQuestion + 1} of {examQuestions.length}
-          </span>
-        </div>
-
-        {/* ADDED onWheel handler here */}
-        <div 
-          className="exam-content"
-          onWheel={(e) => {
-            e.stopPropagation();
-            const element = e.currentTarget;
-            if (e.deltaY !== 0) {
-              element.scrollTop += e.deltaY;
-            }
-          }}
-        >
-          {examQuestions.length > 0 && examQuestions[currentQuestion] && (
-            <div className="question-container">
-              <h4 className="question-text">
-                Q{currentQuestion + 1}: {examQuestions[currentQuestion].question}
-              </h4>
-              
-              <div className="options-container">
-                {examQuestions[currentQuestion].options.map((option, idx) => (
-                  <label key={idx} className="option-label">
-                    <input
-                      type="radio"
-                      name={`question_${currentQuestion}`}
-                      value={option}
-                      checked={answers[currentQuestion] === option}
-                      onChange={() => handleAnswerSelect(currentQuestion, option)}
-                      className="option-radio"
-                    />
-                    <span className="option-text">{option}</span>
-                  </label>
-                ))}
+  if (examStarted && !examSubmitted) {
+    return (
+      <>
+        <div className="exam-modal-overlay">
+          <div className="exam-modal">
+            <div className="exam-modal-header">
+              <h3>Technical Assessment - {jobData?.job_title || jobData?.title || 'Position'}</h3>
+              {/* UPDATED: Use handleCloseClick instead of onClose */}
+              <button onClick={handleCloseClick} className="close-btn">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="exam-info-bar">
+              <div className="exam-info-item">
+                <User size={16} />
+                <span>{formData.full_name || 'Candidate'}</span>
+              </div>
+              <div className="exam-info-item">
+                <Mail size={16} />
+                <span>{formData.email || 'Email'}</span>
+              </div>
+              <div className="exam-info-item">
+                <Briefcase size={16} />
+                <span>{jobData?.job_title || jobData?.title || 'Position'}</span>
               </div>
             </div>
-          )}
-        </div>
+            
+            <div className="exam-timer">
+              <span className="timer-label">⏱️ Time Remaining:</span>
+              <span className={`timer-value ${examTimer < 300 ? 'warning' : ''}`}>
+                {formatTime(examTimer)}
+              </span>
+            </div>
 
-        {/* UPDATED navigation with restrictions */}
-        <div className="exam-navigation">
-          <button
-            onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
-            disabled={currentQuestion === 0}
-            className="nav-btn prev"
-          >
-            Previous
-          </button>
-          
-          {currentQuestion === examQuestions.length - 1 ? (
-            <button
-              onClick={handleExamSubmit}
-              disabled={loading || !answers[currentQuestion] || Object.keys(answers).length < examQuestions.length}
-              className="nav-btn submit-exam"
-            >
-              {loading ? <Loader2 className="spinner" /> : 'Submit Exam'}
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                // Only allow navigation if current question is answered
-                if (answers[currentQuestion]) {
-                  setCurrentQuestion(prev => Math.min(examQuestions.length - 1, prev + 1));
-                } else {
-                  showToast('Please answer the current question before proceeding.', 'error');
+            <div className="exam-progress">
+              <div className="progress-bar">
+                <div 
+                  className="progress-fill"
+                  style={{ width: `${((currentQuestion + 1) / examQuestions.length) * 100}%` }}
+                />
+              </div>
+              <span className="progress-text">
+                Question {currentQuestion + 1} of {examQuestions.length}
+              </span>
+            </div>
+
+            <div 
+              className="exam-content"
+              onWheel={(e) => {
+                e.stopPropagation();
+                const element = e.currentTarget;
+                if (e.deltaY !== 0) {
+                  element.scrollTop += e.deltaY;
                 }
               }}
-              disabled={!answers[currentQuestion]}
-              className={`nav-btn next ${!answers[currentQuestion] ? 'disabled' : ''}`}
             >
-              Next
-            </button>
-          )}
+              {examQuestions.length > 0 && examQuestions[currentQuestion] && (
+                <div className="question-container">
+                  <h4 className="question-text">
+                    Q{currentQuestion + 1}: {examQuestions[currentQuestion].question}
+                  </h4>
+                  
+                  <div className="options-container">
+                    {examQuestions[currentQuestion].options.map((option, idx) => (
+                      <label key={idx} className="option-label">
+                        <input
+                          type="radio"
+                          name={`question_${currentQuestion}`}
+                          value={option}
+                          checked={answers[currentQuestion] === option}
+                          onChange={() => handleAnswerSelect(currentQuestion, option)}
+                          className="option-radio"
+                        />
+                        <span className="option-text">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="exam-navigation">
+              <button
+                onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
+                disabled={currentQuestion === 0}
+                className="nav-btn prev"
+              >
+                Previous
+              </button>
+              
+              {currentQuestion === examQuestions.length - 1 ? (
+                <button
+                  onClick={handleExamSubmit}
+                  disabled={loading || !answers[currentQuestion] || Object.keys(answers).length < examQuestions.length}
+                  className="nav-btn submit-exam"
+                >
+                  {loading ? <Loader2 className="spinner" /> : 'Submit Exam'}
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    if (answers[currentQuestion]) {
+                      setCurrentQuestion(prev => Math.min(examQuestions.length - 1, prev + 1));
+                    } else {
+                      showToast('Please answer the current question before proceeding.', 'error');
+                    }
+                  }}
+                  disabled={!answers[currentQuestion]}
+                  className={`nav-btn next ${!answers[currentQuestion] ? 'disabled' : ''}`}
+                >
+                  Next
+                </button>
+              )}
+            </div>
+
+            <div className="exam-questions-status">
+              <div className="status-label">Questions:</div>
+              {examQuestions.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    if (answers[idx] || idx === currentQuestion) {
+                      setCurrentQuestion(idx);
+                    } else {
+                      showToast('Please answer the current question first.', 'error');
+                    }
+                  }}
+                  className={`question-status-btn ${answers[idx] ? 'answered' : ''} ${currentQuestion === idx ? 'active' : ''}`}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+            
+            <div className="exam-footer">
+              <p className="exam-instructions">
+                Please answer all questions. You have {Math.floor(examTimer / 60)} minutes to complete the assessment.
+              </p>
+            </div>
+            {toast && (
+              <Toast 
+                message={toast.message} 
+                type={toast.type} 
+                onClose={() => setToast(null)} 
+              />
+            )}
+          </div>
         </div>
 
-        <div className="exam-questions-status">
-          <div className="status-label">Questions:</div>
-          {examQuestions.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => {
-                // Allow clicking on status buttons only if question is answered
-                if (answers[idx] || idx === currentQuestion) {
-                  setCurrentQuestion(idx);
-                } else {
-                  showToast('Please answer the current question first.', 'error');
-                }
-              }}
-              className={`question-status-btn ${answers[idx] ? 'answered' : ''} ${currentQuestion === idx ? 'active' : ''}`}
-            >
-              {idx + 1}
-            </button>
-          ))}
-        </div>
-        
-        <div className="exam-footer">
-          <p className="exam-instructions">
-            Please answer all questions. You have {Math.floor(examTimer / 60)} minutes to complete the assessment.
-          </p>
-        </div>
-        {toast && (
-          <Toast 
-            message={toast.message} 
-            type={toast.type} 
-            onClose={() => setToast(null)} 
-          />
-        )}
-      </div>
-    </div>
-  );
-}
+        {/* ============================================================
+            CONFIRMATION DIALOG - ADD THIS
+        ============================================================ */}
+        <ConfirmationDialog
+          isOpen={showCloseConfirmation}
+          onClose={cancelClose}
+          onConfirm={confirmCloseAndSubmit}
+          title="⚠️ Submit Exam?"
+          message="If you close this window, your exam will be submitted with your current answers. Are you sure you want to proceed?"
+          confirmText="Yes, Submit Exam"
+          cancelText="Continue Exam"
+        />
+      </>
+    );
+  }
 
   // Render success/result state
   if (success || examSubmitted) {
