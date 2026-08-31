@@ -417,8 +417,8 @@ const ProjectSlidePanel = ({ project, isOpen, onClose }) => {
                 </ul>
               </div>
             )}
-            <div className="panel-contact">
-              <button className="contact-btn">lEARN MORE</button>
+            <div className="panel-contact w-50">
+              <button className="contact-btn">LEARN MORE</button>
             </div>
           </div>
         </div>
