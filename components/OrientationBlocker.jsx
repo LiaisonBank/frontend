@@ -7,7 +7,7 @@ export default function OrientationBlocker({ children }) {
 
     useEffect(() => {
       const checkOrientation = () => {
-      const isMobile = window.innerWidth <= 768;
+      const isMobile = window.innerWidth <= 600;
       const isLandscape = window.innerWidth > window.innerHeight;
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
