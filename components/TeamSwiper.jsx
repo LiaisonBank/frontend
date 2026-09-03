@@ -25,7 +25,6 @@ function TeamCard({ member, onClick }) {
             fill
             className="object-cover object-[50%_10%]"
             unoptimized={true}
-
           />
         </div>
 
@@ -33,7 +32,6 @@ function TeamCard({ member, onClick }) {
           <h4 className="text-xl font-semibold text-gray-900 member-name">
             {member.name}
           </h4>
-
           <p className="text-lg text-center text-gray-500 member-designation">
             {member.designation}
           </p>

@@ -18,6 +18,23 @@ html.lenis {
   overflow: hidden;
 }
 html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+html {
   margin:0;
   padding:0;
   // touch-action: pan-y;
@@ -43,7 +60,14 @@ body {
     font-size: var(--font-size);
     background: var(--background);
 }
+body.completed:has(.MuiDialog-root) {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
 
+body.completed:has(.MuiDialog-root)::-webkit-scrollbar {
+  display: none;
+}
 img{
   max-width: 100%;
 }

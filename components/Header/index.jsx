@@ -15,7 +15,7 @@ import { navLinks } from "@/lib/data/menus";
 import pdfIcon from "@/public/pdf_icon.png";
 
 import NewLauncb from "@/components/NewLaunch";
-import NavText from "@/components/NavReusable/NavText";
+// import NavText from "@/components/NavReusable/NavText";
 
 import { useModal } from "@/context/ModalContext";
 
@@ -370,9 +370,6 @@ useEffect(() => {
                           hasSubmenu
                             ? "has-submenu"
                             : "",
-                          isActive
-                            ? "mega-active"
-                            : "",
                         ]
                           .filter(Boolean)
                           .join(" ")}
@@ -393,14 +390,14 @@ useEffect(() => {
                         "Our Services" ? (
                           <button
                             type="button"
-                            className="nav-link bg-transparent border-0 p-0 cursor-pointer flex items-center gap-1"
+                            className="nav-link bg-transparent border-0 cursor-pointer flex items-center gap-1"
                             aria-haspopup="true"
                             aria-expanded={isActive}
                           >
-                            <NavText
+                            {/* <NavText
                               text={link.name}
-                            />
-
+                            /> */}
+                            {link.name}
                             <ChevronDown
                               size={16}
                               className="nav-arrow"
@@ -410,22 +407,24 @@ useEffect(() => {
                         ) : link.href ? (
                           <button
                             type="button"
-                            className="nav-link bg-transparent border-0 p-0 cursor-pointer"
+                            className="nav-link bg-transparent border-0 cursor-pointer"
                             onClick={() =>
                               handleNavigation(
                                 link.href,
                               )
                             }
                           >
-                            <NavText
+                            {/* <NavText
                               text={link.name}
-                            />
+                            /> */}
+                            {link.name}
                           </button>
                         ) : (
                           <span className="nav-link cursor-pointer flex items-center gap-1">
-                            <NavText
+                            {/* <NavText
                               text={link.name}
-                            />
+                            /> */}
+                            {link.name}
 
                             {hasSubmenu && (
                               <ChevronDown

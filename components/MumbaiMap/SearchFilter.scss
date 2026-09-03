@@ -1,0 +1,417 @@
+// SearchFilter.scss
+
+.search-filter-container {
+  position: absolute;
+  top: 1rem;
+  left: 2rem;
+  // transform: translateX(-50%);
+  // width: 90%;
+  // max-width: 700px;
+  z-index: 10;
+  pointer-events: none;
+
+  >* {
+    pointer-events: auto;
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .projectsearch {
+    width: 100%;
+
+    &:focus {
+      box-shadow: none !important;
+    }
+
+    // Accessibility - focus states
+    &:focus-visible {
+      box-shadow: none;
+      outline: none;
+      // outline: 2px solid #e55a00;
+      outline-offset: 2px;
+    }
+  }
+
+  .css-12tjcea-MuiInputBase-input-MuiOutlinedInput-input:focus {
+    box-shadow: none;
+
+  }
+
+  .css-1inh97s-MuiFormControl-root-MuiTextField-root .MuiOutlinedInput-root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .css-1inh97s-MuiFormControl-root-MuiTextField-root .MuiOutlinedInput-root .MuiInputAdornment-root {
+    margin: 0 !important;
+  }
+
+  // Search input wrapper with animation support
+  .search-wrapper {
+    flex: 0 0 auto;
+    width: 40px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.expanded {
+      flex: 1 1 auto;
+      min-width: 200px;
+      width: 100%;
+    }
+
+    @media (min-width: 600px) {
+      &.expanded {
+        min-width: 300px;
+        max-width: 500px;
+      }
+    }
+  }
+
+  // Search container for flex layout
+  .search-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    flex-wrap: wrap;
+
+    @media (min-width: 600px) {
+      flex-wrap: nowrap;
+    }
+  }
+
+  // Filter section with responsive layout
+  .filter-section {
+    flex: 1 1 auto;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    @media (min-width: 600px) {
+      flex: 1 1 0;
+      min-width: 150px;
+    }
+  }
+
+  .css-1q55ijt-MuiInputBase-input-MuiOutlinedInput-input {
+    &:focus {
+      box-shadow: none;
+    }
+  }
+
+  .filter-chips-wrapper {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    margin-top: 0.5rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    width: 600px;
+    max-width: 600px;
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 4px;
+      border-radius: 10px;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      cursor: pointer;
+      user-select: none;
+
+      span {
+        color: white;
+      }
+
+      button {
+        svg {
+          fill: white;
+        }
+      }
+
+      .MuiChip-filled {
+        background: white;
+        border: 1px solid #f97316;
+
+        .MuiChip-label {
+          color: #f97316;
+        }
+      }
+
+      p.mapmarkcount {
+        font-size: 1rem;
+        color: white;
+      }
+    }
+
+    .filters-content {
+      padding: 0.5rem 1rem;
+      animation: slideDown 0.3s ease forwards;
+    }
+
+    .filter-group {
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    .category-type {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .mapmarkcount {
+      font-size: 0.7rem;
+      color: #6b7280;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    .MuiChip-root {
+      cursor: pointer;
+      transition: all 0.2s ease;
+      height: 24px;
+
+      .MuiChip-label {
+        padding: 0 10px;
+        font-size: 0.7rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Selected project card styles
+  .selected-project-card {
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: #fafafa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  // Smooth transitions for all interactive elements
+  .MuiChip-root,
+  .MuiIconButton-root,
+  .MuiButton-root {
+    transition: all 0.2s ease !important;
+  }
+}
+
+// Animations
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Loading state
+.search-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+// Custom scrollbar for suggestions
+.MuiPaper-root::-webkit-scrollbar {
+  width: 4px;
+}
+
+.MuiPaper-root::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.MuiPaper-root::-webkit-scrollbar-thumb {
+  background: #c1c7cd;
+  border-radius: 4px;
+}
+
+.MuiPaper-root::-webkit-scrollbar-thumb:hover {
+  background: #a8aeb4;
+}
+
+// Filter chips scrollbar
+.filter-chips-wrapper::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.filter-chips-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filter-chips-wrapper::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
+}
+
+.filter-chips-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .search-filter-container {
+    top: 8px;
+    width: 95%;
+    max-width: 100%;
+
+    .filter-chips-wrapper {
+      padding: 6px 12px;
+      max-height: 80vh;
+      overflow-y: auto;
+
+      .filter-bar {
+        padding: 0.4rem 0.8rem;
+
+        p.mapmarkcount {
+          font-size: 0.8rem;
+        }
+      }
+
+      .filters-content {
+        padding: 0.4rem 0.8rem;
+      }
+
+      .filter-group {
+        margin-bottom: 8px !important;
+      }
+
+      .MuiChip-root {
+        height: 20px;
+
+        .MuiChip-label {
+          padding: 0 8px;
+          font-size: 0.65rem;
+        }
+      }
+    }
+
+    .selected-project-card {
+      padding: 12px;
+      margin-top: 12px;
+    }
+  }
+}
+
+// Small mobile devices
+@media (max-width: 480px) {
+  .search-filter-container {
+    top: 4px;
+    width: 98%;
+
+    .filter-chips-wrapper {
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 0.4rem 0.6rem;
+
+        .filter-controls {
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+      }
+    }
+  }
+}
+
+// Desktop enhancements
+@media (min-width: 1024px) {
+  .search-filter-container {
+    // max-width: 800px;
+
+    .filter-chips-wrapper {
+      .filter-bar {
+        padding: 0.6rem 1.2rem;
+      }
+    }
+  }
+}
+
+// Dark mode support (optional)
+@media (prefers-color-scheme: dark) {
+  .search-filter-container {
+    .filter-chips-wrapper {
+      // background: rgba(31, 41, 55, 0.95);
+
+      .filter-bar {
+        background: linear-gradient(135deg, #ea580c, #f97316);
+      }
+
+      .selected-project-card {
+        background-color: #1f2937;
+        border-color: #374151;
+
+        .MuiTypography-root {
+          color: #e5e7eb;
+        }
+      }
+    }
+
+    .MuiPaper-root {
+      background-color: #1f2937;
+      border-color: #374151;
+
+      .MuiListItem-root {
+        color: #e5e7eb;
+
+        &:hover {
+          background-color: #374151;
+        }
+
+        &.Mui-selected {
+          background-color: #374151;
+        }
+      }
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .search-filter-container {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    pointer-events: none;
+
+    .filter-chips-wrapper {
+      background: transparent;
+      backdrop-filter: none;
+      box-shadow: none;
+      border: 1px solid #e5e7eb;
+    }
+  }
+}
+
+// High contrast accessibility
+@media (forced-colors: active) {
+  .search-filter-container {
+    .filter-chips-wrapper {
+      .filter-bar {
+        background: Canvas;
+        border: 2px solid CanvasText;
+      }
+    }
+  }
+}
