@@ -867,9 +867,17 @@ function IntroductoryVideoContent() {
             {/* Terms and Conditions Modal */}
             {showTermsModal && (
                 <div className="modal-overlay" onClick={() => setShowTermsModal(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}onWheel={(e) => {
+                e.stopPropagation();
+ 
+                const element = e.currentTarget;
+ 
+                if (e.deltaY !== 0) {
+                  element.scrollTop += e.deltaY;
+                }
+              }}>
                         <div className="modal-header">
-                            <h2>📋 Terms and Conditions</h2>
+                            <h2>Terms and Conditions</h2>
                             <button className="modal-close" onClick={() => setShowTermsModal(false)}>
                                 <X size={24} />
                             </button>
@@ -1285,10 +1293,10 @@ function IntroductoryVideoContent() {
 
                             {/* Instructions */}
                             <div className="instructions-card">
-                                <h4>📋 Video Instructions</h4>
+                                <h4>Video Instructions</h4>
                                 <div className="instructions-content">
                                     <div className="instruction-section">
-                                        <h5>👔 Professional Appearance:</h5>
+                                        <h5> Professional Appearance:</h5>
                                         <ul>
                                             <li>Wear formal/professional attire</li>
                                             <li>Ensure face is clearly visible</li>
@@ -1297,7 +1305,7 @@ function IntroductoryVideoContent() {
                                         </ul>
                                     </div>
                                     <div className="instruction-section">
-                                        <h5>🎯 What to Include:</h5>
+                                        <h5> What to Include:</h5>
                                         <ul>
                                             <li>Professional introduction of yourself</li>
                                             <li>Current role and key responsibilities</li>
@@ -1307,7 +1315,7 @@ function IntroductoryVideoContent() {
                                         </ul>
                                     </div>
                                     <div className="instruction-section">
-                                        <h5>🎬 Video Quality Tips:</h5>
+                                        <h5>Video Quality Tips:</h5>
                                         <ul>
                                             <li>Good lighting (face well-lit)</li>
                                             <li>Clear audio (minimize background noise)</li>

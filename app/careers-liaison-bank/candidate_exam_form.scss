@@ -474,7 +474,123 @@
     }
   }
 }
+// Confirmation Dialog Styles
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
 
+.confirmation-modal {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 480px;
+  width: 90%;
+  padding: 32px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+  
+  .confirmation-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    
+    .confirmation-icon {
+      color: #f59e0b;
+      flex-shrink: 0;
+    }
+    
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0;
+    }
+  }
+  
+  .confirmation-body {
+    margin-bottom: 24px;
+    
+    p {
+      font-size: 15px;
+      color: #475569;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+  
+  .confirmation-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    
+    button {
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-1px);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
+    
+    .btn-confirm-cancel {
+      background: #f1f5f9;
+      color: #475569;
+      
+      &:hover {
+        background: #e2e8f0;
+      }
+    }
+    
+    .btn-confirm-submit {
+      background: #ef4444;
+      color: #fff;
+      
+      &:hover {
+        background: #dc2626;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .exam-navigation {
   padding: 16px 24px;
   border-top: 1px solid #e5e7eb;
