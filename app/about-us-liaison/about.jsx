@@ -262,12 +262,11 @@ export default function AboutUsLiaisonPage() {
 
         {/* Team */}
         <section className="team-section">
-          <div className="container">
+          <div className="container-fluid">
             <div className="row justify-content-center">
               <div className="col-lg-10">
                 <div className="section-header">
                   <h2 className="section-title">Meet Our Team</h2>
-                 
                 </div>
                 <TeamSwiper />
               </div>

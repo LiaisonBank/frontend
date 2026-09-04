@@ -231,12 +231,12 @@
 
 
         .welcome-header {
-  font-size: 3.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 12px;
-  line-height: 1.2;
-}
+          font-size: 3.5rem;
+          font-weight: 700;
+          color: #ffffff;
+          margin-bottom: 12px;
+          line-height: 1.2;
+        }
 
    
 
@@ -569,6 +569,35 @@
           background: #ffffff;
         }
 
+        .team-card {
+      
+      .member-image{
+        img{
+          transition: all 0.3s ease-out;
+          -webkit-transition: all 0.3s ease-out;
+          // filter:grayscale(1);
+        }
+        &:hover img{
+          // filter:grayscale(0);
+          // transform: scale(1.19);
+          // transition: all 0.5s;
+        }
+      }
+      .member-name {
+        font-size: 1.4rem;
+        background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
+        -webkit-text-fill-color: #0000;
+        background-clip: border-box;
+        -webkit-background-clip: text;
+      }
+      .member-designation {
+         font-size: 1rem;
+           background: linear-gradient(115deg, var(--dep-sub-black-pearl), var(--back-button-color));
+        -webkit-text-fill-color: #0000;
+        background-clip: border-box;
+        -webkit-background-clip: text;
+      }
+    }
         /* Responsive */
         @media (max-width: 992px) {
           .hero-title-full { font-size: 2.8rem; }
