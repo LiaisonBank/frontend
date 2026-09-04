@@ -10,13 +10,13 @@ const slides = [
 //     mobileImage: "/images/home/mobile/Hunan.webp",
 //     category: "Motion",
 //   },
-  {
+  // {
     // title: "PAN-India Equipment Solutions For Construction & Infrastructure Projects",
-    title: "Liaisoning, Licensing & Regulatory Compliance Services",
-    image: "/images/home/Sonali.webp",
-    mobileImage: "/images/home/mobile/Sonali.webp",
-    category: "Design",
-  },
+  //   title: "Liaisoning, Licensing & Regulatory Compliance Services",
+  //   image: "/images/home/Sonali.webp",
+  //   mobileImage: "/images/home/mobile/Sonali.webp",
+  //   category: "Design",
+  // },
   // {
   //   title: "Fire & Safety Systems and Compliance Solutions",
   //   image: "/images/home/Neekuj.webp",

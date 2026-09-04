@@ -15,12 +15,12 @@ const nextConfig = {
         pathname: "/uploads/**",
       },
         // Local development
-    {
-      protocol: "http",
-      hostname: "localhost",
-      port: "8000",
-      pathname: "/uploads/**",
-    },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/uploads/**",
+      },
     ],
   },
 

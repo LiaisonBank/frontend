@@ -16,6 +16,59 @@
   $text-secondary: #24476d;
   $muted-color: #94a3b8;
 
+  // =========================================================
+  // Global Styles (from Global Styles.txt)
+  // =========================================================
+
+  // Body overflow for popup
+  body {
+    overflow: var(--popup-overflow, "");
+  }
+
+  // Stats grid styles
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 2rem;
+    max-width: 100%;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+  }
+
+  .stat-item {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 0.5rem;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 2rem;
+    letter-spacing: 2px;
+  }
 
   // =========================================================
   // Section Title
@@ -88,7 +141,6 @@
     }
   }
 
-
   @keyframes dot-flow {
     0% {
       transform: translateX(-45px);
@@ -98,7 +150,6 @@
       transform: translateX(45px);
     }
   }
-
 
   // =========================================================
   // Main Grid
@@ -117,23 +168,35 @@
       gap: 1.5rem;
     }
   }
-.outline-theme-btn {
-  color: #fe6e00 !important;
-  border-color: #fe6e00 !important;
-  background-color: transparent;
 
-  &:hover {
+  .outline-theme-btn {
     color: #fe6e00 !important;
     border-color: #fe6e00 !important;
-    background-color: rgba(254, 110, 0, 0.08) !important;
-  }
+    background-color: transparent;
+    padding: 12px 36px !important;
+    font-size: 1.1rem !important;
+    text-transform: none !important;
+    transition: all 0.3s ease !important;
 
-  &:active {
-    color: #fe6e00 !important;
-    border-color: #fe6e00 !important;
-    background-color: rgba(254, 110, 0, 0.12) !important;
+    &:hover {
+      color: #fff !important;
+      border-color: #fff !important;
+      background-color: rgba(254, 110, 0, 0.08) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+      color: #fe6e00 !important;
+      border-color: #fe6e00 !important;
+      background-color: rgba(254, 110, 0, 0.12) !important;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   }
-}
 
   // =========================================================
   // Main Table Container
@@ -154,31 +217,134 @@
     // box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
-
   // =========================================================
-  // Filters
+  // Projects Hero Section (combined styles)
   // =========================================================
 
-  .project-filters {
-    display: grid;
+  .projects-hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 80vh;
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    padding: 4rem 1rem;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
 
-    grid-template-columns:
-      minmax(260px, 1fr)
-      200px
-      220px
-      auto;
+    /* * X-axis parallax value. * This value is updated from JavaScript. */
+    --parallax-x: 0px;
 
-    align-items: end;
+    /* * Background image * Use pseudo-element so only the image moves. */
+    &::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: -10%;
+      width: 120%;
+      height: 100%;
+      background-image: url("https://corporategenie.in/wp-content/uploads/2025/01/theme-1311.jpg");
+      background-position: bottom center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      transform: translate3d(var(--parallax-x), 0, 0);
+      will-change: transform;
+      z-index: -2;
+      pointer-events: none;
+    }
 
-    gap: 16px;
+    /* * Blue overlay */
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(13, 34, 82, 0.87);
+      // background-image: url("https://corporategenie.in/wp-content/uploads/2025/02/h-bg-section9.png");
+      background-position: center right;
+      background-repeat: no-repeat;
+      background-size: cover;
+      z-index: -1;
+      pointer-events: none;
+    }
 
-    padding: 20px 20px 14px;
+    /* * Keep hero content above the background and overlay. */
+    >* {
+      position: relative;
+      z-index: 1;
+    }
 
-    background: #ffffff;
+    .elementor-background-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
 
-    border-bottom: 1px solid #edf1f5;
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* * Optional: Respect reduced-motion accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      &::before {
+        transform: none !important;
+      }
+    }
+
+    /* * Mobile */
+    @media (max-width: 768px) {
+      min-height: 50vh;
+
+      &::before {
+        left: -20%;
+        width: 140%;
+      }
+
+      &::after {
+        background-position: center;
+      }
+    }
   }
 
+  // =========================================================
+  // Stats Grid (override for flex layout)
+  // =========================================================
+
+  .stats-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 2rem 0 2.5rem;
+    flex-wrap: wrap;
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .stats-grid {
+      justify-content: center;
+      gap: 3rem;
+    }
+  }
+
+  // =========================================================
+  // Project Filters
+  // =========================================================
 
   .project-search,
   .project-filter {
@@ -243,7 +409,6 @@
     }
   }
 
-
   // =========================================================
   // Clear Filters Button
   // =========================================================
@@ -286,7 +451,6 @@
     }
   }
 
-
   // =========================================================
   // Filter Result Information
   // =========================================================
@@ -314,12 +478,10 @@
     }
   }
 
-
   .filter-active-text {
     font-size: 12px;
     color: #777777;
   }
-
 
   // =========================================================
   // Empty Filter State
@@ -344,7 +506,6 @@
     text-align: center;
   }
 
-
   .project-filter-empty-content {
     h3 {
       margin: 0 0 8px;
@@ -363,70 +524,6 @@
       font-size: 14px;
     }
   }
-
-
-  // =========================================================
-  // Desktop Table Wrapper
-  // =========================================================
-
-  .client-table-wrapper {
-    width: 100%;
-
-    /*
-     * IMPORTANT:
-     * The table itself gets a fixed visible area.
-     * JavaScript moves tbody vertically for the
-     * automatic smooth scrolling.
-     */
-    max-height: 470px;
-
-    overflow-x: auto;
-    overflow-y: hidden;
-
-    position: relative;
-
-    -webkit-overflow-scrolling: touch;
-
-    /*
-     * Smooth horizontal scrolling on touch devices
-     */
-    scroll-behavior: smooth;
-
-    /*
-     * Prevent vertical page scroll while interacting
-     * with horizontal table on touch devices.
-     */
-    touch-action: pan-x;
-  }
-
-
-  // =========================================================
-  // Table Scrollbar
-  // =========================================================
-
-  .client-table-wrapper {
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
-
-    &::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 20px;
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
-  }
-
 
   // =========================================================
   // Desktop Table
@@ -456,7 +553,6 @@
       z-index: 5;
     }
 
-
     .header-row {
       height: 50px;
 
@@ -478,7 +574,6 @@
       }
     }
 
-
     tbody {
       position: relative;
 
@@ -489,7 +584,6 @@
 
       transform: translateZ(0);
     }
-
 
     .client-row {
       height: 40px;
@@ -509,7 +603,6 @@
         background: $hover-bg;
       }
 
-
       td {
         padding: 0 25px;
 
@@ -520,7 +613,6 @@
         vertical-align: middle;
       }
     }
-
 
     // =======================================================
     // Columns
@@ -534,11 +626,9 @@
       color: $text-primary;
     }
 
-
     .item-type {
       width: 23%;
     }
-
 
     .item-status {
       width: 20%;
@@ -555,70 +645,14 @@
       }
     }
 
-
     .item-location {
       width: 25%;
     }
   }
 
-
   // =========================================================
-  // Mobile Cards
+  // Mobile Card Styles
   // =========================================================
-
-  .mobile-cards {
-    display: none;
-
-    flex-direction: column;
-
-    gap: 0.75rem;
-
-    padding: 1rem;
-
-    /*
-     * Needed because JS transforms this element.
-     */
-    will-change: transform;
-
-    transform: translateZ(0);
-
-    @media screen and (max-width: 768px) {
-      display: flex;
-
-      /*
-       * Mobile cards get their own scrolling viewport.
-       */
-      max-height: 470px;
-
-      overflow: hidden;
-    }
-  }
-
-
-  .mobile-card {
-    flex: 0 0 auto;
-
-    background: #ffffff;
-
-    border: 1px solid $border-color;
-    border-radius: 8px;
-
-    padding: 1rem;
-
-    transition:
-      background-color $transition-speed ease,
-      border-color $transition-speed ease,
-      box-shadow $transition-speed ease;
-
-    &:hover {
-      background: $hover-bg;
-
-      border-color: #cbd5e1;
-
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-    }
-  }
-
 
   .mobile-card-content {
     display: flex;
@@ -628,7 +662,6 @@
     gap: 0.5rem;
   }
 
-
   .mobile-card-header {
     display: flex;
 
@@ -637,7 +670,6 @@
 
     gap: 0.5rem;
   }
-
 
   .mobile-card-title {
     margin: 0;
@@ -649,7 +681,6 @@
 
     line-height: 1.35;
   }
-
 
   .mobile-card-details {
     display: flex;
@@ -663,7 +694,6 @@
     color: #4a6f8e;
   }
 
-
   .mobile-card-type {
     &::before {
       content: "Category: ";
@@ -672,13 +702,11 @@
     }
   }
 
-
   .mobile-card-location {
     &::before {
       content: "📍 ";
     }
   }
-
 
   // =========================================================
   // MUI Chip
@@ -698,129 +726,6 @@
     }
   }
 
-
-  // =========================================================
-  // Empty Table Row
-  // =========================================================
-
-  .empty-row {
-    height: 120px;
-
-    td {
-      text-align: center;
-
-      color: $muted-color !important;
-
-      font-size: 14px !important;
-    }
-  }
-
-
-  // =========================================================
-  // Pagination
-  // =========================================================
-
-  .pagination {
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 7px;
-
-    width: 100%;
-
-    min-height: 82px;
-
-    padding: 18px 24px;
-
-    box-sizing: border-box;
-
-    background: #ffffff;
-
-    border-top: 1px solid $border-color;
-
-    flex-wrap: wrap;
-    position:relative;
-    bottom: 0;
-  }
-
-
-  .pagination-pages {
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-  }
-
-
-  .pagination-btn,
-  .pagination-page {
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    height: 46px;
-
-    min-width: 46px;
-
-    padding: 0 14px;
-
-    border: 1px solid #dbe3ec;
-    border-radius: 8px;
-
-    background: #ffffff;
-
-    color: $text-primary;
-
-    font-size: 14px;
-    font-weight: 500;
-
-    cursor: pointer;
-
-    transition:
-      background-color $transition-speed ease,
-      border-color $transition-speed ease,
-      color $transition-speed ease;
-
-    &:hover:not(:disabled) {
-      background: #f5f7fa;
-
-      border-color: #cbd5e1;
-    }
-
-    &:focus-visible {
-      outline: 2px solid $primary-color;
-      outline-offset: 2px;
-    }
-
-    &:disabled {
-      opacity: 0.45;
-
-      cursor: not-allowed;
-    }
-  }
-
-
-  .pagination-page {
-    &.active {
-      background: $primary-color;
-
-      border-color: $primary-color;
-
-      color: #ffffff;
-
-      &:hover {
-        background: #020617;
-
-        border-color: #020617;
-      }
-    }
-  }
-
-
   // =========================================================
   // Tablet
   // =========================================================
@@ -828,36 +733,11 @@
   @media screen and (max-width: 1199px) {
     .project-filters {
       grid-template-columns:
-        minmax(220px, 1fr)
-        180px
-        200px
-        auto;
+        minmax(220px, 1fr) 180px 200px auto;
 
       gap: 12px;
     }
   }
-
-
-  @media screen and (max-width: 1024px) {
-    .client-table {
-      min-width: 750px;
-    }
-
-    .client-table-wrapper {
-      max-height: 450px;
-    }
-
-    .pagination {
-      overflow-x: auto;
-
-      justify-content: flex-start;
-    }
-
-    .pagination-pages {
-      flex-shrink: 0;
-    }
-  }
-
 
   // =========================================================
   // Tablet / Small Desktop Filters
@@ -877,118 +757,6 @@
     }
   }
 
-
-  // =========================================================
-  // Mobile
-  // =========================================================
-
-  @media screen and (max-width: 768px) {
-    .client-table-wrapper {
-      display: none;
-    }
-
-    .mobile-cards {
-      display: flex;
-    }
-
-    .pagination {
-      min-height: 70px;
-
-      padding: 14px 16px;
-
-      overflow-x: auto;
-
-      justify-content: flex-start;
-
-      flex-wrap: nowrap;
-    }
-
-    .pagination-pages {
-      flex-shrink: 0;
-    }
-
-    .pagination-btn,
-    .pagination-page {
-      height: 40px;
-
-      min-width: 40px;
-
-      padding: 0 10px;
-
-      font-size: 13px;
-
-      flex-shrink: 0;
-    }
-  }
-
-
-  // =========================================================
-  // Small Mobile
-  // =========================================================
-
-  @media screen and (max-width: 575px) {
-    .project-filters {
-      grid-template-columns: 1fr;
-
-      gap: 12px;
-
-      padding: 16px;
-    }
-
-    .project-search {
-      grid-column: auto;
-    }
-
-    .clear-filters-btn {
-      width: 100%;
-    }
-
-    .project-results-info {
-      align-items: flex-start;
-
-      flex-direction: column;
-
-      gap: 4px;
-
-      padding: 10px 16px;
-    }
-
-    .mobile-cards {
-      padding: 12px;
-
-      max-height: 450px;
-    }
-
-    .mobile-card {
-      padding: 14px;
-    }
-
-    .mobile-card-header {
-      align-items: flex-start;
-    }
-
-    .mobile-card-title {
-      font-size: 0.95rem;
-    }
-
-    .mobile-card-details {
-      font-size: 0.8rem;
-    }
-
-    .pagination {
-      justify-content: flex-start;
-    }
-
-    .pagination-pages {
-      gap: 5px;
-    }
-
-    .pagination-btn {
-      padding: 0 12px;
-    }
-  }
-
-
   // =========================================================
   // Empty State
   // =========================================================
@@ -1007,31 +775,43 @@
     }
   }
 
-
   // =========================================================
-  // Accessibility
+  // Responsive Styles (from Global Styles.txt)
   // =========================================================
 
-  @media (prefers-reduced-motion: reduce) {
-    .pagination-btn,
-    .pagination-page,
-    .client-row,
-    .mobile-card,
-    .project-search input,
-    .project-filter select,
-    .clear-filters-btn {
-      transition: none !important;
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.5rem;
     }
 
-    .section-title h3 {
-      animation: none !important;
+    .stat-number {
+      font-size: 2rem;
+    }
 
-      &::before {
-        animation: none !important;
-      }
+    .stats-grid {
+      gap: 1rem;
+      padding: 0 0.5rem;
+    }
+
+    .stat-item {
+      padding: 1rem 0.5rem;
     }
   }
 
+  @media (max-width: 480px) {
+    .hero-title {
+      font-size: 2rem;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+    }
+
+    .outline-theme-btn {
+      padding: 10px 24px !important;
+      font-size: 1rem !important;
+    }
+  }
 
   // =========================================================
   // Print
@@ -1039,20 +819,19 @@
 
   @media print {
     .project-filters,
-    .project-results-info,
-    .pagination,
-    .mobile-cards {
+    .project-results-info {
       display: none !important;
     }
+  }
 
-    .client-table-wrapper {
-      max-height: none !important;
+  // =========================================================
+  // Optional: Hero Section for smaller mobile
+  // =========================================================
 
-      overflow: visible !important;
-    }
-
-    .client-row {
-      break-inside: avoid;
+  @media screen and (max-width: 768px) {
+    .hero-section {
+      // background-image: url('your-mobile-image.jpg');
+      min-height: 80vh;
     }
   }
 }
