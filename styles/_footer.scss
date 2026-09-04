@@ -185,30 +185,48 @@ font-weight: 400;
   font-weight: 700;     
   // transform: translateX(4px);
 }
+
+
  .read-more-btn {
         position: relative;
         display: inline-block;
         color: #000;
         text-decoration: none;
         font-weight: 600;
-        &:hover{
-          color:#e18c1d;
+        cursor: pointer;
+
+    transition:
+      color 0.25s ease,
+      transform 0.3s ease;
+        &:before{
+          content: '';
+          height: 5px;
+          -webkit-border-radius: 2px;
+          -khtml-border-radius: 2px;
+          -moz-border-radius: 2px;
+          -ms-border-radius: 2px;
+          -o-border-radius: 2px;
+          border-radius: 2px;
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #f7950d;
+          width: 0;
+          -webkit-transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+          -khtml-transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+          -moz-transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+          -ms-transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+          -o-transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+          transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+          margin: auto;
         }
-      }
-
-      .read-more-btn::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 0;
-        height: 2px;
-        background: #e18c1d;
-        transition: width 0.35s ease;
-      }
-
-      .read-more-btn:hover::after {
-        width: 100%;
+        &:hover {
+          color:#f7950d;
+          &:before{
+            width:100%;
+          }
+        }
       }
 /* ===== Contact Section with Icons ===== */
 .footer-contact {

@@ -4,7 +4,7 @@ header {
   left: 0;
   width: 100%;
   z-index: 99;
-
+  border-bottom: 1px solid lightgray;
   min-height: 5rem;
   padding: 0.2rem 1rem 0;
 
@@ -45,8 +45,6 @@ header {
     > ul > li {
       position: relative;
       margin: 0;
-      padding: 2rem 1rem;
-
       list-style: none;
     }
   }
@@ -57,10 +55,11 @@ header {
 
   .nav-link {
     display: inline-flex;
+    position:relative;
     align-items: center;
     gap: 6px;
-
-    padding: 0;
+    font-weight: 600;
+    padding: 1.7rem 1rem;
     margin: 0;
 
     overflow: hidden;
@@ -78,6 +77,36 @@ header {
     transition:
       color 0.25s ease,
       transform 0.3s ease;
+      &:before{
+        content: '';
+        height: 5px;
+        -webkit-border-radius: 2px;
+        -khtml-border-radius: 2px;
+        -moz-border-radius: 2px;
+        -ms-border-radius: 2px;
+        -o-border-radius: 2px;
+        border-radius: 2px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #f7950d;
+        width: 0;
+        -webkit-transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+        -khtml-transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+        -moz-transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+        -ms-transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+        -o-transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+        transition: 0.3s cubic-bezier(0.24, 0.74, 0.58, 1);
+        margin: auto;
+      }
+      &:hover {
+        color:#f7950d;
+        &:before{
+          width:100%;
+        }
+      }
+     
   }
 
   .nav-link svg {
@@ -88,6 +117,7 @@ header {
     transition:
       transform 0.3s ease;
   }
+
 
   .has-submenu:hover .nav-arrow,
   .mega-active .nav-arrow {

@@ -118,17 +118,18 @@
     height: 58px;
     min-height: 58px;
     flex-shrink: 0; // PREVENTS HEADER FROM SHRINKING
-    background: #f1f5f9;
+    background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+
     border-bottom: 2px solid #dbe2ea;
     padding: 0 20px;
     position: sticky;
     top: 0;
     z-index: 10;
-
+    color:white;
     > div {
       display: flex;
       align-items: center;
-      color: #475569;
+      color: white;
       font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
@@ -145,23 +146,46 @@
       -webkit-overflow-scrolling: touch;
 
 
-    // Custom scrollbar
     &::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: #f8fafc;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
-
-      &:hover {
-        background: #94a3b8;
-      }
-    }
+		width: .5em;
+		height: 1em;
+	}
+	&::-webkit-scrollbar-track {
+		background: #000;
+		border-radius: 0;
+		border: none;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: #ef7f1a;
+		border-radius: 0;
+		border: none;
+		min-height: 40px;
+		min-width: 40px;
+		transition: background 0.2s ease;
+		// &:hover {
+		// 	background: #9ca3af;
+		// }
+		// &:active {
+		// 	background: #6b7280;
+		// }
+	}
+	&::-webkit-scrollbar-button {
+		// background: #ef7f1a;
+		height: 0px;
+		width: 16px;
+		display: block;
+		cursor: pointer;
+		transition: background 0.2s ease;
+		&:hover {
+			background: #d1d5db;
+		}
+		&:active {
+			background: #9ca3af;
+		}
+	}
+	&::-webkit-scrollbar-corner {
+		background: #f1f1f1;
+	}
   }
  
   // TABLE ROWS
@@ -197,7 +221,7 @@
     }
 
     .item-type {
-      color: #475569;
+      color:#475569;
     }
 
     .item-status {
@@ -217,12 +241,13 @@
       }
 
       .status-completed {
-        background: #f05100;
+        background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
         color: white;
       }
 
       .status-in-progress {
-        background: #f59e0b;
+        // background: #f59e0b;
+        background:linear-gradient(0deg, #b45309 -86.4%, #f59e0b 94.15%);;
         color: white;
       }
 
@@ -320,6 +345,7 @@
     }
 
     p {
+      text-align: center;
       margin-bottom: 18px;
       color: #64748b;
     }
@@ -468,3 +494,4 @@
     }
   }
 }
+

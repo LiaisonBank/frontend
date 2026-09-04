@@ -8,7 +8,7 @@ import "./service-detail.scss";
 import { getImageUrl } from "../../../lib/utils/getImagehelper";
 
 // Fallback image
-const FALLBACK_IMAGE = '/images/fallback-service.jpg';
+const FALLBACK_IMAGE = '/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png';
 
 export default function ServiceDetail() {
   const params = useParams();
@@ -67,28 +67,51 @@ export default function ServiceDetail() {
           if (sub.image) {
             try {
               subImageUrl = getImageUrl(sub.image);
-            } catch (err) {}
+            } catch (err) {
+              console.error('Error loading subcategory image:', err);
+            }
           }
 
           const processedItems = (sub.items || []).map((item) => {
+            // Process itemServices - ensure it's an array
+            let servicesList = [];
+            if (item.itemServices) {
+              if (Array.isArray(item.itemServices)) {
+                servicesList = item.itemServices;
+              } else if (typeof item.itemServices === 'string') {
+                // If it's a string, try to parse it or split by comma
+                try {
+                  const parsed = JSON.parse(item.itemServices);
+                  servicesList = Array.isArray(parsed) ? parsed : [item.itemServices];
+                } catch {
+                  servicesList = item.itemServices.split(',').map(s => s.trim()).filter(s => s);
+                }
+              }
+            }
+
             let itemImageUrl = null;
             if (item.image) {
               try {
                 itemImageUrl = getImageUrl(item.image);
-              } catch (err) {}
+              } catch (err) {
+                console.error('Error loading item image:', err);
+              }
             }
+
             return {
               ...item,
               imageUrl: itemImageUrl,
+              hasImage: !!itemImageUrl,
+              servicesList: servicesList,
             };
           });
 
           return {
             ...sub,
             imageUrl: subImageUrl,
+            hasImage: !!subImageUrl,
             items: processedItems,
             itemCount: processedItems.length,
-            hasImage: !!subImageUrl,
           };
         });
 
@@ -211,116 +234,108 @@ export default function ServiceDetail() {
               <Link href="/our-services" className="hero-back-link">← Back to Services</Link>
               <h1 className="hero-title">{service.name}</h1>
               <p className="hero-desc">{service.description}</p>
-              
             </div>
           </div>
         </div>
       </section>
 
-      {/* About Section - Full width image with text overlay */}
-      <section className="about-section">
-        <div className="container">
-          <div className="about-wrapper">
-            <div className="about-image-wrap">
-              <img
-                src={service.image}
-                alt={service.imageAlt || service.name}
-                className="about-image"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = FALLBACK_IMAGE;
-                }}
-              />
-              <div className="about-image-overlay">
-                <span className="about-badge">About</span>
-                <h2 className="about-title">{service.name}</h2>
-              </div>
-            </div>
-            <div className="about-text">
-              {service.fullDescription && service.fullDescription.split('\r\n\r\n').map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Subcategories with Modern Accordion Style */}
+      {/* Subcategories as Flip Cards - 2 columns */}
       <section className="services-modern">
         <div className="container">
           <div className="services-header">
+            <span className="services-badge">Services</span>
             <h2 className="services-title">Explore {service.name} Services</h2>
+            <p className="services-subtitle">Hover over each card to see available services</p>
           </div>
 
-          {service.subcategories.map((subcategory, index) => (
-            <div key={subcategory.id} className="subcategory-modern">
-              <div className="subcategory-header">
-                <div className="subcategory-number">{String(index + 1).padStart(2, '0')}</div>
-                <h3 className="subcategory-name">{subcategory.name}</h3>
-                <span className="subcategory-count">{subcategory.itemCount} items</span>
-              </div>
+          <div className="subcategory-flip-grid">
+            {service.subcategories.map((subcategory, index) => (
+              <div key={subcategory.id} className="subcategory-flip-container">
+                <div className="subcategory-flip-card">
+                  {/* FRONT - Image with name overlay at top */}
+                  <div className="subcategory-flip-front">
+                    {subcategory.hasImage && subcategory.imageUrl ? (
+                      <img
+                        src={subcategory.imageUrl}
+                        alt={subcategory.name}
+                        className="subcategory-flip-image"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.style.display = 'none';
+                          const placeholder = e.currentTarget.parentElement.querySelector('.subcategory-no-image');
+                          if (placeholder) {
+                            placeholder.style.display = 'flex';
+                          }
+                        }}
+                      />
+                    ) : (
+                      <div className="subcategory-no-image">
+                        <h3 className="subcategory-name-only">{subcategory.name}</h3>
+                      </div>
+                    )}
+                    
+                    {/* Name at TOP */}
+                    <div className="subcategory-name-overlay-top">
+                      <h3 className="subcategory-flip-name">{subcategory.name}</h3>
+                      <span className="subcategory-item-count">{subcategory.itemCount} services</span>
+                    </div>
 
-              {subcategory.hasImage && subcategory.imageUrl && (
-                <div className="subcategory-image-wrap">
-                  <img
-                    src={subcategory.imageUrl}
-                    alt={subcategory.name}
-                    className="subcategory-image"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
+                    {/* Hover hint at bottom */}
+                    <div className="subcategory-hover-hint">Hover to view services →</div>
+                  </div>
+
+                  {/* BACK - Items list with scroll functionality */}
+                  <div className="subcategory-flip-back">
+                    <div className="flip-back-header">
+                      <span className="flip-back-badge">Available Services</span>
+                      <h4 className="flip-back-title">{subcategory.name}</h4>
+                    </div>
+
+                    <div 
+                      className="flip-back-items-list"
+                      onWheel={(e) => {
+                        e.stopPropagation();
+                        const element = e.currentTarget;
+                        if (e.deltaY !== 0) {
+                          element.scrollTop += e.deltaY;
+                        }
+                      }}
+                    >
+                      {subcategory.items && subcategory.items.length > 0 ? (
+                        subcategory.items.map((item, idx) => (
+                          <div key={item.id} className="back-item-wrapper">
+                            {/* Item name as header */}
+                            <div className="back-item-header">
+                              <span className="back-item-number">{String(idx + 1).padStart(2, '0')}</span>
+                              <p className="back-item-name">{item.name}</p>
+                            </div>
+                            
+                            {/* Item Services list - displayed as a vertical list */}
+                            {item.servicesList && item.servicesList.length > 0 && (
+                              <ul className="back-item-services-list">
+                                {item.servicesList.map((serviceName, serviceIdx) => (
+                                  <li key={serviceIdx} className="back-service-item">
+                                    <span className="back-service-dot">•</span>
+                                    <span className="back-service-name">{serviceName}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', textAlign: 'center', padding: '20px 0' }}>
+                          No services available
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flip-back-hint">← Flip back to see image</div>
+                  </div>
                 </div>
-              )}
-
-              {subcategory.description && (
-                <p className="subcategory-desc">{subcategory.description}</p>
-              )}
-
-             {subcategory.items && subcategory.items.length > 0 && (
-  <div className="items-modern-grid">
-    {subcategory.items.map((item, idx) => (
-      <Link 
-        key={item.id} 
-        href={`/our-services/${service.slug}/${item.slug}`}
-        className="item-modern-link"
-      >
-        <div className="item-modern-card">
-          <div className="item-modern-number">{String(idx + 1).padStart(2, '0')}</div>
-          <div className="item-modern-content">
-            <h4 className="item-modern-name">{item.name}</h4>
-            {item.description && <p className="item-modern-desc">{item.description}</p>}
-            {item.imageUrl && (
-              <div className="item-modern-image">
-                <img
-                  src={item.imageUrl}
-                  alt={item.name}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = FALLBACK_IMAGE;
-                  }}
-                />
               </div>
-            )}
-            {item.itemServices && item.itemServices.length > 0 && (
-              <div className="item-modern-tags">
-                {item.itemServices.map((tag, idx) => (
-                  <span key={idx} className="item-modern-tag">
-                    {tag.replace(/-/g, ' ')}
-                  </span>
-                ))}
-              </div>
-            )}
+            ))}
           </div>
-        </div>
-      </Link>
-    ))}
-  </div>
-)}
-
-            </div>
-          ))}
         </div>
       </section>
 
@@ -357,21 +372,6 @@ export default function ServiceDetail() {
           </div>
         </section>
       )}
-
-      {/* <section className="cta-modern">
-        <div className="container">
-          <div className="cta-modern-box">
-            <div className="cta-modern-content">
-              <h2>Let's Work Together</h2>
-              <p>Get professional {service.name} solutions tailored to your needs</p>
-              <div className="cta-modern-buttons">
-                <Link href="/contact" className="cta-modern-primary">Start a Project</Link>
-                <Link href="/our-services" className="cta-modern-secondary">All Services</Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> */}
     </>
   );
 }
