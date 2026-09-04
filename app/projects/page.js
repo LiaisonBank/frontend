@@ -210,12 +210,12 @@ useEffect(() => {
               </span>
               <span className="stat-label">Ongoing</span>
             </div>
-            <div className="stat-item">
+            {/* <div className="stat-item">
               <span className="stat-number">
                 {loading ? "..." : projectCounts?.upcoming_projects || "0"}
               </span>
               <span className="stat-label">Upcoming</span>
-            </div>
+            </div> */}
           </div>
           
           {/* Add loading/error state indicator */}
