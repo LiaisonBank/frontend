@@ -17,6 +17,7 @@ html.lenis {
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
 html {
   margin:0;
   padding:0;
@@ -43,7 +44,14 @@ body {
     font-size: var(--font-size);
     background: var(--background);
 }
+body.completed:has(.MuiDialog-root) {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
 
+body.completed:has(.MuiDialog-root)::-webkit-scrollbar {
+  display: none;
+}
 img{
   max-width: 100%;
 }
