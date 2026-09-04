@@ -10,14 +10,18 @@ import { getImageUrl } from "../../../lib/utils/getImagehelper";
 // Fallback image
 const FALLBACK_IMAGE = '/images/fallback-service.jpg';
 
+
 export default function ServiceDetail() {
   const params = useParams();
+
   const slug = params?.slug;
   
   const [service, setService] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [relatedServices, setRelatedServices] = useState([]);
+  
 
   useEffect(() => {
     if (!slug) return;
@@ -71,6 +75,25 @@ export default function ServiceDetail() {
           }
 
           const processedItems = (sub.items || []).map((item) => {
+            // Process itemServices - ensure it's an array
+
+            let servicesList = [];
+            if (item.itemServices) {
+              if (Array.isArray(item.itemServices)) {
+                servicesList = item.itemServices;
+              } else if (typeof item.itemServices === 'string') {
+                // If it's a string, try to parse it or split by comma
+
+                try {
+                  const parsed = JSON.parse(item.itemServices);
+                  servicesList = Array.isArray(parsed) ? parsed : [item.itemServices];
+                } catch {
+                  servicesList = item.itemServices.split(',').map(s => s.trim()).filter(s => s);
+
+                }
+              }
+            }
+
             let itemImageUrl = null;
             if (item.image) {
               try {
@@ -252,13 +275,42 @@ export default function ServiceDetail() {
             <h2 className="services-title">Explore {service.name} Services</h2>
           </div>
 
-          {service.subcategories.map((subcategory, index) => (
-            <div key={subcategory.id} className="subcategory-modern">
-              <div className="subcategory-header">
-                <div className="subcategory-number">{String(index + 1).padStart(2, '0')}</div>
-                <h3 className="subcategory-name">{subcategory.name}</h3>
-                <span className="subcategory-count">{subcategory.itemCount} items</span>
-              </div>
+          <div className="subcategory-flip-grid">
+            {service.subcategories.map((subcategory, index) => (
+              <div key={subcategory.id} className="subcategory-flip-container">
+                <div className="subcategory-flip-card">
+                  {/* FRONT - Image with name overlay at top */}
+                  <div className="subcategory-flip-front">
+                    {subcategory.hasImage && subcategory.imageUrl ? (
+
+                      <img
+                        src={subcategory.imageUrl}
+                        alt={subcategory.name}
+                        className="subcategory-flip-image"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.style.display = 'none';
+                          const placeholder = e.currentTarget.parentElement.querySelector('.subcategory-no-image');
+                          if (placeholder) {
+                            placeholder.style.display = 'flex';
+                          }
+                        }}
+                      />
+                    ) : (
+                      <div className="subcategory-no-image">
+                        <h3 className="subcategory-name-only">{subcategory.name}</h3>
+                      </div>
+                    )}
+                    
+                    {/* Name at TOP */}
+                    <div className="subcategory-name-overlay-top">
+                      <h3 className="subcategory-flip-name">{subcategory.name}</h3>
+                      <span className="subcategory-item-count">{subcategory.itemCount} services</span>
+                    </div>
+
+                    {/* Hover hint at bottom */}
+                    <div className="subcategory-hover-hint">Hover to view services →</div>
+                  </div>
 
               {subcategory.hasImage && subcategory.imageUrl && (
                 <div className="subcategory-image-wrap">
