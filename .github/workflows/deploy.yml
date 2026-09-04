@@ -3,7 +3,7 @@ name: Deploy Liaison Bank Frontend
 on:
   push:
     branches:
-      - master
+      - akashpawar
 
 jobs:
   deploy:
