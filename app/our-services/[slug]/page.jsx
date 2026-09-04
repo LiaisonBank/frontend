@@ -10,14 +10,18 @@ import { getImageUrl } from "../../../lib/utils/getImagehelper";
 // Fallback image
 const FALLBACK_IMAGE = '/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png';
 
+
 export default function ServiceDetail() {
   const params = useParams();
+
   const slug = params?.slug;
   
   const [service, setService] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [relatedServices, setRelatedServices] = useState([]);
+  
 
   useEffect(() => {
     if (!slug) return;
@@ -87,7 +91,7 @@ export default function ServiceDetail() {
                   servicesList = Array.isArray(parsed) ? parsed : [item.itemServices];
                 } catch {
                   servicesList = item.itemServices.split(',').map(s => s.trim()).filter(s => s);
-                  
+
                 }
               }
             }
