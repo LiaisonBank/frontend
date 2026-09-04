@@ -26,10 +26,10 @@ jobs:
             cd /root/frontend
 
             echo "Fetching latest code..."
-            git fetch origin master
+            git fetch origin akashpawar
 
             echo "Updating source code..."
-            git reset --hard origin/master
+            git reset --hard origin/akashpawar
 
             echo "Installing dependencies..."
             npm ci
