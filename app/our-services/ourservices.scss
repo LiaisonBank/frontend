@@ -515,38 +515,38 @@ body {
   flex-wrap: wrap;
 }
 
-// .contact-item {
-//   display: flex;
-//   align-items: center;
-//   gap: 14px;
-//   padding: 12px 24px;
-//   background: #f8fafc;
-//   border-radius: 12px;
-//   border: 1px solid #eef2f6;
-//   transition: all 0.3s ease;
-// }
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 24px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #eef2f6;
+  transition: all 0.3s ease;
+}
 
-// .contact-item:hover {
-//   border-color: #E8720D;
-//   transform: translateY(-2px);
-// }
+.contact-item:hover {
+  border-color: #E8720D;
+  transform: translateY(-2px);
+}
 
 .contact-emoji {
   font-size: 28px;
 }
 
-// .contact-item h4 {
-//   font-size: 14px;
-//   font-weight: 600;
-//   color: #1a1a2e;
-//   margin: 0;
-// }
+.contact-item h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0;
+}
 
-// .contact-item p {
-//   font-size: 14px;
-//   color: #64748b;
-//   margin: 0;
-// }
+.contact-item p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
 
 /* ===== CTA SECTION ===== */
 .services-cta {
