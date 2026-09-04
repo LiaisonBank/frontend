@@ -74,17 +74,20 @@ export default function ServiceDetail() {
 
           const processedItems = (sub.items || []).map((item) => {
             // Process itemServices - ensure it's an array
+
             let servicesList = [];
             if (item.itemServices) {
               if (Array.isArray(item.itemServices)) {
                 servicesList = item.itemServices;
               } else if (typeof item.itemServices === 'string') {
                 // If it's a string, try to parse it or split by comma
+
                 try {
                   const parsed = JSON.parse(item.itemServices);
                   servicesList = Array.isArray(parsed) ? parsed : [item.itemServices];
                 } catch {
                   servicesList = item.itemServices.split(',').map(s => s.trim()).filter(s => s);
+                  
                 }
               }
             }
@@ -255,6 +258,7 @@ export default function ServiceDetail() {
                   {/* FRONT - Image with name overlay at top */}
                   <div className="subcategory-flip-front">
                     {subcategory.hasImage && subcategory.imageUrl ? (
+
                       <img
                         src={subcategory.imageUrl}
                         alt={subcategory.name}
