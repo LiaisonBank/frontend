@@ -32,9 +32,10 @@ const TeamMemberCard = ({ member }) => {
     backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
   };
   console.log("TeamMemberCard member:", member);
+  
   return (
     <section>
-      
+
       <div className="scene" tabIndex={0} onClick={handleToggle}>
         <div className={`flip ${isFlipped ? "flipped" : ""}`}>
           {/* FRONT : image + name */}

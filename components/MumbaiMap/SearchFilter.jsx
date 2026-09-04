@@ -126,12 +126,6 @@ const SearchWrapper = styled(Box)(({ theme }) => ({
     minWidth: "200px",
     width: "100%",
   },
-  "@media (min-width: 600px)": {
-    "&.expanded": {
-      minWidth: "300px",
-      maxWidth: "500px",
-    },
-  },
 }));
 
 const FilterSection = styled(Box)(({ theme }) => ({
@@ -509,55 +503,48 @@ export default function SearchFilter({
   };
 
   // Handle suggestion click
- // Handle suggestion click
-const handleSuggestionClick = (project) => {
-  try {
-    if (!project || typeof project !== "object") {
-      console.warn("Invalid project selected");
-      return;
+  const handleSuggestionClick = (project) => {
+    try {
+      if (!project || typeof project !== "object") {
+        console.warn("Invalid project selected");
+        return;
+      }
+
+      // Get display name
+      const displayName =
+        project.client_name ||
+        project.location ||
+        project.name ||
+        project.title ||
+        "";
+
+      // Set selected project data
+      setSelectedProjectData(project);
+
+      // CRITICAL: Clear search term to remove value from input
+      setSearchTerm("");
+
+      // Close suggestions dropdown immediately
+      setIsOpen(false);
+      setSuggestions([]);
+
+      // CLOSE SEARCH PANEL
+      setIsSearchPanelOpen(false);
+      setIsExpanded(false);
+
+      // Callback to parent
+      if (onSelectProject && typeof onSelectProject === "function") {
+        onSelectProject(project);
+      }
+
+      // Remove focus from input
+      if (inputRef.current && typeof inputRef.current.blur === "function") {
+        inputRef.current.blur();
+      }
+    } catch (error) {
+      console.error("Error handling suggestion click:", error);
     }
-
-    // Get display name
-    const displayName =
-      project.client_name ||
-      project.location ||
-      project.name ||
-      project.title ||
-      "";
-
-    // Set search term
-    setSearchTerm(displayName);
-
-    // CRITICAL: Close suggestions dropdown immediately
-    setIsOpen(false);
-    setSuggestions([]);
-
-    // Clear any selected project data
-    setSelectedProjectData(project);
-
-    // CLOSE SEARCH PANEL
-    setIsSearchPanelOpen(false);
-    setIsExpanded(false); // This will collapse the search input
-
-    // Callback to parent
-    if (onSelectProject && typeof onSelectProject === "function") {
-      onSelectProject(project);
-    }
-
-    // Remove focus from input
-    if (inputRef.current && typeof inputRef.current.blur === "function") {
-      inputRef.current.blur();
-    }
-
-    // Force close the popper by updating anchor element
-    if (anchorRef.current) {
-      // This triggers a re-render of the popper
-      setPopperWidth(anchorRef.current.clientWidth || "100%");
-    }
-  } catch (error) {
-    console.error("Error handling suggestion click:", error);
-  }
-};
+  };
 
   // Clear search
   const handleClearSearch = () => {
@@ -777,10 +764,149 @@ const handleSuggestionClick = (project) => {
   };
 
   return (
-    <div className="search-filter-container" ref={searchRef}>
-      <SearchContainer className="align-items-start d-flex flex-column">
-        {/* Filter Section */}
-        <FilterSection className="filter-chips-wrapper">
+  <div className="search-filter-container" ref={searchRef}>
+    <SearchContainer className="align-items-start d-flex flex-column">
+      {/* Search Input First */}
+      <SearchWrapper className={isExpanded ? "expanded" : ""} ref={anchorRef}>
+        <StyledTextField
+          ref={inputRef}
+          fullWidth
+          size="small"
+          placeholder={isExpanded ? placeholder : ""}
+          value={searchTerm || ""}
+          onChange={handleSearchChange}
+          onFocus={handleFocus}
+          disabled={isLoading || false}
+          className="projectsearch"
+          $isExpanded={isExpanded}
+          slotProps={{
+            input: {
+              startAdornment: inputSlotProps.startAdornment,
+              endAdornment: inputSlotProps.endAdornment,
+              onBlur: () => {
+                if (!searchTerm) {
+                  setIsExpanded(false);
+                }
+              },
+            },
+            htmlInput: {
+              "aria-label": "Search projects",
+            },
+          }}
+        />
+
+        {/* Suggestions Popper */}
+        <Popper
+          open={Boolean(isOpen && suggestions.length > 0 && searchTerm.trim().length > 0)}
+          anchorEl={anchorRef.current}
+          placement="bottom-start"
+          transition
+          sx={{
+            width: popperWidth,
+            zIndex: 1300,
+            marginTop: "4px",
+          }}
+        >
+          {({ TransitionProps }) => (
+            <ClickAwayListener
+              onClickAway={(event) => {
+                if (suggestionClickRef.current) {
+                  return;
+                }
+                const target = event.target;
+                const isSuggestionItem = target.closest && target.closest('.MuiListItemButton-root');
+                if (!isSuggestionItem) {
+                  setIsOpen(false);
+                }
+              }}
+            >
+              <Fade {...TransitionProps} timeout={200}>
+                <Paper
+                  elevation={3}
+                  sx={{
+                    maxHeight: "300px",
+                    overflow: "auto",
+                    borderRadius: "8px",
+                    border: "1px solid #e5e7eb",
+                  }}
+                >
+                  <List dense>
+                    {Array.isArray(suggestions) && suggestions.length > 0 ? (
+                      suggestions.map((project) => (
+                        <ListItemButton
+                          key={project?.id || Math.random().toString()}
+                          onClick={() => {
+                            suggestionClickRef.current = true;
+                            handleSuggestionClick(project);
+                            setTimeout(() => {
+                              suggestionClickRef.current = false;
+                            }, 100);
+                          }}
+                          selected={selectedProject?.id === project?.id}
+                          sx={{
+                            "&:hover": {
+                              backgroundColor: "#f3f4f6",
+                            },
+                            "&.Mui-selected": {
+                              backgroundColor: "#e5e7eb",
+                            },
+                            width: "100%",
+                          }}
+                        >
+                          <ListItemIcon sx={{ minWidth: "32px" }}>
+                            <LocationOnIcon fontSize="small" sx={{ color: "#6b7280" }} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              project?.client_name ||
+                              project?.location ||
+                              project?.name ||
+                              project?.title ||
+                              "Unnamed Project"
+                            }
+                            secondary={
+                              <Box component="span" sx={{ display: "flex", gap: "8px", mt: 0.5 }}>
+                                {project?.location && (
+                                  <Typography variant="caption" sx={{ color: "#6b7280" }}>
+                                    📍 {project.location}
+                                  </Typography>
+                                )}
+                                {project?.project_status && (
+                                  <Typography
+                                    variant="caption"
+                                    sx={{
+                                      color: getStatusColor(project.project_status),
+                                      fontWeight: 500,
+                                    }}
+                                  >
+                                    ● {project.project_status}
+                                  </Typography>
+                                )}
+                              </Box>
+                            }
+                            slotProps={{
+                              primary: { variant: "body2", fontWeight: 500 },
+                              secondary: { component: "div" }
+                            }}
+                          />
+                        </ListItemButton>
+                      ))
+                    ) : (
+                      <ListItem>
+                        <ListItemText primary="No matching projects found" />
+                      </ListItem>
+                    )}
+                  </List>
+                </Paper>
+              </Fade>
+            </ClickAwayListener>
+          )}
+        </Popper>
+      </SearchWrapper>
+
+      {/* Filter Section - Only shown when expanded */}
+      {isExpanded && (
+        <FilterSection className="filter-chips-wrapper" sx={{ mt: 1 }}>
           <Box
             sx={{
               display: "flex",
@@ -811,8 +937,7 @@ const handleSuggestionClick = (project) => {
             >
               {activeFilterCount > 0 && (
                 <FilterBadge>
-                  {activeFilterCount} filter{activeFilterCount > 1 ? "s" : ""}{" "}
-                  active
+                  {activeFilterCount} filter{activeFilterCount > 1 ? "s" : ""} active
                 </FilterBadge>
               )}
 
@@ -834,10 +959,7 @@ const handleSuggestionClick = (project) => {
 
               <IconButton
                 size="small"
-                sx={{
-                  color: "#6b7280",
-                  p: 0.5,
-                }}
+                sx={{ color: "#6b7280", p: 0.5 }}
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowFilters(!showFilters);
@@ -849,21 +971,12 @@ const handleSuggestionClick = (project) => {
             </Box>
           </Box>
 
-          {/* Filter Content with ClickAwayListener */}
+          {/* Filter Content */}
           {showFilters && (
-            // <ClickAwayListener
-            //   onClickAway={() => {
-            //     setShowFilters(false);
-            //     setIsSearchPanelOpen(false); // Also close search panel
-            //   }}
-            // >
             <ClickAwayListener
               onClickAway={(event) => {
-                // Check if the click was on a suggestion item or its children
                 const target = event.target;
                 const isSuggestionClick = target.closest && target.closest('.MuiListItemButton-root');
-                
-                // Only close if not clicking on a suggestion
                 if (!isSuggestionClick) {
                   setIsOpen(false);
                 }
@@ -873,25 +986,12 @@ const handleSuggestionClick = (project) => {
                 {/* Category Filters */}
                 {filterOptions.categories.length > 0 && (
                   <Box className="filter-group" sx={{ mb: 1.5 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        mb: 0.5,
-                      }}
-                    >
-                      <Typography
-                        variant="caption"
-                        sx={{ color: "#6b7280", fontWeight: 500 }}
-                      >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                      <Typography variant="caption" sx={{ color: "#6b7280", fontWeight: 500 }}>
                         Categories
                       </Typography>
                     </Box>
-                    <Box
-                      className="category-type"
-                      sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}
-                    >
+                    <Box className="category-type" sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                       {filterOptions.categories.map((category) => {
                         const isActive = isFilterActive("categories", category);
                         return (
@@ -902,15 +1002,11 @@ const handleSuggestionClick = (project) => {
                             variant={isActive ? "filled" : "outlined"}
                             onClick={() => toggleFilter("categories", category)}
                             sx={{
-                              backgroundColor: isActive
-                                ? "#f36421"
-                                : "transparent",
+                              backgroundColor: isActive ? "#f36421" : "transparent",
                               color: isActive ? "#ffffff" : "#374151",
                               borderColor: isActive ? "#f36421" : "#d1d5db",
                               "&:hover": {
-                                backgroundColor: isActive
-                                  ? "#f36421"
-                                  : "#f3f4f6",
+                                backgroundColor: isActive ? "#f36421" : "#f3f4f6",
                                 opacity: isActive ? 0.8 : 1,
                               },
                               fontSize: "0.75rem",
@@ -925,19 +1021,9 @@ const handleSuggestionClick = (project) => {
                 {/* Service Filters */}
                 {filterOptions.services.length > 0 && (
                   <Box className="filter-group" sx={{ mb: 1.5 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        mb: 0.5,
-                      }}
-                    >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
                       <BuildIcon fontSize="small" sx={{ color: "#6b7280" }} />
-                      <Typography
-                        variant="caption"
-                        sx={{ color: "#6b7280", fontWeight: 500 }}
-                      >
+                      <Typography variant="caption" sx={{ color: "#6b7280", fontWeight: 500 }}>
                         Services
                       </Typography>
                     </Box>
@@ -952,15 +1038,11 @@ const handleSuggestionClick = (project) => {
                             variant={isActive ? "filled" : "outlined"}
                             onClick={() => toggleFilter("services", service)}
                             sx={{
-                              backgroundColor: isActive
-                                ? "#8b5cf6"
-                                : "transparent",
+                              backgroundColor: isActive ? "#8b5cf6" : "transparent",
                               color: isActive ? "#ffffff" : "#374151",
                               borderColor: isActive ? "#8b5cf6" : "#d1d5db",
                               "&:hover": {
-                                backgroundColor: isActive
-                                  ? "#7c3aed"
-                                  : "#f3f4f6",
+                                backgroundColor: isActive ? "#7c3aed" : "#f3f4f6",
                                 opacity: isActive ? 0.8 : 1,
                               },
                               fontSize: "0.75rem",
@@ -975,18 +1057,8 @@ const handleSuggestionClick = (project) => {
                 {/* Status Filters */}
                 {filterOptions.statuses.length > 0 && (
                   <Box className="filter-group" sx={{ mb: 1.5 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        mb: 0.5,
-                      }}
-                    >
-                      <Typography
-                        variant="caption"
-                        sx={{ color: "#6b7280", fontWeight: 500 }}
-                      >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                      <Typography variant="caption" sx={{ color: "#6b7280", fontWeight: 500 }}>
                         Status
                       </Typography>
                     </Box>
@@ -1002,15 +1074,11 @@ const handleSuggestionClick = (project) => {
                             variant={isActive ? "filled" : "outlined"}
                             onClick={() => toggleFilter("statuses", status)}
                             sx={{
-                              backgroundColor: isActive
-                                ? statusColor
-                                : "transparent",
+                              backgroundColor: isActive ? statusColor : "transparent",
                               color: isActive ? "#ffffff" : "#374151",
                               borderColor: isActive ? statusColor : "#d1d5db",
                               "&:hover": {
-                                backgroundColor: isActive
-                                  ? statusColor
-                                  : "#f3f4f6",
+                                backgroundColor: isActive ? statusColor : "#f3f4f6",
                                 opacity: isActive ? 0.8 : 1,
                               },
                               fontSize: "0.75rem",
@@ -1025,224 +1093,8 @@ const handleSuggestionClick = (project) => {
             </ClickAwayListener>
           )}
         </FilterSection>
-
-        <SearchWrapper className={isExpanded ? "expanded" : ""} ref={anchorRef}>
-          <StyledTextField
-            ref={inputRef}
-            fullWidth
-            size="small"
-            placeholder={isExpanded ? placeholder : ""}
-            value={searchTerm || ""}
-            onChange={handleSearchChange}
-            onFocus={handleFocus}
-            disabled={isLoading || false}
-            className="projectsearch"
-            $isExpanded={isExpanded}
-            slotProps={{
-              input: {
-                startAdornment: inputSlotProps.startAdornment,
-                endAdornment: inputSlotProps.endAdornment,
-                onBlur: () => {
-                  // Keep the input expanded if there's a value
-                  if (!searchTerm) {
-                    setIsExpanded(false);
-                  }
-                },
-              },
-              htmlInput: {
-                "aria-label": "Search projects",
-              },
-            }}
-          />
-
-          {/* Suggestions Popper */}
-         {/* Suggestions Popper */}
-<Popper
-  open={Boolean(isOpen && suggestions.length > 0 && searchTerm.trim().length > 0)}
-  anchorEl={anchorRef.current}
-  placement="bottom-start"
-  transition
-  sx={{
-    
-    width: popperWidth,
-    zIndex: 1300,
-    marginTop: "4px",
-  }}
->
-  {({ TransitionProps }) => (
-    <ClickAwayListener
-      onClickAway={(event) => {
-        // Don't close if we're in the middle of a suggestion click
-        if (suggestionClickRef.current) {
-          return;
-        }
-        
-        // Check if click is on a suggestion item
-        const target = event.target;
-        const isSuggestionItem = target.closest && target.closest('.MuiListItemButton-root');
-        
-        if (!isSuggestionItem) {
-          setIsOpen(false);
-        }
-      }}
-    >
-      <Fade {...TransitionProps} timeout={200}>
-        <Paper
-          elevation={3}
-          sx={{
-            maxHeight: "300px",
-            overflow: "auto",
-            borderRadius: "8px",
-            border: "1px solid #e5e7eb",
-          }}
-        >
-          <List dense>
-            {Array.isArray(suggestions) && suggestions.length > 0 ? (
-              suggestions.map((project) => (
-                <ListItemButton
-                  key={project?.id || Math.random().toString()}
-                  onClick={() => {
-                    suggestionClickRef.current = true;
-                    handleSuggestionClick(project);
-                    // Reset the ref after a short delay
-                    setTimeout(() => {
-                      suggestionClickRef.current = false;
-                    }, 100);
-                  }}
-                  selected={selectedProject?.id === project?.id}
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: "#f3f4f6",
-                    },
-                    "&.Mui-selected": {
-                      backgroundColor: "#e5e7eb",
-                    },
-                    width: "100%",
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: "32px" }}>
-                    <LocationOnIcon
-                      fontSize="small"
-                      sx={{ color: "#6b7280" }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      project?.client_name ||
-                      project?.location ||
-                      project?.name ||
-                      project?.title ||
-                      "Unnamed Project"
-                    }
-                    secondary={
-                      <Box
-                        component="span"
-                        sx={{ display: "flex", gap: "8px", mt: 0.5 }}
-                      >
-                        {project?.location && (
-                          <Typography
-                            variant="caption"
-                            sx={{ color: "#6b7280" }}
-                          >
-                            📍 {project.location}
-                          </Typography>
-                        )}
-                        {project?.project_status && (
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: getStatusColor(
-                                project.project_status,
-                              ),
-                              fontWeight: 500,
-                            }}
-                          >
-                            ● {project.project_status}
-                          </Typography>
-                        )}
-                      </Box>
-                    }
-                    primaryTypographyProps={{
-                      variant: "body2",
-                      fontWeight: 500,
-                    }}
-                    secondaryTypographyProps={{
-                      component: "div",
-                    }}
-                  />
-                </ListItemButton>
-              ))
-            ) : (
-              <ListItem>
-                <ListItemText primary="No matching projects found" />
-              </ListItem>
-            )}
-          </List>
-        </Paper>
-      </Fade>
-    </ClickAwayListener>
-  )}
-</Popper>
-        </SearchWrapper>
-      </SearchContainer>
-
-      {/* Selected Project Card */}
-      {selectedProjectData && (
-        <Box
-          sx={{
-            mt: 2,
-            p: 2,
-            border: "1px solid #e5e7eb",
-            borderRadius: "8px",
-            backgroundColor: "#fafafa",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Box>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-              {selectedProjectData.client_name ||
-                selectedProjectData.name ||
-                selectedProjectData.title ||
-                "Unnamed Project"}
-            </Typography>
-            {selectedProjectData.location && (
-              <Typography
-                variant="caption"
-                sx={{ color: "#6b7280", display: "block" }}
-              >
-                📍 {selectedProjectData.location}
-              </Typography>
-            )}
-            {selectedProjectData.project_status && (
-              <Typography
-                variant="caption"
-                sx={{
-                  color: getStatusColor(selectedProjectData.project_status),
-                  fontWeight: 500,
-                  display: "block",
-                }}
-              >
-                ● {selectedProjectData.project_status}
-              </Typography>
-            )}
-          </Box>
-          <IconButton
-            size="small"
-            onClick={() => {
-              setSelectedProjectData(null);
-              setSearchTerm("");
-              setIsExpanded(false);
-              if (onSelectProject && typeof onSelectProject === "function") {
-                onSelectProject(null);
-              }
-            }}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </Box>
       )}
-    </div>
-  );
+    </SearchContainer>
+  </div>
+);
 }

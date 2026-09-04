@@ -49,26 +49,26 @@ export default function ProjectsPage() {
         setProjectCounts(data);
         
         // Production-ready console log with specific values from nested data
-        console.log("✅ Project Counts API Response:", {
-          completed_projects: data.completed_projects || 0,
-          ongoing_projects: data.ongoing_projects || 0,
-          upcoming_projects: data.upcoming_projects || 0,
-          total_projects: data.total_projects || 0,
-          active_projects: data.active_projects || 0,
-          featured_projects: data.featured_projects || 0,
-          inactive_projects: data.inactive_projects || 0,
-          full_response: result,
-          timestamp: new Date().toISOString(),
-          status: "success",
-          endpoint: "/api/projects/counts",
-        });
+        // console.log("✅ Project Counts API Response:", {
+        //   completed_projects: data.completed_projects || 0,
+        //   ongoing_projects: data.ongoing_projects || 0,
+        //   upcoming_projects: data.upcoming_projects || 0,
+        //   total_projects: data.total_projects || 0,
+        //   active_projects: data.active_projects || 0,
+        //   featured_projects: data.featured_projects || 0,
+        //   inactive_projects: data.inactive_projects || 0,
+        //   full_response: result,
+        //   timestamp: new Date().toISOString(),
+        //   status: "success",
+        //   endpoint: "/api/projects/counts",
+        // });
 
         // Individual console logs for each value
-        console.log("📊 Completed Projects:", data.completed_projects || 0);
-        console.log("📊 Ongoing Projects:", data.ongoing_projects || 0);
-        console.log("📊 Upcoming Projects:", data.upcoming_projects || 0);
-        console.log("📊 Total Projects:", data.total_projects || 0);
-        console.log("📊 Active Projects:", data.active_projects || 0);
+        // console.log("📊 Completed Projects:", data.completed_projects || 0);
+        // console.log("📊 Ongoing Projects:", data.ongoing_projects || 0);
+        // console.log("📊 Upcoming Projects:", data.upcoming_projects || 0);
+        // console.log("📊 Total Projects:", data.total_projects || 0);
+        // console.log("📊 Active Projects:", data.active_projects || 0);
 
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Failed to fetch project counts";
@@ -93,13 +93,13 @@ export default function ProjectsPage() {
   // Log project counts whenever they update with specific values
   useEffect(() => {
     if (projectCounts) {
-      console.log("📊 Project Counts Updated:", {
-        completed_projects: projectCounts.completed_projects || 0,
-        ongoing_projects: projectCounts.ongoing_projects || 0,
-        upcoming_projects: projectCounts.upcoming_projects || 0,
-        total_projects: projectCounts.total_projects || 0,
-        timestamp: new Date().toISOString(),
-      });
+      // console.log("📊 Project Counts Updated:", {
+      //   completed_projects: projectCounts.completed_projects || 0,
+      //   ongoing_projects: projectCounts.ongoing_projects || 0,
+      //   upcoming_projects: projectCounts.upcoming_projects || 0,
+      //   total_projects: projectCounts.total_projects || 0,
+      //   timestamp: new Date().toISOString(),
+      // });
     }
   }, [projectCounts]);
 

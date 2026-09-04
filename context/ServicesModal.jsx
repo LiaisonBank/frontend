@@ -776,16 +776,7 @@ export default function ServicesModal() {
                     setExpandedItems({});
                   }}
                 >
-                  <span
-                    className="services-section-name"
-                    onClick={() => {
-                      if (section.slug) {
-                        router.push(section.slug);
-                      }
-                    }}
-                  >
-                    {section.name}
-                  </span>
+                  <span className="services-section-name">{section.name}</span>
                   {section.pdf && (
                     <a
                       href={section.pdf}

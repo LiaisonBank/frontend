@@ -1,20 +1,11 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  ChevronDown,
-  ChevronRight,
-  FileText,
-  List,
-  X,
-} from "lucide-react";
+import { ChevronDown, ChevronRight, FileText, List, X } from "lucide-react";
 
 import { useModal } from "@/context/ModalContext";
 import { useLenis } from "@/components/LenisProvider";
@@ -46,10 +37,7 @@ const normalizeName = (value) =>
  * Returns a stable ID for any service entity.
  */
 const getEntityId = (entity, fallback = "") =>
-  entity?.id ??
-  entity?._id ??
-  entity?.name ??
-  fallback;
+  entity?.id ?? entity?._id ?? entity?.name ?? fallback;
 
 /* ==========================================================================
    Skeleton Loader
@@ -155,15 +143,20 @@ function ServiceChildren({
       {children.map((child, index) => {
         const childId = getEntityId(child, `child-${index}`);
         const itemKey = `${childId}-${level}`;
-        const hasChildren = Array.isArray(child?.children) && child.children.length > 0;
-        const hasServices = Array.isArray(child?.service) && child.service.length > 0;
+        const hasChildren =
+          Array.isArray(child?.children) && child.children.length > 0;
+        const hasServices =
+          Array.isArray(child?.service) && child.service.length > 0;
         const isExpanded = Boolean(expandedItems[itemKey]);
         const isServicesExpanded = Boolean(expandedServices[itemKey]);
         const isExpandable = hasChildren || hasServices;
         const isOpen = isExpanded || isServicesExpanded;
 
         const isGrandchild = level >= 1;
-        const hasExpandedSibling = isGrandchild && expandedChildKey !== null && expandedChildKey !== itemKey;
+        const hasExpandedSibling =
+          isGrandchild &&
+          expandedChildKey !== null &&
+          expandedChildKey !== itemKey;
 
         if (hasExpandedSibling) {
           return null;
@@ -215,12 +208,19 @@ function ServiceChildren({
                   }`}
                   aria-hidden="true"
                 >
-                  {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  {isOpen ? (
+                    <ChevronDown size={16} />
+                  ) : (
+                    <ChevronRight size={16} />
+                  )}
                 </span>
               )}
 
               {hasServices && (
-                <span className="service-services-badge" aria-label={`${child.service.length} offerings`}>
+                <span
+                  className="service-services-badge"
+                  aria-label={`${child.service.length} offerings`}
+                >
                   <List size={12} aria-hidden="true" />
                   {child.service.length}
                 </span>
@@ -242,25 +242,25 @@ function ServiceChildren({
 
             {/* Service Offerings - Scrollable */}
             {hasServices && isServicesExpanded && (
-              <ul className="service-services-list" role="list"
-                  style={{
-                    overflowY: "auto",
-                    maxHeight: "100%",
-                    scrollbarWidth: "thin",
-                    scrollbarColor:
-                      "#ef7f1a transparent",
-                  }}
-                  onWheel={(event) => {
-                    event.stopPropagation();
+              <ul
+                className="service-services-list"
+                role="list"
+                style={{
+                  overflowY: "auto",
+                  maxHeight: "100%",
+                  scrollbarWidth: "thin",
+                  scrollbarColor: "#ef7f1a transparent",
+                }}
+                onWheel={(event) => {
+                  event.stopPropagation();
 
-                    const element =
-                      event.currentTarget;
+                  const element = event.currentTarget;
 
-                    if (event.deltaY !== 0) {
-                      element.scrollTop +=
-                        event.deltaY;
-                    }
-                  }}>
+                  if (event.deltaY !== 0) {
+                    element.scrollTop += event.deltaY;
+                  }
+                }}
+              >
                 {child.service.map((serviceItem, serviceIndex) => {
                   const serviceSlug = String(serviceItem)
                     .trim()
@@ -268,12 +268,18 @@ function ServiceChildren({
                     .replace(/\s+/g, "-");
 
                   return (
-                    <li key={`${itemKey}-service-${serviceIndex}`} className="service-service-item">
+                    <li
+                      key={`${itemKey}-service-${serviceIndex}`}
+                      className="service-service-item"
+                    >
                       <span className="service-service-dot" aria-hidden="true">
                         •
                       </span>
                       {/* <Link href={`/services/${serviceSlug}`} className="service-service-name"> */}
-                      <Link href="/contact-us-liaison-bank" className="service-service-name">
+                      <Link
+                        href="/contact-us-liaison-bank"
+                        className="service-service-name"
+                      >
                         {serviceItem}
                       </Link>
                     </li>
@@ -308,17 +314,11 @@ function ServiceChildren({
    ========================================================================== */
 
 export default function ServicesModal() {
-  const {
-    serviceModalOpen,
-    setServiceModalOpen,
-  } = useModal();
+  const router = useRouter();
+  const { serviceModalOpen, setServiceModalOpen } = useModal();
 
-  const {
-    stopLenis,
-    startLenis,
-    getLenisScroll,
-    restoreLenisScroll,
-  } = useLenis();
+  const { stopLenis, startLenis, getLenisScroll, restoreLenisScroll } =
+    useLenis();
 
   /* ==========================================================================
      Refs
@@ -356,17 +356,13 @@ export default function ServicesModal() {
   /* ==========================================================================
      Normalize API Data
      ========================================================================== */
-
   const normalizeServiceData = useCallback((categories) => {
     if (!Array.isArray(categories)) {
       return [];
     }
 
     return categories.map((category, categoryIndex) => {
-      const categoryId = getEntityId(
-        category,
-        `category-${categoryIndex}`,
-      );
+      const categoryId = getEntityId(category, `category-${categoryIndex}`);
 
       const subCategories = Array.isArray(category?.subCategories)
         ? category.subCategories
@@ -376,12 +372,11 @@ export default function ServicesModal() {
         id: categoryId,
 
         name: category?.name ?? "Unnamed Category",
+        slug: category?.slug ?? "",
 
-        pdf: category?.pdf ?? "",
+        pdf: category?.pdf ? category.pdf : "/images/pdf-icon.png",
 
-        isUnderDevelopment: Boolean(
-          category?.isUnderDevelopment,
-        ),
+        isUnderDevelopment: Boolean(category?.isUnderDevelopment),
 
         items: subCategories.map((sub, subIndex) => {
           const subId = getEntityId(
@@ -393,22 +388,17 @@ export default function ServicesModal() {
             id: subId,
 
             name: sub?.name ?? "Unnamed Subcategory",
+            slug: sub?.slug ?? "",
 
             pdf: sub?.pdf ?? "",
 
             href: sub?.href ?? "",
 
-            isUnderDevelopment: Boolean(
-              sub?.isUnderDevelopment,
-            ),
+            isUnderDevelopment: Boolean(sub?.isUnderDevelopment),
 
-            service: Array.isArray(sub?.service)
-              ? sub.service
-              : [],
+            service: Array.isArray(sub?.service) ? sub.service : [],
 
-            children: Array.isArray(sub?.items)
-              ? sub.items
-              : [],
+            children: Array.isArray(sub?.items) ? sub.items : [],
           };
         }),
       };
@@ -421,8 +411,7 @@ export default function ServicesModal() {
 
   const fetchServices = useCallback(async () => {
     if (!API_BASE_URL) {
-      const message =
-        "NEXT_PUBLIC_LOCAL_API_URL is not configured.";
+      const message = "NEXT_PUBLIC_LOCAL_API_URL is not configured.";
 
       console.error(message);
 
@@ -459,40 +448,29 @@ export default function ServicesModal() {
       );
 
       if (!response.ok) {
-        throw new Error(
-          `Failed to fetch services: ${response.status}`,
-        );
+        throw new Error(`Failed to fetch services: ${response.status}`);
       }
 
       const result = await response.json();
 
-      if (
-        !result?.success ||
-        !Array.isArray(result?.data)
-      ) {
-        throw new Error(
-          "Invalid services response from server.",
-        );
+      if (!result?.success || !Array.isArray(result?.data)) {
+        throw new Error("Invalid services response from server.");
       }
 
       if (controller.signal.aborted) {
         return;
       }
 
-      const normalizedData =
-        normalizeServiceData(result.data);
+      const normalizedData = normalizeServiceData(result.data);
 
       setServicesData(normalizedData);
-
       /* --------------------------------------------------------------
          Initialize first section/category
          -------------------------------------------------------------- */
 
-      const firstSection =
-        normalizedData[0] ?? null;
+      const firstSection = normalizedData[0] ?? null;
 
-      const firstCategory =
-        firstSection?.items?.[0] ?? null;
+      const firstCategory = firstSection?.items?.[0] ?? null;
 
       setSelectedSection(firstSection);
 
@@ -502,23 +480,13 @@ export default function ServicesModal() {
 
       setExpandedServices({});
     } catch (err) {
-      if (
-        err?.name === "AbortError" ||
-        controller.signal.aborted
-      ) {
+      if (err?.name === "AbortError" || controller.signal.aborted) {
         return;
       }
 
-      console.error(
-        "Error fetching services:",
-        err,
-      );
+      console.error("Error fetching services:", err);
 
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to load services.",
-      );
+      setError(err instanceof Error ? err.message : "Unable to load services.");
     } finally {
       if (!controller.signal.aborted) {
         setLoading(false);
@@ -554,8 +522,7 @@ export default function ServicesModal() {
 
     return (
       servicesData.find(
-        (section) =>
-          normalizeName(section?.name) === "licensing",
+        (section) => normalizeName(section?.name) === "licensing",
       ) ?? null
     );
   }, [servicesData]);
@@ -593,12 +560,10 @@ export default function ServicesModal() {
       return null;
     }
 
-    const isAMC =
-      normalizeName(selectedSection?.name) === "amc";
+    const isAMC = normalizeName(selectedSection?.name) === "amc";
 
     const isLicensesRenewal =
-      normalizeName(selectedCategory?.name) ===
-      "licenses renewal";
+      normalizeName(selectedCategory?.name) === "licenses renewal";
 
     /**
      * Normal category:
@@ -617,9 +582,7 @@ export default function ServicesModal() {
       return selectedCategory;
     }
 
-    const licensingItems = Array.isArray(
-      licensingCategory.items,
-    )
+    const licensingItems = Array.isArray(licensingCategory.items)
       ? licensingCategory.items
       : [];
 
@@ -633,11 +596,7 @@ export default function ServicesModal() {
 
       children: licensingItems,
     };
-  }, [
-    selectedCategory,
-    selectedSection,
-    licensingCategory,
-  ]);
+  }, [selectedCategory, selectedSection, licensingCategory]);
 
   /* ==========================================================================
      Fetch When Modal Opens
@@ -674,10 +633,7 @@ export default function ServicesModal() {
      ========================================================================== */
 
   const closeModal = useCallback(() => {
-    if (
-      isClosingRef.current ||
-      !isMountedRef.current
-    ) {
+    if (isClosingRef.current || !isMountedRef.current) {
       return;
     }
 
@@ -729,10 +685,7 @@ export default function ServicesModal() {
      ========================================================================== */
 
   useEffect(() => {
-    if (
-      !serviceModalOpen &&
-      isClosingRef.current
-    ) {
+    if (!serviceModalOpen && isClosingRef.current) {
       setIsClosing(false);
 
       isClosingRef.current = false;
@@ -779,25 +732,15 @@ export default function ServicesModal() {
     const handleClickOutside = (event) => {
       const modal = modalRef.current;
 
-      if (
-        modal &&
-        !modal.contains(event.target) &&
-        !isClosingRef.current
-      ) {
+      if (modal && !modal.contains(event.target) && !isClosingRef.current) {
         closeModal();
       }
     };
 
-    document.addEventListener(
-      "click",
-      handleClickOutside,
-    );
+    document.addEventListener("click", handleClickOutside);
 
     return () => {
-      document.removeEventListener(
-        "click",
-        handleClickOutside,
-      );
+      document.removeEventListener("click", handleClickOutside);
     };
   }, [serviceModalOpen, closeModal]);
 
@@ -811,26 +754,17 @@ export default function ServicesModal() {
     }
 
     const handleKeyDown = (event) => {
-      if (
-        event.key === "Escape" &&
-        !isClosingRef.current
-      ) {
+      if (event.key === "Escape" && !isClosingRef.current) {
         event.preventDefault();
 
         closeModal();
       }
     };
 
-    document.addEventListener(
-      "keydown",
-      handleKeyDown,
-    );
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener(
-        "keydown",
-        handleKeyDown,
-      );
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [serviceModalOpen, closeModal]);
 
@@ -850,8 +784,7 @@ export default function ServicesModal() {
     stopLenis();
 
     return () => {
-      const position =
-        modalScrollRef.current;
+      const position = modalScrollRef.current;
 
       startLenis();
 
@@ -871,97 +804,77 @@ export default function ServicesModal() {
      Section Hover
      ========================================================================== */
 
-  const handleSectionHover = useCallback(
-    (section) => {
-      if (!section) {
-        return;
-      }
+  const handleSectionHover = useCallback((section) => {
+    if (!section) {
+      return;
+    }
 
-      setSelectedSection((current) =>
-        current?.id === section.id
-          ? current
-          : section,
-      );
+    setSelectedSection((current) =>
+      current?.id === section.id ? current : section,
+    );
 
-      setSelectedCategory(
-        section.items?.[0] ?? null,
-      );
+    setSelectedCategory(section.items?.[0] ?? null);
 
-      setExpandedItems({});
+    setExpandedItems({});
 
-      setExpandedServices({});
-    },
-    [],
-  );
+    setExpandedServices({});
+  }, []);
 
   /* ==========================================================================
      Category Hover
      ========================================================================== */
 
-  const handleCategoryHover = useCallback(
-    (category) => {
-      if (!category) {
-        return;
-      }
+  const handleCategoryHover = useCallback((category) => {
+    if (!category) {
+      return;
+    }
 
-      setSelectedCategory((current) =>
-        current?.id === category.id
-          ? current
-          : category,
-      );
+    setSelectedCategory((current) =>
+      current?.id === category.id ? current : category,
+    );
 
-      /**
-       * Reset nested expansion when switching
-       * to another category.
-       */
-      setExpandedItems({});
+    /**
+     * Reset nested expansion when switching
+     * to another category.
+     */
+    setExpandedItems({});
 
-      setExpandedServices({});
-    },
-    [],
-  );
+    setExpandedServices({});
+  }, []);
 
   /* ==========================================================================
      Section Click
      ========================================================================== */
 
-  const handleSectionClick = useCallback(
-    (section) => {
-      if (!section) {
-        return;
-      }
+  const handleSectionClick = useCallback((section) => {
+    if (!section) {
+      return;
+    }
 
-      setSelectedSection(section);
+    setSelectedSection(section);
 
-      setSelectedCategory(
-        section.items?.[0] ?? null,
-      );
+    setSelectedCategory(section.items?.[0] ?? null);
 
-      setExpandedItems({});
+    setExpandedItems({});
 
-      setExpandedServices({});
-    },
-    [],
-  );
+    setExpandedServices({});
+  }, []);
 
   /* ==========================================================================
      Category Click
      ========================================================================== */
 
-  const handleCategoryClick = useCallback(
-    (category) => {
-      if (!category) {
-        return;
-      }
+  const handleCategoryClick = useCallback((category) => {
+    if (!category) {
+      return;
+    }
 
-      setSelectedCategory(category);
+    setSelectedCategory(category);
 
-      setExpandedItems({});
+    setExpandedItems({});
 
-      setExpandedServices({});
-    },
-    [],
-  );
+    setExpandedServices({});
+  }, []);
 
   /* ==========================================================================
      Expand / Collapse Children
@@ -969,34 +882,22 @@ export default function ServicesModal() {
 
   const toggleExpand = useCallback((key) => {
     setExpandedItems((previous) => {
-      const level = parseInt(
-        key.split("-").pop(),
-        10,
-      );
+      const level = parseInt(key.split("-").pop(), 10);
 
-      const isCurrentlyExpanded =
-        Boolean(previous[key]);
+      const isCurrentlyExpanded = Boolean(previous[key]);
 
       if (!isCurrentlyExpanded) {
         const nextState = {
           ...previous,
         };
 
-        Object.keys(nextState).forEach(
-          (existingKey) => {
-            const existingLevel = parseInt(
-              existingKey.split("-").pop(),
-              10,
-            );
+        Object.keys(nextState).forEach((existingKey) => {
+          const existingLevel = parseInt(existingKey.split("-").pop(), 10);
 
-            if (
-              existingKey !== key &&
-              existingLevel === level
-            ) {
-              delete nextState[existingKey];
-            }
-          },
-        );
+          if (existingKey !== key && existingLevel === level) {
+            delete nextState[existingKey];
+          }
+        });
 
         nextState[key] = true;
 
@@ -1014,59 +915,42 @@ export default function ServicesModal() {
      Expand / Collapse Services
      ========================================================================== */
 
-  const toggleServiceExpand = useCallback(
-    (key) => {
-      setExpandedServices((previous) => {
-        const level = parseInt(
-          key.split("-").pop(),
-          10,
-        );
+  const toggleServiceExpand = useCallback((key) => {
+    setExpandedServices((previous) => {
+      const level = parseInt(key.split("-").pop(), 10);
 
-        const isCurrentlyExpanded =
-          Boolean(previous[key]);
+      const isCurrentlyExpanded = Boolean(previous[key]);
 
-        if (!isCurrentlyExpanded) {
-          const nextState = {
-            ...previous,
-          };
-
-          Object.keys(nextState).forEach(
-            (existingKey) => {
-              const existingLevel = parseInt(
-                existingKey.split("-").pop(),
-                10,
-              );
-
-              if (
-                existingKey !== key &&
-                existingLevel === level
-              ) {
-                delete nextState[existingKey];
-              }
-            },
-          );
-
-          nextState[key] = true;
-
-          return nextState;
-        }
-
-        return {
+      if (!isCurrentlyExpanded) {
+        const nextState = {
           ...previous,
-          [key]: false,
         };
-      });
-    },
-    [],
-  );
+
+        Object.keys(nextState).forEach((existingKey) => {
+          const existingLevel = parseInt(existingKey.split("-").pop(), 10);
+
+          if (existingKey !== key && existingLevel === level) {
+            delete nextState[existingKey];
+          }
+        });
+
+        nextState[key] = true;
+
+        return nextState;
+      }
+
+      return {
+        ...previous,
+        [key]: false,
+      };
+    });
+  }, []);
 
   /* ==========================================================================
      Derived State
      ========================================================================== */
 
-  const hasSubcategories = Boolean(
-    selectedSection?.items?.length,
-  );
+  const hasSubcategories = Boolean(selectedSection?.items?.length);
 
   /* ==========================================================================
      Render Guard - MOVED TO THE END AFTER ALL HOOKS
@@ -1079,18 +963,11 @@ export default function ServicesModal() {
      Error State
      ========================================================================== */
 
-  if (
-    !serviceModalOpen && 
-    !isClosing
-  ) {
+  if (!serviceModalOpen && !isClosing) {
     return null;
   }
 
-  if (
-    error &&
-    servicesData.length === 0 &&
-    !loading
-  ) {
+  if (error && servicesData.length === 0 && !loading) {
     return (
       <div
         className="services-modal-overlay"
@@ -1100,9 +977,7 @@ export default function ServicesModal() {
       >
         <div
           ref={modalRef}
-          className={`services-modal ${
-            isClosing ? "closing" : ""
-          }`}
+          className={`services-modal ${isClosing ? "closing" : ""}`}
         >
           <div className="services-modal-body error-state">
             <button
@@ -1111,27 +986,17 @@ export default function ServicesModal() {
               onClick={closeModal}
               aria-label="Close services menu"
             >
-              <X
-                size={24}
-                aria-hidden="true"
-              />
+              <X size={24} aria-hidden="true" />
             </button>
 
             <div className="error-container">
-              <p
-                className="error-icon"
-                aria-hidden="true"
-              >
+              <p className="error-icon" aria-hidden="true">
                 ⚠️
               </p>
 
-              <h2 id="services-error-title">
-                Unable to load services
-              </h2>
+              <h2 id="services-error-title">Unable to load services</h2>
 
-              <p className="error-message">
-                {error}
-              </p>
+              <p className="error-message">{error}</p>
 
               <button
                 type="button"
@@ -1165,15 +1030,11 @@ export default function ServicesModal() {
         } ${isClosing ? "closing" : ""}`}
       >
         {loading ? (
-          <SkeletonLoader
-            hasSubcategories={hasSubcategories}
-          />
+          <SkeletonLoader hasSubcategories={hasSubcategories} />
         ) : (
           <div
             className={`services-modal-body ${
-              hasSubcategories
-                ? "has-subcategories"
-                : "no-subcategories"
+              hasSubcategories ? "has-subcategories" : "no-subcategories"
             }`}
           >
             {/* ==============================================================
@@ -1184,23 +1045,14 @@ export default function ServicesModal() {
               className="services-left-panel"
               aria-label="Service categories"
             >
-              <h2 className="sr-only">
-                Service Categories
-              </h2>
-
-              <div
-                className="services-section-list"
-                role="list"
-              >
+              <div className="services-section-list" role="list">
                 {servicesData.map((section) => {
                   const sectionId = getEntityId(
                     section,
                     `section-${section.name}`,
                   );
 
-                  const isActive =
-                    selectedSection?.id ===
-                    section.id;
+                  const isActive = selectedSection?.id === section.id;
 
                   return (
                     <div
@@ -1212,42 +1064,62 @@ export default function ServicesModal() {
                         <button
                           type="button"
                           className={`services-section-btn ${
-                            isActive
-                              ? "active"
-                              : ""
+                            isActive ? "active" : ""
                           }`}
-                          onClick={() =>
-                            handleSectionClick(
-                              section,
-                            )
-                          }
-                          onMouseEnter={() =>
-                            handleSectionHover(
-                              section,
-                            )
-                          }
-                          aria-current={
-                            isActive
-                              ? "page"
-                              : undefined
-                          }
+                          onClick={() => handleSectionClick(section)}
+                          onMouseEnter={() => handleSectionHover(section)}
+                          aria-current={isActive ? "page" : undefined}
                         >
-                          <span className="services-section-name">
+                          <span
+                            className="services-section-name"
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent button's onClick from firing
+                              if (section.slug) {
+                                closeModal();
+                                router.push(`/our-services/${section.slug}`);
+                              }
+                            }}
+                            role="link"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                if (section.slug) {
+                                  closeModal();
+                                  router.push(`/our-services/${section.slug}`);
+                                }
+                              }
+                            }}
+                          >
                             {section.name}
                           </span>
-                        </button>
 
-                        {section.pdf && (
-                          <a
-                            href={section.pdf}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="services-section-pdf"
-                            aria-label={`Open PDF for ${section.name}`}
-                          >
-                            PDF
-                          </a>
-                        )}
+                          {section.pdf && (
+                            <a
+                              href={section.pdf}
+                              // target="_blank"
+                              rel="noopener noreferrer"
+                              className="services-section-pdf-icon"
+                              aria-label={`Open PDF for ${section.name}`}
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent button's onClick from firing
+                                e.preventDefault(); // Prevent default anchor behavior
+                                if (section.pdf) {
+                                  closeModal();
+                                  router.push("/downloads");
+                                }
+                              }}
+                            >
+                              {" "}
+                              <Image
+                                src="/images/pdf-icon.png"
+                                alt="PDF Icon"
+                                width={16}
+                                height={16}
+                              />
+                            </a>
+                          )}
+                        </button>
                       </div>
                     </div>
                   );
@@ -1264,9 +1136,7 @@ export default function ServicesModal() {
                 className="services-center-panel"
                 aria-label="Service subcategories"
               >
-                <h2 className="sr-only">
-                  Service Subcategories
-                </h2>
+                <h2 className="sr-only">Service Subcategories</h2>
 
                 <div
                   className="services-category-list"
@@ -1275,117 +1145,71 @@ export default function ServicesModal() {
                     overflowY: "auto",
                     maxHeight: "100%",
                     scrollbarWidth: "thin",
-                    scrollbarColor:
-                      "#ef7f1a transparent",
+                    scrollbarColor: "#ef7f1a transparent",
                   }}
                   onWheel={(event) => {
                     event.stopPropagation();
 
-                    const element =
-                      event.currentTarget;
+                    const element = event.currentTarget;
 
                     if (event.deltaY !== 0) {
-                      element.scrollTop +=
-                        event.deltaY;
+                      element.scrollTop += event.deltaY;
                     }
                   }}
                 >
-                  {selectedSection.items.map(
-                    (item) => {
-                      const itemId = getEntityId(
-                        item,
-                        `category-${item.name}`,
-                      );
+                  {selectedSection.items.map((item) => {
+                    const itemId = getEntityId(item, `category-${item.name}`);
 
-                      const isActive =
-                        selectedCategory?.id ===
-                        item.id;
+                    const isActive = selectedCategory?.id === item.id;
 
-                      return (
-                        <div
-                          key={itemId}
-                          className="services-category-item"
-                          role="listitem"
-                        >
-                          <div className="services-category-row">
-                            <button
-                              type="button"
-                              className={`services-category-btn ${
-                                isActive
-                                  ? "active"
-                                  : ""
-                              }`}
-                              onClick={() =>
-                                handleCategoryClick(
-                                  item,
-                                )
-                              }
-                              onMouseEnter={() =>
-                                handleCategoryHover(
-                                  item,
-                                )
-                              }
-                              aria-current={
-                                isActive
-                                  ? "page"
-                                  : undefined
-                              }
+                    return (
+                      <div
+                        key={itemId}
+                        className="services-category-item"
+                        role="listitem"
+                      >
+                        <div className="services-category-row">
+                          <button
+                            type="button"
+                            className={`services-category-btn ${
+                              isActive ? "active" : ""
+                            }`}
+                            onClick={() => handleCategoryClick(item)}
+                            onMouseEnter={() => handleCategoryHover(item)}
+                            aria-current={isActive ? "page" : undefined}
+                          >
+                            <span className="services-category-name">
+                              {String(item.name ?? "")
+                                .split(/(\()/)
+                                .map((part, index) =>
+                                  part === "(" ? (
+                                    <span key={index}>
+                                      &nbsp;
+                                      {part}
+                                    </span>
+                                  ) : (
+                                    <span key={index}>{part}</span>
+                                  ),
+                                )}
+                            </span>
+                          </button>
+
+                          {item.pdf && (
+                            <a
+                              href={item.pdf}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="services-category-pdf"
+                              aria-label={`Open PDF for ${item.name}`}
+                              onClick={(event) => event.stopPropagation()}
                             >
-                              <span className="services-category-name">
-                                {String(
-                                  item.name ?? "",
-                                )
-                                  .split(/(\()/)
-                                  .map(
-                                    (
-                                      part,
-                                      index,
-                                    ) =>
-                                      part ===
-                                      "(" ? (
-                                        <span
-                                          key={
-                                            index
-                                          }
-                                        >
-                                          &nbsp;
-                                          {part}
-                                        </span>
-                                      ) : (
-                                        <span
-                                          key={
-                                            index
-                                          }
-                                        >
-                                          {part}
-                                        </span>
-                                      ),
-                                  )}
-                              </span>
-                            </button>
-
-                            {item.pdf && (
-                              <a
-                                href={item.pdf}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="services-category-pdf"
-                                aria-label={`Open PDF for ${item.name}`}
-                                onClick={(event) =>
-                                  event.stopPropagation()
-                                }
-                              >
-                                <FileText
-                                  size={14}
-                                  aria-hidden="true"
-                                />
-                              </a>
-                            )}
-                          </div>
+                              <FileText size={14} aria-hidden="true" />
+                            </a>
+                          )}
                         </div>
-                      );
-                    },
-                  )}
+                      </div>
+                    );
+                  })}
                 </div>
               </nav>
             )}
@@ -1411,38 +1235,40 @@ export default function ServicesModal() {
                       {/* Direct Service Offerings */}
                       {Array.isArray(displayCategory.service) &&
                         displayCategory.service.length > 0 && (
-                        <section
-                          className="services-details-services"
-                          aria-label="Service offerings"
-                        >
-                          <h3 className="services-details-subtitle">
-                            <List size={16} aria-hidden="true" />
-                            Service Offerings
-                          </h3>
-
-                          <ul
-                            className="services-details-services-list"
-                            role="list"
+                          <section
+                            className="services-details-services"
+                            aria-label="Service offerings"
                           >
-                            {displayCategory.service.map((serviceItem, index) => (
-                              <li
-                                key={`${displayCategory.id}-service-${index}`}
-                                className="services-details-service-item"
-                              >
-                                <span
-                                  className="services-details-service-dot"
-                                  aria-hidden="true"
-                                >
-                                  •
-                                </span>
-                                <span className="services-details-service-name">
-                                  {serviceItem}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        </section>
-                      )}
+                            <h3 className="services-details-subtitle">
+                              <List size={16} aria-hidden="true" />
+                              Service Offerings
+                            </h3>
+
+                            <ul
+                              className="services-details-services-list"
+                              role="list"
+                            >
+                              {displayCategory.service.map(
+                                (serviceItem, index) => (
+                                  <li
+                                    key={`${displayCategory.id}-service-${index}`}
+                                    className="services-details-service-item"
+                                  >
+                                    <span
+                                      className="services-details-service-dot"
+                                      aria-hidden="true"
+                                    >
+                                      •
+                                    </span>
+                                    <span className="services-details-service-name">
+                                      {serviceItem}
+                                    </span>
+                                  </li>
+                                ),
+                              )}
+                            </ul>
+                          </section>
+                        )}
 
                       {/* Recursive Children */}
                       {Array.isArray(displayCategory.children) &&

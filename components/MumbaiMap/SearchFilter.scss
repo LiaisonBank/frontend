@@ -61,13 +61,6 @@
       min-width: 200px;
       width: 100%;
     }
-
-    @media (min-width: 600px) {
-      &.expanded {
-        min-width: 300px;
-        max-width: 500px;
-      }
-    }
   }
 
   // Search container for flex layout
@@ -108,7 +101,7 @@
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 12px;
-    margin-top: 0.5rem;
+    margin-top: 0.2rem;
     width: 100%;
     transition: all 0.3s ease;
     width: 600px;

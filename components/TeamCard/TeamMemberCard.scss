@@ -1,15 +1,15 @@
 /* TeamMemberCard.scss */
 // ===== Variables =====
-$card-width: 350px;
-$card-height: 250px;
+$card-width: 450px;
+$card-height: 321px;
 $card-radius: 1rem;
 $transition-duration: 0.8s;
-$border-color: #0b1a2e;
-$text-dark: #142433;
+$border-color: #f97316;
+$text-dark: #ea580c;
 $text-muted: #6f82a0;
-$text-primary: #1f3a5f;
-$text-name: #0b1a2e;
-$text-designation: #2f5277;
+$text-primary: #f97316;
+$text-name: #f97316;
+$text-designation: #ea580c;
 
 // ===== scene + flip =====
 .scene {
@@ -79,6 +79,7 @@ $text-designation: #2f5277;
 
   .flip.flipped & .front-image {
     transform: scale(0.22) rotate(0deg);
+    
   }
 
   .front-label {
@@ -93,7 +94,7 @@ $text-designation: #2f5277;
     padding: 0.3rem 1.4rem;
     border-radius: 40px;
     backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid #ea580c;
     pointer-events: none;
     z-index: 3;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
@@ -103,6 +104,7 @@ $text-designation: #2f5277;
 // ---- BACK : two columns, 50% each ----
 .back {
   background: #ffffff;
+  border: 1px solid #ea580c;
   transform: rotateY(180deg);
   padding: 0;
   display: flex;
@@ -129,7 +131,7 @@ $text-designation: #2f5277;
     .circle-image {
       width: 100%;
       aspect-ratio: 1 / 1;
-      max-width: 130px;
+      max-width: 200px;
       border-radius: 100%;
       background-size: cover;
       background-position: center;
@@ -146,6 +148,7 @@ $text-designation: #2f5277;
     .flip.flipped & .circle-image {
       transform: scale(1.08);
       transition: transform 0.9s cubic-bezier(0.34, 1.2, 0.64, 1);
+      border:orangered solid 1px;
     }
   }
 
@@ -154,12 +157,12 @@ $text-designation: #2f5277;
     flex: 0 0 50%;
     width: 50%;
     height: 100%;
-    padding: 1.2rem 1.2rem 1.2rem 0.8rem;
+    padding: 1.4rem 1.4rem 1.4rem 1rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     background: #ffffff;
-    gap: 0.7rem;
+    gap: 0.9rem;
     border-radius: 0 1.8rem 1.8rem 0;
 
     .info-item {
@@ -167,7 +170,7 @@ $text-designation: #2f5277;
       flex-direction: column;
       align-items: flex-start;
       width: 100%;
-      padding-bottom: 0.2rem;
+      padding-bottom: 0.3rem;
       border-bottom: 1px solid rgba(0, 0, 0, 0.03);
       opacity: 0;
       transform: translateY(16px);
@@ -191,24 +194,24 @@ $text-designation: #2f5277;
     }
 
     .info-label {
-      font-size: 0.5rem;
+      font-size: 0.6rem;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.8px;
       color: $text-muted;
       font-weight: 700;
-      margin-bottom: 0.05rem;
+      margin-bottom: 0.1rem;
     }
 
     .info-value {
-      font-size: 0.8rem;
+      font-size: 1rem;
       font-weight: 500;
       color: $text-dark;
       word-break: break-word;
-      line-height: 1.2;
+      line-height: 1.3;
 
       &.name {
         font-weight: 700;
-        font-size: 1.05rem;
+        font-size: 1.3rem;
         color: $text-name;
         letter-spacing: -0.2px;
       }
@@ -216,7 +219,7 @@ $text-designation: #2f5277;
       &.designation {
         color: $text-designation;
         font-weight: 400;
-        font-size: 0.75rem;
+        font-size: 1rem;
       }
     }
   }
@@ -240,19 +243,23 @@ $text-designation: #2f5277;
   }
 
   .back-right {
-    padding: 0.8rem 0.8rem 0.8rem 0.5rem;
-    gap: 0.5rem;
-
-    .info-value {
-      font-size: 0.7rem;
-
-      &.name {
-        font-size: 0.9rem;
-      }
-    }
+    padding: 0.9rem 0.9rem 0.9rem 0.6rem;
+    gap: 0.6rem;
 
     .info-label {
-      font-size: 0.45rem;
+      font-size: 0.5rem;
+    }
+
+    .info-value {
+      font-size: 0.8rem;
+
+      &.name {
+        font-size: 1.1rem;
+      }
+
+      &.designation {
+        font-size: 0.75rem;
+      }
     }
   }
 
@@ -275,19 +282,23 @@ $text-designation: #2f5277;
   }
 
   .back-right {
-    padding: 0.5rem 0.6rem 0.5rem 0.3rem;
-    gap: 0.4rem;
-
-    .info-value {
-      font-size: 0.6rem;
-
-      &.name {
-        font-size: 0.8rem;
-      }
-    }
+    padding: 0.6rem 0.6rem 0.6rem 0.4rem;
+    gap: 0.5rem;
 
     .info-label {
-      font-size: 0.4rem;
+      font-size: 0.45rem;
+    }
+
+    .info-value {
+      font-size: 0.7rem;
+
+      &.name {
+        font-size: 0.95rem;
+      }
+
+      &.designation {
+        font-size: 0.65rem;
+      }
     }
   }
 
