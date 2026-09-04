@@ -17,31 +17,21 @@ export default function OurServices() {
   const [error, setError] = useState(null);
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // Define which services should have navigation
-  const getNavigationStatus = (categoryName) => {
-    // Services that should be clickable/navigable
-    const navigableServices = ['Licensing', 'Liaisoning', 'Piped Natural Gas', 'Piped natural gas', 'PNG Services'];
-    return navigableServices.some(name => 
-      categoryName.toLowerCase().includes(name.toLowerCase())
-    );
-  };
-
   // Define unique features for each service type
   const getFeaturesForCategory = (categoryName) => {
     const featuresMap = {
-      'Licensing': ['Business License Applications', 'Renewal Services', 'Documentation Support'],
-      'Liaisoning': ['Government Approvals', 'Regulatory Compliance', 'Department Coordination'],
+      'Licensing': ['Business License Applications',  'Renewal Services',  'Documentation Support'],
+      'Liaisoning': ['Government Approvals',  'Regulatory Compliance', 'Department Coordination'],
       'Electrical': ['Electrical Audits', 'Safety Certifications', 'Energy Optimization'],
-      'Piped Natural Gas': ['Pipeline Installation', 'Maintenance', 'Safety Inspections'],
-      'Piped natural gas': ['Pipeline Installation', 'Maintenance', 'Safety Inspections'],
-      'PNG Services': ['Pipeline Installation', 'Maintenance', 'Safety Inspections'],
-      'Fire': ['Fire Audits', 'Risk Assessments', 'Certification'],
-      'AMC': ['Annual Maintenance', 'Compliance Support', 'Regular Inspections'],
-      'Real Estate': [
+      'Piped Natural gas': ['Pipeline Installation', 'Maintenance', 'Safety Inspections'],
+      'Fire': ['Fire Audits', 'Risk Assessments', 'Certification',],
+      'AMC': ['Annual Maintenance', 'Compliance Support', 'Regular Inspections', ],
+            'Real Estate': [
         'Property Registration', 
         'Legal Documentation', 
         'Stamp Duty & Registration',
       ],
+            // Equipment Solution Department
       'Equipment Solution Department': [
         'Equipment Sourcing', 
         'Installation & Commissioning', 
@@ -50,8 +40,10 @@ export default function OurServices() {
     };
 
     // Return features based on category name, or default if not found
-    return featuresMap[categoryName] || ['Expert Consultation', 'Fast Turnaround', '100% Compliance'];
+    return featuresMap[categoryName] || ['Expert Consultation', 'Fast Turnaround', '100% Compliance',];
   };
+
+  
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -83,9 +75,6 @@ export default function OurServices() {
 
             // Get features based on category name
             const features = category.features || getFeaturesForCategory(category.name);
-            
-            // Check if this category should be navigable
-            const isNavigable = getNavigationStatus(category.name);
 
             return {
               id: category.id,
@@ -94,7 +83,6 @@ export default function OurServices() {
               description: category.description || `Expert ${category.name} services for your business.`,
               image: fullImageUrl,
               features: features,
-              isNavigable: isNavigable,
             };
           });
           
@@ -109,7 +97,6 @@ export default function OurServices() {
               description: "Expert Licensing services for your business. Get all your licenses and permits with our professional guidance.",
               image: getImageUrl('/images/licensing-ourservices.png'),
               features: ['Business License Applications', 'Permit Management', 'Renewal Services', 'Compliance Monitoring', 'Documentation Support'],
-              isNavigable: true,
             },
             {
               id: 2,
@@ -118,7 +105,6 @@ export default function OurServices() {
               description: "Expert Liaisoning services for your business. Navigate government regulations with ease.",
               image: getImageUrl('/images/businessman-application-human-digital-business.jpg'),
               features: ['Government Approvals', 'NOC Services', 'Regulatory Compliance', 'Department Coordination', 'File Tracking'],
-              isNavigable: true,
             },
             {
               id: 3,
@@ -127,16 +113,14 @@ export default function OurServices() {
               description: "Expert Electrical services for your business. Professional electrical audit and certification.",
               image: getImageUrl('/images/electric-ourservices.png'),
               features: ['Electrical Audits', 'Safety Certifications', 'Load Analysis', 'Compliance Reports', 'Energy Optimization'],
-              isNavigable: false,
             },
             {
               id: 4,
-              name: "Piped Natural Gas",
-              slug: "piped-natural-gas",
+              name: "PNG Services",
+              slug: "png-services",
               description: "Expert PNG services for your business. Complete Piped Natural Gas solutions.",
               image: getImageUrl('/images/png-ourservices.png'),
               features: ['Site Survey', 'Pipeline Installation', 'Commissioning', 'Maintenance', 'Safety Inspections'],
-              isNavigable: true,
             },
             {
               id: 5,
@@ -145,7 +129,6 @@ export default function OurServices() {
               description: "Expert Fire Safety services for your business. Comprehensive fire safety audits.",
               image: getImageUrl('/images/fire-ourservices.png'),
               features: ['Fire Audits', 'Risk Assessments', 'Safety Training', 'Certification', 'Equipment Inspection'],
-              isNavigable: false,
             },
             {
               id: 6,
@@ -154,7 +137,6 @@ export default function OurServices() {
               description: "Expert AMC services for your business. Annual maintenance contracts for compliance.",
               image: getImageUrl('/images/expert.jpg'),
               features: ['Annual Maintenance', 'Compliance Support', 'Regular Inspections', 'Dedicated Support', 'Emergency Response'],
-              isNavigable: false,
             },
           ];
           setServicesData(mockData);
@@ -255,9 +237,6 @@ export default function OurServices() {
 
           <div className="services-grid">
             {servicesData.map((service, index) => {
-              // Check if this service should be navigable
-              const isNavigable = service.isNavigable !== undefined ? service.isNavigable : false;
-              
               return (
                 <motion.div
                   key={service.id}
@@ -268,60 +247,7 @@ export default function OurServices() {
                   onMouseLeave={() => setHoveredCard(null)}
                   className="service-card-wrapper"
                 >
-                  {isNavigable ? (
-                    <Link href={`/our-services/${service.slug}`} className="service-card-link">
-                      <div className="service-card-modern">
-                        <div className="service-card-image-full">
-                          <img
-                            src={service.image || FALLBACK_IMAGE}
-                            alt={service.name || "Service"}
-                            onError={(e) => {
-                              console.warn(
-                                `Image failed to load for ${service?.name}:`,
-                                service?.image
-                              );
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = FALLBACK_IMAGE;
-                            }}
-                          />
-                          <div className="card-overlay-full">
-                            <div className="card-content-overlay">
-                              <h3 className="card-title-overlay">{service.name}</h3>
-                              <p className="card-description-overlay"></p>
-
-                              <div className="card-features-overlay">
-                                {service.features && service.features.slice(0, 3).map((feature, idx) => (
-                                  <span key={idx} className="feature-chip-overlay">
-                                    {feature}
-                                  </span>
-                                ))}
-                                {service.features && service.features.length > 3 && (
-                                  <span className="feature-chip-more-overlay">
-                                    +{service.features.length - 3} more
-                                  </span>
-                                )}
-                              </div>
-
-                              <div className="card-footer-overlay">
-                                <span className="card-number-overlay">
-                                  {String(index + 1).padStart(2, '0')}
-                                </span>
-                                <button className="card-btn-overlay">
-                                  Learn More
-                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M5 12h14" />
-                                    <path d="M12 5l7 7-7 7" />
-                                  </svg>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="card-gradient-bar-overlay" />
-                        </div>
-                      </div>
-                    </Link>
-                  ) : (
-                    // Non-navigable card without Link and without any button/badge
+                  {/* <Link href={`/our-services/${service.slug}`} className="service-card-link"> */}
                     <div className="service-card-modern">
                       <div className="service-card-image-full">
                         <img
@@ -358,14 +284,20 @@ export default function OurServices() {
                               <span className="card-number-overlay">
                                 {String(index + 1).padStart(2, '0')}
                               </span>
-                              {/* No button, no badge - just empty space */}
+                              {/* <button className="card-btn-overlay">
+                                Learn More
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M5 12h14" />
+                                  <path d="M12 5l7 7-7 7" />
+                                </svg>
+                              </button> */}
                             </div>
                           </div>
                         </div>
                         <div className="card-gradient-bar-overlay" />
                       </div>
                     </div>
-                  )}
+                  {/* </Link> */}
                 </motion.div>
               );
             })}
