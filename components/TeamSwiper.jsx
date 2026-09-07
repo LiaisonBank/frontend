@@ -27,7 +27,7 @@ const TEAM_GROUPS = {
     designations: ["Chief Officer", "Deputy Chief", "Chief Vigilance", "Chief Vigilance Officer", ]
   },
    adminArchitecture: {
-    title: "Admin & Architecture",
+    title: "Admin & Architect",
     designations: ["Admin", "Architecture", "Architect", "Administrative", "Administration", "Facilities", "Senior Architect", "Architectural Designer"]
   },
   informationTechnologySales: {
