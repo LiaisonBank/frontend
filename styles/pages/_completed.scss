@@ -25,40 +25,91 @@
     overflow: var(--popup-overflow, "");
   }
 
-  // Stats grid styles
+  // Stats grid styles - FIXED VERSION
   .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 2rem;
-    max-width: 100%;
-    margin: 0 auto 2rem;
-    padding: 0 1rem;
-  }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+    margin: 2rem auto 3rem;
+    padding: 0 2rem;
+    flex-wrap: wrap;
+    max-width: 1200px;
 
-  .stat-item {
-    text-align: center;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 1.5rem 1rem;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 0 1 auto;
+      min-width: 160px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 1.8rem 2.5rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
 
-  .stat-number {
-    display: block;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #fff;
-    line-height: 1.2;
-  }
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+    }
 
-  .stat-label {
-    display: block;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 0.5rem;
+    .stat-number {
+      display: block;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.9);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    // Responsive
+    @media (max-width: 768px) {
+      gap: 1.5rem;
+      padding: 0 1rem;
+      margin: 1.5rem auto 2rem;
+      
+      .stat-item {
+        min-width: 120px;
+        padding: 1.2rem 1.5rem;
+        flex: 1 1 40%;
+      }
+      
+      .stat-number {
+        font-size: 2rem;
+      }
+      
+      .stat-label {
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      gap: 1rem;
+      
+      .stat-item {
+        min-width: 100px;
+        padding: 1rem 1rem;
+        flex: 1 1 100%;
+      }
+      
+      .stat-number {
+        font-size: 1.8rem;
+      }
+    }
   }
 
   .hero-title {
@@ -209,12 +260,9 @@
 
     background: #ffffff;
 
-    // border: 1px solid $border-color;
     border-radius: 12px;
 
     overflow: hidden;
-
-    // box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
   // =========================================================
@@ -264,7 +312,6 @@
       width: 100%;
       height: 100%;
       background-color: rgba(13, 34, 82, 0.87);
-      // background-image: url("https://corporategenie.in/wp-content/uploads/2025/02/h-bg-section9.png");
       background-position: center right;
       background-repeat: no-repeat;
       background-size: cover;
@@ -315,30 +362,6 @@
       &::after {
         background-position: center;
       }
-    }
-  }
-
-  // =========================================================
-  // Stats Grid (override for flex layout)
-  // =========================================================
-
-  .stats-grid {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin: 2rem 0 2.5rem;
-    flex-wrap: wrap;
-
-    .stat-item {
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .stats-grid {
-      justify-content: center;
-      gap: 3rem;
     }
   }
 
@@ -776,35 +799,18 @@
   }
 
   // =========================================================
-  // Responsive Styles (from Global Styles.txt)
+  // Responsive Styles
   // =========================================================
 
   @media (max-width: 768px) {
     .hero-title {
       font-size: 2.5rem;
     }
-
-    .stat-number {
-      font-size: 2rem;
-    }
-
-    .stats-grid {
-      gap: 1rem;
-      padding: 0 0.5rem;
-    }
-
-    .stat-item {
-      padding: 1rem 0.5rem;
-    }
   }
 
   @media (max-width: 480px) {
     .hero-title {
       font-size: 2rem;
-    }
-
-    .stat-number {
-      font-size: 1.8rem;
     }
 
     .outline-theme-btn {
@@ -830,7 +836,6 @@
 
   @media screen and (max-width: 768px) {
     .hero-section {
-      // background-image: url('your-mobile-image.jpg');
       min-height: 80vh;
     }
   }
