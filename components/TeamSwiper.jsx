@@ -32,7 +32,7 @@ const TEAM_GROUPS = {
   },
   informationTechnologySales: {
     title: "Information Technology & Sales",
-    designations: ["IT", "Information Technology", "Sales", "IT Head", "Sales Head", "IT Manager", "Sales Manager", "Business Development"]
+    designations: ["Software Engineer", "Information Technology", "Sales", "IT Head", "Sales Head", "IT Manager", "Sales Manager", "Business Development"]
   },
     projectCoordinator: {
     title: "Project Coordinator",
