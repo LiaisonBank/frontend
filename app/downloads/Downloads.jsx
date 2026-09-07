@@ -170,7 +170,7 @@ export default function Downloads() {
     () => [
       {
         name: "Company Profile",
-        file: "COMPANYPROFILE",
+        file: "liaisoncompanyprofile",
         category: "profile",
         description:
           "Comprehensive overview of our company, services, and achievements",
