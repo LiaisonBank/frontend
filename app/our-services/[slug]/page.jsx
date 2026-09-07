@@ -1,7 +1,7 @@
 // app/our-services/[slug]/page.jsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import "./service-detail.scss";
@@ -18,6 +18,15 @@ export default function ServiceDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [relatedServices, setRelatedServices] = useState([]);
+  
+  // Track flip state for each card
+  const [flippedCards, setFlippedCards] = useState({});
+  
+  // Refs for timeout handling
+  const timeoutRefs = useRef({});
+  const containerRefs = useRef({});
+  const scrollTimeoutRefs = useRef({});
+  const listRefs = useRef({});
 
   useEffect(() => {
     if (!slug) return;
@@ -73,13 +82,11 @@ export default function ServiceDetail() {
           }
 
           const processedItems = (sub.items || []).map((item) => {
-            // Process itemServices - ensure it's an array
             let servicesList = [];
             if (item.itemServices) {
               if (Array.isArray(item.itemServices)) {
                 servicesList = item.itemServices;
               } else if (typeof item.itemServices === 'string') {
-                // If it's a string, try to parse it or split by comma
                 try {
                   const parsed = JSON.parse(item.itemServices);
                   servicesList = Array.isArray(parsed) ? parsed : [item.itemServices];
@@ -189,6 +196,120 @@ export default function ServiceDetail() {
     fetchServiceDetail();
   }, [slug]);
 
+  // Toggle flip state for a card
+  const toggleFlip = (cardId, isFlipped) => {
+    setFlippedCards(prev => ({
+      ...prev,
+      [cardId]: isFlipped
+    }));
+  };
+
+  // Handle mouse enter on card
+  const handleCardMouseEnter = (cardId) => {
+    // Clear any pending timeout
+    if (timeoutRefs.current[cardId]) {
+      clearTimeout(timeoutRefs.current[cardId]);
+      delete timeoutRefs.current[cardId];
+    }
+    toggleFlip(cardId, true);
+  };
+
+  // Handle mouse leave on card
+  const handleCardMouseLeave = (cardId) => {
+    // Check if we're scrolling
+    const container = containerRefs.current[cardId];
+    if (container && container.dataset.isScrolling === 'true') {
+      return;
+    }
+    
+    // Delay flipping back to prevent accidental flips
+    timeoutRefs.current[cardId] = setTimeout(() => {
+      toggleFlip(cardId, false);
+      delete timeoutRefs.current[cardId];
+    }, 200);
+  };
+
+  // Handle scroll start
+  const handleScrollStart = (cardId) => {
+    const container = containerRefs.current[cardId];
+    if (container) {
+      container.dataset.isScrolling = 'true';
+    }
+    // Ensure card stays flipped during scroll
+    toggleFlip(cardId, true);
+    
+    // Clear any existing scroll timeout
+    if (scrollTimeoutRefs.current[cardId]) {
+      clearTimeout(scrollTimeoutRefs.current[cardId]);
+      delete scrollTimeoutRefs.current[cardId];
+    }
+  };
+
+  // Handle scroll end
+  const handleScrollEnd = (cardId) => {
+    const container = containerRefs.current[cardId];
+    if (container) {
+      if (scrollTimeoutRefs.current[cardId]) {
+        clearTimeout(scrollTimeoutRefs.current[cardId]);
+      }
+      scrollTimeoutRefs.current[cardId] = setTimeout(() => {
+        if (container) {
+          container.dataset.isScrolling = 'false';
+        }
+        delete scrollTimeoutRefs.current[cardId];
+      }, 300);
+    }
+  };
+
+  // Handle wheel scroll event with boundary detection
+  const handleWheelScroll = (e, cardId) => {
+    const element = e.currentTarget;
+    const delta = e.deltaY;
+    
+    // Get scroll boundaries
+    const scrollTop = element.scrollTop;
+    const scrollHeight = element.scrollHeight;
+    const clientHeight = element.clientHeight;
+    const maxScroll = scrollHeight - clientHeight;
+    
+    // Check if we're at the boundaries
+    const isAtTop = scrollTop === 0;
+    const isAtBottom = scrollTop >= maxScroll - 1;
+    
+    // If at top and scrolling up, or at bottom and scrolling down, let the event pass through
+    if ((isAtTop && delta < 0) || (isAtBottom && delta > 0)) {
+      // Allow the wheel event to pass through to the parent
+      return;
+    }
+    
+    // Otherwise, prevent default and handle the scroll
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Scroll the element
+    element.scrollTop += delta;
+    
+    // Update scroll state
+    const container = containerRefs.current[cardId];
+    if (container) {
+      container.dataset.isScrolling = 'true';
+      toggleFlip(cardId, true);
+      
+      // Clear existing timeout
+      if (scrollTimeoutRefs.current[cardId]) {
+        clearTimeout(scrollTimeoutRefs.current[cardId]);
+      }
+      
+      // Set timeout to mark scrolling as ended
+      scrollTimeoutRefs.current[cardId] = setTimeout(() => {
+        if (container) {
+          container.dataset.isScrolling = 'false';
+        }
+        delete scrollTimeoutRefs.current[cardId];
+      }, 300);
+    }
+  };
+
   if (loading) {
     return (
       <div className="service-detail-loading">
@@ -245,96 +366,110 @@ export default function ServiceDetail() {
           <div className="services-header">
             <span className="services-badge">Services</span>
             <h2 className="services-title">Explore {service.name} Services</h2>
-            <p className="services-subtitle">Hover over each card to see available services</p>
           </div>
 
           <div className="subcategory-flip-grid">
-            {service.subcategories.map((subcategory, index) => (
-              <div key={subcategory.id} className="subcategory-flip-container">
-                <div className="subcategory-flip-card">
-                  {/* FRONT - Image with name overlay at top */}
-                  <div className="subcategory-flip-front">
-                    {subcategory.hasImage && subcategory.imageUrl ? (
-                      <img
-                        src={subcategory.imageUrl}
-                        alt={subcategory.name}
-                        className="subcategory-flip-image"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.style.display = 'none';
-                          const placeholder = e.currentTarget.parentElement.querySelector('.subcategory-no-image');
-                          if (placeholder) {
-                            placeholder.style.display = 'flex';
+            {service.subcategories.map((subcategory) => {
+              const cardId = `card-${subcategory.id}`;
+              const isFlipped = flippedCards[cardId] || false;
+              
+              return (
+                <div 
+                  key={subcategory.id} 
+                  className={`subcategory-flip-container ${isFlipped ? 'flipped' : ''}`}
+                  ref={(el) => {
+                    if (el) {
+                      containerRefs.current[cardId] = el;
+                    }
+                  }}
+                  onMouseEnter={() => handleCardMouseEnter(cardId)}
+                  onMouseLeave={() => handleCardMouseLeave(cardId)}
+                >
+                  <div className="subcategory-flip-card">
+                    {/* FRONT - Image with name overlay at top */}
+                    <div className="subcategory-flip-front">
+                      {subcategory.hasImage && subcategory.imageUrl ? (
+                        <img
+                          src={subcategory.imageUrl}
+                          alt={subcategory.name}
+                          className="subcategory-flip-image"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.style.display = 'none';
+                            const placeholder = e.currentTarget.parentElement.querySelector('.subcategory-no-image');
+                            if (placeholder) {
+                              placeholder.style.display = 'flex';
+                            }
+                          }}
+                        />
+                      ) : (
+                        <div className="subcategory-no-image">
+                          <h3 className="subcategory-name-only">{subcategory.name}</h3>
+                        </div>
+                      )}
+                      
+                      {/* Name at TOP */}
+                      <div className="subcategory-name-overlay-top">
+                        <h3 className="subcategory-flip-name">{subcategory.name}</h3>
+                      </div>
+
+                    </div>
+
+                    {/* BACK - Items list with scroll functionality */}
+                    <div className="subcategory-flip-back">
+                      <div className="flip-back-header">
+                        <span className="flip-back-badge">Available Services</span>
+                        <h4 className="flip-back-title">{subcategory.name}</h4>
+                      </div>
+
+                      <div 
+                        className="flip-back-items-list"
+                        ref={(el) => {
+                          if (el) {
+                            listRefs.current[cardId] = el;
                           }
                         }}
-                      />
-                    ) : (
-                      <div className="subcategory-no-image">
-                        <h3 className="subcategory-name-only">{subcategory.name}</h3>
-                      </div>
-                    )}
-                    
-                    {/* Name at TOP */}
-                    <div className="subcategory-name-overlay-top">
-                      <h3 className="subcategory-flip-name">{subcategory.name}</h3>
-                      <span className="subcategory-item-count">{subcategory.itemCount} services</span>
-                    </div>
-
-                    {/* Hover hint at bottom */}
-                    <div className="subcategory-hover-hint">Hover to view services →</div>
-                  </div>
-
-                  {/* BACK - Items list with scroll functionality */}
-                  <div className="subcategory-flip-back">
-                    <div className="flip-back-header">
-                      <span className="flip-back-badge">Available Services</span>
-                      <h4 className="flip-back-title">{subcategory.name}</h4>
-                    </div>
-
-                    <div 
-                      className="flip-back-items-list"
-                      onWheel={(e) => {
-                        e.stopPropagation();
-                        const element = e.currentTarget;
-                        if (e.deltaY !== 0) {
-                          element.scrollTop += e.deltaY;
-                        }
-                      }}
-                    >
-                      {subcategory.items && subcategory.items.length > 0 ? (
-                        subcategory.items.map((item, idx) => (
-                          <div key={item.id} className="back-item-wrapper">
-                            {/* Item name as header */}
-                            <div className="back-item-header">
-                              <span className="back-item-number">{String(idx + 1).padStart(2, '0')}</span>
-                              <p className="back-item-name">{item.name}</p>
+                        onWheel={(e) => handleWheelScroll(e, cardId)}
+                        onMouseDown={() => handleScrollStart(cardId)}
+                        onMouseUp={() => handleScrollEnd(cardId)}
+                        onMouseLeave={() => handleScrollEnd(cardId)}
+                        onTouchStart={() => handleScrollStart(cardId)}
+                        onTouchEnd={() => handleScrollEnd(cardId)}
+                        onTouchCancel={() => handleScrollEnd(cardId)}
+                      >
+                        {subcategory.items && subcategory.items.length > 0 ? (
+                          subcategory.items.map((item, idx) => (
+                            <div key={item.id} className="back-item-wrapper">
+                              {/* Item name as header */}
+                              <div className="back-item-header">
+                                <span className="back-item-number">{String(idx + 1).padStart(2, '0')}</span>
+                                <p className="back-item-name">{item.name}</p>
+                              </div>
+                              
+                              {/* Item Services list - displayed as a vertical list */}
+                              {item.servicesList && item.servicesList.length > 0 && (
+                                <ul className="back-item-services-list">
+                                  {item.servicesList.map((serviceName, serviceIdx) => (
+                                    <li key={serviceIdx} className="back-service-item">
+                                      <span className="back-service-dot">•</span>
+                                      <span className="back-service-name">{serviceName}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
                             </div>
-                            
-                            {/* Item Services list - displayed as a vertical list */}
-                            {item.servicesList && item.servicesList.length > 0 && (
-                              <ul className="back-item-services-list">
-                                {item.servicesList.map((serviceName, serviceIdx) => (
-                                  <li key={serviceIdx} className="back-service-item">
-                                    <span className="back-service-dot">•</span>
-                                    <span className="back-service-name">{serviceName}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        ))
-                      ) : (
-                        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', textAlign: 'center', padding: '20px 0' }}>
-                          No services available
-                        </p>
-                      )}
-                    </div>
+                          ))
+                        ) : (
+                          <p className="no-services-message">
+                          </p>
+                        )}
+                      </div>
 
-                    <div className="flip-back-hint">← Flip back to see image</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

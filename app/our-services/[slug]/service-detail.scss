@@ -744,6 +744,7 @@ $font-5xl: 58px;
     .related-subtitle {
       color: $gray-500;
       font-size: 20px;
+      text-align: center;
 
       @media (max-width: 768px) {
         font-size: 18px;
