@@ -16,13 +16,13 @@ const routes = [
     priority: 0.9,
     changeFrequency: "monthly",
   },
-  // {
-  //   path: "/process-liaison-bank",
-  //   priority: 0.9,
-  //   changeFrequency: "monthly",
-  // },
   {
-    path: "/our-services",
+    path: "/process-liaison-bank",
+    priority: 0.9,
+    changeFrequency: "monthly",
+  },
+  {
+    path: "/services",
     priority: 0.9,
     changeFrequency: "weekly",
   },

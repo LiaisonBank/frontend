@@ -1,14 +1,13 @@
+
 import React, { useState } from "react";
+import PhoneIcon from "components/phoneicon";
+import EmailIcon from "components/EmailIcon";
+
 import "./TeamMemberCard.scss";
 
-const TeamMemberCard = ({ member }) => {
+const TeamMemberCard = ({ member = {} }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const handleToggle = () => {
-    setIsFlipped(!isFlipped);
-  };
-
-  // Destructure member object with fallback values
   const {
     name = "Alexandra V. Chen",
     designation = "Lead Product Designer",
@@ -16,66 +15,115 @@ const TeamMemberCard = ({ member }) => {
     phone = "+1 (415) 867-5309",
     image = "",
     frontLabel = "",
-  } = member || {};
+  } = member;
 
-  // Construct image URLs
+  // Construct image URL
   const imageUrl = image
     ? `${process.env.NEXT_PUBLIC_LOCAL_API_URL}${image}`
     : "";
 
-  // Generate inline styles for dynamic images
-  const frontImageStyle = {
-    backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
+  const imageStyle = imageUrl
+    ? { backgroundImage: `url("${imageUrl}")` }
+    : undefined;
+
+  const handleToggle = () => {
+    setIsFlipped((prev) => !prev);
   };
 
-  const circleImageStyle = {
-    backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
-  };
-  console.log("TeamMemberCard member:", member);
-  
   return (
-    <section>
-
-      <div className="scene" tabIndex={0} onClick={handleToggle}>
+    <section className="team-member-card">
+      <div
+        className="scene"
+        tabIndex={0}
+        role="button"
+        aria-label={`View details for ${name}`}
+        aria-pressed={isFlipped}
+        onClick={handleToggle}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleToggle();
+          }
+        }}
+      >
         <div className={`flip ${isFlipped ? "flipped" : ""}`}>
-          {/* FRONT : image + name */}
+          {/* Front */}
           <div className="face front">
-            <div className="front-image" style={frontImageStyle}></div>
-            <div className="front-label">{frontLabel || name}</div>
+            <div
+              className="front-image"
+              style={imageStyle}
+              aria-label={`${name} profile`}
+            />
+
+            <div className="front-label">
+              {frontLabel || name}
+            </div>
           </div>
 
-          {/* BACK : 50% circle (left) + 50% details (right) */}
+          {/* Back */}
           <div className="face back">
-            {/* left column : circle image (50%) */}
+            {/* Left - Profile Image */}
             <div className="back-left">
-              <div className="circle-image" style={circleImageStyle}></div>
+              <div
+                className="circle-image"
+                style={imageStyle}
+                aria-label={`${name} profile`}
+              />
             </div>
 
-            {/* right column : name, designation, email, phone (50%) */}
+            {/* Right - Member Information */}
             <div className="back-right">
               <div className="info-item">
-                <span className="info-label">Name</span>
-                <span className="info-value name">{name}</span>
+                <span className="info-value name">
+                  {name}
+                </span>
               </div>
+
               <div className="info-item">
-                <span className="info-label">Designation</span>
-                <span className="info-value designation">{designation}</span>
+                <span className="info-value designation">
+                  {designation}
+                </span>
               </div>
+
               <div className="info-item">
-                <span className="info-label">Email</span>
-                <span className="info-value">{email}</span>
+                <span className="info-label">
+                  <EmailIcon width={20} height={20} />
+                </span>
+                {email && (
+                  <a
+                    href={`mailto:${email}`}
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <span className="info-value">
+                      Email
+                    </span>
+                  </a>
+                )}
               </div>
+
               <div className="info-item">
-                <span className="info-label">Phone</span>
-                <span className="info-value">{phone}</span>
+                <span className="info-label">
+                  <PhoneIcon width={20} height={20} />
+                </span>
+
+                {phone && (
+                  <a
+                    href={`tel:${phone}`}
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <span className="info-value">
+                      Call Mobile
+                    </span>
+                  </a>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </section>
   );
 };
 
 export default TeamMemberCard;
+
