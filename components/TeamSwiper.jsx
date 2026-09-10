@@ -26,15 +26,15 @@ const TEAM_GROUPS = {
     title: "Chief Officers",
     designations: ["Chief Officer", "Deputy Chief", "Chief Vigilance", "Chief Vigilance Officer", ]
   },
-   adminArchitecture: {
+    adminArchitecture: {
     title: "Admin & Architect",
     designations: ["Admin", "Architecture", "Architect", "Administrative", "Administration", "Facilities", "Senior Architect", "Architectural Designer"]
   },
-  informationTechnologySales: {
+   informationTechnologySales: {
     title: "Information Technology & Sales",
-    designations: ["Software Engineer", "Information Technology", "Sales", "IT Head", "Sales Head", "IT Manager", "Sales Manager", "Business Development"]
+    designations: ["Software Engineer", "Information Technology", "Sales", "IT Head","IT", "Sales Head", "IT Manager", "Sales Manager", "Business Development"]
   },
-    projectCoordinator: {
+  projectCoordinator: {
     title: "Project Coordinator",
     designations: ["Project Co-Ordinator", "Project Manager", "MGL Liaison Co-ordinator", "Project Lead", "Program Manager", "Coordinator"]
   },

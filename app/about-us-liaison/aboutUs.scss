@@ -418,7 +418,7 @@
         h3.section-title {
           color: #ffffff;
           text-align: center;
-          background-color: #fff;
+          // background-color: #fff;
           justify-content: center;
           align-items: center;
           margin: 0;
@@ -555,7 +555,7 @@
           display: grid;
           grid-template-columns: repeat(6, 1fr);
           gap: 16px;
-          margin-bottom: 30px;
+          margin: 30px 0;
         }
 
         .sector-item {

@@ -238,7 +238,7 @@ export default function AboutUsLiaisonPage() {
                   <h2 className="section-title">Sectors We Serve</h2>
                  
                 </div>
-                <div className="sectors-grid">
+                <div className="sectors-grid ">
                   {sectors.map((sector, idx) => {
                     const Icon = sector.icon;
                     return (
@@ -265,9 +265,6 @@ export default function AboutUsLiaisonPage() {
           <div className="container-fluid">
             <div className="row justify-content-center">
               <div className="col-lg-10">
-                {/* <div className="section-header">
-                  <h2 className="section-title">Meet Our Team</h2>
-                </div> */}
                 <TeamSwiper />
               </div>
             </div>
