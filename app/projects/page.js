@@ -208,7 +208,7 @@ useEffect(() => {
               <span className="stat-number">
                 {loading ? "..." : projectCounts?.ongoing_projects || "0"}
               </span>
-              <span className="stat-label">Ongoing</span>
+              <span className="stat-label">In Progress</span>
             </div>
             <div className="stat-item">
               <span className="stat-number">
