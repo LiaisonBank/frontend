@@ -87,12 +87,20 @@
     margin-bottom: 14px;
     color: #64748b;
     font-size: 13px;
+    .total-projects {
+      font-size: 1rem;
+      padding: 0.2rem 1rem;
+      background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+      border-radius: 100px;
+      color: white;
+    }
   }
 
   .filter-active {
     color: #e67e22;
     font-weight: 600;
   }
+
 
   // =========================================================
   // TABLE WITH FIXED HEADER - CRITICAL FOR SCROLLING

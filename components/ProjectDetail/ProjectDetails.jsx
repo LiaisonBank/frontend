@@ -2,6 +2,8 @@
 
 import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import Chip from "@mui/material/Chip";
+import CountUp from "@/hooks/Countup";
+
 import "./ProjectDetails.scss";
 
 const ITEMS_PER_LOAD = 20;
@@ -10,7 +12,7 @@ const API_BASE_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL ||
   "http://localhost:8000";
 
-export default function ProjectDetails() {
+export default function ProjectDetails({ projectCounts }) {
   // =========================================================
   // REFS
   // =========================================================
@@ -587,7 +589,7 @@ export default function ProjectDetails() {
         </div>
 
         {/* RESULTS INFO */}
-        <div className="project-results-info d-none" role="status" aria-live="polite">
+        <div className="project-results-info" role="status" aria-live="polite">
           <span>
             Showing <strong>{visibleProjects.length}</strong> of{" "}
             <strong>{filteredProjects.length}</strong> projects
@@ -600,6 +602,10 @@ export default function ProjectDetails() {
               Loading more...
             </span>
           )}
+         <span className="total-projects">
+            Total:{' '}
+            <CountUp end={projectCounts?.total_projects ?? 0} duration={20000} />
+          </span>
         </div>
 
         {filteredProjects.length === 0 ? (
