@@ -576,16 +576,26 @@ export default function ProjectDetails({ projectCounts }) {
               ))}
             </select>
           </div>
-
-          {hasActiveFilters && (
-            <button
-              className="clear-filters-btn"
-              onClick={handleClearFilters}
-              aria-label="Clear all filters"
-            >
-              Clear Filters
-            </button>
-          )}
+          <div className="project-filter">
+            {loadingMore && (
+              <span className="loading-more" aria-hidden="true">
+                Loading more...
+              </span>
+            )}
+            <span className="total-projects">
+              Total:{' '}
+              <CountUp end={projectCounts?.total_projects ?? 0} duration={20000} />
+            </span>
+            {hasActiveFilters && (
+              <button
+                className="clear-filters-btn"
+                onClick={handleClearFilters}
+                aria-label="Clear all filters"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
         </div>
 
         {/* RESULTS INFO */}
@@ -594,18 +604,18 @@ export default function ProjectDetails({ projectCounts }) {
             Showing <strong>{visibleProjects.length}</strong> of{" "}
             <strong>{filteredProjects.length}</strong> projects
           </span>
-          {hasActiveFilters && (
+          {/* {hasActiveFilters && (
             <span className="filter-active">Filters applied</span>
-          )}
-          {loadingMore && (
+          )} */}
+          {/* {loadingMore && (
             <span className="loading-more" aria-hidden="true">
               Loading more...
             </span>
           )}
-         <span className="total-projects">
+          <span className="total-projects">
             Total:{' '}
             <CountUp end={projectCounts?.total_projects ?? 0} duration={20000} />
-          </span>
+          </span> */}
         </div>
 
         {filteredProjects.length === 0 ? (
@@ -665,7 +675,14 @@ export default function ProjectDetails({ projectCounts }) {
                         title={project.location}
                         role="cell"
                       >
-                        {project.location}
+                      {project.location &&
+                        `${project.location.replace(/\(/g, " (").replace(/,/g, ", ")}${
+                          !project.location.includes("Vasai") &&
+                          !project.location.includes("Virar") &&
+                          !project.location.includes("Mumbai")
+                            ? ", Mumbai"
+                            : ""
+                        }`}
                       </div>
                     </div>
                   ))}

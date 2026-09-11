@@ -114,6 +114,13 @@
           transform: translateY(-4px);
           box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
+         &:hover {
+
+         .stat-label,.stat-number, .total-value{
+            color: #f97316; /* Change color on hover */
+            font-weight: 800; /* Make text bolder on hover */
+          }
+        }
       }
 
       .stat-number {

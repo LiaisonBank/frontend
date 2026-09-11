@@ -194,6 +194,20 @@ export default function ProjectsPage() {
         </div>
       </div>
       <section className="projects-hero-section">
+         <video
+          className="bg-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/images/projects-poster.jpg"
+        >
+          <source src="/videos/projects-bg.mp4" type="video/mp4" />
+          <source src="/videos/projects-bg.webm" type="video/webm" />
+          Your browser does not support the video tag.
+        </video>
+
         <div className="elementor-background-overlay"></div>
         <div className="hero-content">
           <h1>PROJECTS</h1>
@@ -251,7 +265,7 @@ export default function ProjectsPage() {
           <div className="text-center">
             <Button
               variant="outlined"
-              className="outline-theme-btn"
+              className="block"
               onClick={handleOpenPopup}
             >
               View Full Screen Map

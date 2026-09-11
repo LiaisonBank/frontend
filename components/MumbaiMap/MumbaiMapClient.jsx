@@ -553,9 +553,9 @@ const ProjectSlidePanel = React.memo(({ project, isOpen, onClose }) => {
             )}
 
             <div className="py-4 d-flex align-itemem-center justify-end">
-              {project.location && (
+             {project.location && (
                 <p className="panel-location">
-                  📍 {project.location}
+                  📍 {project.location.replace(/\(/g, " (").replace(/,/g, ", ")}
                   {!project.location.includes("Vasai") &&
                     !project.location.includes("Virar") &&
                     !project.location.includes("Mumbai") &&
