@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import Chip from "@mui/material/Chip";
-import CountUp from "@/hooks/Countup";
 
 import "./ProjectDetails.scss";
 
@@ -17,7 +16,7 @@ export default function ProjectDetails({ projectCounts }) {
   // REFS
   // =========================================================
   const tableBodyRef = useRef(null);
-  const tableWrapperRef = useRef(null); // NEW: Ref for table wrapper
+  const tableWrapperRef = useRef(null);
   const fetchedRef = useRef(false);
   const abortControllerRef = useRef(null);
 
@@ -39,29 +38,23 @@ export default function ProjectDetails({ projectCounts }) {
   // =========================================================
   // SCROLL FUNCTIONS
   // =========================================================
-
-  // Scroll to top of table body (keeps header visible)
   const scrollTableToTop = useCallback(() => {
     if (tableBodyRef.current) {
       tableBodyRef.current.scrollTop = 0;
     }
   }, []);
 
-  // NEW: Scroll to table wrapper (makes header visible)
   const scrollToTableWrapper = useCallback(() => {
     if (tableWrapperRef.current) {
-      // Get the position of the table wrapper relative to the viewport
       const wrapperRect = tableWrapperRef.current.getBoundingClientRect();
-      const offset = 80; // Adjust this value based on your header height
+      const offset = 80;
       const targetPosition = window.scrollY + wrapperRect.top - offset;
 
-      // Smooth scroll to the table wrapper
       window.scrollTo({
         top: targetPosition,
         behavior: "smooth",
       });
 
-      // Also scroll table body to top
       setTimeout(scrollTableToTop, 100);
     }
   }, [scrollTableToTop]);
@@ -125,7 +118,6 @@ export default function ProjectDetails({ projectCounts }) {
 
         const data = await response.json();
 
-        // Only update state if component is still mounted
         if (!isMounted) return;
 
         const projectsData = Array.isArray(data)
@@ -179,7 +171,6 @@ export default function ProjectDetails({ projectCounts }) {
   // =========================================================
   const fetchMoreProjects = useCallback(
     async (pageNum) => {
-      // Prevent multiple simultaneous load more requests
       if (loadingMore) {
         return;
       }
@@ -207,17 +198,14 @@ export default function ProjectDetails({ projectCounts }) {
 
         const data = await response.json();
 
-        // Handle different response structures
         const projectsData = Array.isArray(data)
           ? data
           : data.projects || data.data || [];
 
-        // Update total if available
         if (data.total || data.count) {
           setTotalProjects(data.total || data.count);
         }
 
-        // Check if there are more items
         const hasMoreItems =
           data.hasMore !== undefined
             ? data.hasMore
@@ -226,7 +214,6 @@ export default function ProjectDetails({ projectCounts }) {
               : projectsData.length === ITEMS_PER_LOAD;
         setHasMore(hasMoreItems);
 
-        // If no projects returned, there's nothing more to load
         if (projectsData.length === 0) {
           setHasMore(false);
           setLoadingMore(false);
@@ -235,9 +222,7 @@ export default function ProjectDetails({ projectCounts }) {
 
         const normalizedProjects = normalizeProjects(projectsData, pageNum);
 
-        // Append new projects to existing ones
         setProjects((prev) => {
-          // Avoid duplicates by checking IDs
           const existingIds = new Set(prev.map((p) => p.id));
           const uniqueNewProjects = normalizedProjects.filter(
             (p) => !existingIds.has(p.id),
@@ -245,12 +230,10 @@ export default function ProjectDetails({ projectCounts }) {
           return [...prev, ...uniqueNewProjects];
         });
 
-        // Update visible count to show all loaded projects
         setVisibleCount((prev) => prev + projectsData.length);
 
         setPage(pageNum);
 
-        // Scroll to table wrapper after loading more
         setTimeout(scrollToTableWrapper, 150);
       } catch (err) {
         console.error("Error fetching more projects:", err);
@@ -338,7 +321,7 @@ export default function ProjectDetails({ projectCounts }) {
     (event) => {
       setLocationFilter(event.target.value);
       setVisibleCount(ITEMS_PER_LOAD);
-      scrollToTableWrapper(); // Scroll to table when filtering
+      scrollToTableWrapper();
     },
     [scrollToTableWrapper],
   );
@@ -347,7 +330,7 @@ export default function ProjectDetails({ projectCounts }) {
     (event) => {
       setStatusFilter(event.target.value);
       setVisibleCount(ITEMS_PER_LOAD);
-      scrollToTableWrapper(); // Scroll to table when filtering
+      scrollToTableWrapper();
     },
     [scrollToTableWrapper],
   );
@@ -356,7 +339,7 @@ export default function ProjectDetails({ projectCounts }) {
     (event) => {
       setCategoryFilter(event.target.value);
       setVisibleCount(ITEMS_PER_LOAD);
-      scrollToTableWrapper(); // Scroll to table when filtering
+      scrollToTableWrapper();
     },
     [scrollToTableWrapper],
   );
@@ -366,27 +349,22 @@ export default function ProjectDetails({ projectCounts }) {
     setStatusFilter("All");
     setCategoryFilter("All");
     setVisibleCount(ITEMS_PER_LOAD);
-    scrollToTableWrapper(); // Scroll to table when clearing filters
+    scrollToTableWrapper();
   }, [scrollToTableWrapper]);
 
   // =========================================================
-  // LOAD MORE / LESS - FIXED
+  // LOAD MORE / LESS
   // =========================================================
   const handleLoadMore = useCallback(() => {
-    // Calculate how many more items we need to show
     const currentVisible = visibleCount;
     const totalAvailable = filteredProjects.length;
     const needed = currentVisible + ITEMS_PER_LOAD;
 
-    // If we need more items than currently available AND there are more on server
     if (needed > totalAvailable && hasMore) {
-      // Fetch next page from API
       const nextPage = page + 1;
       fetchMoreProjects(nextPage);
     } else {
-      // Just show more items client-side (from already loaded data)
       setVisibleCount(Math.min(needed, filteredProjects.length));
-      // Scroll to table wrapper after updating
       setTimeout(scrollToTableWrapper, 100);
     }
   }, [
@@ -400,14 +378,9 @@ export default function ProjectDetails({ projectCounts }) {
 
   const handleLoadLess = useCallback(() => {
     setVisibleCount(ITEMS_PER_LOAD);
-    // Scroll to table wrapper after updating
     setTimeout(scrollToTableWrapper, 100);
   }, [scrollToTableWrapper]);
 
-  // =========================================================
-  // PREVENT OVERSCROLL BUBBLING
-  // =========================================================
-  // =========================================================
   // =========================================================
   // HANDLE TABLE SCROLL WITH BODY SCROLL PASS-THROUGH
   // =========================================================
@@ -415,28 +388,21 @@ export default function ProjectDetails({ projectCounts }) {
     const element = e.currentTarget;
     const { scrollTop, scrollHeight, clientHeight } = element;
 
-    // Check if we're at boundaries
     const atTop = scrollTop === 0;
     const atBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
 
-    // If at boundary and scrolling in the direction of the boundary,
-    // let the event bubble to the page body
     if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
-      // Don't prevent default - allow body scroll
       return;
     }
 
-    // Otherwise, prevent body scroll and let table scroll
     e.preventDefault();
     e.stopPropagation();
   }, []);
 
-  // Add native event listener with passive: false
   useEffect(() => {
     const tableBody = tableBodyRef.current;
     if (!tableBody) return;
 
-    // Use native event listener with passive: false
     const wheelHandler = (e) => {
       const { scrollTop, scrollHeight, clientHeight } = tableBody;
 
@@ -444,7 +410,7 @@ export default function ProjectDetails({ projectCounts }) {
       const atBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
 
       if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
-        return; // Allow body scroll
+        return;
       }
 
       e.preventDefault();
@@ -576,6 +542,8 @@ export default function ProjectDetails({ projectCounts }) {
               ))}
             </select>
           </div>
+
+          {/* ===================== TOTAL COUNT (FILTERED) ===================== */}
           <div className="project-filter">
             {loadingMore && (
               <span className="loading-more" aria-hidden="true">
@@ -583,8 +551,7 @@ export default function ProjectDetails({ projectCounts }) {
               </span>
             )}
             <span className="total-projects">
-              Total:{' '}
-              <CountUp end={projectCounts?.total_projects ?? 0} duration={20000} />
+              Total: <strong>{filteredProjects.length}</strong>
             </span>
             {hasActiveFilters && (
               <button
@@ -604,18 +571,6 @@ export default function ProjectDetails({ projectCounts }) {
             Showing <strong>{visibleProjects.length}</strong> of{" "}
             <strong>{filteredProjects.length}</strong> projects
           </span>
-          {/* {hasActiveFilters && (
-            <span className="filter-active">Filters applied</span>
-          )} */}
-          {/* {loadingMore && (
-            <span className="loading-more" aria-hidden="true">
-              Loading more...
-            </span>
-          )}
-          <span className="total-projects">
-            Total:{' '}
-            <CountUp end={projectCounts?.total_projects ?? 0} duration={20000} />
-          </span> */}
         </div>
 
         {filteredProjects.length === 0 ? (
@@ -628,10 +583,9 @@ export default function ProjectDetails({ projectCounts }) {
           </div>
         ) : (
           <>
-            {/* TABLE WITH FIXED HEADER - Added ref */}
+            {/* TABLE WITH FIXED HEADER */}
             <div className="table-wrapper" ref={tableWrapperRef}>
               <div className="table-container">
-                {/* FIXED HEADER - STICKY AT TOP */}
                 <div className="table-header" role="row">
                   <div role="columnheader">Brand Name</div>
                   <div role="columnheader">Category Type</div>
@@ -639,7 +593,6 @@ export default function ProjectDetails({ projectCounts }) {
                   <div role="columnheader">Location</div>
                 </div>
 
-                {/* SCROLLABLE BODY */}
                 <div
                   className="table-body"
                   ref={tableBodyRef}
@@ -675,14 +628,16 @@ export default function ProjectDetails({ projectCounts }) {
                         title={project.location}
                         role="cell"
                       >
-                      {project.location &&
-                        `${project.location.replace(/\(/g, " (").replace(/,/g, ", ")}${
-                          !project.location.includes("Vasai") &&
-                          !project.location.includes("Virar") &&
-                          !project.location.includes("Mumbai")
-                            ? ", Mumbai"
-                            : ""
-                        }`}
+                        {project.location &&
+                          `${project.location
+                            .replace(/\(/g, " (")
+                            .replace(/,/g, ", ")}${
+                            !project.location.includes("Vasai") &&
+                            !project.location.includes("Virar") &&
+                            !project.location.includes("Mumbai")
+                              ? ", Mumbai"
+                              : ""
+                          }`}
                       </div>
                     </div>
                   ))}
@@ -693,7 +648,6 @@ export default function ProjectDetails({ projectCounts }) {
             {/* LOAD MORE / LESS BUTTONS */}
             {(hasMoreToLoad || canLoadLess) && (
               <div className="load-more-wrapper">
-                {/* Show Load More if there are more items to show */}
                 {hasMoreToLoad && visibleCount < filteredProjects.length && (
                   <button
                     className="load-more-btn"
@@ -722,7 +676,6 @@ export default function ProjectDetails({ projectCounts }) {
                   </button>
                 )}
 
-                {/* Show Load More when there are server items even if filtered shows all */}
                 {hasMore && visibleCount >= filteredProjects.length && (
                   <button
                     className="load-more-btn"
