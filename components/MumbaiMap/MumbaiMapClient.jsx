@@ -552,10 +552,10 @@ const ProjectSlidePanel = React.memo(({ project, isOpen, onClose }) => {
               </div>
             )}
 
-            <div className="py-4 d-flex align-itemem-center justify-end">
-              {project.location && (
+            <div className=" d-flex align-itemem-center justify-end">
+             {project.location && (
                 <p className="panel-location">
-                  📍 {project.location}
+                  📍 {project.location.replace(/\(/g, " (").replace(/,/g, ", ")}
                   {!project.location.includes("Vasai") &&
                     !project.location.includes("Virar") &&
                     !project.location.includes("Mumbai") &&
@@ -663,29 +663,42 @@ function useProjects() {
   const [retryCount, setRetryCount] = useState(0);
 
   const geocodeWithNominatim = useCallback(async (location) => {
-    if (!location?.trim()) return null;
-    try {
-      const response = await fetch(
-        `/api/geocode?location=${encodeURIComponent(location)}`,
-        {
-          method: "GET",
-          cache: "no-store",
+      if (!location?.trim()) return null;
+
+      try {
+        const response = await fetch(
+          `/api/geocode?location=${encodeURIComponent(location)}`,
+          {
+            method: 'GET',
+            cache: 'no-store',
+          }
+        );
+
+        if (!response.ok) {
+          // 400 = missing param, 404 = not found, 5xx = server error
+          return null;
         }
-      );
-      if (!response.ok) return null;
-      const data = await response.json();
-      if (!isValidCoordinate(data?.lat, data?.lng)) return null;
-      if (!isWithinMumbaiBounds(data.lat, data.lng)) return null;
-      return {
-        lat: Number(data.lat),
-        lng: Number(data.lng),
-        source: "nominatim",
-      };
-    } catch (error) {
-      console.warn("Nominatim failed:", location, error);
-      return null;
-    }
-  }, []);
+
+        const data = await response.json();
+
+        // API returns { lat, long, display_name }
+        const lat = Number(data?.lat);
+        const lng = Number(data?.long);
+
+        if (!isValidCoordinate(lat, lng)) return null;
+        if (!isWithinMumbaiBounds(lat, lng)) return null;
+
+        return {
+          lat,
+          lng,
+          display_name: data?.display_name ?? null,
+          source: 'nominatim',
+        };
+      } catch (error) {
+        console.warn('Nominatim failed:', location, error);
+        return null;
+      }
+    }, []);
 
   const resolveApiProjectCoordinates = useCallback(
     async (project) => {
