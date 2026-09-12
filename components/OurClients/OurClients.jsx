@@ -4,9 +4,7 @@ import React, { Component } from "react";
 import { getImageUrl } from "@/lib/utils/getImagehelper";
 import Image from "next/image";
 
-  const API_URL = (
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/our-clients`
-        );
+const API_URL = `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/our-clients`;
 
 export default class OurClients extends Component {
   state = {
@@ -17,15 +15,21 @@ export default class OurClients extends Component {
     try {
       const response = await fetch(API_URL);
       const result = await response.json();
-      if (result.success) {
-        this.setState({
-          clients: result.data,
-        });
-      }
-      console.log("api", result.data)
 
+      if (result.success) {
+        this.setState({ clients: result.data });
+
+        // ✅ Send count to parent
+        this.props.onCountChange?.(result.data.length);
+      } else {
+        this.props.onError?.("Failed to load clients");
+      }
+
+      console.log("api", result.data);
     } catch (error) {
       console.error("Error fetching clients:", error);
+      // ✅ Send error to parent
+      this.props.onError?.(error.message || "Something went wrong");
     }
   }
 
