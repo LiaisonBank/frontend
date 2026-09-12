@@ -360,7 +360,7 @@ export default function ServiceDetail() {
         </div>
       </section>
 
-      {/* Subcategories as Flip Cards - 2 columns */}
+      {/* Subcategories as Flip Cards */}
       <section className="services-modern">
         <div className="container">
           <div className="services-header">
@@ -376,95 +376,117 @@ export default function ServiceDetail() {
               return (
                 <div 
                   key={subcategory.id} 
-                  className={`subcategory-flip-container ${isFlipped ? 'flipped' : ''}`}
-                  ref={(el) => {
-                    if (el) {
-                      containerRefs.current[cardId] = el;
-                    }
-                  }}
-                  onMouseEnter={() => handleCardMouseEnter(cardId)}
-                  onMouseLeave={() => handleCardMouseLeave(cardId)}
+                  className="subcategory-flip-container"
                 >
-                  <div className="subcategory-flip-card">
-                    {/* FRONT - Image with name overlay at top */}
-                    <div className="subcategory-flip-front">
-                      {subcategory.hasImage && subcategory.imageUrl ? (
-                        <img
-                          src={subcategory.imageUrl}
-                          alt={subcategory.name}
-                          className="subcategory-flip-image"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.style.display = 'none';
-                            const placeholder = e.currentTarget.parentElement.querySelector('.subcategory-no-image');
-                            if (placeholder) {
-                              placeholder.style.display = 'flex';
+                  {/* The flip card */}
+                  <div 
+                    className={`subcategory-flip-card-wrapper ${isFlipped ? 'flipped' : ''}`}
+                    ref={(el) => {
+                      if (el) {
+                        containerRefs.current[cardId] = el;
+                      }
+                    }}
+                    onMouseEnter={() => handleCardMouseEnter(cardId)}
+                    onMouseLeave={() => handleCardMouseLeave(cardId)}
+                  >
+                    <div className="subcategory-flip-card">
+                      {/* FRONT - Header with name + Image */}
+                      <div className="subcategory-flip-front">
+                        {/* Header with name */}
+                        <div className="subcategory-front-header">
+                          <h3 className="subcategory-front-name">{subcategory.name}</h3>
+                          <span className="subcategory-front-count">
+                            {subcategory.itemCount}
+                          </span>
+                        </div>
+                        
+                        {/* Image section */}
+                        <div className="subcategory-front-image-wrapper">
+                          {subcategory.hasImage && subcategory.imageUrl ? (
+                            <img
+                              src={subcategory.imageUrl}
+                              alt={subcategory.name}
+                              className="subcategory-flip-image"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.style.display = 'none';
+                                const placeholder = e.currentTarget.parentElement.querySelector('.subcategory-no-image');
+                                if (placeholder) {
+                                  placeholder.style.display = 'flex';
+                                }
+                              }}
+                            />
+                          ) : (
+                            <div className="subcategory-no-image">
+                              <h3 className="subcategory-name-only">{subcategory.name}</h3>
+                            </div>
+                          )}
+                          
+                      
+                        </div>
+                      </div>
+
+                      {/* BACK - Header with name + Items list */}
+                      <div className="subcategory-flip-back">
+                        {/* Header with name */}
+                        <div className="flip-back-header">
+                          <div className="flip-back-title-wrapper">
+                            <h4 className="flip-back-title">{subcategory.name}</h4>
+                          </div>
+                          <span className="flip-back-count">
+                            {subcategory.itemCount}
+                          </span>
+                        </div>
+
+                        {/* Items list */}
+                        <div 
+                          className="flip-back-items-list"
+                          ref={(el) => {
+                            if (el) {
+                              listRefs.current[cardId] = el;
                             }
                           }}
-                        />
-                      ) : (
-                        <div className="subcategory-no-image">
-                          <h3 className="subcategory-name-only">{subcategory.name}</h3>
-                        </div>
-                      )}
-                      
-                      {/* Name at TOP */}
-                      <div className="subcategory-name-overlay-top">
-                        <h3 className="subcategory-flip-name">{subcategory.name}</h3>
-                      </div>
-
-                    </div>
-
-                    {/* BACK - Items list with scroll functionality */}
-                    <div className="subcategory-flip-back">
-                      <div className="flip-back-header">
-                        <span className="flip-back-badge">Available Services</span>
-                        <h4 className="flip-back-title">{subcategory.name}</h4>
-                      </div>
-
-                      <div 
-                        className="flip-back-items-list"
-                        ref={(el) => {
-                          if (el) {
-                            listRefs.current[cardId] = el;
-                          }
-                        }}
-                        onWheel={(e) => handleWheelScroll(e, cardId)}
-                        onMouseDown={() => handleScrollStart(cardId)}
-                        onMouseUp={() => handleScrollEnd(cardId)}
-                        onMouseLeave={() => handleScrollEnd(cardId)}
-                        onTouchStart={() => handleScrollStart(cardId)}
-                        onTouchEnd={() => handleScrollEnd(cardId)}
-                        onTouchCancel={() => handleScrollEnd(cardId)}
-                      >
-                        {subcategory.items && subcategory.items.length > 0 ? (
-                          subcategory.items.map((item, idx) => (
-                            <div key={item.id} className="back-item-wrapper">
-                              {/* Item name as header */}
-                              <div className="back-item-header">
-                                <span className="back-item-number">{String(idx + 1).padStart(2, '0')}</span>
-                                <p className="back-item-name">{item.name}</p>
+                          onWheel={(e) => handleWheelScroll(e, cardId)}
+                          onMouseDown={() => handleScrollStart(cardId)}
+                          onMouseUp={() => handleScrollEnd(cardId)}
+                          onMouseLeave={() => handleScrollEnd(cardId)}
+                          onTouchStart={() => handleScrollStart(cardId)}
+                          onTouchEnd={() => handleScrollEnd(cardId)}
+                          onTouchCancel={() => handleScrollEnd(cardId)}
+                        >
+                          {subcategory.items && subcategory.items.length > 0 ? (
+                            subcategory.items.map((item, idx) => (
+                              <div key={item.id} className="back-item-wrapper">
+                                <div className="back-item-header">
+                                  <span className="back-item-number">{String(idx + 1).padStart(2, '0')}</span>
+                                  <p className="back-item-name">{item.name}</p>
+                                </div>
+                                
+                                {item.servicesList && item.servicesList.length > 0 && (
+                                  <ul className="back-item-services-list">
+                                    {item.servicesList.map((serviceName, serviceIdx) => (
+                                      <li key={serviceIdx} className="back-service-item">
+                                        <span className="back-service-dot">•</span>
+                                        <span className="back-service-name">{serviceName}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
                               </div>
-                              
-                              {/* Item Services list - displayed as a vertical list */}
-                              {item.servicesList && item.servicesList.length > 0 && (
-                                <ul className="back-item-services-list">
-                                  {item.servicesList.map((serviceName, serviceIdx) => (
-                                    <li key={serviceIdx} className="back-service-item">
-                                      <span className="back-service-dot">•</span>
-                                      <span className="back-service-name">{serviceName}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
+                            ))
+                          ) : (
+                            <div style={{ 
+                              color: '#999', 
+                              textAlign: 'center', 
+                              padding: '30px 0',
+                              fontSize: '14px'
+                            }}>
                             </div>
-                          ))
-                        ) : (
-                          <p className="no-services-message">
-                          </p>
-                        )}
-                      </div>
+                          )}
+                        </div>
 
+                       
+                      </div>
                     </div>
                   </div>
                 </div>
