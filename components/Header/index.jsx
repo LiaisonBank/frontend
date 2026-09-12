@@ -249,7 +249,7 @@ useEffect(() => {
         setIsOpen(false);
         closeAllMenus();
 
-        router.push("/ourservices");
+        router.push("/our-services");
 
         return;
       }

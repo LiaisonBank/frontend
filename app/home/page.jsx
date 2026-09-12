@@ -13,7 +13,8 @@ import TestimonialSlider from '@/components/TestimonialSlider';
 import CertificateGallery from "@/components/awards/page";
 import FAQAccordion from "@/components/Faqs/FAQAccordion";
 import OurServices from "@/components/OurServices/page";
-import HeroMarquee from "@/components/HeroMarquee/HeroMarquee";
+import HeroSlogan from "@/components/HeroSlogan/HeroSlogan";
+// import HeroMarquee from "@/components/HeroMarquee/HeroMarquee";
 
 const quotes = [
   {
@@ -96,7 +97,7 @@ const Home = () => {
     <>
       <div className="hero-section page-header">
         <div className="inner-header">
-          <HeroMarquee />
+          <HeroSlogan />
         </div>
       </div>
 

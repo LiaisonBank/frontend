@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, A11y } from "swiper/modules";
 import TeamMemberCard from "./TeamCard/TeamMemberCard";
+import { getImageUrl } from "../lib/utils/getImagehelper";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -25,17 +26,17 @@ const TEAM_GROUPS = {
     title: "Chief Officers",
     designations: ["Chief Officer", "Deputy Chief", "Chief Vigilance", "Chief Vigilance Officer", ]
   },
-   adminArchitecture: {
-    title: "Admin & Architecture",
+    adminArchitecture: {
+    title: "Admin & Architect",
     designations: ["Admin", "Architecture", "Architect", "Administrative", "Administration", "Facilities", "Senior Architect", "Architectural Designer"]
   },
-  informationTechnologySales: {
+   informationTechnologySales: {
     title: "Information Technology & Sales",
-    designations: ["IT", "Information Technology", "Sales", "IT Head", "Sales Head", "IT Manager", "Sales Manager", "Business Development"]
+    designations: ["Software Engineer", "Information Technology", "Sales", "IT Head","IT", "Sales Head", "IT Manager", "Sales Manager", "Business Development"]
   },
-    projectCoordinator: {
+  projectCoordinator: {
     title: "Project Coordinator",
-    designations: ["Project Coordinator", "Project Manager", "MGL Liaison Coordinator", "Project Lead", "Program Manager", "Coordinator"]
+    designations: ["Project Co-Ordinator", "Project Manager", "MGL Liaison Co-ordinator", "Project Lead", "Program Manager", "Coordinator"]
   },
   liaisoningLicensing: {
     title: "Liaisoning and Licensing",
@@ -54,7 +55,7 @@ function TeamCard({ member }) {
           <div className="absolute inset-0 w-full h-full rounded-2xl overflow-hidden cursor-pointer [backface-visibility:hidden] shadow-sm bg-white">
             <div className="relative w-full h-[320px] bg-gray-200">
               <Image
-                src={`${process.env.NEXT_PUBLIC_LOCAL_API_URL}${member.image}`}
+                src={`${getImageUrl(member.image)}`}
                 alt={member.name}
                 fill
                 className="object-cover object-[50%_10%]"
@@ -76,7 +77,7 @@ function TeamCard({ member }) {
             <div className="flex flex-col h-full items-center justify-center gap-4">
               <div className="relative w-32 h-32 shrink-0 rounded-full overflow-hidden bg-gray-200 border-4 border-orange-100">
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_LOCAL_API_URL}${member.image}`}
+                  src={`${getImageUrl(member.image)}`}
                   alt={member.name}
                   fill
                   className="object-cover object-[50%_10%]"

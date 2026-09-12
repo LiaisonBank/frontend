@@ -55,9 +55,7 @@ const TeamMemberCard = ({ member = {} }) => {
               aria-label={`${name} profile`}
             />
 
-            <div className="front-label">
-              {frontLabel || name}
-            </div>
+            <div className="front-label">{frontLabel || name}</div>
           </div>
 
           {/* Back */}
@@ -73,16 +71,12 @@ const TeamMemberCard = ({ member = {} }) => {
 
             {/* Right - Member Information */}
             <div className="back-right">
-              <div className="info-item">
-                <span className="info-value name">
-                  {name}
-                </span>
+              <div className="info-item ">
+                <span className="info-value name">{name}</span>
               </div>
 
-              <div className="info-item">
-                <span className="info-value designation">
-                  {designation}
-                </span>
+              <div className="info-item ">
+                <span className="info-value ">{designation}</span>
               </div>
 
               <div className="info-item">
@@ -92,28 +86,29 @@ const TeamMemberCard = ({ member = {} }) => {
                 {email && (
                   <a
                     href={`mailto:${email}`}
+                    className="email-llink"
                     onClick={(event) => event.stopPropagation()}
                   >
-                    <span className="info-value">
-                      Email
-                    </span>
+                    <span className="info-value">{email}</span>
                   </a>
                 )}
               </div>
 
               <div className="info-item">
-                <span className="info-label">
-                  <PhoneIcon width={20} height={20} />
+               <span className="info-label">
+                  <PhoneIcon
+                    width={20}
+                    height={20}
+                    color={phone ? undefined : "white"}
+                  />
                 </span>
-
                 {phone && (
                   <a
+                    className="call-link"
                     href={`tel:${phone}`}
                     onClick={(event) => event.stopPropagation()}
                   >
-                    <span className="info-value">
-                      Call Mobile
-                    </span>
+                    <span className="info-value">{phone}</span>
                   </a>
                 )}
               </div>

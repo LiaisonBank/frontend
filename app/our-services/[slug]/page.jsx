@@ -1,27 +1,32 @@
 // app/our-services/[slug]/page.jsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import "./service-detail.scss";
 import { getImageUrl } from "../../../lib/utils/getImagehelper";
 
 // Fallback image
-const FALLBACK_IMAGE = '/images/fallback-service.jpg';
-
+const FALLBACK_IMAGE = '/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png';
 
 export default function ServiceDetail() {
   const params = useParams();
-
   const slug = params?.slug;
   
   const [service, setService] = useState(null);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [relatedServices, setRelatedServices] = useState([]);
   
+  // Track flip state for each card
+  const [flippedCards, setFlippedCards] = useState({});
+  
+  // Refs for timeout handling
+  const timeoutRefs = useRef({});
+  const containerRefs = useRef({});
+  const scrollTimeoutRefs = useRef({});
+  const listRefs = useRef({});
 
   useEffect(() => {
     if (!slug) return;
@@ -71,25 +76,22 @@ export default function ServiceDetail() {
           if (sub.image) {
             try {
               subImageUrl = getImageUrl(sub.image);
-            } catch (err) {}
+            } catch (err) {
+              console.error('Error loading subcategory image:', err);
+            }
           }
 
           const processedItems = (sub.items || []).map((item) => {
-            // Process itemServices - ensure it's an array
-
             let servicesList = [];
             if (item.itemServices) {
               if (Array.isArray(item.itemServices)) {
                 servicesList = item.itemServices;
               } else if (typeof item.itemServices === 'string') {
-                // If it's a string, try to parse it or split by comma
-
                 try {
                   const parsed = JSON.parse(item.itemServices);
                   servicesList = Array.isArray(parsed) ? parsed : [item.itemServices];
                 } catch {
                   servicesList = item.itemServices.split(',').map(s => s.trim()).filter(s => s);
-
                 }
               }
             }
@@ -98,20 +100,25 @@ export default function ServiceDetail() {
             if (item.image) {
               try {
                 itemImageUrl = getImageUrl(item.image);
-              } catch (err) {}
+              } catch (err) {
+                console.error('Error loading item image:', err);
+              }
             }
+
             return {
               ...item,
               imageUrl: itemImageUrl,
+              hasImage: !!itemImageUrl,
+              servicesList: servicesList,
             };
           });
 
           return {
             ...sub,
             imageUrl: subImageUrl,
+            hasImage: !!subImageUrl,
             items: processedItems,
             itemCount: processedItems.length,
-            hasImage: !!subImageUrl,
           };
         });
 
@@ -189,6 +196,120 @@ export default function ServiceDetail() {
     fetchServiceDetail();
   }, [slug]);
 
+  // Toggle flip state for a card
+  const toggleFlip = (cardId, isFlipped) => {
+    setFlippedCards(prev => ({
+      ...prev,
+      [cardId]: isFlipped
+    }));
+  };
+
+  // Handle mouse enter on card
+  const handleCardMouseEnter = (cardId) => {
+    // Clear any pending timeout
+    if (timeoutRefs.current[cardId]) {
+      clearTimeout(timeoutRefs.current[cardId]);
+      delete timeoutRefs.current[cardId];
+    }
+    toggleFlip(cardId, true);
+  };
+
+  // Handle mouse leave on card
+  const handleCardMouseLeave = (cardId) => {
+    // Check if we're scrolling
+    const container = containerRefs.current[cardId];
+    if (container && container.dataset.isScrolling === 'true') {
+      return;
+    }
+    
+    // Delay flipping back to prevent accidental flips
+    timeoutRefs.current[cardId] = setTimeout(() => {
+      toggleFlip(cardId, false);
+      delete timeoutRefs.current[cardId];
+    }, 200);
+  };
+
+  // Handle scroll start
+  const handleScrollStart = (cardId) => {
+    const container = containerRefs.current[cardId];
+    if (container) {
+      container.dataset.isScrolling = 'true';
+    }
+    // Ensure card stays flipped during scroll
+    toggleFlip(cardId, true);
+    
+    // Clear any existing scroll timeout
+    if (scrollTimeoutRefs.current[cardId]) {
+      clearTimeout(scrollTimeoutRefs.current[cardId]);
+      delete scrollTimeoutRefs.current[cardId];
+    }
+  };
+
+  // Handle scroll end
+  const handleScrollEnd = (cardId) => {
+    const container = containerRefs.current[cardId];
+    if (container) {
+      if (scrollTimeoutRefs.current[cardId]) {
+        clearTimeout(scrollTimeoutRefs.current[cardId]);
+      }
+      scrollTimeoutRefs.current[cardId] = setTimeout(() => {
+        if (container) {
+          container.dataset.isScrolling = 'false';
+        }
+        delete scrollTimeoutRefs.current[cardId];
+      }, 300);
+    }
+  };
+
+  // Handle wheel scroll event with boundary detection
+  const handleWheelScroll = (e, cardId) => {
+    const element = e.currentTarget;
+    const delta = e.deltaY;
+    
+    // Get scroll boundaries
+    const scrollTop = element.scrollTop;
+    const scrollHeight = element.scrollHeight;
+    const clientHeight = element.clientHeight;
+    const maxScroll = scrollHeight - clientHeight;
+    
+    // Check if we're at the boundaries
+    const isAtTop = scrollTop === 0;
+    const isAtBottom = scrollTop >= maxScroll - 1;
+    
+    // If at top and scrolling up, or at bottom and scrolling down, let the event pass through
+    if ((isAtTop && delta < 0) || (isAtBottom && delta > 0)) {
+      // Allow the wheel event to pass through to the parent
+      return;
+    }
+    
+    // Otherwise, prevent default and handle the scroll
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Scroll the element
+    element.scrollTop += delta;
+    
+    // Update scroll state
+    const container = containerRefs.current[cardId];
+    if (container) {
+      container.dataset.isScrolling = 'true';
+      toggleFlip(cardId, true);
+      
+      // Clear existing timeout
+      if (scrollTimeoutRefs.current[cardId]) {
+        clearTimeout(scrollTimeoutRefs.current[cardId]);
+      }
+      
+      // Set timeout to mark scrolling as ended
+      scrollTimeoutRefs.current[cardId] = setTimeout(() => {
+        if (container) {
+          container.dataset.isScrolling = 'false';
+        }
+        delete scrollTimeoutRefs.current[cardId];
+      }, 300);
+    }
+  };
+
   if (loading) {
     return (
       <div className="service-detail-loading">
@@ -234,145 +355,144 @@ export default function ServiceDetail() {
               <Link href="/our-services" className="hero-back-link">← Back to Services</Link>
               <h1 className="hero-title">{service.name}</h1>
               <p className="hero-desc">{service.description}</p>
-              
             </div>
           </div>
         </div>
       </section>
 
-      {/* About Section - Full width image with text overlay */}
-      <section className="about-section">
-        <div className="container">
-          <div className="about-wrapper">
-            <div className="about-image-wrap">
-              <img
-                src={service.image}
-                alt={service.imageAlt || service.name}
-                className="about-image"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = FALLBACK_IMAGE;
-                }}
-              />
-              <div className="about-image-overlay">
-                <span className="about-badge">About</span>
-                <h2 className="about-title">{service.name}</h2>
-              </div>
-            </div>
-            <div className="about-text">
-              {service.fullDescription && service.fullDescription.split('\r\n\r\n').map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Subcategories with Modern Accordion Style */}
+      {/* Subcategories as Flip Cards */}
       <section className="services-modern">
         <div className="container">
           <div className="services-header">
+            <span className="services-badge">Services</span>
             <h2 className="services-title">Explore {service.name} Services</h2>
           </div>
 
           <div className="subcategory-flip-grid">
-            {service.subcategories.map((subcategory, index) => (
-              <div key={subcategory.id} className="subcategory-flip-container">
-                <div className="subcategory-flip-card">
-                  {/* FRONT - Image with name overlay at top */}
-                  <div className="subcategory-flip-front">
-                    {subcategory.hasImage && subcategory.imageUrl ? (
-
-                      <img
-                        src={subcategory.imageUrl}
-                        alt={subcategory.name}
-                        className="subcategory-flip-image"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.style.display = 'none';
-                          const placeholder = e.currentTarget.parentElement.querySelector('.subcategory-no-image');
-                          if (placeholder) {
-                            placeholder.style.display = 'flex';
-                          }
-                        }}
-                      />
-                    ) : (
-                      <div className="subcategory-no-image">
-                        <h3 className="subcategory-name-only">{subcategory.name}</h3>
-                      </div>
-                    )}
-                    
-                    {/* Name at TOP */}
-                    <div className="subcategory-name-overlay-top">
-                      <h3 className="subcategory-flip-name">{subcategory.name}</h3>
-                      <span className="subcategory-item-count">{subcategory.itemCount} services</span>
-                    </div>
-
-                    {/* Hover hint at bottom */}
-                    <div className="subcategory-hover-hint">Hover to view services →</div>
-                  </div>
-
-              {subcategory.hasImage && subcategory.imageUrl && (
-                <div className="subcategory-image-wrap">
-                  <img
-                    src={subcategory.imageUrl}
-                    alt={subcategory.name}
-                    className="subcategory-image"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.style.display = 'none';
+            {service.subcategories.map((subcategory) => {
+              const cardId = `card-${subcategory.id}`;
+              const isFlipped = flippedCards[cardId] || false;
+              
+              return (
+                <div 
+                  key={subcategory.id} 
+                  className="subcategory-flip-container"
+                >
+                  {/* The flip card */}
+                  <div 
+                    className={`subcategory-flip-card-wrapper ${isFlipped ? 'flipped' : ''}`}
+                    ref={(el) => {
+                      if (el) {
+                        containerRefs.current[cardId] = el;
+                      }
                     }}
-                  />
+                    onMouseEnter={() => handleCardMouseEnter(cardId)}
+                    onMouseLeave={() => handleCardMouseLeave(cardId)}
+                  >
+                    <div className="subcategory-flip-card">
+                      {/* FRONT - Header with name + Image */}
+                      <div className="subcategory-flip-front">
+                        {/* Header with name */}
+                        <div className="subcategory-front-header">
+                          <h3 className="subcategory-front-name">{subcategory.name}</h3>
+                          <span className="subcategory-front-count">
+                            {subcategory.itemCount}
+                          </span>
+                        </div>
+                        
+                        {/* Image section */}
+                        <div className="subcategory-front-image-wrapper">
+                          {subcategory.hasImage && subcategory.imageUrl ? (
+                            <img
+                              src={subcategory.imageUrl}
+                              alt={subcategory.name}
+                              className="subcategory-flip-image"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.style.display = 'none';
+                                const placeholder = e.currentTarget.parentElement.querySelector('.subcategory-no-image');
+                                if (placeholder) {
+                                  placeholder.style.display = 'flex';
+                                }
+                              }}
+                            />
+                          ) : (
+                            <div className="subcategory-no-image">
+                              <h3 className="subcategory-name-only">{subcategory.name}</h3>
+                            </div>
+                          )}
+                          
+                      
+                        </div>
+                      </div>
+
+                      {/* BACK - Header with name + Items list */}
+                      <div className="subcategory-flip-back">
+                        {/* Header with name */}
+                        <div className="flip-back-header">
+                          <div className="flip-back-title-wrapper">
+                            <h4 className="flip-back-title">{subcategory.name}</h4>
+                          </div>
+                          <span className="flip-back-count">
+                            {subcategory.itemCount}
+                          </span>
+                        </div>
+
+                        {/* Items list */}
+                        <div 
+                          className="flip-back-items-list"
+                          ref={(el) => {
+                            if (el) {
+                              listRefs.current[cardId] = el;
+                            }
+                          }}
+                          onWheel={(e) => handleWheelScroll(e, cardId)}
+                          onMouseDown={() => handleScrollStart(cardId)}
+                          onMouseUp={() => handleScrollEnd(cardId)}
+                          onMouseLeave={() => handleScrollEnd(cardId)}
+                          onTouchStart={() => handleScrollStart(cardId)}
+                          onTouchEnd={() => handleScrollEnd(cardId)}
+                          onTouchCancel={() => handleScrollEnd(cardId)}
+                        >
+                          {subcategory.items && subcategory.items.length > 0 ? (
+                            subcategory.items.map((item, idx) => (
+                              <div key={item.id} className="back-item-wrapper">
+                                <div className="back-item-header">
+                                  <span className="back-item-number">{String(idx + 1).padStart(2, '0')}</span>
+                                  <p className="back-item-name">{item.name}</p>
+                                </div>
+                                
+                                {item.servicesList && item.servicesList.length > 0 && (
+                                  <ul className="back-item-services-list">
+                                    {item.servicesList.map((serviceName, serviceIdx) => (
+                                      <li key={serviceIdx} className="back-service-item">
+                                        <span className="back-service-dot">•</span>
+                                        <span className="back-service-name">{serviceName}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            ))
+                          ) : (
+                            <div style={{ 
+                              color: '#999', 
+                              textAlign: 'center', 
+                              padding: '30px 0',
+                              fontSize: '14px'
+                            }}>
+                            </div>
+                          )}
+                        </div>
+
+                       
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              )}
-
-              {subcategory.description && (
-                <p className="subcategory-desc">{subcategory.description}</p>
-              )}
-
-             {subcategory.items && subcategory.items.length > 0 && (
-  <div className="items-modern-grid">
-    {subcategory.items.map((item, idx) => (
-      <Link 
-        key={item.id} 
-        href={`/our-services/${service.slug}/${item.slug}`}
-        className="item-modern-link"
-      >
-        <div className="item-modern-card">
-          <div className="item-modern-number">{String(idx + 1).padStart(2, '0')}</div>
-          <div className="item-modern-content">
-            <h4 className="item-modern-name">{item.name}</h4>
-            {item.description && <p className="item-modern-desc">{item.description}</p>}
-            {item.imageUrl && (
-              <div className="item-modern-image">
-                <img
-                  src={item.imageUrl}
-                  alt={item.name}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = FALLBACK_IMAGE;
-                  }}
-                />
-              </div>
-            )}
-            {item.itemServices && item.itemServices.length > 0 && (
-              <div className="item-modern-tags">
-                {item.itemServices.map((tag, idx) => (
-                  <span key={idx} className="item-modern-tag">
-                    {tag.replace(/-/g, ' ')}
-                  </span>
-                ))}
-              </div>
-            )}
+              );
+            })}
           </div>
-        </div>
-      </Link>
-    ))}
-  </div>
-)}
-
-            </div>
-          ))}
         </div>
       </section>
 
@@ -409,21 +529,6 @@ export default function ServiceDetail() {
           </div>
         </section>
       )}
-
-      {/* <section className="cta-modern">
-        <div className="container">
-          <div className="cta-modern-box">
-            <div className="cta-modern-content">
-              <h2>Let's Work Together</h2>
-              <p>Get professional {service.name} solutions tailored to your needs</p>
-              <div className="cta-modern-buttons">
-                <Link href="/contact" className="cta-modern-primary">Start a Project</Link>
-                <Link href="/our-services" className="cta-modern-secondary">All Services</Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> */}
     </>
   );
 }
