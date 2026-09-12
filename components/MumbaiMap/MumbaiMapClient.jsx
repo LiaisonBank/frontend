@@ -552,7 +552,7 @@ const ProjectSlidePanel = React.memo(({ project, isOpen, onClose }) => {
               </div>
             )}
 
-            <div className="py-4 d-flex align-itemem-center justify-end">
+            <div className=" d-flex align-itemem-center justify-end">
              {project.location && (
                 <p className="panel-location">
                   📍 {project.location.replace(/\(/g, " (").replace(/,/g, ", ")}
