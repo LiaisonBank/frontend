@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useLoading } from "@/context/LoadingContext";
 import logo from "../../assets/images/company/logo.png";
 import name from "../../assets/images/company/name.png";
@@ -16,6 +16,7 @@ const EASE_SLIDE = [0.76, 0, 0.24, 1];
 
 const SLIDE_UP_START = 2600; // when mobile slide-up begins (ms)
 const SLIDE_DURATION = 1.1; // mobile slide-up duration (s)
+const SLIDE_DURATION_MS = SLIDE_DURATION * 1000;
 
 export default function IntroLoader() {
   const { setIsLoading } = useLoading();
@@ -29,6 +30,17 @@ export default function IntroLoader() {
     y: "-45.2vh",
     scale: 0.22,
   });
+
+  // Refs to avoid stale closures inside rAF loop
+  const isMobileRef = useRef(isMobile);
+  const startTimeRef = useRef(null);
+  const rafIdRef = useRef(null);
+  const slideTriggeredRef = useRef(false);
+  const hideTriggeredRef = useRef(false);
+
+  useEffect(() => {
+    isMobileRef.current = isMobile;
+  }, [isMobile]);
 
   /* ==========================================
    * RESPONSIVE DOCK POSITION
@@ -84,26 +96,46 @@ export default function IntroLoader() {
   }, []);
 
   /* ==========================================
-   * TIMING — single source of truth
+   * TIMING — single rAF loop drives both timers
    * ========================================== */
   useEffect(() => {
-    const slideTimer = setTimeout(() => {
-      if (window.innerWidth < 992) setSlideUp(true);
-    }, SLIDE_UP_START);
+    const tick = (now) => {
+      if (startTimeRef.current === null) startTimeRef.current = now;
+      const elapsed = now - startTimeRef.current;
 
-    const hideTimer = setTimeout(
-      () => {
+      // Trigger mobile slide-up at SLIDE_UP_START
+      if (
+        !slideTriggeredRef.current &&
+        elapsed >= SLIDE_UP_START &&
+        window.innerWidth < 992
+      ) {
+        slideTriggeredRef.current = true;
+        setSlideUp(true);
+      }
+
+      // Trigger hide after slide completes (mobile) or immediately at SLIDE_UP_START (desktop)
+      const hideAt =
+        SLIDE_UP_START + (isMobileRef.current ? SLIDE_DURATION_MS : 0);
+
+      if (!hideTriggeredRef.current && elapsed >= hideAt) {
+        hideTriggeredRef.current = true;
         setShow(false);
         setIsLoading(false);
-      },
-      SLIDE_UP_START + (isMobile ? SLIDE_DURATION * 1000 : 0)
-    );
+        return; // stop the loop
+      }
+
+      rafIdRef.current = requestAnimationFrame(tick);
+    };
+
+    rafIdRef.current = requestAnimationFrame(tick);
 
     return () => {
-      clearTimeout(slideTimer);
-      clearTimeout(hideTimer);
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
     };
-  }, [setIsLoading, isMobile]);
+  }, [setIsLoading]);
 
   /* ==========================================
    * STATIC OFFSETS (memoized)
