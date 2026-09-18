@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, A11y } from "swiper/modules";
 import TeamMemberCard from "./TeamCard/TeamMemberCard";
-import { getImageUrl } from "../lib/utils/getImagehelper";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -149,120 +147,6 @@ const applyPriorityOrdering = (members, priorityNames) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                              Team Card (Mobile)                            */
-/* -------------------------------------------------------------------------- */
-
-function TeamCard({ member }) {
-  const imageSrc = getImageUrl(member?.image);
-  const isDev = process.env.NODE_ENV === "development";
-
-  return (
-    <div className="w-full max-w-sm mx-auto group">
-      <div className="relative w-full h-[400px] [perspective:1200px]">
-        <div className="relative w-full h-full transition-transform duration-700 ease-[cubic-bezier(.4,.1,.2,1)] [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-          {/* Front */}
-          <div className="absolute inset-0 w-full h-full rounded-2xl overflow-hidden cursor-pointer [backface-visibility:hidden] shadow-sm bg-white">
-            <div className="relative w-full h-[320px] bg-gray-200">
-              <Image
-                src={imageSrc}
-                alt={member?.name || "Team member"}
-                fill
-                className="object-cover object-[50%_10%]"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                priority={false}
-                unoptimized={isDev}
-              />
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent px-6 py-5">
-              <h4 className="text-xl font-semibold text-white">
-                {member?.name}
-              </h4>
-              {member?.designation && (
-                <p className="text-sm text-white/80">{member.designation}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Back */}
-          <div className="absolute inset-0 w-full h-full rounded-2xl bg-white border border-gray-100 shadow-xl p-6 [backface-visibility:hidden] [transform:rotateY(180deg)] flex flex-col">
-            <div className="flex flex-col h-full items-center justify-center gap-4">
-              <div className="relative w-32 h-32 shrink-0 rounded-full overflow-hidden bg-gray-200 border-4 border-orange-100">
-                <Image
-                  src={imageSrc}
-                  alt={member?.name || "Team member"}
-                  fill
-                  className="object-cover object-[50%_10%]"
-                  sizes="128px"
-                  unoptimized={isDev}
-                />
-              </div>
-              <div className="flex-1 min-w-0 space-y-3 text-center">
-                <h4 className="text-xl font-semibold text-gray-900">
-                  {member?.name}
-                </h4>
-                {member?.designation && (
-                  <p className="text-sm text-gray-500">{member.designation}</p>
-                )}
-                <div className="w-12 h-px bg-orange-400 mx-auto my-2" />
-                {member?.email && (
-                  <a
-                    href={`mailto:${member.email}`}
-                    className="flex items-center justify-center gap-2.5 w-full rounded-lg bg-gray-50 px-3 py-2 hover:bg-orange-50 transition"
-                  >
-                    <span className="text-orange-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        className="w-4 h-4"
-                      >
-                        <rect x="3" y="5" width="18" height="14" rx="2" />
-                        <path d="m3 7 9 6 9-6" />
-                      </svg>
-                    </span>
-                    <span className="text-sm font-medium text-gray-700">
-                      {member.email}
-                    </span>
-                  </a>
-                )}
-                {member?.phone && (
-                  <a
-                    href={`tel:${member.phone}`}
-                    className="flex items-center justify-center gap-2.5 w-full rounded-lg bg-gray-50 px-3 py-2 hover:bg-orange-50 transition"
-                  >
-                    <span className="text-orange-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        className="w-4 h-4"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M5 4h3l2 5-2.5 1.5a12 12 0 005 5L14 13l5 2v3a2 2 0 01-2 2C10.373 20 4 13.627 4 6a2 2 0 012-2z"
-                        />
-                      </svg>
-                    </span>
-                    <span className="text-sm font-medium text-gray-700">
-                      {member.phone}
-                    </span>
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
 /*                              Team Section                                  */
 /* -------------------------------------------------------------------------- */
 
@@ -391,35 +275,24 @@ export default function TeamSection() {
   return (
     <section className="w-full px-4">
       <div className="container-fluid mx-auto">
-        {/* Desktop / Tablet View */}
-        <div className="hidden md:block">
-          {Object.entries(groupedTeam).map(([groupKey, members]) => (
-            <div key={groupKey} className="mb-12">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6 py-2 flex items-center gap-3 section-title">
-                {getGroupTitle(groupKey)}
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 py-5 justify-items-center gap-6">
-                {members.map((member, index) => (
-                  <TeamMemberCard
-                    key={member?._id || member?.id || `${groupKey}-${index}`}
-                    member={member}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        {Object.entries(groupedTeam).map(([groupKey, members]) => (
+          <div key={groupKey} className="mb-12">
+            <h3 className="text-2xl font-bold text-gray-800 mb-6 py-2 flex items-center gap-3 section-title">
+              {getGroupTitle(groupKey)}
+            </h3>
 
-        {/* Mobile View */}
-        <div className="block md:hidden">
-          {Object.entries(groupedTeam).map(([groupKey, members]) => (
-            <div key={groupKey} className="mb-8">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span className="text-2xl">
-                  {TEAM_GROUPS[groupKey]?.icon || "👥"}
-                </span>
-                {getGroupTitle(groupKey)}
-              </h2>
+            {/* Desktop / Tablet View - Grid */}
+            <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 py-5 justify-items-center gap-6">
+              {members.map((member, index) => (
+                <TeamMemberCard
+                  key={member?._id || member?.id || `${groupKey}-${index}`}
+                  member={member}
+                />
+              ))}
+            </div>
+
+            {/* Mobile View - Department wise Slider (same card as desktop) */}
+            <div className="block md:hidden">
               <Swiper
                 modules={[Autoplay, A11y]}
                 slidesPerView={1}
@@ -433,7 +306,7 @@ export default function TeamSection() {
                 autoplay={{
                   delay: 3000,
                   disableOnInteraction: false,
-                  pauseOnMouseEnter: false,
+                  pauseOnMouseEnter: true,
                 }}
                 className="team-swiper"
               >
@@ -442,14 +315,14 @@ export default function TeamSection() {
                     key={member?._id || member?.id || `${groupKey}-${index}`}
                   >
                     <div className="flex justify-center">
-                      <TeamCard member={member} />
+                      <TeamMemberCard member={member} />
                     </div>
                   </SwiperSlide>
                 ))}
               </Swiper>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </section>
   );

@@ -139,7 +139,7 @@ export default function AwardPage() {
                 <div className="row justify-content-center text-center">
                   <div className="col-lg-10">
                     <div className="theme-breadcrumb-box">
-                      <h1>Awards and Certifications</h1>
+                      <h1>Appreciation and Completion Certifications</h1>
 
                       <nav
                         aria-label="breadcrumb"
@@ -195,8 +195,7 @@ export default function AwardPage() {
                 <div className="row justify-content-center text-center">
                   <div className="col-lg-10">
                     <div className="theme-breadcrumb-box">
-                      <h1>Awards and Certifications</h1>
-
+                      <h1>Appreciation and Completion Certifications</h1>
                       <nav
                         aria-label="breadcrumb"
                         className="page-breadcrumb"
@@ -213,7 +212,7 @@ export default function AwardPage() {
                             className="breadcrumb-item active"
                             aria-current="page"
                           >
-                            Awards &amp; Certifications
+                            Appreciation and Completion Certifications
                           </li>
                         </ol>
                       </nav>
@@ -250,7 +249,7 @@ export default function AwardPage() {
                 <div className="row justify-content-center text-center">
                   <div className="col-lg-10">
                     <div className="theme-breadcrumb-box">
-                      <h1>Awards and Certifications</h1>
+                      <h1>Appreciation and Completion Certifications</h1>
 
                       <nav
                         aria-label="breadcrumb"
@@ -268,7 +267,7 @@ export default function AwardPage() {
                             className="breadcrumb-item active"
                             aria-current="page"
                           >
-                            Awards &amp; Certifications
+                            Appreciation and Completion Certifications
                           </li>
                         </ol>
                       </nav>
@@ -303,7 +302,7 @@ export default function AwardPage() {
               <div className="row justify-content-center text-center">
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
-                    <h1>Awards and Certifications</h1>
+                    <h1>Appreciation and Completion Certifications</h1>
 
                     <nav
                       aria-label="breadcrumb"
@@ -321,7 +320,7 @@ export default function AwardPage() {
                           className="breadcrumb-item active"
                           aria-current="page"
                         >
-                          Awards &amp; Certifications
+                          Appreciation and Completion Certifications
                         </li>
                       </ol>
                     </nav>

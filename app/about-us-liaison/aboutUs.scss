@@ -1,4 +1,4 @@
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 .about-us{
   .section-title {
     color: #f97316;
@@ -7,7 +7,11 @@
     font-family: Inter, sans-serif;
     font-size: 2rem;
     font-weight: 700;
-}
+     @media (max-width: 768px) {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+          }
+    }
 }
         /* Full Screen Hero */
         .hero-fullscreen {
@@ -222,7 +226,7 @@
 
       
 
-        .welcome-badge-full {
+        .welcome-badge-full h2 {
           display: inline-block;
           font-size: 2.75rem;
           font-weight: 800;
@@ -460,7 +464,10 @@
               animation: dot-flow 3s linear infinite alternate;
               z-index: 2;
             }
-           
+          @media (max-width: 768px) {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+          }
         }
 
         .section-subtitle {
@@ -683,7 +690,7 @@
         @media (max-width: 480px) {
           .hero-fullscreen { min-height: 400px; padding: 40px 0; }
           .hero-title-full { font-size: 1.8rem; }
-          .welcome-badge-full { font-size: 0.6rem; padding: 4px 14px; }
+          .welcome-badge-full h2 { font-size: 1.5rem; padding: 4px 14px; }
           .hero-desc-full { font-size: 0.88rem; }
           .sectors-grid { grid-template-columns: repeat(2, 1fr); }
           .sectors-footer { padding: 16px 18px; }
