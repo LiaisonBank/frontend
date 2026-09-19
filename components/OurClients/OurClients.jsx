@@ -47,6 +47,10 @@ export default class OurClients extends Component {
               alt={client.name || "Client"}
               loading="lazy"
               unoptimized
+              style={{
+                width: "100%",
+                height: "auto",
+              }}
             />
           </div>
         ))}

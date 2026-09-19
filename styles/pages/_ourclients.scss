@@ -31,7 +31,7 @@
       width: auto;
       height: auto;
       /* Base transform — JS overrides only the Y portion */
-      transform: translate3d(-50%, calc(-30% + var(--parallax-y)), 0);
+      transform: translate3d(-50%, calc(-50% + var(--parallax-y)), 0);
       object-fit: cover;
       z-index: 0;
       pointer-events: none;      /* don't block clicks */

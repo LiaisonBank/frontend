@@ -116,7 +116,7 @@
   .mapblock {
     display: block;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px 20px;
     text-align: center;
 
     color: #fe6e00;
@@ -215,7 +215,7 @@
       min-height: 110%;
       width: auto;
       height: auto;
-      transform: translate3d(-50%, calc(-30% + var(--parallax-y)), 0);
+      transform: translate3d(-50%, calc(-35% + var(--parallax-y)), 0);
       object-fit: cover;
       z-index: 0;
       pointer-events: none;
@@ -431,7 +431,22 @@
       outline-offset: 2px;
     }
   }
+  .project-count-filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 
+    // .total-projects {
+    //   font-size: 14px;
+    //   color: $text-secondary;
+
+    //   strong {
+    //     color: $text-primary;
+    //     font-weight: 600;
+    //   }
+    // }
+  }
   // =========================================================
   // Filter Result Info
   // =========================================================

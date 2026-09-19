@@ -78,6 +78,24 @@ export default function ProjectDetails({
     hasMoreRef.current = hasMore;
   }, [hasMore]);
 
+  useEffect(() => {
+  let ignore = false;
+
+  (async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/projects?page=1`);
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const json = await res.json();
+      if (!ignore) setProjects(json?.data ?? json);
+    } catch (err) {
+      if (!ignore) setError(err.message ?? "Failed to fetch projects");
+    } finally {
+      if (!ignore) setLoading(false); // ✅ only after await
+    }
+  })();
+
+  return () => { ignore = true; };
+}, []);
   // =========================================================
   // NORMALIZE HELPER
   // =========================================================
@@ -933,14 +951,14 @@ export default function ProjectDetails({
               </span>
             )} */}
 
-            <span className="total-projects">
+            {/* <span className="total-projects">
               Total:{" "}
               <strong>
                 {hasActiveFilters
                   ? filteredCount
                   : totalProjectCount}
               </strong>
-            </span>
+            </span> */}
 
             {hasActiveFilters && (
               <button
@@ -975,6 +993,15 @@ export default function ProjectDetails({
             </strong>{" "}
             projects
           </span>
+
+           <span className="total-projects">
+              Total:{" "}
+              <strong>
+                {hasActiveFilters
+                  ? filteredCount
+                  : totalProjectCount}
+              </strong>
+            </span>
         </div>
 
         {/* =====================================================
