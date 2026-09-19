@@ -201,7 +201,7 @@ export default function ProjectsPage() {
           loop
           playsInline
           preload="auto"
-          poster="/images/projects-poster.jpg"
+          poster="/images/projects-poster.png"
         >
           <source src="/videos/projects-bg.mp4" type="video/mp4" />
           <source src="/videos/projects-bg.webm" type="video/webm" />

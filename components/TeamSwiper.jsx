@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, A11y } from "swiper/modules";
 import TeamMemberCard from "./TeamCard/TeamMemberCard";
+import ApiError from "@/components/ApiError/ApiError"; // adjust path
 import { getImageUrl } from "../lib/utils/getImagehelper";
 
 import "swiper/css";
@@ -12,7 +13,6 @@ import "swiper/css/pagination";
 import "./TeamCard/TeamMemberCard.scss";
 
 
-// Team grouping configuration - EXACTLY as specified
 const TEAM_GROUPS = {
   ceoDirector: {
     title: "CEO & Director",
@@ -26,11 +26,11 @@ const TEAM_GROUPS = {
     title: "Chief Officers",
     designations: ["Chief Officer", "Deputy Chief", "Chief Vigilance", "Chief Vigilance Officer", ]
   },
-    adminArchitecture: {
+  adminArchitecture: {
     title: "Admin & Architect",
-    designations: ["Admin", "Architecture", "Architect", "Administrative", "Administration", "Facilities", "Senior Architect", "Architectural Designer"]
+    designations: ["Admin","Admin Manager", "Architecture", "Architect", "Administrative", "Administration", "Facilities", "Senior Architect", "Architectural Designer"]
   },
-   informationTechnologySales: {
+  informationTechnologySales: {
     title: "Information Technology & Sales",
     designations: ["Software Engineer", "Information Technology", "Sales", "IT Head","IT", "Sales Head", "IT Manager", "Sales Manager", "Business Development"]
   },
@@ -42,8 +42,6 @@ const TEAM_GROUPS = {
     title: "Liaisoning and Licensing",
     designations: ["Liaison", "Licensing", "Compliance", "Regulatory", "Liaison Officer", "Licensing Manager"]
   },
- 
-
 };
 
 function TeamCard({ member }) {
@@ -124,30 +122,50 @@ function TeamCard({ member }) {
 export default function TeamSection() {
   const [teamData, setTeamData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [statusCode, setStatusCode] = useState(null);
   const [groupedTeam, setGroupedTeam] = useState({});
 
-  useEffect(() => {
-    const fetchTeam = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/employee`);
-        const data = await res.json();
-        if (data.success) {
-          setTeamData(data.data);
-          groupTeamMembers(data.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch team:", error);
-      } finally {
-        setLoading(false);
+  const fetchTeam = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setStatusCode(null);
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/employee`);
+
+      // ✅ Real HTTP status check — catches 4xx/5xx even when body is JSON
+      if (!res.ok) {
+        setError(`Request failed with status ${res.status}`);
+        setStatusCode(`ERR · ${res.status}`);
+        return;
       }
-    };
-    fetchTeam();
+
+      const data = await res.json();
+
+      if (data?.success && Array.isArray(data.data)) {
+        setTeamData(data.data);
+        groupTeamMembers(data.data);
+      } else {
+        setError("Unexpected response from server");
+        setStatusCode("ERR · BAD DATA");
+      }
+    } catch (err) {
+      console.error("Failed to fetch team:", err);
+      setError(err?.message || "Something went wrong");
+      setStatusCode("ERR · NETWORK");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchTeam();
+  }, [fetchTeam]);
 
   const groupTeamMembers = (members) => {
     const grouped = {};
-    
-    // Initialize groups
+
     Object.keys(TEAM_GROUPS).forEach(key => {
       grouped[key] = [];
     });
@@ -156,7 +174,6 @@ export default function TeamSection() {
       const designation = member.designation?.toLowerCase() || "";
       let assigned = false;
 
-      // Check each group
       for (const [key, group] of Object.entries(TEAM_GROUPS)) {
         if (group.designations.some(d => designation.includes(d.toLowerCase()))) {
           grouped[key].push(member);
@@ -165,28 +182,51 @@ export default function TeamSection() {
         }
       }
 
-      // If not assigned to any group, add to "Other" category
       if (!assigned) {
         if (!grouped.other) grouped.other = [];
         grouped.other.push(member);
       }
     });
 
-    // Remove empty groups
     Object.keys(grouped).forEach(key => {
-      if (grouped[key].length === 0) {
-        delete grouped[key];
-      }
+      if (grouped[key].length === 0) delete grouped[key];
     });
 
     setGroupedTeam(grouped);
   };
 
+  const handleRetry = () => {
+    fetchTeam();
+  };
+
+  /* ---------- Error ---------- */
+  if (error) {
+    return (
+      <ApiError
+        title="Team Information Unavailable"
+        message="We couldn't load our team directory right now. Please try again in a moment."
+        onRetry={handleRetry}
+        statusCode={statusCode}
+        statusTone="warning"
+      />
+    );
+  }
+
+  /* ---------- Loading ---------- */
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
       </div>
+    );
+  }
+
+  /* ---------- Empty ---------- */
+  if (Object.keys(groupedTeam).length === 0) {
+    return (
+      <section className="w-full px-4 py-16 text-center text-gray-500">
+        <p>No team members to display yet.</p>
+      </section>
     );
   }
 
@@ -200,7 +240,7 @@ export default function TeamSection() {
               <h3 className="text-2xl font-bold text-gray-800 mb-6 py-2 flex items-center gap-3 section-title">
                 {TEAM_GROUPS[groupKey]?.title || groupKey}
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 py-5  justify-items-center gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 py-5 justify-items-center gap-6">
                 {members.map((member, index) => (
                   <TeamMemberCard key={index} member={member} />
                 ))}

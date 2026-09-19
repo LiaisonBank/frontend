@@ -555,8 +555,10 @@ import AuthModal from '../AuthModal';
                         
                         {/* View Details Button */}
                         <div className="job-footer" onClick={() => handleViewDetails(job, index)}>
-                          View Details
-                          <ArrowUpRight size={16} />
+                          <button className="view-job-btn">View Details
+                                                      <ArrowUpRight size={16} />
+
+                          </button>
                         </div>
                       </div>
                     </div>

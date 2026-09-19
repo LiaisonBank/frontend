@@ -4,6 +4,7 @@ import { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import Chip from "@mui/material/Chip";
 
 import "./ProjectDetails.scss";
+import ApiError from "../ApiError/ApiError";
 
 const ITEMS_PER_LOAD = 20;
 const API_BASE_URL =
@@ -456,24 +457,39 @@ export default function ProjectDetails({ projectCounts }) {
   // =========================================================
   // ERROR STATE
   // =========================================================
+  // if (error) {
+  //   return (
+  //     <section className="project-details" aria-label="Error loading projects">
+  //       <div className="client-table-container">
+  //         <div className="project-error" role="alert">
+  //           <h3>Error Loading Projects</h3>
+  //           <p>{error}</p>
+  //           <button
+  //             type="button"
+  //             onClick={() => window.location.reload()}
+  //             className="retry-btn"
+  //             aria-label="Retry loading projects"
+  //           >
+  //             Retry
+  //           </button>
+  //         </div>
+  //       </div>
+  //     </section>
+  //   );
+  // }
+
   if (error) {
     return (
-      <section className="project-details" aria-label="Error loading projects">
-        <div className="client-table-container">
-          <div className="project-error" role="alert">
-            <h3>Error Loading Projects</h3>
-            <p>{error}</p>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="retry-btn"
-              aria-label="Retry loading projects"
-            >
-              Retry
-            </button>
-          </div>
-        </div>
-      </section>
+      <ApiError
+        showStatus={true}
+        statusLabel="Error"
+        statusCode={error.status ? `ERR · ${error.status}` : "ERR · TIMEOUT"}
+        statusTone={error.status >= 500 ? "danger" : "warning"}
+        title="Projects Temporarily Unavailable"
+        message="Our project information is temporarily unavailable. Please try again shortly."
+        onRetry={() => window.location.reload()}
+        backToHome={() => window.open("/", "_self")}
+      />
     );
   }
 

@@ -626,7 +626,12 @@ export default function CareersLiaisonPage() {
         </button>
       ))}
     </div>
-
+   <Link
+            href={`/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.name)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="view-link featured-view"
+          >
     <div className="featured-service">
       <div className="featured-image">
         <img 
@@ -637,17 +642,18 @@ export default function CareersLiaisonPage() {
         <div className="featured-overlay">
           <h3>{activeService.slug}</h3>
           
-          <Link
+          <h2
             href={`/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.name)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="view-link featured-view"
           >
             View Openings <ArrowUpRight size={18} />
-          </Link>
+          </h2>
         </div>
       </div>
     </div>
+    </Link>
   </div>
 </section>
 

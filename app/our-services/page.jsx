@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import "./ourservices.scss";
 import { getImageUrl } from "../../lib/utils/getImagehelper";
+import ApiError from "@/components/ApiError/ApiError";
 
 // Fallback image
 const FALLBACK_IMAGE = '/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png';
@@ -174,19 +175,18 @@ export default function OurServices() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="services-error">
-        <div className="container">
-          <div className="error-box">
-            <h2>⚠️ Failed to Load Services</h2>
-            <p>{error}</p>
-            <button onClick={() => window.location.reload()}>Try Again</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+if (error) {
+  return (
+    <ApiError
+      title="Services Temporarily Unavailable"
+      message="Our service information is temporarily unavailable. Please try again shortly."
+      onRetry={() => window.location.reload()}
+      statusCode={error.status ? `ERR · ${error.status}` : "ERR · TIMEOUT"}
+      statusTone={error.status >= 500 ? "danger" : "warning"}
+      backToHome={() => window.open("/", "_self")}
+    />
+  );
+}
 
   return (
     <>
