@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import "./service-detail.scss";
+import Image from "next/image";
 import { getImageUrl } from "../../../lib/utils/getImagehelper";
 import ApiError from "@/components/ApiError/ApiError";
 
@@ -430,18 +431,11 @@ export default function ServiceDetail() {
                         {/* Image section */}
                         <div className="subcategory-front-image-wrapper">
                           {subcategory.hasImage && subcategory.imageUrl ? (
-                            <img
+                            <Image
                               src={subcategory.imageUrl}
                               alt={subcategory.name}
-                              className="subcategory-flip-image"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.style.display = 'none';
-                                const placeholder = e.currentTarget.parentElement.querySelector('.subcategory-no-image');
-                                if (placeholder) {
-                                  placeholder.style.display = 'flex';
-                                }
-                              }}
+                              fill
+                              unoptimized
                             />
                           ) : (
                             <div className="subcategory-no-image">
