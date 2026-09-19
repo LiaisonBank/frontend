@@ -9,17 +9,20 @@ import {
 } from "react";
 
 import Chip from "@mui/material/Chip";
+import Select from "react-select";
 
 import "./ProjectDetails.scss";
 import ApiError from "../ApiError/ApiError";
 
 const ITEMS_PER_LOAD = 20;
-const MIN_LOADING_DISPLAY_MS = 600; // 👈 minimum overlay duration
+const MIN_LOADING_DISPLAY_MS = 600;
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_LOCAL_API_URL ||
   process.env.NEXT_PUBLIC_BACKEND_URL ||
   "http://localhost:8000";
+
+const PROJECTS_ENDPOINT = `${API_BASE_URL}/api/projects/distinct`;
 
 export default function ProjectDetails({
   projectCounts,
@@ -32,22 +35,16 @@ export default function ProjectDetails({
 
   const tableBodyRef = useRef(null);
   const tableWrapperRef = useRef(null);
-
-  // Sentinel element used by IntersectionObserver
   const observerTargetRef = useRef(null);
 
-  // Prevent duplicate requests
   const isFetchingRef = useRef(false);
-
-  // Keep current page in a ref so IntersectionObserver
-  // always gets the latest page without stale closures
   const pageRef = useRef(1);
-
-  // Keep hasMore in a ref for the observer
   const hasMoreRef = useRef(true);
 
-  // Abort currently running request when component unmounts
   const abortControllerRef = useRef(null);
+
+  // Used to ignore stale requests after unmount/re-entry.
+  const requestIdRef = useRef(0);
 
   // =========================================================
   // STATE
@@ -79,26 +76,8 @@ export default function ProjectDetails({
     hasMoreRef.current = hasMore;
   }, [hasMore]);
 
-  useEffect(() => {
-  let ignore = false;
-
-  (async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/projects?page=1`);
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      const json = await res.json();
-      if (!ignore) setProjects(json?.data ?? json);
-    } catch (err) {
-      if (!ignore) setError(err.message ?? "Failed to fetch projects");
-    } finally {
-      if (!ignore) setLoading(false); // ✅ only after await
-    }
-  })();
-
-  return () => { ignore = true; };
-}, []);
   // =========================================================
-  // NORMALIZE HELPER
+  // NORMALIZE
   // =========================================================
 
   const normalize = useCallback((value) => {
@@ -111,85 +90,95 @@ export default function ProjectDetails({
   // NORMALIZE PROJECTS
   // =========================================================
 
-  const normalizeProjects = useCallback((projectsData, pageNum = 1) => {
-    return projectsData.map((project, index) => ({
-      ...project,
+  const normalizeProjects = useCallback(
+    (projectsData, pageNum = 1) => {
+      return projectsData.map((project, index) => ({
+        ...project,
 
-      id:
-        project.id ??
-        project.project_id ??
-        `project-${pageNum}-${index}`,
+        id:
+          project.id ??
+          project.project_id ??
+          `project-${pageNum}-${index}`,
 
-      client_name:
-        project.client_name ??
-        project.name ??
-        "Unnamed Project",
+        client_name:
+          project.client_name ??
+          project.name ??
+          "Unnamed Project",
 
-      project_status:
-        project.project_status ??
-        project.status ??
-        "Unknown",
+        project_status:
+          project.project_status ??
+          project.status ??
+          "Unknown",
 
-      projectsCategory:
-        project.projectsCategory ??
-        project.type ??
-        project.category ??
-        "Uncategorized",
+        projectsCategory:
+          project.projectsCategory ??
+          project.type ??
+          project.category ??
+          "Uncategorized",
 
-      location: project.location ?? "",
-    }));
-  }, []);
+        location: project.location ?? "",
+      }));
+    },
+    [],
+  );
 
   // =========================================================
   // DETERMINE HAS MORE
   // =========================================================
 
-  const determineHasMore = useCallback((data, projectsData) => {
-    /*
-     * Supports different backend response formats:
-     *
-     * {
-     *   hasMore: true
-     * }
-     *
-     * {
-     *   next_page: 2
-     * }
-     *
-     * {
-     *   total: 100
-     * }
-     *
-     * Or simply:
-     *
-     * 20 records = probably another page
-     */
+  const determineHasMore = useCallback(
+    (data, projectsData) => {
+      if (typeof data?.hasMore === "boolean") {
+        return data.hasMore;
+      }
 
-    if (typeof data?.hasMore === "boolean") {
-      return data.hasMore;
+      if (typeof data?.has_more === "boolean") {
+        return data.has_more;
+      }
+
+      if (data?.next_page !== undefined) {
+        return data.next_page !== null;
+      }
+
+      if (data?.nextPage !== undefined) {
+        return data.nextPage !== null;
+      }
+
+      if (
+        typeof data?.total === "number" &&
+        typeof data?.page === "number" &&
+        typeof data?.limit === "number"
+      ) {
+        return data.page * data.limit < data.total;
+      }
+
+      return projectsData.length === ITEMS_PER_LOAD;
+    },
+    [],
+  );
+
+  // =========================================================
+  // EXTRACT PROJECT DATA
+  // =========================================================
+
+  const extractProjects = useCallback((data) => {
+    if (Array.isArray(data)) {
+      return data;
     }
 
-    if (typeof data?.has_more === "boolean") {
-      return data.has_more;
+    if (Array.isArray(data?.projects)) {
+      return data.projects;
     }
 
-    if (data?.next_page !== undefined) {
-      return data.next_page !== null;
+    if (Array.isArray(data?.data)) {
+      return data.data;
     }
 
-    if (data?.nextPage !== undefined) {
-      return data.nextPage !== null;
+    if (Array.isArray(data?.items)) {
+      return data.items;
     }
 
-    if (
-      typeof data?.total === "number" &&
-      typeof data?.page === "number" &&
-      typeof data?.limit === "number"
-    ) {
-      return data.page * data.limit < data.total;
-    }
-
-    return projectsData.length === ITEMS_PER_LOAD;
+    return [];
   }, []);
 
   // =========================================================
@@ -198,8 +187,15 @@ export default function ProjectDetails({
 
   const fetchProjects = useCallback(
     async (pageNum = 1, isInitialLoad = false) => {
-      if (isFetchingRef.current) return;
-      if (!isInitialLoad && !hasMoreRef.current) return;
+      // Prevent duplicate requests.
+      if (isFetchingRef.current) {
+        return;
+      }
+
+      // Do not request pages after the API says there is no more data.
+      if (!isInitialLoad && !hasMoreRef.current) {
+        return;
+      }
 
       isFetchingRef.current = true;
 
@@ -211,13 +207,17 @@ export default function ProjectDetails({
 
       setError(null);
 
-      // 👇 record start time so we can enforce minimum display
+      const requestId = ++requestIdRef.current;
       const startedAt = Date.now();
 
-      // 👇 helper that waits the remaining time
+      // -------------------------------------------------------
+      // Minimum loading duration
+      // -------------------------------------------------------
+
       const waitMinimumDisplay = async () => {
         const elapsed = Date.now() - startedAt;
-        const remaining = MIN_LOADING_DISPLAY_MS - elapsed;
+        const remaining =
+          MIN_LOADING_DISPLAY_MS - elapsed;
 
         if (remaining > 0) {
           await new Promise((resolve) =>
@@ -226,126 +226,219 @@ export default function ProjectDetails({
         }
       };
 
+      // -------------------------------------------------------
+      // Abort previous request
+      // -------------------------------------------------------
+
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
 
       const controller = new AbortController();
+
       abortControllerRef.current = controller;
 
       try {
+        // -----------------------------------------------------
+        // IMPORTANT:
+        // Every request MUST use /distinct with pagination.
+        // -----------------------------------------------------
+
         const url =
-          `${API_BASE_URL}/api/projects/distinct` +
-          `?page=${pageNum}&limit=${ITEMS_PER_LOAD}`;
+          `${PROJECTS_ENDPOINT}` +
+          `?page=${pageNum}` +
+          `&limit=${ITEMS_PER_LOAD}`;
+
+        if (process.env.NODE_ENV === "development") {
+          console.debug(
+            `[ProjectDetails] Fetching page ${pageNum}:`,
+            url,
+          );
+        }
 
         const response = await fetch(url, {
           method: "GET",
           cache: "no-store",
           headers: {
             Accept: "application/json",
-            "Content-Type": "application/json",
           },
           signal: controller.signal,
         });
 
         if (!response.ok) {
-          throw new Error(
+          const apiError = new Error(
             `Failed to fetch projects: ${response.status} ${response.statusText}`,
           );
+
+          apiError.status = response.status;
+
+          throw apiError;
         }
 
         const data = await response.json();
 
-        const projectsData = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.projects)
-            ? data.projects
-            : Array.isArray(data?.data)
-              ? data.data
-              : Array.isArray(data?.items)
-                ? data.items
-                : [];
-
-        const normalizedProjects = normalizeProjects(
-          projectsData,
-          pageNum,
-        );
-
-        const moreAvailable = determineHasMore(
-          data,
-          projectsData,
-        );
-
-        // 👇 enforce minimum overlay time BEFORE hiding it
-        await waitMinimumDisplay();
-
-        if (isInitialLoad) {
-          setProjects(normalizedProjects);
-          setPage(1);
-          pageRef.current = 1;
-          setHasMore(moreAvailable);
-          hasMoreRef.current = moreAvailable;
+        // Ignore stale requests.
+        if (requestId !== requestIdRef.current) {
           return;
         }
 
+        const projectsData = extractProjects(data);
+
+        const normalizedProjects =
+          normalizeProjects(
+            projectsData,
+            pageNum,
+          );
+
+        const moreAvailable =
+          determineHasMore(
+            data,
+            projectsData,
+          );
+
+        await waitMinimumDisplay();
+
+        // Check again after the artificial delay.
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
+
+        // =====================================================
+        // INITIAL LOAD
+        // =====================================================
+
+        if (isInitialLoad) {
+          setProjects(normalizedProjects);
+
+          setPage(1);
+          pageRef.current = 1;
+
+          setHasMore(moreAvailable);
+          hasMoreRef.current = moreAvailable;
+
+          return;
+        }
+
+        // =====================================================
+        // LOAD MORE
+        // =====================================================
+
         setProjects((previousProjects) => {
           const existingIds = new Set(
-            previousProjects.map((p) => p.id),
+            previousProjects.map(
+              (project) => project.id,
+            ),
           );
 
-          const uniqueProjects = normalizedProjects.filter(
-            (p) => !existingIds.has(p.id),
-          );
+          const uniqueProjects =
+            normalizedProjects.filter(
+              (project) =>
+                !existingIds.has(project.id),
+            );
 
-          return [...previousProjects, ...uniqueProjects];
+          return [
+            ...previousProjects,
+            ...uniqueProjects,
+          ];
         });
 
         setPage(pageNum);
         pageRef.current = pageNum;
+
         setHasMore(moreAvailable);
         hasMoreRef.current = moreAvailable;
       } catch (err) {
-        if (err?.name === "AbortError") return;
+        // Abort is expected during navigation/unmount.
+        if (err?.name === "AbortError") {
+          return;
+        }
 
-        console.error("Project API error:", err);
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
 
-        // still wait before showing the error (optional)
+        console.error(
+          "[ProjectDetails] Project API error:",
+          err,
+        );
+
         await waitMinimumDisplay();
+
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
 
         setError(
           err instanceof Error
-            ? err.message
-            : "Failed to load projects",
+            ? err
+            : new Error(
+                "Failed to load projects",
+              ),
         );
       } finally {
-        isFetchingRef.current = false;
+        if (requestId === requestIdRef.current) {
+          isFetchingRef.current = false;
 
-        if (isInitialLoad) {
-          setLoading(false);
-        } else {
-          setLoadingMore(false);
+          if (isInitialLoad) {
+            setLoading(false);
+          } else {
+            setLoadingMore(false);
+          }
         }
       }
     },
-    [determineHasMore, normalizeProjects],
+    [
+      determineHasMore,
+      extractProjects,
+      normalizeProjects,
+    ],
   );
 
   // =========================================================
   // INITIAL PROJECT LOAD
+  //
+  // Every time this component mounts/re-mounts:
+  //
+  // /api/projects/distinct?page=1&limit=20
+  //
   // =========================================================
 
   useEffect(() => {
+    // Cancel anything left from a previous mount.
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Reset pagination.
+    pageRef.current = 1;
+    hasMoreRef.current = true;
+
+    // Reset state.
+    setProjects([]);
+    setPage(1);
+    setHasMore(true);
+    setError(null);
+    setLoading(true);
+
+    // Always start from page 1.
     fetchProjects(1, true);
 
     return () => {
+      // Invalidate current request.
+      requestIdRef.current += 1;
+
+      // Abort request during navigation/unmount.
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
+        abortControllerRef.current = null;
       }
+
+      isFetchingRef.current = false;
     };
   }, [fetchProjects]);
 
   // =========================================================
-  // INFINITE SCROLL - INTERSECTION OBSERVER
+  // INFINITE SCROLL
   // =========================================================
 
   useEffect(() => {
@@ -356,35 +449,33 @@ export default function ProjectDetails({
       return;
     }
 
-    /*
-     * IMPORTANT:
-     *
-     * root = tableBodyRef.current
-     *
-     * This means the observer watches scrolling
-     * INSIDE the project table, not the browser window.
-     */
+    const observer =
+      new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
+          if (
+            !entry?.isIntersecting ||
+            isFetchingRef.current ||
+            !hasMoreRef.current
+          ) {
+            return;
+          }
 
-        if (
-          entry?.isIntersecting &&
-          !isFetchingRef.current &&
-          hasMoreRef.current
-        ) {
-          const nextPage = pageRef.current + 1;
+          const nextPage =
+            pageRef.current + 1;
 
-          fetchProjects(nextPage, false);
-        }
-      },
-      {
-        root: tableBody,
-        rootMargin: "150px",
-        threshold: 0.1,
-      },
-    );
+          fetchProjects(
+            nextPage,
+            false,
+          );
+        },
+        {
+          root: tableBody,
+          rootMargin: "150px",
+          threshold: 0.1,
+        },
+      );
 
     observer.observe(target);
 
@@ -398,40 +489,74 @@ export default function ProjectDetails({
   // =========================================================
 
   const scrollTableToTop = useCallback(() => {
-    if (tableBodyRef.current) {
-      tableBodyRef.current.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+    if (!tableBodyRef.current) {
+      return;
     }
+
+    tableBodyRef.current.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }, []);
 
   // =========================================================
   // SCROLL PAGE TO TABLE
+  //
+  // Used ONLY by location search.
+  // React Select does not call this.
   // =========================================================
 
-  const scrollToTableWrapper = useCallback(() => {
-    if (!tableWrapperRef.current) {
-      return;
-    }
+  const scrollToTableWrapper =
+    useCallback(() => {
+      if (!tableWrapperRef.current) {
+        return;
+      }
 
-    const wrapperRect =
-      tableWrapperRef.current.getBoundingClientRect();
+      const wrapperRect =
+        tableWrapperRef.current.getBoundingClientRect();
 
-    const offset = 80;
+      const offset = 80;
 
-    const targetPosition =
-      window.scrollY + wrapperRect.top - offset;
+      const targetPosition =
+        window.scrollY +
+        wrapperRect.top -
+        offset;
 
-    window.scrollTo({
-      top: targetPosition,
-      behavior: "smooth",
-    });
+      window.scrollTo({
+        top: targetPosition,
+        behavior: "smooth",
+      });
 
-    requestAnimationFrame(() => {
-      scrollTableToTop();
-    });
-  }, [scrollTableToTop]);
+      requestAnimationFrame(() => {
+        scrollTableToTop();
+      });
+    }, [scrollTableToTop]);
+
+  // =========================================================
+  // STATUS OPTIONS
+  // =========================================================
+
+  const statusOptions = useMemo(
+    () => [
+      {
+        value: "All",
+        label: "All Status",
+      },
+      {
+        value: "Completed",
+        label: "Completed",
+      },
+      {
+        value: "In Progress",
+        label: "In Progress",
+      },
+      {
+        value: "Upcoming",
+        label: "Upcoming",
+      },
+    ],
+    [],
+  );
 
   // =========================================================
   // CATEGORY OPTIONS
@@ -440,7 +565,8 @@ export default function ProjectDetails({
   const categoryOptions = useMemo(() => {
     const categories = projects
       .flatMap((project) => {
-        const category = project?.projectsCategory;
+        const category =
+          project?.projectsCategory;
 
         if (Array.isArray(category)) {
           return category;
@@ -449,17 +575,10 @@ export default function ProjectDetails({
         return [category];
       })
       .filter(Boolean)
-      .map((category) => String(category).trim())
+      .map((category) =>
+        String(category).trim(),
+      )
       .filter(Boolean);
-
-    /*
-     * Keep combined values such as:
-     *
-     * Residential/Commercial
-     *
-     * in the table data, but do not add them
-     * to the Category Type dropdown.
-     */
 
     const excludedCategories = new Set([
       "Residential/Commercial",
@@ -469,51 +588,168 @@ export default function ProjectDetails({
 
     return [...new Set(categories)]
       .filter(
-        (category) => !excludedCategories.has(category),
+        (category) =>
+          !excludedCategories.has(category),
       )
-      .sort((a, b) => a.localeCompare(b));
+      .sort((a, b) =>
+        a.localeCompare(b),
+      );
   }, [projects]);
+
+  // =========================================================
+  // CATEGORY SELECT OPTIONS
+  // =========================================================
+
+  const categorySelectOptions = useMemo(
+    () => [
+      {
+        value: "All",
+        label: "All Categories",
+      },
+      ...categoryOptions.map(
+        (category) => ({
+          value: category,
+          label: category,
+        }),
+      ),
+    ],
+    [categoryOptions],
+  );
+
+  // =========================================================
+  // SELECTED STATUS
+  // =========================================================
+
+  const selectedStatusOption = useMemo(
+    () =>
+      statusOptions.find(
+        (option) =>
+          option.value === statusFilter,
+      ) ?? statusOptions[0],
+    [statusFilter, statusOptions],
+  );
+
+  // =========================================================
+  // SELECTED CATEGORY
+  // =========================================================
+
+  const selectedCategoryOption = useMemo(
+    () =>
+      categorySelectOptions.find(
+        (option) =>
+          option.value === categoryFilter,
+      ) ?? categorySelectOptions[0],
+    [
+      categoryFilter,
+      categorySelectOptions,
+    ],
+  );
+
+  // =========================================================
+  // FILTER HANDLERS
+  // =========================================================
+
+  const handleLocationChange =
+    useCallback(
+      (event) => {
+        setLocationFilter(
+          event.target.value,
+        );
+
+        requestAnimationFrame(() => {
+          scrollToTableWrapper();
+        });
+      },
+      [scrollToTableWrapper],
+    );
+
+  // IMPORTANT:
+  // Do NOT scroll the page when Select changes.
+  // This prevents Category Type dropdown scroll issues.
+
+  const handleStatusChange =
+    useCallback(
+      (selectedOption) => {
+        setStatusFilter(
+          selectedOption?.value ?? "All",
+        );
+      },
+      [],
+    );
+
+  const handleCategoryChange =
+    useCallback(
+      (selectedOption) => {
+        setCategoryFilter(
+          selectedOption?.value ?? "All",
+        );
+      },
+      [],
+    );
 
   // =========================================================
   // FILTERED PROJECTS
   // =========================================================
 
   const filteredProjects = useMemo(() => {
-    const location = normalize(locationFilter);
-    const status = normalize(statusFilter);
-    const category = normalize(categoryFilter);
+    const location =
+      normalize(locationFilter);
 
-    return projects.filter((project) => {
-      const projectLocation = normalize(project.location);
+    const status =
+      normalize(statusFilter);
 
-      const projectStatus = normalize(
-        project.project_status,
-      );
+    const category =
+      normalize(categoryFilter);
 
-      const projectType = normalize(
-        Array.isArray(project.projectsCategory)
-          ? project.projectsCategory.join(", ")
-          : project.projectsCategory,
-      );
+    return projects.filter(
+      (project) => {
+        const projectLocation =
+          normalize(
+            project.location,
+          );
 
-      const matchesLocation =
-        !location ||
-        projectLocation.includes(location);
+        const projectStatus =
+          normalize(
+            project.project_status,
+          );
 
-      const matchesStatus =
-        statusFilter === "All" ||
-        projectStatus === status;
+        const projectCategories =
+          Array.isArray(
+            project.projectsCategory,
+          )
+            ? project.projectsCategory.map(
+                (item) =>
+                  normalize(item),
+              )
+            : [
+                normalize(
+                  project.projectsCategory,
+                ),
+              ];
 
-      const matchesCategory =
-        categoryFilter === "All" ||
-        projectType === category;
+        const matchesLocation =
+          !location ||
+          projectLocation.includes(
+            location,
+          );
 
-      return (
-        matchesLocation &&
-        matchesStatus &&
-        matchesCategory
-      );
-    });
+        const matchesStatus =
+          statusFilter === "All" ||
+          projectStatus === status;
+
+        const matchesCategory =
+          categoryFilter === "All" ||
+          projectCategories.includes(
+            category,
+          );
+
+        return (
+          matchesLocation &&
+          matchesStatus &&
+          matchesCategory
+        );
+      },
+    );
   }, [
     projects,
     locationFilter,
@@ -537,21 +773,28 @@ export default function ProjectDetails({
 
   const getStatusClass = useCallback(
     (status) => {
-      const normalizedStatus = normalize(status);
+      const normalizedStatus =
+        normalize(status);
 
-      if (normalizedStatus === "completed") {
+      if (
+        normalizedStatus ===
+        "completed"
+      ) {
         return "status-completed";
       }
 
       if (
-        normalizedStatus === "upcoming"
+        normalizedStatus ===
+        "upcoming"
       ) {
         return "status-upcoming";
       }
 
       if (
-        normalizedStatus === "in progress" ||
-        normalizedStatus === "ongoing"
+        normalizedStatus ===
+          "in progress" ||
+        normalizedStatus ===
+          "ongoing"
       ) {
         return "status-in-progress";
       }
@@ -565,132 +808,106 @@ export default function ProjectDetails({
   // LOCATION FORMATTER
   // =========================================================
 
-  const formatLocation = useCallback((location) => {
-    if (!location) {
-      return "";
-    }
+  const formatLocation = useCallback(
+    (location) => {
+      if (!location) {
+        return "";
+      }
 
-    let formattedLocation = String(location)
-      .replace(/\(/g, " (")
-      .replace(/\s+/g, " ")
-      .replace(/,\s*/g, ", ")
-      .trim();
+      let formattedLocation =
+        String(location)
+          .replace(/\(/g, " (")
+          .replace(/\s+/g, " ")
+          .replace(/,\s*/g, ", ")
+          .trim();
 
-    const lowerLocation =
-      formattedLocation.toLowerCase();
+      const lowerLocation =
+        formattedLocation.toLowerCase();
 
-    const alreadyHasMumbai =
-      lowerLocation.includes("mumbai");
+      const alreadyHasMumbai =
+        lowerLocation.includes(
+          "mumbai",
+        );
 
-    const alreadyHasVasai =
-      lowerLocation.includes("vasai");
+      const alreadyHasVasai =
+        lowerLocation.includes(
+          "vasai",
+        );
 
-    const alreadyHasVirar =
-      lowerLocation.includes("virar");
+      const alreadyHasVirar =
+        lowerLocation.includes(
+          "virar",
+        );
 
-    if (
-      !alreadyHasMumbai &&
-      !alreadyHasVasai &&
-      !alreadyHasVirar
-    ) {
-      formattedLocation += ", Mumbai";
-    }
+      if (
+        !alreadyHasMumbai &&
+        !alreadyHasVasai &&
+        !alreadyHasVirar
+      ) {
+        formattedLocation += ", Mumbai";
+      }
 
-    return formattedLocation;
-  }, []);
-
-  // =========================================================
-  // FILTER HANDLERS
-  // =========================================================
-
-  const handleLocationChange = useCallback(
-    (event) => {
-      setLocationFilter(event.target.value);
-
-      requestAnimationFrame(() => {
-        scrollToTableWrapper();
-      });
+      return formattedLocation;
     },
-    [scrollToTableWrapper],
-  );
-
-  const handleStatusChange = useCallback(
-    (event) => {
-      setStatusFilter(event.target.value);
-
-      requestAnimationFrame(() => {
-        scrollToTableWrapper();
-      });
-    },
-    [scrollToTableWrapper],
-  );
-
-  const handleCategoryChange = useCallback(
-    (event) => {
-      setCategoryFilter(event.target.value);
-
-      requestAnimationFrame(() => {
-        scrollToTableWrapper();
-      });
-    },
-    [scrollToTableWrapper],
+    [],
   );
 
   // =========================================================
   // CLEAR FILTERS
   // =========================================================
 
-  const handleClearFilters = useCallback(() => {
-    setLocationFilter("");
-    setStatusFilter("All");
-    setCategoryFilter("All");
+  const handleClearFilters =
+    useCallback(() => {
+      setLocationFilter("");
+      setStatusFilter("All");
+      setCategoryFilter("All");
 
-    requestAnimationFrame(() => {
-      scrollToTableWrapper();
-    });
-  }, [scrollToTableWrapper]);
+      requestAnimationFrame(() => {
+        scrollToTableWrapper();
+      });
+    }, [scrollToTableWrapper]);
 
   // =========================================================
   // WHEEL BEHAVIOR
   // =========================================================
 
-  const handleTableWheel = useCallback((event) => {
-    const element = event.currentTarget;
+  const handleTableWheel =
+    useCallback((event) => {
+      const element =
+        event.currentTarget;
 
-    const {
-      scrollTop,
-      scrollHeight,
-      clientHeight,
-    } = element;
+      const {
+        scrollTop,
+        scrollHeight,
+        clientHeight,
+      } = element;
 
-    const atTop = scrollTop <= 0;
+      const atTop =
+        scrollTop <= 0;
 
-    const atBottom =
-      Math.ceil(scrollTop + clientHeight) >=
-      scrollHeight;
+      const atBottom =
+        Math.ceil(
+          scrollTop + clientHeight,
+        ) >= scrollHeight;
 
-    /*
-     * Allow the page to continue scrolling when
-     * the table itself reaches the top/bottom.
-     */
+      if (
+        (event.deltaY < 0 && atTop) ||
+        (event.deltaY > 0 && atBottom)
+      ) {
+        return;
+      }
 
-    if (
-      (event.deltaY < 0 && atTop) ||
-      (event.deltaY > 0 && atBottom)
-    ) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-  }, []);
+      event.preventDefault();
+      event.stopPropagation();
+    }, []);
 
   // =========================================================
   // TABLE WHEEL LISTENER
   // =========================================================
 
   useEffect(() => {
-    const tableBody = tableBodyRef.current;
+    const tableBody =
+      tableBodyRef.current;
 
     if (!tableBody) {
       return;
@@ -703,11 +920,13 @@ export default function ProjectDetails({
         clientHeight,
       } = tableBody;
 
-      const atTop = scrollTop <= 0;
+      const atTop =
+        scrollTop <= 0;
 
       const atBottom =
-        Math.ceil(scrollTop + clientHeight) >=
-        scrollHeight;
+        Math.ceil(
+          scrollTop + clientHeight,
+        ) >= scrollHeight;
 
       if (
         (event.deltaY < 0 && atTop) ||
@@ -741,13 +960,21 @@ export default function ProjectDetails({
   // =========================================================
 
   const handleRetry = useCallback(() => {
-    setProjects([]);
-    setPage(1);
-    pageRef.current = 1;
+    if (isFetchingRef.current) {
+      return;
+    }
 
-    setHasMore(true);
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+
+    pageRef.current = 1;
     hasMoreRef.current = true;
 
+    setProjects([]);
+    setPage(1);
+    setHasMore(true);
     setError(null);
 
     fetchProjects(1, true);
@@ -757,7 +984,8 @@ export default function ProjectDetails({
   // DISPLAY COUNT
   // =========================================================
 
-  const filteredCount = filteredProjects.length;
+  const filteredCount =
+    filteredProjects.length;
 
   const totalProjectCount =
     projectCounts?.total_projects ??
@@ -770,7 +998,7 @@ export default function ProjectDetails({
   if (loading) {
     return (
       <section
-        className="project-details"
+        className="project-details py-4"
         aria-label="Loading projects"
       >
         <div className="client-table-container">
@@ -784,7 +1012,9 @@ export default function ProjectDetails({
               aria-hidden="true"
             />
 
-            <p>Loading projects...</p>
+            <p>
+              Loading projects...
+            </p>
           </div>
         </div>
       </section>
@@ -794,38 +1024,31 @@ export default function ProjectDetails({
   // =========================================================
   // ERROR STATE
   // =========================================================
-  // if (error) {
-  //   return (
-  //     <section className="project-details" aria-label="Error loading projects">
-  //       <div className="client-table-container">
-  //         <div className="project-error" role="alert">
-  //           <h3>Error Loading Projects</h3>
-  //           <p>{error}</p>
-  //           <button
-  //             type="button"
-  //             onClick={() => window.location.reload()}
-  //             className="retry-btn"
-  //             aria-label="Retry loading projects"
-  //           >
-  //             Retry
-  //           </button>
-  //         </div>
-  //       </div>
-  //     </section>
-  //   );
-  // }
 
-  if (error) {
+  if (
+    error &&
+    projects.length === 0
+  ) {
     return (
       <ApiError
         showStatus={true}
         statusLabel="Error"
-        statusCode={error.status ? `ERR · ${error.status}` : "ERR · TIMEOUT"}
-        statusTone={error.status >= 500 ? "danger" : "warning"}
+        statusCode={
+          error?.status
+            ? `ERR · ${error.status}`
+            : "ERR · TIMEOUT"
+        }
+        statusTone={
+          error?.status >= 500
+            ? "danger"
+            : "warning"
+        }
         title="Projects Temporarily Unavailable"
         message="Our project information is temporarily unavailable. Please try again shortly."
-        onRetry={() => window.location.reload()}
-        backToHome={() => window.open("/", "_self")}
+        onRetry={handleRetry}
+        backToHome={() =>
+          window.open("/", "_self")
+        }
       />
     );
   }
@@ -876,9 +1099,12 @@ export default function ProjectDetails({
                 id="project-location"
                 type="search"
                 value={locationFilter}
-                onChange={handleLocationChange}
+                onChange={
+                  handleLocationChange
+                }
                 placeholder="Search location..."
                 autoComplete="off"
+                className="form-control"
                 aria-label="Filter by location"
               />
             </div>
@@ -891,28 +1117,21 @@ export default function ProjectDetails({
               Status
             </label>
 
-            <select
-              id="project-status"
-              value={statusFilter}
-              onChange={handleStatusChange}
+            <Select
+              inputId="project-status"
+              value={selectedStatusOption}
+              options={statusOptions}
+              onChange={
+                handleStatusChange
+              }
+              className="react-select"
+              classNamePrefix="react-select"
               aria-label="Filter by status"
-            >
-              <option value="All">
-                All Status
-              </option>
-
-              <option value="Completed">
-                Completed
-              </option>
-
-              <option value="In Progress">
-                In Progress
-              </option>
-
-              <option value="Upcoming">
-                Upcoming
-              </option>
-            </select>
+              isSearchable={false}
+              isClearable={false}
+              menuPlacement="auto"
+              menuPosition="absolute"
+            />
           </div>
 
           {/* CATEGORY */}
@@ -922,56 +1141,37 @@ export default function ProjectDetails({
               Category Type
             </label>
 
-            <select
-              id="project-category"
-              value={categoryFilter}
-              onChange={handleCategoryChange}
+            <Select
+              inputId="project-category"
+              value={
+                selectedCategoryOption
+              }
+              options={
+                categorySelectOptions
+              }
+              onChange={
+                handleCategoryChange
+              }
+              className="react-select"
+              classNamePrefix="react-select"
               aria-label="Filter by category"
-            >
-              <option value="All">
-                All Categories
-              </option>
-
-              {categoryOptions.map(
-                (category) => (
-                  <option
-                    key={category}
-                    value={category}
-                  >
-                    {category}
-                  </option>
-                ),
-              )}
-            </select>
+              isSearchable={false}
+              isClearable={false}
+              menuPlacement="auto"
+              menuPosition="absolute"
+            />
           </div>
 
           {/* COUNT + CLEAR */}
 
           <div className="project-filter project-count-filter">
-
-            {/* {loadingMore && (
-              <span
-                className="loading-more"
-                aria-live="polite"
-              >
-                Loading more...
-              </span>
-            )} */}
-
-            {/* <span className="total-projects">
-              Total:{" "}
-              <strong>
-                {hasActiveFilters
-                  ? filteredCount
-                  : totalProjectCount}
-              </strong>
-            </span> */}
-
             {hasActiveFilters && (
               <button
                 type="button"
                 className="clear-filters-btn"
-                onClick={handleClearFilters}
+                onClick={
+                  handleClearFilters
+                }
                 aria-label="Clear all filters"
               >
                 Clear Filters
@@ -1001,14 +1201,14 @@ export default function ProjectDetails({
             projects
           </span>
 
-           <span className="total-projects">
-              Total:{" "}
-              <strong>
-                {hasActiveFilters
-                  ? filteredCount
-                  : totalProjectCount}
-              </strong>
-            </span>
+          <span className="total-projects">
+            Total:{" "}
+            <strong>
+              {hasActiveFilters
+                ? filteredCount
+                : totalProjectCount}
+            </strong>
+          </span>
         </div>
 
         {/* =====================================================
@@ -1031,7 +1231,9 @@ export default function ProjectDetails({
             {hasActiveFilters && (
               <button
                 type="button"
-                onClick={handleClearFilters}
+                onClick={
+                  handleClearFilters
+                }
                 aria-label="Clear all filters"
               >
                 Clear Filters
@@ -1078,7 +1280,9 @@ export default function ProjectDetails({
                 <div
                   className="table-body"
                   ref={tableBodyRef}
-                  onWheel={handleTableWheel}
+                  onWheel={
+                    handleTableWheel
+                  }
                   role="rowgroup"
                 >
                   {filteredProjects.map(
@@ -1097,7 +1301,9 @@ export default function ProjectDetails({
                           }
                           role="cell"
                         >
-                          {project.client_name}
+                          {
+                            project.client_name
+                          }
                         </div>
 
                         {/* CATEGORY */}
@@ -1159,21 +1365,19 @@ export default function ProjectDetails({
                     ),
                   )}
 
-                  {/* =================================================
-                      INFINITE SCROLL SENTINEL
-                  ================================================== */}
+                  {/* INFINITE SCROLL SENTINEL */}
 
                   {hasMore && (
                     <div
-                      ref={observerTargetRef}
+                      ref={
+                        observerTargetRef
+                      }
                       className="infinite-scroll-sentinel"
                       aria-hidden="true"
                     />
                   )}
 
-                  {/* =================================================
-                      CENTERED LOADING OVERLAY FOR NEXT PAGE
-                  ================================================== */}
+                  {/* LOADING MORE */}
 
                   {loadingMore && (
                     <div
@@ -1187,7 +1391,8 @@ export default function ProjectDetails({
                       />
 
                       <span>
-                        Loading more projects...
+                        Loading more
+                        projects...
                       </span>
                     </div>
                   )}
@@ -1195,36 +1400,39 @@ export default function ProjectDetails({
               </div>
             </div>
 
-            {/* =================================================
-                PAGINATION ERROR
-            ================================================== */}
+            {/* PAGINATION ERROR */}
 
-            {error && projects.length > 0 && (
-              <div
-                className="project-load-error"
-                role="alert"
-              >
-                <span>
-                  {error}
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    fetchProjects(
-                      pageRef.current + 1,
-                      false,
-                    )
-                  }
-                  disabled={loadingMore}
+            {error &&
+              projects.length > 0 && (
+                <div
+                  className="project-load-error"
+                  role="alert"
                 >
-                  Retry
-                </button>
-              </div>
-            )}
+                  <span>
+                    {error.message ||
+                      "Failed to load projects"}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      fetchProjects(
+                        pageRef.current + 1,
+                        false,
+                      )
+                    }
+                    disabled={
+                      loadingMore
+                    }
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
           </>
         )}
       </div>
     </section>
   );
 }
+

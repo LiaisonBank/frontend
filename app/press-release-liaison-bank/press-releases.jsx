@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import Select, { components } from "react-select";
 import useBodyClass from "@/components/useBodyClass";
 import PressReleaseCard from "./PressReleaseCard";
+import CountUp from "@/hooks/Countup";
+
 
 // Custom MenuList that prevents page scroll while scrolling inside the dropdown
 const MenuList = (props) => {
@@ -24,11 +26,16 @@ export default function PressReleaseLiaisonbankPage({ pressReleases = [] }) {
   useBodyClass("pressrelease");
 
   const ITEMS_PER_LOAD = 10;
+ 
 
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("All");
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
-
+  const heroRef = useRef(null);
+  const [count, setCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
     // ✅ Total count of ALL press releases
   const totalCount = pressReleases.length;
 
@@ -104,13 +111,53 @@ export default function PressReleaseLiaisonbankPage({ pressReleases = [] }) {
         </div>
       </div>
 
-       {/* ✅ Total count display */}
-      <section className="pt-4">
-        <div className="container">
+      <section  className="pr-hero-section" ref={heroRef}>
+          {/* <video
+          className="bg-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/images/projects-poster.png"
+        >
+          <source
+            src="/videos/projects-bg.mp4"
+            type="video/mp4"
+          />
+
+          <source
+            src="/videos/projects-bg.webm"
+            type="video/webm"
+          />
+
+          Your browser does not support the video tag.
+        </video> */}
+
+        <div className="elementor-background-overlay" />
+
+        <div className="hero-content position-absolute top-50 start-50 translate-middle text-center">
+          <h1>Press Releases</h1>
+          <div className="stats-grid">
+            <div className="stat-item">
+              <CountUp end={totalCount} className="total-value"/>
+              {/* <span className="stat-number">
+                {loading ? "..." : count || "0"}
+              </span> */}
+              <span className="stat-label">PRESS RELEASES</span>
+            </div>
+          </div>
+          {error && (
+            <div className="text-center text-danger mb-3">
+              <small>⚠️ {error}</small>
+            </div>
+          )}
+        </div>
+        {/* <div className="container">
           <p className="mb-0 text-muted">
             Total Press Releases: <strong>{totalCount}</strong>
           </p>
-        </div>
+        </div> */}
       </section>
 
       <section className="py-4 border-bottom">
