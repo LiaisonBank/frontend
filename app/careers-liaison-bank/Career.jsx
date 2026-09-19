@@ -3,6 +3,7 @@ import Link from "next/link";
 import useBodyClass from '@/components/useBodyClass';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   ArrowUpRight,
   PenTool,
@@ -586,7 +587,12 @@ export default function CareersLiaisonPage() {
               >
                 <div className="benefit-card-hover">
                   <div className="benefit-card-image">
-                    <img src={benefit.image} alt={benefit.title} />
+                    <Image 
+                    src={benefit.image} 
+                    alt={benefit.title} 
+                    width={800}
+                    height={500}
+                    />
                     
                     {/* 1. The short vertical label on the left */}
                     <div className="benefit-card-label">
@@ -634,10 +640,13 @@ export default function CareersLiaisonPage() {
           >
     <div className="featured-service">
       <div className="featured-image">
-        <img 
+        <Image
+         
           src={activeService.image} 
           alt={activeService.name}
           className="featured-image-img"
+          fill
+          unoptimized
         />
         <div className="featured-overlay">
           <h3>{activeService.slug}</h3>

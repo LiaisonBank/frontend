@@ -116,7 +116,7 @@ const Home = () => {
                   src={devaImg}
                   width={700}
                   height={700}
-                  alt="Mahadev Biradar"
+                  alt="Mahadev Biradar - Founder & CEO"
                   className="ceo-full-image"
                   priority
                 />

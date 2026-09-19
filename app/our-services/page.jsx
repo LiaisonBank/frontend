@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import "./ourservices.scss";
 import { getImageUrl } from "../../lib/utils/getImagehelper";
 import ApiError from "@/components/ApiError/ApiError";
+import Image from "next/image";
 
 // Fallback image
 const FALLBACK_IMAGE = '/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png';
@@ -250,7 +251,9 @@ if (error) {
                   <Link href={`/our-services/${service.slug}`} className="service-card-link">
                     <div className="service-card-modern">
                       <div className="service-card-image-full">
-                        <img
+                        <Image
+                          width={650}
+                          height={600}
                           src={service.image || FALLBACK_IMAGE}
                           alt={service.name || "Service"}
                           onError={(e) => {
@@ -261,6 +264,7 @@ if (error) {
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = FALLBACK_IMAGE;
                           }}
+                          unoptimized
                         />
                         <div className="card-overlay-full">
                           <div className="card-content-overlay">
