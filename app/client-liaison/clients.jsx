@@ -54,7 +54,7 @@ export default function ClientLiaisonbankPage() {
           muted
           loop
           playsInline
-          preload="auto"
+         preload="metadata"  
           poster="/images/clients-poster.jpg"
         >
           <source src="/videos/clients-bg.mp4" type="video/mp4" />
@@ -64,7 +64,7 @@ export default function ClientLiaisonbankPage() {
 
         <div className="elementor-background-overlay"></div>
 
-        <div className="hero-content">
+        <div className="hero-content position-absolute top-50 start-50 translate-middle text-center">
           <h1>CLIENTS</h1>
 
           <div className="stats-grid">

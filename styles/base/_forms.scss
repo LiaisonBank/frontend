@@ -88,9 +88,89 @@ select {
 div:where(.swal2-container){
   z-index: 10000 !important;
 }
-.form-control:focus{
-  border-color:none;
+ .form-control {
+  border-color: #d1d5db;
   box-shadow: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: #f97316;
+  }
+
+  &:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+    outline: none;
+  }
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+}
+.react-select {
+  &__control {
+    border-color: #d1d5db;
+    box-shadow: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #f97316;
+    }
+
+    &--is-focused {
+      border-color: #f97316 !important;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+    }
+  }
+
+  // Dropdown menu
+  &__menu {
+    border: 1px solid #f97316;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    margin-top: 4px;
+  }
+
+  // Individual dropdown options
+  &__option {
+    cursor: pointer;
+    padding: 10px 14px;
+    transition: all 0.15s ease;
+
+    // Hover / keyboard focused option
+    &--is-focused {
+      background-color: rgba(249, 115, 22, 0.1);
+      color: #111827;
+    }
+
+    // Selected option
+    &--is-selected {
+      background-color: #f97316;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    // Selected + hover
+    &--is-selected:hover {
+      background-color: #ea580c;
+      color: #fff;
+    }
+  }
+
+  // Dropdown arrow
+  &__dropdown-indicator {
+    color: #6b7280;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #f97316;
+    }
+  }
+
+  &__control--is-focused &__dropdown-indicator {
+    color: #f97316;
+  }
 }
 .react-tel-input .selected-flag:hover, .react-tel-input .selected-flag:focus,
 .react-tel-input .flag-dropdown.open .selected-flag {

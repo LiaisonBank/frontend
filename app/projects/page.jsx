@@ -21,7 +21,6 @@ export default function ProjectsPage() {
   const [openPopup, setOpenPopup] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [projectCounts, setProjectCounts] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const heroRef = useRef(null);
@@ -30,14 +29,13 @@ export default function ProjectsPage() {
   const scrollYRef = useRef(0);
 
   /* ------------------------------------------------------------------ */
-  /*  Fetch project counts                                               */
+  /* Fetch project counts                                                */
   /* ------------------------------------------------------------------ */
   useEffect(() => {
     const controller = new AbortController();
 
     const fetchProjectCounts = async () => {
       try {
-        setLoading(true);
         setError(null);
 
         const response = await fetch(`${API_BASE_URL}/api/projects/counts`, {
@@ -56,77 +54,90 @@ export default function ProjectsPage() {
         setProjectCounts(data);
       } catch (err) {
         if (err.name === "AbortError") return;
+
         const errorMessage =
-          err instanceof Error ? err.message : "Failed to fetch project counts";
+          err instanceof Error
+            ? err.message
+            : "Failed to fetch project counts";
+
         setError(errorMessage);
+
         console.error("❌ Project Counts API Error:", errorMessage);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchProjectCounts();
+
     return () => controller.abort();
   }, []);
 
   /* ------------------------------------------------------------------ */
-  /*  Parallax on the hero video (sets --parallax-y)                     */
+  /* Parallax on the hero video                                         */
   /* ------------------------------------------------------------------ */
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
 
-    // Respect reduced-motion
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
+
     if (reduceMotion) return;
 
     let rafId = null;
 
     const update = () => {
       const rect = hero.getBoundingClientRect();
-      // Only translate while hero is on screen
+
       if (rect.bottom < 0 || rect.top > window.innerHeight) {
         rafId = null;
         return;
       }
-      // Move video slightly opposite to scroll direction
-      const offset = rect.top * -0.15; // ~15% parallax
+
+      const offset = rect.top * -0.15;
+
       hero.style.setProperty("--parallax-y", `${offset}px`);
       rafId = null;
     };
 
     const onScroll = () => {
-      if (rafId === null) rafId = requestAnimationFrame(update);
+      if (rafId === null) {
+        rafId = requestAnimationFrame(update);
+      }
     };
 
-    update(); // initial
+    update();
+
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
 
     return () => {
       if (rafId !== null) cancelAnimationFrame(rafId);
+
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
   }, []);
 
   /* ------------------------------------------------------------------ */
-  /*  Body scroll lock (single source of truth)                          */
+  /* Body scroll lock                                                    */
   /* ------------------------------------------------------------------ */
   useEffect(() => {
     if (!openPopup) {
       const scrollY = scrollYRef.current;
+
       document.body.style.overflow = "";
       document.body.style.position = "";
       document.body.style.width = "";
       document.body.style.top = "";
+
       window.scrollTo(0, scrollY);
+
       return;
     }
 
     scrollYRef.current = window.scrollY;
+
     document.body.style.overflow = "hidden";
     document.body.style.position = "fixed";
     document.body.style.width = "100%";
@@ -141,12 +152,18 @@ export default function ProjectsPage() {
   }, [openPopup]);
 
   /* ------------------------------------------------------------------ */
-  /*  Cleanup on unmount                                                 */
+  /* Cleanup on unmount                                                  */
   /* ------------------------------------------------------------------ */
   useEffect(() => {
     return () => {
-      if (animationTimeoutRef.current) clearTimeout(animationTimeoutRef.current);
-      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+
       document.body.style.overflow = "";
       document.body.style.position = "";
       document.body.style.width = "";
@@ -156,12 +173,20 @@ export default function ProjectsPage() {
 
   const handleOpenPopup = useCallback(() => {
     setOpenPopup(true);
-    animationTimeoutRef.current = setTimeout(() => setIsAnimating(true), 50);
+
+    animationTimeoutRef.current = setTimeout(
+      () => setIsAnimating(true),
+      50
+    );
   }, []);
 
   const handleClosePopup = useCallback(() => {
     setIsAnimating(false);
-    closeTimeoutRef.current = setTimeout(() => setOpenPopup(false), 300);
+
+    closeTimeoutRef.current = setTimeout(
+      () => setOpenPopup(false),
+      300
+    );
   }, []);
 
   return (
@@ -174,7 +199,11 @@ export default function ProjectsPage() {
                 <div className="col-lg-10">
                   <div className="theme-breadcrumb-box">
                     <h1>Projects</h1>
-                    <nav aria-label="breadcrumb" className="page-breadcrumb">
+
+                    <nav
+                      aria-label="breadcrumb"
+                      className="page-breadcrumb"
+                    >
                       <ol className="breadcrumb justify-content-center">
                         <li className="breadcrumb-item">
                           <Link href="/">
@@ -182,7 +211,11 @@ export default function ProjectsPage() {
                             Home
                           </Link>
                         </li>
-                        <li className="breadcrumb-item active" aria-current="page">
+
+                        <li
+                          className="breadcrumb-item active"
+                          aria-current="page"
+                        >
                           Projects
                         </li>
                       </ol>
@@ -195,8 +228,11 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      {/* Hero — ref added for parallax */}
-      <section className="projects-hero-section" ref={heroRef}>
+      {/* Hero */}
+      <section
+        className="projects-hero-section"
+        ref={heroRef}
+      >
         <video
           className="bg-video"
           autoPlay
@@ -206,58 +242,63 @@ export default function ProjectsPage() {
           preload="auto"
           poster="/images/projects-poster.png"
         >
-          <source src="/videos/projects-bg.mp4" type="video/mp4" />
-          <source src="/videos/projects-bg.webm" type="video/webm" />
+          <source
+            src="/videos/projects-bg.mp4"
+            type="video/mp4"
+          />
+
+          <source
+            src="/videos/projects-bg.webm"
+            type="video/webm"
+          />
+
           Your browser does not support the video tag.
         </video>
 
-        <div className="elementor-background-overlay"></div>
+        <div className="elementor-background-overlay" />
 
-        <div className="hero-content">
+        <div className="hero-content position-absolute top-50 start-50 translate-middle text-center">
           <h1>PROJECTS</h1>
 
           <div className="stats-grid">
             <div className="stat-item">
               <span className="stat-number">
-                {loading ? (
-                  "..."
-                ) : (
-                  <CountUp
-                    end={projectCounts?.completed_projects ?? 0}
-                    className="total-value"
-                    duration={20000}
-                  />
-                )}
+                <CountUp
+                  end={projectCounts?.completed_projects ?? 0}
+                  className="total-value"
+                  duration={20000}
+                />
               </span>
-              <span className="stat-label">Completed</span>
+
+              <span className="stat-label">
+                Completed
+              </span>
             </div>
 
             <div className="stat-item">
               <span className="stat-number">
-                {loading ? (
-                  "..."
-                ) : (
-                  <CountUp
-                    end={projectCounts?.ongoing_projects ?? 0}
-                    className="total-value"
-                  />
-                )}
+                <CountUp
+                  end={projectCounts?.ongoing_projects ?? 0}
+                  className="total-value"
+                />
               </span>
-              <span className="stat-label">In Progress</span>
+
+              <span className="stat-label">
+                In Progress
+              </span>
             </div>
 
             <div className="stat-item">
               <span className="stat-number">
-                {loading ? (
-                  "..."
-                ) : (
-                  <CountUp
-                    end={projectCounts?.upcoming_projects ?? 0}
-                    className="total-value"
-                  />
-                )}
+                <CountUp
+                  end={projectCounts?.upcoming_projects ?? 0}
+                  className="total-value"
+                />
               </span>
-              <span className="stat-label">Upcoming</span>
+
+              <span className="stat-label">
+                Upcoming
+              </span>
             </div>
           </div>
 
@@ -280,11 +321,13 @@ export default function ProjectsPage() {
       </section>
 
       <section className="container-fluid p-0 m-0 bg-white position-relative">
-        <div className="container py-4 bg-white" aria-label="Projects section">
+        <div
+          className="container py-4 bg-white"
+          aria-label="Projects section"
+        >
           <div className="auto-grid">
             <ProjectDetails
               projectCounts={projectCounts}
-              loading={loading}
               error={error}
             />
           </div>
@@ -303,7 +346,9 @@ export default function ProjectsPage() {
             backgroundColor: "#f5f5f5",
             position: "relative",
             overflow: "hidden",
-            transform: isAnimating ? "scale(1)" : "scale(0.3)",
+            transform: isAnimating
+              ? "scale(1)"
+              : "scale(0.3)",
             opacity: isAnimating ? 1 : 0,
             transition:
               "transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease",
@@ -313,6 +358,7 @@ export default function ProjectsPage() {
             height: isAnimating ? "100%" : "0px",
             margin: isAnimating ? 0 : "auto",
           },
+
           "& .MuiBackdrop-root": {
             position: "fixed",
           },
@@ -338,6 +384,7 @@ export default function ProjectsPage() {
             right: 16,
             zIndex: 9999,
             backgroundColor: "rgba(255, 255, 255, 0.9)",
+
             "&:hover": {
               backgroundColor: "rgba(255, 255, 255, 1)",
             },
