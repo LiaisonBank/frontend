@@ -137,14 +137,14 @@ export default function PressReleaseLiaisonbankPage({ pressReleases = [] }) {
         <div className="elementor-background-overlay" />
 
         <div className="hero-content position-absolute top-50 start-50 translate-middle text-center">
-          <h1>Press Releases</h1>
+          <h1>Press Release</h1>
           <div className="stats-grid">
             <div className="stat-item">
               <CountUp end={totalCount} className="total-value"/>
               {/* <span className="stat-number">
                 {loading ? "..." : count || "0"}
               </span> */}
-              <span className="stat-label">PRESS RELEASES</span>
+              <span className="stat-label">PRESS RELEASE</span>
             </div>
           </div>
           {error && (
