@@ -1208,6 +1208,7 @@ $transition: all 0.3s ease;
                     font-size: 0.85rem;
                     cursor: pointer;
                     transition: $transition;
+                    background-color: #27ae60;
 
                     &:hover {
                         background: $gray-200;

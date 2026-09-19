@@ -5,7 +5,9 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import "./service-detail.scss";
+import Image from "next/image";
 import { getImageUrl } from "../../../lib/utils/getImagehelper";
+import ApiError from "@/components/ApiError/ApiError";
 
 // Fallback image
 const FALLBACK_IMAGE = '/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png';
@@ -327,22 +329,48 @@ export default function ServiceDetail() {
     );
   }
 
-  if (error || !service) {
+  // if (error || !service) {
+  //   return (
+  //     <div className="service-detail-error">
+  //       <div className="container">
+  //         <div className="error-box">
+  //           <div className="error-icon">🔍</div>
+  //           <h2>Service Not Found</h2>
+  //           <p>{error || "The service you're looking for doesn't exist."}</p>
+  //           <Link href="/our-services" className="back-btn">
+  //             <span>←</span> Back to Services
+  //           </Link>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  if (error) {
     return (
-      <div className="service-detail-error">
-        <div className="container">
-          <div className="error-box">
-            <div className="error-icon">🔍</div>
-            <h2>Service Not Found</h2>
-            <p>{error || "The service you're looking for doesn't exist."}</p>
-            <Link href="/our-services" className="back-btn">
-              <span>←</span> Back to Services
-            </Link>
-          </div>
-        </div>
-      </div>
+      <ApiError
+        title="Service Information Temporarily Unavailable"
+        message="Our service information is temporarily unavailable. Please try again shortly."
+        onRetry={() => window.location.reload()}
+        statusCode={error.status ? `ERR · ${error.status}` : "ERR · TIMEOUT"}
+        statusTone={error.status >= 500 ? "danger" : "warning"}
+        backToHome={() => window.open("/", "_self")}
+      />
+    );
+  } else if (!service) {
+    return (
+      <ApiError
+        title="Service Not Found"
+        message="The service you're looking for doesn't exist or has been removed."
+        onRetry={() => window.location.reload()}
+        statusCode="ERR · NOT FOUND"
+        statusTone="info"
+        backToHome={() => window.open("/", "_self")}
+      />
     );
   }
+
+
 
   return (
     <>
@@ -403,18 +431,11 @@ export default function ServiceDetail() {
                         {/* Image section */}
                         <div className="subcategory-front-image-wrapper">
                           {subcategory.hasImage && subcategory.imageUrl ? (
-                            <img
+                            <Image
                               src={subcategory.imageUrl}
                               alt={subcategory.name}
-                              className="subcategory-flip-image"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.style.display = 'none';
-                                const placeholder = e.currentTarget.parentElement.querySelector('.subcategory-no-image');
-                                if (placeholder) {
-                                  placeholder.style.display = 'flex';
-                                }
-                              }}
+                              fill
+                              unoptimized
                             />
                           ) : (
                             <div className="subcategory-no-image">

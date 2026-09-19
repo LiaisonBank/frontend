@@ -1,50 +1,133 @@
+/* ==========================================
+   OVERLAY
+   ========================================== */
 .overlay {
   position: fixed;
   inset: 0;
-  background: white;
-  z-index: 99999;
+  background: #ffffff;
+  z-index: 9999;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
+  overflow: hidden;
+  /* Promote to its own layer for smoother exit fade */
+  will-change: opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
-/* This is the animated group (logo + text together) */
-.wrapper {
-  display: flex;
-  align-items: center;
+/* ==========================================
+   SLIDE-UP WRAPPER (mobile only)
+   ========================================== */
+.slideWrapper {
   will-change: transform;
-  gap:10px;
-  width: 170px;
-  height: 60px;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
-/* Logo styling */
-.logo {
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  margin-top: .4rem;
-  margin-left: 0.2rem;
+/* ==========================================
+   MAIN LOCKUP
+   ==========================================
+   Width is defined by the row.
+   Oval + tagline stretch to that width.
+   ========================================== */
+.lockup {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  transform-origin: center center;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
-.name {
-  width: 150px;
-  height: 60px;
-  object-fit: contain;
-  margin-top: 0.79rem;
-  margin-left: -0.4rem;
-}
-/* Company name */
-.title {
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: #111;
+
+/* ==========================================
+   ROW: logo + name — the width source
+   ========================================== */
+.logoNameRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 20px;
   white-space: nowrap;
+  align-self: flex-start;
+  width: max-content;
 }
 
-/* Optional: header final positioning safety */
-@media (max-width: 768px) {
-  .title {
-    font-size: 20px;
+/* ==========================================
+   LOGO
+   ========================================== */
+.logo {
+  height: 210px;
+  width: auto;
+  flex-shrink: 0;
+  display: block;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* ==========================================
+   NAME (Liaison Bank)
+   ========================================== */
+.name {
+  height: 200px;
+  width: auto;
+  display: block;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* ==========================================
+   OVAL LINE WRAPPER
+   ========================================== */
+.ovalWrapper {
+  display: block;
+  width: 100%;
+  height: 20px;
+  overflow: hidden;
+}
+
+.oval {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* ==========================================
+   TAGLINE
+   ========================================== */
+.taglineWrapper {
+  display: block;
+  width: 100%;
+}
+
+.tagline {
+  display: block;
+  width: 100%;
+  height: auto;
+  align-self: center;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+@media (max-width: 991px) {
+  .logoNameRow {
+    gap: 16px;
+  }
+  .logo {
+    height: 80px;
+  }
+  .name {
+    height: 68px;
+  }
+  .ovalWrapper {
+    height: 4px;
   }
 }

@@ -68,8 +68,8 @@ export default function Footer() {
               </Link>
 
               <p className="footer-text">
-                Established in 2017–2019 as DBRE Proprietary, the firm became
-                DBRE Private Limited in 2019 and rebranded as Liaison Bank in
+                Established in 2017–2019 as DBRE India Proprietary, the firm became
+                DBRE India Private Limited in 2019 and rebranded as Liaison Bank in
                 2023. Headquartered in Mumbai, Liaison Bank provides end-to-end
                 licensing, regulatory compliance and project liaisoning
                 services, helping businesses navigate regulatory requirements

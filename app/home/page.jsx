@@ -116,7 +116,7 @@ const Home = () => {
                   src={devaImg}
                   width={700}
                   height={700}
-                  alt="Mahadev Biradar"
+                  alt="Mahadev Biradar - Founder & CEO"
                   className="ceo-full-image"
                   priority
                 />
@@ -227,7 +227,7 @@ const Home = () => {
       <section className="ourclients">
         <div className="container-fluid mx-auto px-0 pt-5 pb-4 bg-white">
           <div className="section-title pb-3">
-            <h3>Our Latest Clients</h3>
+            <h3>Our Clients</h3>
           </div>
           <div>
             <ClientScroller />

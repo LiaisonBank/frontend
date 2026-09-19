@@ -23,20 +23,18 @@
 
     /* ===== Background video ===== */
     .bg-video {
-      position: absolute;
+       position: absolute;
       top: 50%;
       left: 50%;
-      min-width: 110%;           /* slight overscan so parallax never shows edges */
-      min-height: 110%;
-      width: auto;
-      height: auto;
-      /* Base transform — JS overrides only the Y portion */
+      width: 100%;                /* ← changed from min-width: 110% */
+      height: 100%;               /* ← changed from min-height: 110% */
       transform: translate3d(-50%, calc(-50% + var(--parallax-y)), 0);
       object-fit: cover;
       z-index: 0;
-      pointer-events: none;      /* don't block clicks */
-      will-change: transform;    /* GPU acceleration hint */
+      pointer-events: none;
+      will-change: transform;
       backface-visibility: hidden;
+      background: #0d2252;        /* ← matches your overlay so no flash */
     }
 
     /* ===== Blue overlay (replaces old ::after) ===== */

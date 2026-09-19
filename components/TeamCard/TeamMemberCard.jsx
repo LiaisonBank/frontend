@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import PhoneIcon from "components/phoneicon";
 import EmailIcon from "components/EmailIcon";
@@ -17,7 +16,6 @@ const TeamMemberCard = ({ member = {} }) => {
     frontLabel = "",
   } = member;
 
-  // Construct image URL
   const imageUrl = image
     ? `${process.env.NEXT_PUBLIC_LOCAL_API_URL}${image}`
     : "";
@@ -26,8 +24,23 @@ const TeamMemberCard = ({ member = {} }) => {
     ? { backgroundImage: `url("${imageUrl}")` }
     : undefined;
 
-  const handleToggle = () => {
-    setIsFlipped((prev) => !prev);
+  const handleToggle = () => setIsFlipped((prev) => !prev);
+
+  /* -------------------- Email -------------------- */
+  const handleEmailClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    if (!email) return;
+    window.location.href = `mailto:${email}`;
+  };
+
+  /* -------------------- Phone -------------------- */
+  const handlePhoneClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    if (!phone) return;
+    const sanitized = String(phone).replace(/[^\d+]/g, "");
+    window.location.href = `tel:${sanitized}`;
   };
 
   return (
@@ -48,19 +61,17 @@ const TeamMemberCard = ({ member = {} }) => {
       >
         <div className={`flip ${isFlipped ? "flipped" : ""}`}>
           {/* Front */}
-          <div className="face front">
+          <div className="face front" aria-hidden={isFlipped}>
             <div
               className="front-image"
               style={imageStyle}
               aria-label={`${name} profile`}
             />
-
             <div className="front-label">{frontLabel || name}</div>
           </div>
 
           {/* Back */}
-          <div className="face back">
-            {/* Left - Profile Image */}
+          <div className="face back" aria-hidden={!isFlipped}>
             <div className="back-left">
               <div
                 className="circle-image"
@@ -69,14 +80,13 @@ const TeamMemberCard = ({ member = {} }) => {
               />
             </div>
 
-            {/* Right - Member Information */}
             <div className="back-right">
-              <div className="info-item ">
+              <div className="info-item">
                 <span className="info-value name">{name}</span>
               </div>
 
-              <div className="info-item ">
-                <span className="info-value ">{designation}</span>
+              <div className="info-item">
+                <span className="info-value">{designation}</span>
               </div>
 
               <div className="info-item">
@@ -86,8 +96,8 @@ const TeamMemberCard = ({ member = {} }) => {
                 {email && (
                   <a
                     href={`mailto:${email}`}
-                    className="email-llink"
-                    onClick={(event) => event.stopPropagation()}
+                    className="email-link"
+                    onClick={handleEmailClick}
                   >
                     <span className="info-value">{email}</span>
                   </a>
@@ -95,7 +105,7 @@ const TeamMemberCard = ({ member = {} }) => {
               </div>
 
               <div className="info-item">
-               <span className="info-label">
+                <span className="info-label">
                   <PhoneIcon
                     width={20}
                     height={20}
@@ -105,8 +115,8 @@ const TeamMemberCard = ({ member = {} }) => {
                 {phone && (
                   <a
                     className="call-link"
-                    href={`tel:${phone}`}
-                    onClick={(event) => event.stopPropagation()}
+                    href={`tel:${String(phone).replace(/[^\d+]/g, "")}`}
+                    onClick={handlePhoneClick}
                   >
                     <span className="info-value">{phone}</span>
                   </a>
@@ -121,4 +131,3 @@ const TeamMemberCard = ({ member = {} }) => {
 };
 
 export default TeamMemberCard;
-

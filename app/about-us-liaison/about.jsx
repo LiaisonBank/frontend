@@ -152,7 +152,7 @@ export default function AboutUsLiaisonPage() {
 
                   <div className="hero-main-content">
                     <div className="welcome-badge-full motion-text">
-                      Your Trusted Partner for Liaisoning & Licensing
+                      <h2>Your Trusted Partner for Liaisoning & Licensing</h2>
                     </div>
                     {/* <div className="welcome-header">Your Trusted Partner for Liaisoning & Licensing</div> */}
                     {/* <h1 className="hero-title-full motion-text-delay">

@@ -106,7 +106,7 @@ export const metadata = {
     "Fire hydrant systems",
     "Gas suppression systems",
     "Fire alarm control panels",
-    "Fire pump maintenance"
+    "Fire pump maintenance",
   ],
 
   authors: [
@@ -147,10 +147,8 @@ export const metadata = {
     locale: "en_IN",
     url: siteUrl,
     siteName: "Liaison Bank",
-
     description:
       "Liaison Bank is India's trusted business licensing and liaisoning consultancy providing Factory License, Fire NOC, MPCB, Electrical Inspector approvals, Trade License, statutory compliance, industrial approvals and government liaison services across India.",
-
     images: [
       {
         url: "/og-image.jpg",
@@ -188,13 +186,12 @@ export const metadata = {
 };
 
 // ======================================================
-// VIEWPORT
+// VIEWPORT — maximumScale removed for accessibility
 // ======================================================
 
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
   themeColor: "#ffffff",
 };
 
@@ -205,26 +202,20 @@ export const viewport = {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-
   name: "Liaison Bank",
-
   url: "https://liaisonbank.com",
-
   logo: "https://liaisonbank.com/logo.png",
-
   sameAs: [
     "https://www.facebook.com/liaisonbank",
     "https://www.linkedin.com/company/liaisonbank",
     "https://twitter.com/liaisonbank",
     "https://www.instagram.com/liaisonbank",
   ],
-
   contactPoint: {
     "@type": "ContactPoint",
     telephone: "+91-9769458515",
     contactType: "customer support",
     areaServed: "IN",
-
     availableLanguage: [
       "English",
       "Hindi",
@@ -246,42 +237,37 @@ const organizationSchema = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* 
-          The cz-shortcut-listen attribute is added by a browser extension.
-          This meta tag helps prevent the hydration error.
-        */}
-        <meta name="cz-shortcut-listen" content="true" />
-      </head>
-      
-      {/* 
-        FIX: Added suppressHydrationWarning to body 
-        This tells React to ignore attribute mismatches
-      */}
       <body
         className={`${barlow.variable} ${barlow.className} antialiased flex min-h-screen flex-col bg-white text-gray-900`}
         suppressHydrationWarning
       >
-        {/* 
-          FIX: Move GoogleTagManager and GoogleAnalytics inside body 
-          to prevent them from interfering with hydration
-        */}
+        {/* Analytics — first, they don't touch the tree */}
         <GoogleTagManager gtmId="GTM-TT54PJMP" />
         <GoogleAnalytics gaId="G-FNR4R1GZGS" />
 
+        {/* Organization schema — sibling, not inside SSR tree */}
+        <Script
+          id="organization-schema"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
+
+        {/* ============================================
+            SSR-CRITICAL TREE
+            Everything inside this block must render on
+            the server. Do NOT add client-only widgets here.
+        ============================================ */}
         <OrientationBlocker>
-          <Script
-            id="organization-schema"
-            type="application/ld+json"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify(organizationSchema),
-            }}
-          />
-          
-          <ClientChatbotWrapper />
           <AppProviders>{children}</AppProviders>
         </OrientationBlocker>
+
+        {/* ============================================
+            CLIENT-ONLY WIDGETS — outside the SSR tree
+        ============================================ */}
+        <ClientChatbotWrapper />
       </body>
     </html>
   );

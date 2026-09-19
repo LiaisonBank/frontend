@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
 const useBodyClass = (className) => {
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!className) return;
 
     document.body.classList.add(className);
