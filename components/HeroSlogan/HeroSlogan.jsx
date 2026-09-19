@@ -310,23 +310,24 @@ const HeroSlogan = () => {
 
       <div className={styles.animatedGradient} />
       
-      <div className={styles.videoWrapper}>
-        <video
-          ref={videoRef}
-          className={`${styles.backgroundVideo} ${styles[videoAnimation]}`}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          onLoadedData={handleVideoLoad}
-          poster="/sloganBanner.png"
-        >
-          <source src="/bannerMain.mp4" type="video/mp4" />
-          <source src="/sloganBanner.webm" type="video/webm" />
-        </video>
-        {!isVideoLoaded && <div className={styles.videoFallback} />}
-      </div>
+     <div className={styles.videoWrapper}>
+  <video
+    ref={videoRef}
+    className={`${styles.backgroundVideo} ${styles[videoAnimation]}`}
+    autoPlay
+    loop
+    muted
+    playsInline
+    preload="metadata"
+    onLoadedData={handleVideoLoad}
+    poster="/sloganBanner.png"
+  >
+    <source src="/bannerMain.mp4" type="video/mp4" />
+    <source src="/sloganBanner.webm" type="video/webm" />
+  </video>
+
+  {!isVideoLoaded && <div className={styles.videoFallback} />}
+</div>
 
       {particles.length > 0 && (
         <div className={styles.particles} aria-hidden="true">
