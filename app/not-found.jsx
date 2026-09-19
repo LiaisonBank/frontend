@@ -69,11 +69,11 @@ export default function NotFound() {
         <div className="quick-links">
           <span>Explore</span>
 
-          <Link href="/about-us">About Us</Link>
+          <Link href="/about-us-liaison">About Us</Link>
           <Link href="/our-services">Services</Link>
           <Link href="/projects">Projects</Link>
-          <Link href="/our-clients">Our Clients</Link>
-          <Link href="/career">Careers</Link>
+          <Link href="/client-liaison">Our Clients</Link>
+          <Link href="/careers-liaison-bank">Careers</Link>
         </div>
       </section>
     </main>
