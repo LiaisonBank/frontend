@@ -20,6 +20,7 @@ export default function PressReleaseCard({ item }) {
             fill
             className="image"
             sizes="(max-width:768px)100vw,(max-width:1200px)50vw,33vw"
+            loading="eager"
           /></div> 
         </Link>
         <div className="content">
@@ -31,7 +32,6 @@ export default function PressReleaseCard({ item }) {
             <Link href={`/press-release-liaison-bank/${slug}`}><span className="read-more">
               Read More →   
             </span></Link>
-            {/* <span>{formattedDate}</span> */}
           </div>
         </div>
     </article>

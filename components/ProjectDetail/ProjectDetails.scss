@@ -8,6 +8,7 @@
     width: 100%;
   }
 
+
   // =========================================================
   // FILTERS
   // =========================================================
@@ -161,48 +162,49 @@
     overflow-x: hidden;
     overscroll-behavior: contain; // PREVENTS PAGE SCROLL
       -webkit-overflow-scrolling: touch;
-
+    position:relative;
 
     &::-webkit-scrollbar {
-		width: .5em;
-		height: 1em;
-	}
-	&::-webkit-scrollbar-track {
-		background: #000;
-		border-radius: 0;
-		border: none;
-	}
-	&::-webkit-scrollbar-thumb {
-		background: #ef7f1a;
-		border-radius: 0;
-		border: none;
-		min-height: 40px;
-		min-width: 40px;
-		transition: background 0.2s ease;
-		// &:hover {
-		// 	background: #9ca3af;
-		// }
-		// &:active {
-		// 	background: #6b7280;
-		// }
-	}
-	&::-webkit-scrollbar-button {
-		// background: #ef7f1a;
-		height: 0px;
-		width: 16px;
-		display: block;
-		cursor: pointer;
-		transition: background 0.2s ease;
-		&:hover {
-			background: #d1d5db;
-		}
-		&:active {
-			background: #9ca3af;
-		}
-	}
-	&::-webkit-scrollbar-corner {
-		background: #f1f1f1;
-	}
+      display: none;
+      width: .5em;
+      height: 1em;
+    }
+    &::-webkit-scrollbar-track {
+      background: #000;
+      border-radius: 0;
+      border: none;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #ef7f1a;
+      border-radius: 0;
+      border: none;
+      min-height: 40px;
+      min-width: 40px;
+      transition: background 0.2s ease;
+      // &:hover {
+      // 	background: #9ca3af;
+      // }
+      // &:active {
+      // 	background: #6b7280;
+      // }
+    }
+    &::-webkit-scrollbar-button {
+      // background: #ef7f1a;
+      height: 0px;
+      width: 16px;
+      display: block;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      &:hover {
+        background: #d1d5db;
+      }
+      &:active {
+        background: #9ca3af;
+      }
+    }
+    &::-webkit-scrollbar-corner {
+      background: #f1f1f1;
+    }
   }
  
   // TABLE ROWS
@@ -383,6 +385,44 @@
     }
   }
 
+  // Centered loading overlay shown while fetching the next 20 items
+  .table-loading-overlay {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    width: 100%;
+    padding: 16px 0;
+
+    pointer-events: none; // let user keep scrolling
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.95),
+      rgba(255, 255, 255, 0)
+    );
+
+    color: var(--theme-color, #1976d2);
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    .spinner {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 3px solid rgba(25, 118, 210, 0.15);
+      border-top-color: var(--theme-color, #1976d2);
+      animation: spin 0.7s linear infinite;
+    }
+  }
+
+
   // =========================================================
   // LOADING & ERROR
   // =========================================================
@@ -441,7 +481,86 @@
       transform: rotate(360deg);
     }
   }
+/* ============================================================
+   INFINITE SCROLL
+============================================================ */
 
+.infinite-scroll-trigger {
+  width: 100%;
+  min-height: 80px;
+  padding: 24px 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  color: #777;
+  font-size: 14px;
+}
+
+.infinite-scroll-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.all-projects-loaded {
+  font-size: 13px;
+  color: #888;
+}
+
+/* ============================================================
+   SPINNER
+============================================================ */
+
+.spinner {
+  width: 18px;
+  height: 18px;
+
+  border: 2px solid #ddd;
+  border-top-color: #ef7f1a;
+  border-radius: 50%;
+
+  animation: projectSpinner 0.8s linear infinite;
+}
+
+@keyframes projectSpinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================
+   INLINE ERROR
+============================================================ */
+
+.project-inline-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  padding: 14px 18px;
+  margin-bottom: 16px;
+
+  color: #b3261e;
+  background: #fff4f2;
+  border: 1px solid #f1c4be;
+  border-radius: 6px;
+
+  button {
+    padding: 6px 14px;
+    border: 1px solid #b3261e;
+    border-radius: 4px;
+
+    background: transparent;
+    color: #b3261e;
+
+    cursor: pointer;
+  }
+}
   // =========================================================
   // RESPONSIVE
   // =========================================================

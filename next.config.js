@@ -3,9 +3,9 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // ✅ Image optimization config
+  // Image optimization
   images: {
-      formats: ["image/avif", "image/webp"],
+    formats: ["image/avif", "image/webp"],
 
     remotePatterns: [
       {
@@ -14,7 +14,7 @@ const nextConfig = {
         port: "",
         pathname: "/uploads/**",
       },
-        // Local development
+      // Local development
       {
         protocol: "http",
         hostname: "localhost",
@@ -24,7 +24,7 @@ const nextConfig = {
     ],
   },
 
-  // ✅ Security headers
+  // Security headers
   async headers() {
     return [
       {
@@ -56,11 +56,14 @@ const nextConfig = {
     ];
   },
 
-  // ✅ Dev environment allowed origins
+  // Allow development access from other devices
+  // through the Cloudflare tunnel
   allowedDevOrigins: [
-    "192.168.56.1",
+    
     "localhost",
     "*.localhost",
+    "192.168.56.1",
+    "commodity-seventh-motorcycle-though.trycloudflare.com",
   ],
 };
 

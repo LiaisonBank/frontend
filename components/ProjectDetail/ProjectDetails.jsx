@@ -1,68 +1,106 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState, useEffect } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
 import Chip from "@mui/material/Chip";
 
 import "./ProjectDetails.scss";
 import ApiError from "../ApiError/ApiError";
 
 const ITEMS_PER_LOAD = 20;
+const MIN_LOADING_DISPLAY_MS = 600; // 👈 minimum overlay duration
+
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_LOCAL_API_URL ||
   process.env.NEXT_PUBLIC_BACKEND_URL ||
   "http://localhost:8000";
 
-export default function ProjectDetails({ projectCounts }) {
+export default function ProjectDetails({
+  projectCounts,
+  loading: parentLoading,
+  error: parentError,
+}) {
   // =========================================================
   // REFS
   // =========================================================
+
   const tableBodyRef = useRef(null);
   const tableWrapperRef = useRef(null);
-  const fetchedRef = useRef(false);
+
+  // Sentinel element used by IntersectionObserver
+  const observerTargetRef = useRef(null);
+
+  // Prevent duplicate requests
+  const isFetchingRef = useRef(false);
+
+  // Keep current page in a ref so IntersectionObserver
+  // always gets the latest page without stale closures
+  const pageRef = useRef(1);
+
+  // Keep hasMore in a ref for the observer
+  const hasMoreRef = useRef(true);
+
+  // Abort currently running request when component unmounts
   const abortControllerRef = useRef(null);
 
   // =========================================================
   // STATE
   // =========================================================
+
   const [projects, setProjects] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+
   const [error, setError] = useState(null);
+
   const [locationFilter, setLocationFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [categoryFilter, setCategoryFilter] = useState("All");
-  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
+
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [totalProjects, setTotalProjects] = useState(0);
 
   // =========================================================
-  // SCROLL FUNCTIONS
+  // KEEP REFS SYNCHRONIZED
   // =========================================================
-  const scrollTableToTop = useCallback(() => {
-    if (tableBodyRef.current) {
-      tableBodyRef.current.scrollTop = 0;
+
+  useEffect(() => {
+    pageRef.current = page;
+  }, [page]);
+
+  useEffect(() => {
+    hasMoreRef.current = hasMore;
+  }, [hasMore]);
+
+  useEffect(() => {
+  let ignore = false;
+
+  (async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/projects?page=1`);
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const json = await res.json();
+      if (!ignore) setProjects(json?.data ?? json);
+    } catch (err) {
+      if (!ignore) setError(err.message ?? "Failed to fetch projects");
+    } finally {
+      if (!ignore) setLoading(false); // ✅ only after await
     }
-  }, []);
+  })();
 
-  const scrollToTableWrapper = useCallback(() => {
-    if (tableWrapperRef.current) {
-      const wrapperRect = tableWrapperRef.current.getBoundingClientRect();
-      const offset = 80;
-      const targetPosition = window.scrollY + wrapperRect.top - offset;
-
-      window.scrollTo({
-        top: targetPosition,
-        behavior: "smooth",
-      });
-
-      setTimeout(scrollTableToTop, 100);
-    }
-  }, [scrollTableToTop]);
-
+  return () => { ignore = true; };
+}, []);
   // =========================================================
   // NORMALIZE HELPER
   // =========================================================
+
   const normalize = useCallback((value) => {
     return String(value ?? "")
       .trim()
@@ -72,44 +110,143 @@ export default function ProjectDetails({ projectCounts }) {
   // =========================================================
   // NORMALIZE PROJECTS
   // =========================================================
+
   const normalizeProjects = useCallback((projectsData, pageNum = 1) => {
     return projectsData.map((project, index) => ({
       ...project,
-      id: project.id || project.project_id || `project-${pageNum}-${index}`,
-      client_name: project.client_name || project.name,
-      project_status: project.project_status || project.status,
+
+      id:
+        project.id ??
+        project.project_id ??
+        `project-${pageNum}-${index}`,
+
+      client_name:
+        project.client_name ??
+        project.name ??
+        "Unnamed Project",
+
+      project_status:
+        project.project_status ??
+        project.status ??
+        "Unknown",
+
       projectsCategory:
-        project.projectsCategory ||
-        project.type ||
-        project.category ||
+        project.projectsCategory ??
+        project.type ??
+        project.category ??
         "Uncategorized",
-      location: project.location,
+
+      location: project.location ?? "",
     }));
   }, []);
 
   // =========================================================
-  // FETCH PROJECTS - INITIAL LOAD
+  // DETERMINE HAS MORE
   // =========================================================
-  useEffect(() => {
-    let isMounted = true;
-    let abortController = new AbortController();
 
-    const fetchProjects = async () => {
-      try {
+  const determineHasMore = useCallback((data, projectsData) => {
+    /*
+     * Supports different backend response formats:
+     *
+     * {
+     *   hasMore: true
+     * }
+     *
+     * {
+     *   next_page: 2
+     * }
+     *
+     * {
+     *   total: 100
+     * }
+     *
+     * Or simply:
+     *
+     * 20 records = probably another page
+     */
+
+    if (typeof data?.hasMore === "boolean") {
+      return data.hasMore;
+    }
+
+    if (typeof data?.has_more === "boolean") {
+      return data.has_more;
+    }
+
+    if (data?.next_page !== undefined) {
+      return data.next_page !== null;
+    }
+
+    if (data?.nextPage !== undefined) {
+      return data.nextPage !== null;
+    }
+
+    if (
+      typeof data?.total === "number" &&
+      typeof data?.page === "number" &&
+      typeof data?.limit === "number"
+    ) {
+      return data.page * data.limit < data.total;
+    }
+
+    return projectsData.length === ITEMS_PER_LOAD;
+  }, []);
+
+  // =========================================================
+  // FETCH PROJECTS
+  // =========================================================
+
+  const fetchProjects = useCallback(
+    async (pageNum = 1, isInitialLoad = false) => {
+      if (isFetchingRef.current) return;
+      if (!isInitialLoad && !hasMoreRef.current) return;
+
+      isFetchingRef.current = true;
+
+      if (isInitialLoad) {
         setLoading(true);
-        setError(null);
+      } else {
+        setLoadingMore(true);
+      }
 
-        const response = await fetch(
-          `${API_BASE_URL}/api/projects/distinct?page=1&limit=${ITEMS_PER_LOAD}`,
-          {
-            method: "GET",
-            cache: "no-store",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            signal: abortController.signal,
+      setError(null);
+
+      // 👇 record start time so we can enforce minimum display
+      const startedAt = Date.now();
+
+      // 👇 helper that waits the remaining time
+      const waitMinimumDisplay = async () => {
+        const elapsed = Date.now() - startedAt;
+        const remaining = MIN_LOADING_DISPLAY_MS - elapsed;
+
+        if (remaining > 0) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, remaining),
+          );
+        }
+      };
+
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      try {
+        const url =
+          `${API_BASE_URL}/api/projects/distinct` +
+          `?page=${pageNum}&limit=${ITEMS_PER_LOAD}`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          cache: "no-store",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
           },
-        );
+          signal: controller.signal,
+        });
 
         if (!response.ok) {
           throw new Error(
@@ -119,196 +256,305 @@ export default function ProjectDetails({ projectCounts }) {
 
         const data = await response.json();
 
-        if (!isMounted) return;
-
         const projectsData = Array.isArray(data)
           ? data
-          : data.projects || data.data || [];
+          : Array.isArray(data?.projects)
+            ? data.projects
+            : Array.isArray(data?.data)
+              ? data.data
+              : Array.isArray(data?.items)
+                ? data.items
+                : [];
 
-        const total = data.total || data.count;
-        setTotalProjects(total);
+        const normalizedProjects = normalizeProjects(
+          projectsData,
+          pageNum,
+        );
 
-        const hasMoreItems =
-          data.hasMore !== undefined
-            ? data.hasMore
-            : data.next_page !== null
-              ? true
-              : projectsData.length === ITEMS_PER_LOAD;
-        setHasMore(hasMoreItems);
+        const moreAvailable = determineHasMore(
+          data,
+          projectsData,
+        );
 
-        const normalizedProjects = normalizeProjects(projectsData, 1);
-        setProjects(normalizedProjects);
-        setVisibleCount(Math.min(ITEMS_PER_LOAD, normalizedProjects.length));
-        setPage(1);
-      } catch (err) {
-        if (err.name === "AbortError") {
-          console.log("Fetch aborted");
+        // 👇 enforce minimum overlay time BEFORE hiding it
+        await waitMinimumDisplay();
+
+        if (isInitialLoad) {
+          setProjects(normalizedProjects);
+          setPage(1);
+          pageRef.current = 1;
+          setHasMore(moreAvailable);
+          hasMoreRef.current = moreAvailable;
           return;
         }
-        if (!isMounted) return;
-        console.error("Error fetching projects:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load projects",
-        );
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
 
-    fetchProjects();
-
-    return () => {
-      isMounted = false;
-      if (abortController) {
-        abortController.abort();
-      }
-    };
-  }, [normalizeProjects]);
-
-  // =========================================================
-  // FETCH MORE PROJECTS - LOAD MORE
-  // =========================================================
-  const fetchMoreProjects = useCallback(
-    async (pageNum) => {
-      if (loadingMore) {
-        return;
-      }
-
-      try {
-        setLoadingMore(true);
-        setError(null);
-
-        const response = await fetch(
-          `${API_BASE_URL}/api/projects/distinct?page=${pageNum}&limit=${ITEMS_PER_LOAD}`,
-          {
-            method: "GET",
-            cache: "no-store",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch more projects: ${response.status} ${response.statusText}`,
+        setProjects((previousProjects) => {
+          const existingIds = new Set(
+            previousProjects.map((p) => p.id),
           );
-        }
 
-        const data = await response.json();
-
-        const projectsData = Array.isArray(data)
-          ? data
-          : data.projects || data.data || [];
-
-        if (data.total || data.count) {
-          setTotalProjects(data.total || data.count);
-        }
-
-        const hasMoreItems =
-          data.hasMore !== undefined
-            ? data.hasMore
-            : data.next_page !== null
-              ? true
-              : projectsData.length === ITEMS_PER_LOAD;
-        setHasMore(hasMoreItems);
-
-        if (projectsData.length === 0) {
-          setHasMore(false);
-          setLoadingMore(false);
-          return;
-        }
-
-        const normalizedProjects = normalizeProjects(projectsData, pageNum);
-
-        setProjects((prev) => {
-          const existingIds = new Set(prev.map((p) => p.id));
-          const uniqueNewProjects = normalizedProjects.filter(
+          const uniqueProjects = normalizedProjects.filter(
             (p) => !existingIds.has(p.id),
           );
-          return [...prev, ...uniqueNewProjects];
+
+          return [...previousProjects, ...uniqueProjects];
         });
 
-        setVisibleCount((prev) => prev + projectsData.length);
-
         setPage(pageNum);
-
-        setTimeout(scrollToTableWrapper, 150);
+        pageRef.current = pageNum;
+        setHasMore(moreAvailable);
+        hasMoreRef.current = moreAvailable;
       } catch (err) {
-        console.error("Error fetching more projects:", err);
+        if (err?.name === "AbortError") return;
+
+        console.error("Project API error:", err);
+
+        // still wait before showing the error (optional)
+        await waitMinimumDisplay();
+
         setError(
-          err instanceof Error ? err.message : "Failed to load more projects",
+          err instanceof Error
+            ? err.message
+            : "Failed to load projects",
         );
       } finally {
-        setLoadingMore(false);
+        isFetchingRef.current = false;
+
+        if (isInitialLoad) {
+          setLoading(false);
+        } else {
+          setLoadingMore(false);
+        }
       }
     },
-    [loadingMore, normalizeProjects, scrollToTableWrapper],
+    [determineHasMore, normalizeProjects],
   );
+
+  // =========================================================
+  // INITIAL PROJECT LOAD
+  // =========================================================
+
+  useEffect(() => {
+    fetchProjects(1, true);
+
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [fetchProjects]);
+
+  // =========================================================
+  // INFINITE SCROLL - INTERSECTION OBSERVER
+  // =========================================================
+
+  useEffect(() => {
+    const target = observerTargetRef.current;
+    const tableBody = tableBodyRef.current;
+
+    if (!target || !tableBody) {
+      return;
+    }
+
+    /*
+     * IMPORTANT:
+     *
+     * root = tableBodyRef.current
+     *
+     * This means the observer watches scrolling
+     * INSIDE the project table, not the browser window.
+     */
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+
+        if (
+          entry?.isIntersecting &&
+          !isFetchingRef.current &&
+          hasMoreRef.current
+        ) {
+          const nextPage = pageRef.current + 1;
+
+          fetchProjects(nextPage, false);
+        }
+      },
+      {
+        root: tableBody,
+        rootMargin: "150px",
+        threshold: 0.1,
+      },
+    );
+
+    observer.observe(target);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [fetchProjects, projects.length]);
+
+  // =========================================================
+  // SCROLL TABLE TO TOP
+  // =========================================================
+
+  const scrollTableToTop = useCallback(() => {
+    if (tableBodyRef.current) {
+      tableBodyRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
+  // =========================================================
+  // SCROLL PAGE TO TABLE
+  // =========================================================
+
+  const scrollToTableWrapper = useCallback(() => {
+    if (!tableWrapperRef.current) {
+      return;
+    }
+
+    const wrapperRect =
+      tableWrapperRef.current.getBoundingClientRect();
+
+    const offset = 80;
+
+    const targetPosition =
+      window.scrollY + wrapperRect.top - offset;
+
+    window.scrollTo({
+      top: targetPosition,
+      behavior: "smooth",
+    });
+
+    requestAnimationFrame(() => {
+      scrollTableToTop();
+    });
+  }, [scrollTableToTop]);
 
   // =========================================================
   // CATEGORY OPTIONS
   // =========================================================
+
   const categoryOptions = useMemo(() => {
     const categories = projects
-      .map((project) => project?.projectsCategory)
-      .filter(Boolean)
-      .map((type) => String(type).trim());
+      .flatMap((project) => {
+        const category = project?.projectsCategory;
 
-    return [...new Set(categories)].sort((a, b) => a.localeCompare(b));
+        if (Array.isArray(category)) {
+          return category;
+        }
+
+        return [category];
+      })
+      .filter(Boolean)
+      .map((category) => String(category).trim())
+      .filter(Boolean);
+
+    /*
+     * Keep combined values such as:
+     *
+     * Residential/Commercial
+     *
+     * in the table data, but do not add them
+     * to the Category Type dropdown.
+     */
+
+    const excludedCategories = new Set([
+      "Residential/Commercial",
+      "Residential / Commercial",
+      "ResidentialCommercial",
+    ]);
+
+    return [...new Set(categories)]
+      .filter(
+        (category) => !excludedCategories.has(category),
+      )
+      .sort((a, b) => a.localeCompare(b));
   }, [projects]);
 
   // =========================================================
-  // FILTERED PROJECTS - MEMOIZED
+  // FILTERED PROJECTS
   // =========================================================
+
   const filteredProjects = useMemo(() => {
     const location = normalize(locationFilter);
     const status = normalize(statusFilter);
     const category = normalize(categoryFilter);
 
     return projects.filter((project) => {
-      const projectLocation = normalize(project?.location);
-      const projectStatus = normalize(project?.project_status);
-      const projectType = normalize(project?.projectsCategory);
+      const projectLocation = normalize(project.location);
 
-      const matchesLocation = !location || projectLocation.includes(location);
-      const matchesStatus = statusFilter === "All" || projectStatus === status;
+      const projectStatus = normalize(
+        project.project_status,
+      );
+
+      const projectType = normalize(
+        Array.isArray(project.projectsCategory)
+          ? project.projectsCategory.join(", ")
+          : project.projectsCategory,
+      );
+
+      const matchesLocation =
+        !location ||
+        projectLocation.includes(location);
+
+      const matchesStatus =
+        statusFilter === "All" ||
+        projectStatus === status;
+
       const matchesCategory =
-        categoryFilter === "All" || projectType === category;
+        categoryFilter === "All" ||
+        projectType === category;
 
-      return matchesLocation && matchesStatus && matchesCategory;
+      return (
+        matchesLocation &&
+        matchesStatus &&
+        matchesCategory
+      );
     });
-  }, [projects, locationFilter, statusFilter, categoryFilter, normalize]);
+  }, [
+    projects,
+    locationFilter,
+    statusFilter,
+    categoryFilter,
+    normalize,
+  ]);
 
   // =========================================================
-  // VISIBLE PROJECTS
+  // ACTIVE FILTERS
   // =========================================================
-  const visibleProjects = useMemo(() => {
-    return filteredProjects.slice(0, visibleCount);
-  }, [filteredProjects, visibleCount]);
 
-  // =========================================================
-  // LOAD STATES
-  // =========================================================
-  const hasMoreToLoad = hasMore || visibleCount < filteredProjects.length;
-  const canLoadLess = visibleCount > ITEMS_PER_LOAD;
   const hasActiveFilters =
     locationFilter.trim() !== "" ||
     statusFilter !== "All" ||
     categoryFilter !== "All";
 
   // =========================================================
-  // STATUS COLOR
+  // STATUS CLASS
   // =========================================================
+
   const getStatusClass = useCallback(
     (status) => {
       const normalizedStatus = normalize(status);
 
-      if (normalizedStatus === "completed") return "status-completed";
-      if (normalizedStatus === "upcoming") return "status-upcoming";
-      if (normalizedStatus === "in progress") return "status-in-progress";
+      if (normalizedStatus === "completed") {
+        return "status-completed";
+      }
+
+      if (
+        normalizedStatus === "upcoming"
+      ) {
+        return "status-upcoming";
+      }
+
+      if (
+        normalizedStatus === "in progress" ||
+        normalizedStatus === "ongoing"
+      ) {
+        return "status-in-progress";
+      }
 
       return "status-default";
     },
@@ -316,13 +562,54 @@ export default function ProjectDetails({ projectCounts }) {
   );
 
   // =========================================================
+  // LOCATION FORMATTER
+  // =========================================================
+
+  const formatLocation = useCallback((location) => {
+    if (!location) {
+      return "";
+    }
+
+    let formattedLocation = String(location)
+      .replace(/\(/g, " (")
+      .replace(/\s+/g, " ")
+      .replace(/,\s*/g, ", ")
+      .trim();
+
+    const lowerLocation =
+      formattedLocation.toLowerCase();
+
+    const alreadyHasMumbai =
+      lowerLocation.includes("mumbai");
+
+    const alreadyHasVasai =
+      lowerLocation.includes("vasai");
+
+    const alreadyHasVirar =
+      lowerLocation.includes("virar");
+
+    if (
+      !alreadyHasMumbai &&
+      !alreadyHasVasai &&
+      !alreadyHasVirar
+    ) {
+      formattedLocation += ", Mumbai";
+    }
+
+    return formattedLocation;
+  }, []);
+
+  // =========================================================
   // FILTER HANDLERS
   // =========================================================
+
   const handleLocationChange = useCallback(
     (event) => {
       setLocationFilter(event.target.value);
-      setVisibleCount(ITEMS_PER_LOAD);
-      scrollToTableWrapper();
+
+      requestAnimationFrame(() => {
+        scrollToTableWrapper();
+      });
     },
     [scrollToTableWrapper],
   );
@@ -330,8 +617,10 @@ export default function ProjectDetails({ projectCounts }) {
   const handleStatusChange = useCallback(
     (event) => {
       setStatusFilter(event.target.value);
-      setVisibleCount(ITEMS_PER_LOAD);
-      scrollToTableWrapper();
+
+      requestAnimationFrame(() => {
+        scrollToTableWrapper();
+      });
     },
     [scrollToTableWrapper],
   );
@@ -339,114 +628,162 @@ export default function ProjectDetails({ projectCounts }) {
   const handleCategoryChange = useCallback(
     (event) => {
       setCategoryFilter(event.target.value);
-      setVisibleCount(ITEMS_PER_LOAD);
-      scrollToTableWrapper();
+
+      requestAnimationFrame(() => {
+        scrollToTableWrapper();
+      });
     },
     [scrollToTableWrapper],
   );
+
+  // =========================================================
+  // CLEAR FILTERS
+  // =========================================================
 
   const handleClearFilters = useCallback(() => {
     setLocationFilter("");
     setStatusFilter("All");
     setCategoryFilter("All");
-    setVisibleCount(ITEMS_PER_LOAD);
-    scrollToTableWrapper();
+
+    requestAnimationFrame(() => {
+      scrollToTableWrapper();
+    });
   }, [scrollToTableWrapper]);
 
   // =========================================================
-  // LOAD MORE / LESS
+  // WHEEL BEHAVIOR
   // =========================================================
-  const handleLoadMore = useCallback(() => {
-    const currentVisible = visibleCount;
-    const totalAvailable = filteredProjects.length;
-    const needed = currentVisible + ITEMS_PER_LOAD;
 
-    if (needed > totalAvailable && hasMore) {
-      const nextPage = page + 1;
-      fetchMoreProjects(nextPage);
-    } else {
-      setVisibleCount(Math.min(needed, filteredProjects.length));
-      setTimeout(scrollToTableWrapper, 100);
-    }
-  }, [
-    visibleCount,
-    filteredProjects.length,
-    hasMore,
-    page,
-    fetchMoreProjects,
-    scrollToTableWrapper,
-  ]);
+  const handleTableWheel = useCallback((event) => {
+    const element = event.currentTarget;
 
-  const handleLoadLess = useCallback(() => {
-    setVisibleCount(ITEMS_PER_LOAD);
-    setTimeout(scrollToTableWrapper, 100);
-  }, [scrollToTableWrapper]);
+    const {
+      scrollTop,
+      scrollHeight,
+      clientHeight,
+    } = element;
 
-  // =========================================================
-  // HANDLE TABLE SCROLL WITH BODY SCROLL PASS-THROUGH
-  // =========================================================
-  const handleTableWheel = useCallback((e) => {
-    const element = e.currentTarget;
-    const { scrollTop, scrollHeight, clientHeight } = element;
+    const atTop = scrollTop <= 0;
 
-    const atTop = scrollTop === 0;
-    const atBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
+    const atBottom =
+      Math.ceil(scrollTop + clientHeight) >=
+      scrollHeight;
 
-    if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
+    /*
+     * Allow the page to continue scrolling when
+     * the table itself reaches the top/bottom.
+     */
+
+    if (
+      (event.deltaY < 0 && atTop) ||
+      (event.deltaY > 0 && atBottom)
+    ) {
       return;
     }
 
-    e.preventDefault();
-    e.stopPropagation();
+    event.preventDefault();
+    event.stopPropagation();
   }, []);
+
+  // =========================================================
+  // TABLE WHEEL LISTENER
+  // =========================================================
 
   useEffect(() => {
     const tableBody = tableBodyRef.current;
-    if (!tableBody) return;
 
-    const wheelHandler = (e) => {
-      const { scrollTop, scrollHeight, clientHeight } = tableBody;
+    if (!tableBody) {
+      return;
+    }
 
-      const atTop = scrollTop === 0;
-      const atBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
+    const wheelHandler = (event) => {
+      const {
+        scrollTop,
+        scrollHeight,
+        clientHeight,
+      } = tableBody;
 
-      if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
+      const atTop = scrollTop <= 0;
+
+      const atBottom =
+        Math.ceil(scrollTop + clientHeight) >=
+        scrollHeight;
+
+      if (
+        (event.deltaY < 0 && atTop) ||
+        (event.deltaY > 0 && atBottom)
+      ) {
         return;
       }
 
-      e.preventDefault();
-      e.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
     };
 
-    tableBody.addEventListener("wheel", wheelHandler, { passive: false });
+    tableBody.addEventListener(
+      "wheel",
+      wheelHandler,
+      {
+        passive: false,
+      },
+    );
 
     return () => {
-      tableBody.removeEventListener("wheel", wheelHandler);
+      tableBody.removeEventListener(
+        "wheel",
+        wheelHandler,
+      );
     };
   }, []);
 
   // =========================================================
-  // KEYBOARD ACCESSIBILITY FOR LOAD MORE BUTTON
+  // RETRY
   // =========================================================
-  const handleKeyDown = useCallback(
-    (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        handleLoadMore();
-      }
-    },
-    [handleLoadMore],
-  );
+
+  const handleRetry = useCallback(() => {
+    setProjects([]);
+    setPage(1);
+    pageRef.current = 1;
+
+    setHasMore(true);
+    hasMoreRef.current = true;
+
+    setError(null);
+
+    fetchProjects(1, true);
+  }, [fetchProjects]);
+
+  // =========================================================
+  // DISPLAY COUNT
+  // =========================================================
+
+  const filteredCount = filteredProjects.length;
+
+  const totalProjectCount =
+    projectCounts?.total_projects ??
+    projects.length;
 
   // =========================================================
   // LOADING STATE
   // =========================================================
+
   if (loading) {
     return (
-      <section className="project-details" aria-label="Loading projects">
+      <section
+        className="project-details"
+        aria-label="Loading projects"
+      >
         <div className="client-table-container">
-          <div className="project-loading" role="status" aria-live="polite">
-            <div className="spinner" aria-hidden="true"></div>
+          <div
+            className="project-loading"
+            role="status"
+            aria-live="polite"
+          >
+            <div
+              className="spinner"
+              aria-hidden="true"
+            />
+
             <p>Loading projects...</p>
           </div>
         </div>
@@ -496,13 +833,27 @@ export default function ProjectDetails({ projectCounts }) {
   // =========================================================
   // RENDER
   // =========================================================
+
   return (
-    <section className="project-details" aria-label="Project details">
+    <section
+      className="project-details"
+      aria-label="Project details"
+    >
       <div className="client-table-container">
-        {/* FILTERS */}
+
+        {/* =====================================================
+            FILTERS
+        ====================================================== */}
+
         <div className="project-filters">
+
+          {/* LOCATION */}
+
           <div className="project-filter location-filter">
-            <label htmlFor="project-location">Location</label>
+            <label htmlFor="project-location">
+              Location
+            </label>
+
             <div className="filter-input">
               <svg
                 className="filter-icon"
@@ -512,9 +863,15 @@ export default function ProjectDetails({ projectCounts }) {
                 strokeWidth="1.8"
                 aria-hidden="true"
               >
-                <circle cx="11" cy="11" r="7" />
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="7"
+                />
+
                 <path d="m20 20-4-4" />
               </svg>
+
               <input
                 id="project-location"
                 type="search"
@@ -527,50 +884,92 @@ export default function ProjectDetails({ projectCounts }) {
             </div>
           </div>
 
+          {/* STATUS */}
+
           <div className="project-filter">
-            <label htmlFor="project-status">Status</label>
+            <label htmlFor="project-status">
+              Status
+            </label>
+
             <select
               id="project-status"
               value={statusFilter}
               onChange={handleStatusChange}
               aria-label="Filter by status"
             >
-              <option value="All">All Status</option>
-              <option value="Completed">Completed</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Upcoming">Upcoming</option>
+              <option value="All">
+                All Status
+              </option>
+
+              <option value="Completed">
+                Completed
+              </option>
+
+              <option value="In Progress">
+                In Progress
+              </option>
+
+              <option value="Upcoming">
+                Upcoming
+              </option>
             </select>
           </div>
 
+          {/* CATEGORY */}
+
           <div className="project-filter">
-            <label htmlFor="project-category">Category Type</label>
+            <label htmlFor="project-category">
+              Category Type
+            </label>
+
             <select
               id="project-category"
               value={categoryFilter}
               onChange={handleCategoryChange}
               aria-label="Filter by category"
             >
-              <option value="All">All Categories</option>
-              {categoryOptions.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
+              <option value="All">
+                All Categories
+              </option>
+
+              {categoryOptions.map(
+                (category) => (
+                  <option
+                    key={category}
+                    value={category}
+                  >
+                    {category}
+                  </option>
+                ),
+              )}
             </select>
           </div>
 
-          {/* ===================== TOTAL COUNT (FILTERED) ===================== */}
-          <div className="project-filter">
-            {loadingMore && (
-              <span className="loading-more" aria-hidden="true">
+          {/* COUNT + CLEAR */}
+
+          <div className="project-filter project-count-filter">
+
+            {/* {loadingMore && (
+              <span
+                className="loading-more"
+                aria-live="polite"
+              >
                 Loading more...
               </span>
-            )}
-            <span className="total-projects">
-              Total: <strong>{filteredProjects.length}</strong>
-            </span>
+            )} */}
+
+            {/* <span className="total-projects">
+              Total:{" "}
+              <strong>
+                {hasActiveFilters
+                  ? filteredCount
+                  : totalProjectCount}
+              </strong>
+            </span> */}
+
             {hasActiveFilters && (
               <button
+                type="button"
                 className="clear-filters-btn"
                 onClick={handleClearFilters}
                 aria-label="Clear all filters"
@@ -581,33 +980,100 @@ export default function ProjectDetails({ projectCounts }) {
           </div>
         </div>
 
-        {/* RESULTS INFO */}
-        <div className="project-results-info" role="status" aria-live="polite">
+        {/* =====================================================
+            RESULTS INFO
+        ====================================================== */}
+
+        <div
+          className="project-results-info"
+          role="status"
+          aria-live="polite"
+        >
           <span>
-            Showing <strong>{visibleProjects.length}</strong> of{" "}
-            <strong>{filteredProjects.length}</strong> projects
+            Showing{" "}
+            <strong>
+              {filteredCount}
+            </strong>{" "}
+            of{" "}
+            <strong>
+              {totalProjectCount}
+            </strong>{" "}
+            projects
           </span>
+
+           <span className="total-projects">
+              Total:{" "}
+              <strong>
+                {hasActiveFilters
+                  ? filteredCount
+                  : totalProjectCount}
+              </strong>
+            </span>
         </div>
 
-        {filteredProjects.length === 0 ? (
-          <div className="project-empty" role="status">
-            <h3>No projects found</h3>
-            <p>Try changing your filters.</p>
-            <button onClick={handleClearFilters} aria-label="Clear all filters">
-              Clear Filters
-            </button>
+        {/* =====================================================
+            EMPTY STATE
+        ====================================================== */}
+
+        {filteredCount === 0 ? (
+          <div
+            className="project-empty"
+            role="status"
+          >
+            <h3>
+              No projects found
+            </h3>
+
+            <p>
+              Try changing your filters.
+            </p>
+
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                aria-label="Clear all filters"
+              >
+                Clear Filters
+              </button>
+            )}
           </div>
         ) : (
           <>
-            {/* TABLE WITH FIXED HEADER */}
-            <div className="table-wrapper" ref={tableWrapperRef}>
+            {/* =================================================
+                TABLE
+            ================================================== */}
+
+            <div
+              className="table-wrapper"
+              ref={tableWrapperRef}
+            >
               <div className="table-container">
-                <div className="table-header" role="row">
-                  <div role="columnheader">Brand Name</div>
-                  <div role="columnheader">Category Type</div>
-                  <div role="columnheader">Status</div>
-                  <div role="columnheader">Location</div>
+
+                {/* FIXED HEADER */}
+
+                <div
+                  className="table-header"
+                  role="row"
+                >
+                  <div role="columnheader">
+                    Brand Name
+                  </div>
+
+                  <div role="columnheader">
+                    Category Type
+                  </div>
+
+                  <div role="columnheader">
+                    Status
+                  </div>
+
+                  <div role="columnheader">
+                    Location
+                  </div>
                 </div>
+
+                {/* TABLE BODY */}
 
                 <div
                   className="table-body"
@@ -615,130 +1081,145 @@ export default function ProjectDetails({ projectCounts }) {
                   onWheel={handleTableWheel}
                   role="rowgroup"
                 >
-                  {visibleProjects.map((project) => (
-                    <div key={project.id} className="table-row" role="row">
+                  {filteredProjects.map(
+                    (project) => (
                       <div
-                        className="item-name"
-                        title={project.client_name}
-                        role="cell"
+                        key={project.id}
+                        className="table-row"
+                        role="row"
                       >
-                        {project.client_name}
+                        {/* BRAND */}
+
+                        <div
+                          className="item-name"
+                          title={
+                            project.client_name
+                          }
+                          role="cell"
+                        >
+                          {project.client_name}
+                        </div>
+
+                        {/* CATEGORY */}
+
+                        <div
+                          className="item-type"
+                          title={
+                            Array.isArray(
+                              project.projectsCategory,
+                            )
+                              ? project.projectsCategory.join(
+                                  ", ",
+                                )
+                              : project.projectsCategory
+                          }
+                          role="cell"
+                        >
+                          {Array.isArray(
+                            project.projectsCategory,
+                          )
+                            ? project.projectsCategory.join(
+                                ", ",
+                              )
+                            : project.projectsCategory}
+                        </div>
+
+                        {/* STATUS */}
+
+                        <div
+                          className="item-status"
+                          role="cell"
+                        >
+                          <Chip
+                            label={
+                              project.project_status
+                            }
+                            size="small"
+                            className={getStatusClass(
+                              project.project_status,
+                            )}
+                            aria-label={`Status: ${project.project_status}`}
+                          />
+                        </div>
+
+                        {/* LOCATION */}
+
+                        <div
+                          className="item-location"
+                          title={
+                            project.location
+                          }
+                          role="cell"
+                        >
+                          {formatLocation(
+                            project.location,
+                          )}
+                        </div>
                       </div>
+                    ),
+                  )}
+
+                  {/* =================================================
+                      INFINITE SCROLL SENTINEL
+                  ================================================== */}
+
+                  {hasMore && (
+                    <div
+                      ref={observerTargetRef}
+                      className="infinite-scroll-sentinel"
+                      aria-hidden="true"
+                    />
+                  )}
+
+                  {/* =================================================
+                      CENTERED LOADING OVERLAY FOR NEXT PAGE
+                  ================================================== */}
+
+                  {loadingMore && (
+                    <div
+                      className="table-loading-overlay"
+                      role="status"
+                      aria-live="polite"
+                    >
                       <div
-                        className="item-type"
-                        title={project.projectsCategory}
-                        role="cell"
-                      >
-                        {project.projectsCategory}
-                      </div>
-                      <div className="item-status" role="cell">
-                        <Chip
-                          label={project.project_status}
-                          size="small"
-                          className={getStatusClass(project.project_status)}
-                          aria-label={`Status: ${project.project_status}`}
-                        />
-                      </div>
-                      <div
-                        className="item-location"
-                        title={project.location}
-                        role="cell"
-                      >
-                        {project.location &&
-                          `${project.location
-                            .replace(/\(/g, " (")
-                            .replace(/,/g, ", ")}${
-                            !project.location.includes("Vasai") &&
-                            !project.location.includes("Virar") &&
-                            !project.location.includes("Mumbai")
-                              ? ", Mumbai"
-                              : ""
-                          }`}
-                      </div>
+                        className="spinner"
+                        aria-hidden="true"
+                      />
+
+                      <span>
+                        Loading more projects...
+                      </span>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* LOAD MORE / LESS BUTTONS */}
-            {(hasMoreToLoad || canLoadLess) && (
-              <div className="load-more-wrapper">
-                {hasMoreToLoad && visibleCount < filteredProjects.length && (
-                  <button
-                    className="load-more-btn"
-                    onClick={handleLoadMore}
-                    onKeyDown={handleKeyDown}
-                    disabled={loadingMore}
-                    aria-label={
-                      loadingMore
-                        ? "Loading more projects"
-                        : "Load more projects"
-                    }
-                  >
-                    <span>{loadingMore ? "Loading..." : "Load More"}</span>
-                    {!loadingMore && (
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 5v14" />
-                        <path d="m19 12-7 7-7-7" />
-                      </svg>
-                    )}
-                  </button>
-                )}
+            {/* =================================================
+                PAGINATION ERROR
+            ================================================== */}
 
-                {hasMore && visibleCount >= filteredProjects.length && (
-                  <button
-                    className="load-more-btn"
-                    onClick={handleLoadMore}
-                    onKeyDown={handleKeyDown}
-                    disabled={loadingMore}
-                    aria-label={
-                      loadingMore
-                        ? "Loading more projects"
-                        : "Load more projects"
-                    }
-                  >
-                    <span>{loadingMore ? "Loading..." : "Load More"}</span>
-                    {!loadingMore && (
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 5v14" />
-                        <path d="m19 12-7 7-7-7" />
-                      </svg>
-                    )}
-                  </button>
-                )}
+            {error && projects.length > 0 && (
+              <div
+                className="project-load-error"
+                role="alert"
+              >
+                <span>
+                  {error}
+                </span>
 
-                {canLoadLess && (
-                  <button
-                    className="load-less-btn"
-                    onClick={handleLoadLess}
-                    aria-label="Show fewer projects"
-                  >
-                    <span>Load Less</span>
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 19V5" />
-                      <path d="m5 12 7-7 7 7" />
-                    </svg>
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() =>
+                    fetchProjects(
+                      pageRef.current + 1,
+                      false,
+                    )
+                  }
+                  disabled={loadingMore}
+                >
+                  Retry
+                </button>
               </div>
             )}
           </>

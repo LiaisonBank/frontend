@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Button, Dialog, Box, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -17,25 +17,33 @@ const API_BASE_URL =
 
 export default function ProjectsPage() {
   useBodyClass("completed");
+
   const [openPopup, setOpenPopup] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [projectCounts, setProjectCounts] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loading, setLoading] = useState(true); // Added loading state
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch project counts on page load
+  const heroRef = useRef(null);
+  const animationTimeoutRef = useRef(null);
+  const closeTimeoutRef = useRef(null);
+  const scrollYRef = useRef(0);
+
+  /* ------------------------------------------------------------------ */
+  /*  Fetch project counts                                               */
+  /* ------------------------------------------------------------------ */
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchProjectCounts = async () => {
       try {
-        setIsLoading(true);
-        setLoading(true); // Set loading to true when fetch starts
+        setLoading(true);
         setError(null);
+
         const response = await fetch(`${API_BASE_URL}/api/projects/counts`, {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -43,115 +51,87 @@ export default function ProjectsPage() {
         }
 
         const result = await response.json();
-
-        // Extract data from the nested structure
         const data = result?.data || result;
 
         setProjectCounts(data);
-
-        // Production-ready console log with specific values from nested data
-        // console.log("✅ Project Counts API Response:", {
-        //   completed_projects: data.completed_projects || 0,
-        //   ongoing_projects: data.ongoing_projects || 0,
-        //   upcoming_projects: data.upcoming_projects || 0,
-        //   total_projects: data.total_projects || 0,
-        //   active_projects: data.active_projects || 0,
-        //   featured_projects: data.featured_projects || 0,
-        //   inactive_projects: data.inactive_projects || 0,
-        //   full_response: result,
-        //   timestamp: new Date().toISOString(),
-        //   status: "success",
-        //   endpoint: "/api/projects/counts",
-        // });
-
-        // Individual console logs for each value
-        // console.log("📊 Completed Projects:", data.completed_projects || 0);
-        // console.log("📊 Ongoing Projects:", data.ongoing_projects || 0);
-        // console.log("📊 Upcoming Projects:", data.upcoming_projects || 0);
-        // console.log("📊 Total Projects:", data.total_projects || 0);
-        // console.log("📊 Active Projects:", data.active_projects || 0);
       } catch (err) {
+        if (err.name === "AbortError") return;
         const errorMessage =
           err instanceof Error ? err.message : "Failed to fetch project counts";
         setError(errorMessage);
-
-        // Error logging for production
-        console.error("❌ Project Counts API Error:", {
-          error: errorMessage,
-          timestamp: new Date().toISOString(),
-          endpoint: "/api/projects/counts",
-          originalError: err,
-        });
+        console.error("❌ Project Counts API Error:", errorMessage);
       } finally {
-        setIsLoading(false);
-        setLoading(false); // Set loading to false when fetch completes
+        setLoading(false);
       }
     };
 
     fetchProjectCounts();
+    return () => controller.abort();
   }, []);
 
-  // Log project counts whenever they update with specific values
+  /* ------------------------------------------------------------------ */
+  /*  Parallax on the hero video (sets --parallax-y)                     */
+  /* ------------------------------------------------------------------ */
   useEffect(() => {
-    if (projectCounts) {
-      console.log("📊 Project Counts Updated:", {
-        completed_projects: projectCounts.completed_projects || 0,
-        ongoing_projects: projectCounts.ongoing_projects || 0,
-        upcoming_projects: projectCounts.upcoming_projects || 0,
-        total_projects: projectCounts.total_projects || 0,
-        timestamp: new Date().toISOString(),
-      });
-    }
-  }, [projectCounts]);
+    const hero = heroRef.current;
+    if (!hero) return;
 
-  const handleOpenPopup = () => {
-    // Remove body scrollbar
-    document.body.style.overflow = "hidden";
-    setOpenPopup(true);
-    // Trigger animation after a small delay
-    setTimeout(() => setIsAnimating(true), 50);
-  };
+    // Respect reduced-motion
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (reduceMotion) return;
 
-  const handleClosePopup = () => {
-    setIsAnimating(false);
-    // Restore body scrollbar with a delay to allow animation to complete
-    setTimeout(() => {
-      setOpenPopup(false);
-      document.body.style.overflow = "";
-    }, 300);
-  };
+    let rafId = null;
 
-  // Clean up on unmount
-  useEffect(() => {
+    const update = () => {
+      const rect = hero.getBoundingClientRect();
+      // Only translate while hero is on screen
+      if (rect.bottom < 0 || rect.top > window.innerHeight) {
+        rafId = null;
+        return;
+      }
+      // Move video slightly opposite to scroll direction
+      const offset = rect.top * -0.15; // ~15% parallax
+      hero.style.setProperty("--parallax-y", `${offset}px`);
+      rafId = null;
+    };
+
+    const onScroll = () => {
+      if (rafId === null) rafId = requestAnimationFrame(update);
+    };
+
+    update(); // initial
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+
     return () => {
-      document.body.style.overflow = "";
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, []);
 
-  // Control body scroll when popup is open
+  /* ------------------------------------------------------------------ */
+  /*  Body scroll lock (single source of truth)                          */
+  /* ------------------------------------------------------------------ */
   useEffect(() => {
-    if (openPopup) {
-      // Disable scrolling on body
-      document.body.style.overflow = "hidden";
-      document.body.style.position = "fixed";
-      document.body.style.width = "100%";
-      document.body.style.top = `-${window.scrollY}px`;
-
-      // Store scroll position for restoration
-      window._scrollY = window.scrollY;
-    } else {
-      // Restore scrolling
-      const scrollY = window._scrollY || 0;
+    if (!openPopup) {
+      const scrollY = scrollYRef.current;
       document.body.style.overflow = "";
       document.body.style.position = "";
       document.body.style.width = "";
       document.body.style.top = "";
-
-      // Restore scroll position
       window.scrollTo(0, scrollY);
+      return;
     }
 
-    // Cleanup function
+    scrollYRef.current = window.scrollY;
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    document.body.style.top = `-${scrollYRef.current}px`;
+
     return () => {
       document.body.style.overflow = "";
       document.body.style.position = "";
@@ -159,6 +139,30 @@ export default function ProjectsPage() {
       document.body.style.top = "";
     };
   }, [openPopup]);
+
+  /* ------------------------------------------------------------------ */
+  /*  Cleanup on unmount                                                 */
+  /* ------------------------------------------------------------------ */
+  useEffect(() => {
+    return () => {
+      if (animationTimeoutRef.current) clearTimeout(animationTimeoutRef.current);
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.top = "";
+    };
+  }, []);
+
+  const handleOpenPopup = useCallback(() => {
+    setOpenPopup(true);
+    animationTimeoutRef.current = setTimeout(() => setIsAnimating(true), 50);
+  }, []);
+
+  const handleClosePopup = useCallback(() => {
+    setIsAnimating(false);
+    closeTimeoutRef.current = setTimeout(() => setOpenPopup(false), 300);
+  }, []);
 
   return (
     <>
@@ -178,10 +182,7 @@ export default function ProjectsPage() {
                             Home
                           </Link>
                         </li>
-                        <li
-                          className="breadcrumb-item active"
-                          aria-current="page"
-                        >
+                        <li className="breadcrumb-item active" aria-current="page">
                           Projects
                         </li>
                       </ol>
@@ -193,8 +194,10 @@ export default function ProjectsPage() {
           </div>
         </div>
       </div>
-      <section className="projects-hero-section">
-         <video
+
+      {/* Hero — ref added for parallax */}
+      <section className="projects-hero-section" ref={heroRef}>
+        <video
           className="bg-video"
           autoPlay
           muted
@@ -209,13 +212,14 @@ export default function ProjectsPage() {
         </video>
 
         <div className="elementor-background-overlay"></div>
+
         <div className="hero-content">
           <h1>PROJECTS</h1>
 
           <div className="stats-grid">
             <div className="stat-item">
               <span className="stat-number">
-               {loading ? (
+                {loading ? (
                   "..."
                 ) : (
                   <CountUp
@@ -227,6 +231,7 @@ export default function ProjectsPage() {
               </span>
               <span className="stat-label">Completed</span>
             </div>
+
             <div className="stat-item">
               <span className="stat-number">
                 {loading ? (
@@ -240,6 +245,7 @@ export default function ProjectsPage() {
               </span>
               <span className="stat-label">In Progress</span>
             </div>
+
             <div className="stat-item">
               <span className="stat-number">
                 {loading ? (
@@ -255,7 +261,6 @@ export default function ProjectsPage() {
             </div>
           </div>
 
-          {/* Add loading/error state indicator */}
           {error && (
             <div className="text-center text-danger mb-3">
               <small>⚠️ {error}</small>
@@ -265,7 +270,7 @@ export default function ProjectsPage() {
           <div className="text-center">
             <Button
               variant="outlined"
-              className="block"
+              className="mapblock"
               onClick={handleOpenPopup}
             >
               View Full Screen Map
@@ -277,7 +282,7 @@ export default function ProjectsPage() {
       <section className="container-fluid p-0 m-0 bg-white position-relative">
         <div className="container py-4 bg-white" aria-label="Projects section">
           <div className="auto-grid">
-            <ProjectDetails 
+            <ProjectDetails
               projectCounts={projectCounts}
               loading={loading}
               error={error}
@@ -292,12 +297,12 @@ export default function ProjectsPage() {
         open={openPopup}
         onClose={handleClosePopup}
         className="fullscreen-map-dialog"
-        disableScrollLock={false} // Ensure scroll lock is enabled
+        disableScrollLock={false}
         sx={{
           "& .MuiDialog-paper": {
             backgroundColor: "#f5f5f5",
             position: "relative",
-            overflow: "hidden", // Prevent scroll inside dialog
+            overflow: "hidden",
             transform: isAnimating ? "scale(1)" : "scale(0.3)",
             opacity: isAnimating ? 1 : 0,
             transition:
@@ -308,7 +313,6 @@ export default function ProjectsPage() {
             height: isAnimating ? "100%" : "0px",
             margin: isAnimating ? 0 : "auto",
           },
-          // Prevent body scroll when dialog is open
           "& .MuiBackdrop-root": {
             position: "fixed",
           },
@@ -354,13 +358,6 @@ export default function ProjectsPage() {
           <MumbaiMap />
         </Box>
       </Dialog>
-
-      {/* Add global styles for body scrollbar removal */}
-      <style jsx global>{`
-        body {
-          overflow: ${openPopup ? "hidden" : ""};
-        }
-      `}</style>
     </>
   );
 }
