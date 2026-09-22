@@ -363,6 +363,7 @@
 
 // CEO Message Full Section - Clean Quote Style
 section.ceo-message-full {
+  min-height: 400px; /* Adjust based on your design height */
   background: #ffffff;
   
   .ceo-full-container {
@@ -522,7 +523,7 @@ section.ceo-message-full {
 
     .quote-symbol {
       position: absolute;
-
+      font-display: swap;
       top: -12px;
       left: 22px;
 
@@ -600,6 +601,7 @@ section.ceo-message-full {
   // PARAGRAPH
   // ==========================================
   .ceo-full-quote-paragraph {
+    font-display: swap;
     position: relative;
     z-index: 3;
 
