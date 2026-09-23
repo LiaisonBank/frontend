@@ -363,8 +363,10 @@
 
 // CEO Message Full Section - Clean Quote Style
 section.ceo-message-full {
-  min-height: 400px; /* Adjust based on your design height */
-  background: #ffffff;
+  width: 100%;
+  min-height: 400px;
+  background: #fff;
+  contain: layout;
   
   .ceo-full-container {
     width: 100%;
@@ -372,497 +374,440 @@ section.ceo-message-full {
     margin: 0;
     padding: 0;
   }
-  
+
   .ceo-full-grid {
     display: grid;
     grid-template-columns: 1fr;
     min-height: 700px;
-    
-    @media (min-width: 1024px) {
-      grid-template-columns: 1fr 1fr;
-    }
   }
-  
-  // Left Column - Full Image
+
+  // ==========================================
+  // IMAGE
+  // ==========================================
+
   .ceo-full-left {
     position: relative;
-    overflow: hidden;
+    width: 100%;
+    min-width: 0;
     min-height: 400px;
-    
+    overflow: hidden;
+
     @media (min-width: 1024px) {
       min-height: 700px;
-    }
-    
-    .ceo-full-image-wrapper {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      
-      .ceo-full-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
+      height: 700px;
     }
   }
-  
-  // Right Column - Content
+
+  .ceo-full-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+
+  .ceo-full-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+  }
+
+  // ==========================================
+  // RIGHT COLUMN
+  // ==========================================
+
   .ceo-full-right {
+    min-width: 0;
     display: flex;
     align-items: flex-start;
-    background: #ffffff;
+    background: #fff;
     padding: 0 30px;
-    padding-top: 0;
-    
+
     @media (min-width: 768px) {
       padding: 0 40px;
     }
-    
+
     @media (min-width: 1024px) {
       padding: 0 50px 0 40px;
+      min-height: 700px;
     }
-    
+
     @media (min-width: 1280px) {
       padding: 0 60px 0 50px;
     }
-    
-    .ceo-full-content {
-      width: 100%;
-      max-width: 600px;
-      margin: 0;
-      padding-top: 0;
-      
-      @media (min-width: 1024px) {
-        margin: 0;
-      }
-    }
   }
-  
-  // Name & Title
+
+  .ceo-full-content {
+    width: 100%;
+    max-width: 600px;
+    margin: 0;
+    padding-top: 0;
+  }
+
+  // ==========================================
+  // NAME
+  // ==========================================
+
   .ceo-full-name-wrapper {
-    margin-bottom: 25px;
+    margin: 0 0 25px;
     padding-top: 60px;
-    margin-top: 0;
-    
+
     .ceo-full-name {
+      margin: 0 0 2px;
       font-size: 32px;
       font-weight: 700;
-      color: #f97316;
-      margin: 0 0 2px 0;
       line-height: 1.1;
-      
+      color: #f97316;
+
       @media (min-width: 768px) {
         font-size: 38px;
       }
-      
+
       @media (min-width: 1024px) {
         font-size: 62px;
-        font-family: "bootstrap-icon";
+
+        // IMPORTANT:
+        // Remove bootstrap-icon unless this is
+        // genuinely your intended font.
+        // font-family: "bootstrap-icon";
       }
     }
-    
+
     .ceo-full-title {
-      font-size: 20px;
-      // padding: 10px;
-      color: #000000;
-      font-weight: 700;
-      // text-transform: uppercase;
-      // letter-spacing: 0.08em;
       margin: 0;
-      
+      color: #000;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.2;
+
       @media (min-width: 768px) {
         font-size: 34px;
-        font-family: "bootstrap-icon";
+
+        // Remove this if not intentional.
+        // font-family: "bootstrap-icon";
       }
     }
   }
-  
-.ceo-full-quote-text {
-  position: relative;
-  width: 100%;
-  padding: 65px 65px;
-  box-sizing: border-box;
-  min-height: 220px;
 
   // ==========================================
-  // DECORATION CONTAINER
+  // QUOTE CONTAINER
   // ==========================================
+
+  .ceo-full-quote-container {
+    position: relative;
+
+    /*
+     * Reserve space before the quote is rendered.
+     * This is important for CLS.
+     */
+    min-height: 300px;
+    width: 100%;
+  }
+
+  // ==========================================
+  // QUOTE ITEM
+  // ==========================================
+
+  .ceo-full-quote-item {
+    /*
+     * Do NOT switch between absolute and relative.
+     * That causes layout recalculation.
+     */
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translateY(10px);
+
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease,
+      visibility 0s linear 0.4s;
+
+    &.active {
+      position: absolute;
+      inset: 0;
+
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+
+      transform: translateY(0);
+
+      transition:
+        opacity 0.4s ease,
+        transform 0.4s ease,
+        visibility 0s linear 0s;
+    }
+  }
+
+  // ==========================================
+  // QUOTE BOX
+  // ==========================================
+
+  .ceo-full-quote-text {
+    position: relative;
+
+    width: 100%;
+    min-height: 220px;
+
+    box-sizing: border-box;
+
+    padding: 65px;
+
+    display: flex;
+    align-items: center;
+
+    /*
+     * Prevent quote content from changing
+     * the container dimensions.
+     */
+    overflow: hidden;
+
+    .ceo-full-quote-paragraph {
+      position: relative;
+      z-index: 3;
+
+      width: 100%;
+      margin: 0;
+      padding: 15px 10px;
+
+      color: #333;
+
+      font-family: "Messapia", serif;
+      font-size: 24px;
+      line-height: 1.7;
+
+      font-weight: 400;
+
+      @media (max-width: 1023px) {
+        font-size: 16px;
+      }
+
+      @media (max-width: 767px) {
+        font-size: 14px;
+      }
+    }
+  }
+
+  // ==========================================
+  // DECORATIONS
+  // ==========================================
+
   .quote-decoration-top,
   .quote-decoration-bottom {
     position: absolute;
     inset: 0;
+
     width: 100%;
     height: 100%;
+
     pointer-events: none;
     z-index: 2;
   }
 
-  // ==========================================
-  // TOP + LEFT
-  // ==========================================
-  .quote-decoration-top {
+  .quote-decoration-top::before {
+    content: "";
 
-    &::before {
-      content: "";
-      position: absolute;
-
-      top: 0;
-      left: 0;
-
-      width: 100%;
-      height: 100%;
-
-      border-top: 3px solid #f97316;
-      border-left: 3px solid #f97316;
-
-      border-top-left-radius: 35px;
-
-      box-sizing: border-box;
-    }
-
-    .quote-symbol {
-      position: absolute;
-      font-display: swap;
-      top: -12px;
-      left: 22px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      width: 55px;
-      height: 55px;
-
-      color: #f97316;
-
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 65px;
-      font-weight: 700;
-      line-height: 1;
-
-      background: #ffffff;
-
-      // Keeps the symbol clean against the line
-      padding: 0 5px;
-    }
-  }
-
-  // ==========================================
-  // BOTTOM + RIGHT
-  // ==========================================
-  .quote-decoration-bottom {
-
-    &::before {
-      content: "";
-      position: absolute;
-
-      bottom: 0;
-      right: 0;
-
-      width: 100%;
-      height: 100%;
-
-      border-right: 3px solid #f97316;
-      border-bottom: 3px solid #f97316;
-
-      border-bottom-right-radius: 35px;
-
-      box-sizing: border-box;
-    }
-
-    .quote-symbol {
-      position: absolute;
-
-      right: 22px;
-      bottom: -35px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      width: 55px;
-      height: 55px;
-
-      color: #f97316;
-
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 65px;
-      font-weight: 700;
-      line-height: 1;
-
-      background: #ffffff;
-
-      padding: 0 5px;
-    }
-  }
-
-  // ==========================================
-  // PARAGRAPH
-  // ==========================================
-  .ceo-full-quote-paragraph {
-    font-display: swap;
-    position: relative;
-    z-index: 3;
-
-    margin: 0;
-    padding: 15px 10px;
-
-    color: #333333;
-
-    font-family: "Messapia", serif;
-
-    font-size: 24px;
-    line-height: 1.7;
-  }
-}
-  .ceo-full-quote-item {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.7s ease-in-out;
-    visibility: hidden;
-    width: 100%;
-    
-    &.active {
-      opacity: 1;
-      transform: translateY(0);
-      visibility: visible;
-      position: relative;
-    }
+    inset: 0;
+
+    border-top: 3px solid #f97316;
+    border-left: 3px solid #f97316;
+
+    border-top-left-radius: 35px;
+
+    box-sizing: border-box;
   }
-  
-  // Clean Quote Style - Like the image
-  .ceo-full-quote-text {
-    position: relative;
-    padding: 20px 20px 20px 30px;
-    // border-left: 4px solid #f97316;
-    transition: all 0.3s ease;
-    min-height: 160px;
+
+  .quote-decoration-bottom::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    border-right: 3px solid #f97316;
+    border-bottom: 3px solid #f97316;
+
+    border-bottom-right-radius: 35px;
+
+    box-sizing: border-box;
+  }
+
+  .quote-symbol {
+    position: absolute;
+
     display: flex;
     align-items: center;
+    justify-content: center;
 
-    .quote-symbol{
-      color: orange;
-    }
-    
-    .ceo-full-quote-paragraph {
-      font-size: 17px;
-      // line-height: 1.8;
-      color: #333333;
-      margin: 0;
-      font-weight: 400;
-      flex: 1;
-      font-family: cursive;
-        // font-family: "Edu QLD Hand", cursive;
-          // font-family: "Lora", serif;
-          // font-family: "Playfair Display", serif;
-  // font-family: Arial, Helvetica, sans-serif;
-    // font-family: "Amagaro", serif;
-    //  font-family: "Ortica", serif;
-    font-family: "Messapia", serif;
+    width: 55px;
+    height: 55px;
 
+    color: #f97316;
 
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 65px;
+    font-weight: 700;
+    line-height: 1;
 
-
-      
-      @media (min-width: 768px) {
-        font-size: 19px;
-        line-height: 1.9;
-      }
-      
-      @media (min-width: 1024px) {
-        font-size: 24px;
-        // line-height: 2;
-      }
-    }
+    background: #fff;
   }
-  
-  // Navigation Dots
-  .ceo-full-dots {
-    display: flex;
-    justify-content: flex-start;
-    gap: 8px;
-    margin-top: 25px;
-    
-    .ceo-full-dot {
-      transition: all 0.3s ease;
-      border-radius: 9999px;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      width: 8px;
-      height: 8px;
-      background-color: #d1d5db;
-      flex-shrink: 0;
-      
-      &:hover {
-        background-color: #f97316;
-        opacity: 0.6;
-      }
-      
-      &.active {
-        width: 32px;
-        height: 8px;
-        background-color: #f97316;
-      }
-    }
+
+  .quote-decoration-top .quote-symbol {
+    top: -12px;
+    left: 22px;
+
+    padding: 0 5px;
   }
-  
-  // View Profile Link
+
+  .quote-decoration-bottom .quote-symbol {
+    right: 22px;
+    bottom: -35px;
+
+    padding: 0 5px;
+  }
+
+  // ==========================================
+  // PROFILE
+  // ==========================================
+
   .ceo-full-view-profile {
     margin-top: 20px;
     text-align: right;
-    
-    
+
     .ceo-full-profile-link {
       display: inline-flex;
       align-items: center;
+
+      padding-top: 40px;
+
       color: #f97316;
+
       font-size: 18px;
       font-weight: 600;
+
       text-decoration: none;
+
       transition: color 0.3s ease;
-      padding-top: 40px;
-      
+
       @media (min-width: 768px) {
         font-size: 26px;
       }
-      
+
       &:hover {
         color: #ea580c;
-        
+
         .ceo-full-profile-icon {
           transform: translateX(4px);
         }
       }
     }
-    
+
     .ceo-full-profile-icon {
       width: 18px;
       height: 18px;
+
       margin-left: 8px;
+
       transition: transform 0.3s ease;
     }
   }
-  
-  // Mobile Responsive
+
+  // ==========================================
+  // DESKTOP
+  // ==========================================
+
+  @media (min-width: 1024px) {
+    .ceo-full-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      min-height: 700px;
+    }
+  }
+
+  // ==========================================
+  // TABLET
+  // ==========================================
+
   @media (max-width: 1023px) {
     .ceo-full-grid {
       min-height: auto;
     }
-    
+
     .ceo-full-left {
       min-height: 300px;
-      
-      .ceo-full-image-wrapper {
-        .ceo-full-image {
-          min-height: 300px;
-          object-fit: cover;
-        }
-      }
+      height: 300px;
     }
-    
+
     .ceo-full-right {
       padding: 0 20px;
     }
-    
+
     .ceo-full-name-wrapper {
       margin-bottom: 15px;
       padding-top: 30px;
-      
+
       .ceo-full-name {
         font-size: 28px;
       }
     }
-    
+
     .ceo-full-quote-container {
       min-height: 240px;
     }
-    
+
     .ceo-full-quote-text {
-      padding: 15px 15px 15px 20px;
       min-height: 150px;
-      
-      .ceo-full-quote-paragraph {
-        font-size: 16px;
-      }
-    }
-    
-    .ceo-full-dots {
-      justify-content: center;
-    }
-    
-    .ceo-full-view-profile {
-      text-align: center;
+      padding: 15px 15px 15px 20px;
     }
   }
-  
+
+  // ==========================================
+  // MOBILE
+  // ==========================================
+
   @media (max-width: 480px) {
     .ceo-full-left {
       min-height: 200px;
-      
-      .ceo-full-image-wrapper {
-        .ceo-full-image {
-          min-height: 200px;
-        }
-      }
+      height: 200px;
     }
-    
+
     .ceo-full-right {
       padding: 0 16px;
     }
-    
+
     .ceo-full-name-wrapper {
       margin-bottom: 10px;
       padding-top: 20px;
-      
+
       .ceo-full-name {
         font-size: 24px;
       }
-      
+
       .ceo-full-title {
         font-size: 14px;
         padding: 5px 0;
       }
     }
-    
+
     .ceo-full-quote-container {
       min-height: 200px;
     }
-    
+
     .ceo-full-quote-text {
-      padding: 12px 12px 12px 15px;
-      // border-left-width: 3px;
       min-height: 120px;
-      
-      .ceo-full-quote-paragraph {
-        font-size: 14px;
-        // line-height: 1.7;
-      }
+      padding: 12px 12px 12px 15px;
     }
-    
-    .ceo-full-dots {
-      gap: 6px;
-      margin-top: 15px;
-      
-      .ceo-full-dot {
-        width: 6px;
-        height: 6px;
-        
-        &.active {
-          width: 24px;
-          height: 6px;
-        }
-      }
-    }
-    
+
     .ceo-full-view-profile {
       margin-top: 15px;
-      
+
       .ceo-full-profile-link {
         font-size: 16px;
       }
@@ -1122,7 +1067,7 @@ section.ceo-message-full {
       width: 100%;
       height: 100%;
       opacity: 0.6;
-      // z-index: -1;
+      z-index: -1;
       // filter: invert(100%);
     }
     .splide__slide {  
