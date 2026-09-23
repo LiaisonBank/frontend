@@ -1,15 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FileText, ChevronDown, ChevronRight, X } from "lucide-react";
 import { useModal } from "@/context/ModalContext";
-import { ChevronRight, ChevronDown, FileText, X } from "lucide-react";
 import "./ServicesModal.css";
-
-export default function ServicesModal() {
-  const router = useRouter();
-  const { serviceModalOpen, setServiceModalOpen } = useModal();
-  const modalRef = useRef(null);
 
   const servicesData = [
     {
@@ -638,234 +633,359 @@ export default function ServicesModal() {
     }
   ];
 
-  const [selectedSection, setSelectedSection] = useState(servicesData[0]);
-  const [selectedCategory, setSelectedCategory] = useState(servicesData[0]?.items?.[0] || null);
-  const [expandedItems, setExpandedItems] = useState({});
+const findSection = (name) =>
+  servicesData.find((section) => section.name.trim() === name.trim()) ??
+  servicesData[0] ??
+  null;
 
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === 'Escape') setServiceModalOpen(false);
-    };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+const firstItem = (section) => section?.items?.[0] ?? null;
+
+export default function ServicesModal() {
+  const router = useRouter();
+  const { serviceModalOpen, setServiceModalOpen } = useModal();
+
+  const modalRef = useRef(null);
+  const lastFocusedRef = useRef(null);
+
+  // The recording opens on "Liaisoning".
+  const initialSection = useMemo(() => findSection("Liaisoning"), []);
+
+  const [selectedSection, setSelectedSection] = useState(initialSection);
+  const [selectedCategory, setSelectedCategory] = useState(firstItem(initialSection));
+  const [expandedItems, setExpandedItems] = useState({});
+  const [isClosing, setIsClosing] = useState(false);
+
+  const closeModal = useCallback(() => {
+    setIsClosing(true);
+
+    window.setTimeout(() => {
+      setServiceModalOpen(false);
+      setIsClosing(false);
+    }, 160);
   }, [setServiceModalOpen]);
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
-        setServiceModalOpen(false);
+    if (!serviceModalOpen) return undefined;
+
+    lastFocusedRef.current = document.activeElement;
+    document.body.classList.add("services-modal-open");
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeModal();
       }
     };
-    if (serviceModalOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [serviceModalOpen, setServiceModalOpen]);
 
-  if (!serviceModalOpen) return null;
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.classList.remove("services-modal-open");
+
+      if (lastFocusedRef.current instanceof HTMLElement) {
+        lastFocusedRef.current.focus();
+      }
+    };
+  }, [serviceModalOpen, closeModal]);
+
+  useEffect(() => {
+    if (!serviceModalOpen) return;
+
+    const firstFocusable = modalRef.current?.querySelector(
+      "button:not([disabled]), a[href]"
+    );
+
+    firstFocusable?.focus();
+  }, [serviceModalOpen]);
+
+  const selectSection = (section) => {
+    setSelectedSection(section);
+    setSelectedCategory(firstItem(section));
+    setExpandedItems({});
+  };
+
+  const selectCategory = (category) => {
+    setSelectedCategory(category);
+    setExpandedItems({});
+  };
 
   const toggleExpand = (key) => {
-    setExpandedItems(prev => ({
-      ...prev,
-      [key]: !prev[key]
+    setExpandedItems((current) => ({
+      ...current,
+      [key]: !current[key],
     }));
   };
 
   const handleItemClick = (item) => {
-    if (item.href) {
-      setServiceModalOpen(false);
-      router.push(item.href);
+    if (!item?.href) return;
+
+    closeModal();
+    router.push(item.href);
+  };
+
+  const handleOverlayMouseDown = (event) => {
+    if (event.target === event.currentTarget) {
+      closeModal();
     }
   };
 
-  const renderChildren = (children, level = 0) => {
-    if (!children || children.length === 0) return null;
+  const renderTree = (children, level = 0, parentKey = "root") => {
+    if (!children?.length) return null;
 
-    return children.map((child, index) => {
-      const hasChildren = child.children && child.children.length > 0;
-      const key = `${child.name}-${level}-${index}`;
-      const isExpanded = expandedItems[key];
+    return (
+      <div className={`services-tree services-tree-level-${level}`}>
+        {children.map((child, index) => {
+          const key = `${parentKey}-${child.name}-${index}`;
+          const hasChildren = Boolean(child.children?.length);
+          const expanded = Boolean(expandedItems[key]);
 
-      return (
-        <div key={key} className={`service-child level-${level}`}>
-          <div
-            className={`service-child-header ${hasChildren ? 'has-children' : ''}`}
-            onClick={() => {
-              if (hasChildren) {
-                toggleExpand(key);
-              } else if (child.href) {
-                handleItemClick(child);
-              }
-            }}
-            style={{
-              paddingLeft: `${level * 20 + 10}px`,
-              cursor: hasChildren || child.href ? 'pointer' : 'default',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingTop: '10px',
-              paddingBottom: '10px',
-              paddingRight: '10px',
-              borderBottom: '1px solid #f0f0f0',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              if (hasChildren || child.href) {
-                e.currentTarget.style.backgroundColor = '#f5f5f5';
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            <span className="service-child-name" style={{ flex: 1, fontSize: '14px' }}>
-              {child.name}
-            </span>
-            {/* <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {hasChildren && (
-                <span className="service-child-toggle" style={{ color: '#666' }}>
-                  {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+          return (
+            <div className="services-tree-item" key={key}>
+              <div
+                className={[
+                  "services-tree-row",
+                  hasChildren ? "is-parent" : "",
+                  child.href ? "is-link" : "",
+                  expanded ? "is-expanded" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                style={{ "--tree-level": level }}
+                role={hasChildren ? "button" : child.href ? "link" : undefined}
+                tabIndex={hasChildren || child.href ? 0 : undefined}
+                onClick={() => {
+                  if (hasChildren) {
+                    toggleExpand(key);
+                  } else if (child.href) {
+                    handleItemClick(child);
+                  }
+                }}
+                onKeyDown={(event) => {
+                  if (event.key !== "Enter" && event.key !== " ") return;
+                  event.preventDefault();
+
+                  if (hasChildren) {
+                    toggleExpand(key);
+                  } else if (child.href) {
+                    handleItemClick(child);
+                  }
+                }}
+              >
+                <span className="services-tree-name">{child.name}</span>
+
+                <span className="services-tree-actions">
+                  {hasChildren &&
+                    (expanded ? (
+                      <ChevronDown size={15} strokeWidth={1.8} aria-hidden="true" />
+                    ) : (
+                      <ChevronRight size={15} strokeWidth={1.8} aria-hidden="true" />
+                    ))}
+
+                  {child.pdf && (
+                    <a
+                      href={child.pdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="services-pdf-link"
+                      aria-label={`Open PDF for ${child.name}`}
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <FileText size={14} strokeWidth={1.8} />
+                    </a>
+                  )}
                 </span>
+              </div>
+
+              {hasChildren && expanded && (
+                <div className="services-tree-children">
+                  {renderTree(child.children, level + 1, key)}
+                </div>
               )}
-              {child.pdf && (
-                <a
-                  href={child.pdf}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="service-pdf-link"
-                  onClick={(e) => e.stopPropagation()}
-                  style={{ color: '#666', textDecoration: 'none' }}
-                >
-                  <FileText size={14} />
-                </a>
-              )}
-            </div> */}
-          </div>
-          {hasChildren && isExpanded && (
-            <div className="service-child-children">
-              {renderChildren(child.children, level + 1)}
             </div>
-          )}
-        </div>
-      );
-    });
+          );
+        })}
+      </div>
+    );
   };
 
+  if (!serviceModalOpen) return null;
+
   return (
-    <div className="services-modal-overlay">
-      <div className="services-modal" ref={modalRef}>
-        <div className="services-modal-body">
-          <button
-            className="services-modal-close"
-            onClick={() => setServiceModalOpen(false)}
-            aria-label="Close modal"
-          >
-            <X size={24} />
-          </button>
+    <div
+      className={`services-modal-overlay${isClosing ? " is-closing" : ""}`}
+      onMouseDown={handleOverlayMouseDown}
+      aria-hidden="false"
+    >
+      <section
+        ref={modalRef}
+        className="services-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Our Services"
+      >
+        <button
+          type="button"
+          className="services-modal-close"
+          onClick={closeModal}
+          aria-label="Close services menu"
+        >
+          <X size={19} strokeWidth={2} />
+        </button>
 
-          {/* Left Panel - Sections */}
-          <div className="services-left-panel">
-            <div className="services-section-list">
-              {servicesData.map((section) => (
-                <button
-                  key={section.name}
-                  className={`services-section-btn ${selectedSection?.name === section.name ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedSection(section);
-                    setSelectedCategory(section.items?.[0] || null);
-                    setExpandedItems({});
-                  }}
-                >
-                  <span className="services-section-name">{section.name}</span>
-                  {section.pdf && (
-                    <a
-                      href={section.pdf}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="services-section-pdf"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FileText size={14} />
-                    </a>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
+        <div className="services-modal-grid">
+          <aside className="services-left-panel">
+            <div className="services-panel-scroll">
+              {servicesData.map((section) => {
+                const active =
+                  selectedSection?.name.trim() === section.name.trim();
 
-          {/* Center Panel - Categories */}
-          <div className="services-center-panel">
-            <div className="services-category-list">
-              {selectedSection?.items?.map((item) => (
-                <button
-                  key={item.name}
-                  className={`services-category-btn ${selectedCategory?.name === item.name ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedCategory(item);
-                    setExpandedItems({});
-                  }}
-                >
-                  <span className="services-category-name">{item.name}</span>
-                  
-                  {item.pdf && (
-                    <a
-                      href={item.pdf}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="services-category-pdf"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FileText size={14} />
-                    </a>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
+                return (
+                  <div
+                    key={section.name}
+                    className={`services-section-btn${active ? " active" : ""}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={active}
+                    onClick={() => selectSection(section)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        selectSection(section);
+                      }
+                    }}
+                  >
+                    <span className="services-section-name">
+                      {section.name.trim()}
+                    </span>
 
-          {/* Right Panel - Details */}
-          <div className="services-right-panel">
-            {selectedCategory ? (
-              <div className="services-details">
-                <h3 className="services-details-title" style={{ 
-                  fontSize: '18px', 
-                  fontWeight: '600',
-                  marginBottom: '16px',
-                  paddingBottom: '12px',
-                  borderBottom: '2px solid #e0e0e0',
-                  color: '#333'
-                }}>
-                  {selectedCategory.name}
-                </h3>
-                {selectedCategory.description && (
-                  <p className="services-details-description">{selectedCategory.description}</p>
-                )}
-                {selectedCategory.children && selectedCategory.children.length > 0 ? (
-                  <div className="services-details-children">
-                    {renderChildren(selectedCategory.children)}
-                  </div>
-                ) : (
-                  <div className="services-details-empty">
-                    <p>No sub-services available for this category.</p>
-                    {selectedCategory.href && (
-                      <button
-                        className="services-details-cta"
-                        onClick={() => handleItemClick(selectedCategory)}
+                    {section.pdf && (
+                      <a
+                        href={section.pdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="services-section-pdf"
+                        aria-label={`Open PDF for ${section.name.trim()}`}
+                        onClick={(event) => event.stopPropagation()}
                       >
-                        Learn More
-                      </button>
+                        <FileText size={14} strokeWidth={1.8} />
+                      </a>
                     )}
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="services-details-empty-state">
-                <p>Select a category to view details</p>
-              </div>
-            )}
+                );
+              })}
+            </div>
+          </aside>
+
+          <div className="services-center-panel">
+            <div className="services-panel-scroll">
+              {selectedSection?.items?.length ? (
+                selectedSection.items.map((item) => {
+                  const active = selectedCategory?.name === item.name;
+                  const hasChildren = Boolean(item.children?.length);
+
+                  return (
+                    <div
+                      key={item.name}
+                      className={`services-category-btn${active ? " active" : ""}`}
+                      role="button"
+                      tabIndex={0}
+                      aria-pressed={active}
+                      onClick={() => selectCategory(item)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          selectCategory(item);
+                        }
+                      }}
+                    >
+                      <span className="services-category-name">{item.name}</span>
+
+                      <span className="services-category-actions">
+                        {item.pdf && (
+                          <a
+                            href={item.pdf}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="services-category-pdf"
+                            aria-label={`Open PDF for ${item.name}`}
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            <FileText size={14} strokeWidth={1.8} />
+                          </a>
+                        )}
+
+                        {hasChildren &&
+                          (active ? (
+                            <ChevronDown size={15} aria-hidden="true" />
+                          ) : (
+                            <ChevronRight size={15} aria-hidden="true" />
+                          ))}
+                      </span>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="services-panel-empty">No services available.</div>
+              )}
+            </div>
           </div>
+
+          <main className="services-right-panel">
+            <div className="services-details">
+              {selectedCategory ? (
+                <>
+                  <div className="services-details-heading">
+                    <h2>{selectedCategory.name}</h2>
+
+                    {selectedCategory.pdf && (
+                      <a
+                        href={selectedCategory.pdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="services-details-pdf"
+                        aria-label={`Open PDF for ${selectedCategory.name}`}
+                      >
+                        <FileText size={15} />
+                      </a>
+                    )}
+                  </div>
+
+                  {selectedCategory.description && (
+                    <p className="services-details-description">
+                      {selectedCategory.description}
+                    </p>
+                  )}
+
+                  {selectedCategory.children?.length ? (
+                    <div className="services-details-list">
+                      {renderTree(selectedCategory.children)}
+                    </div>
+                  ) : (
+                    <div className="services-details-empty">
+                      <p>No sub-services available for this category.</p>
+
+                      {selectedCategory.href && (
+                        <button
+                          type="button"
+                          className="services-details-cta"
+                          onClick={() => handleItemClick(selectedCategory)}
+                        >
+                          Learn More
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="services-details-empty-state">
+                  <p>Select a category to view details.</p>
+                </div>
+              )}
+            </div>
+          </main>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

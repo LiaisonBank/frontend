@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from 'next/link'
-import Image from 'next/image'
+import Link from 'next/link';
+import Image from 'next/image';
 import useBodyClass from '@/components/useBodyClass';
-import welcomeImg from "@/assets/images/mahadev_Rupali_Arvind.webp"
-import devaImg from "@/assets/images/ceoImg1.jpg"
-import ServicesSection from "@/components/ServicesSection";
+import devaImg from "@/assets/images/ceoImg1.webp"
 import ClientScroller from "@/components/ClientScroller"
 import useFancybox from '@/components/useFancybox';
 import TestimonialSlider from '@/components/TestimonialSlider';
@@ -192,11 +190,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Rest of your sections */}
-      <section className="welcome d-none">
-        {/* Welcome section */}
-      </section>
-
       <section className="ourservices">
         <div className="mx-auto py-5 service-list">
           <div className="section-title">
@@ -207,10 +200,6 @@ const Home = () => {
             <OurServices />
           </div>
         </div>
-      </section>
-
-      <section className="weprovide d-none">
-        {/* We provide section */}
       </section>
 
       <section className="awardscertification px-0">
@@ -233,10 +222,6 @@ const Home = () => {
             <ClientScroller />
           </div>
         </div>
-      </section>
-
-      <section className="assistance d-none">
-        {/* Assistance section */}
       </section>
 
       <section className="clientfeedback pb-5">
