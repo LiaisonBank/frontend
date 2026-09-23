@@ -892,7 +892,9 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     }
   }
 }
-
+input:focus, textarea:focus, select:focus{
+  box-shadow: none !important;
+}
 .sticky-icon-below-1024 {
   display: none;
 }

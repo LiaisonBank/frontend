@@ -1,135 +1,243 @@
 // HeroSlogan.jsx
 "use client";
 
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+  useSyncExternalStore,
+} from "react";
 import styles from "./HeroSlogan.module.scss";
 
-// Constants
+/* -------------------------------------------------------------------------- */
+/*                                Constants                                   */
+/* -------------------------------------------------------------------------- */
+
 const WORDS = ["HAQ", "SE", "BHADHO,", "BHADHO", "HAQ", "SE"];
+
 const PARTICLE_COLORS = [
-  'rgba(255, 215, 0, 0.15)',
-  'rgba(255, 107, 107, 0.1)',
-  'rgba(78, 205, 196, 0.1)',
-  'rgba(255, 159, 67, 0.1)',
-  'rgba(162, 89, 255, 0.1)',
+  "rgba(255, 215, 0, 0.15)",
+  "rgba(255, 107, 107, 0.1)",
+  "rgba(78, 205, 196, 0.1)",
+  "rgba(255, 159, 67, 0.1)",
+  "rgba(162, 89, 255, 0.1)",
 ];
 
-// Sound Effect System - plays 5-second sound from public folder
+const MOBILE_BREAKPOINT = 768;
+const SSR_DEFAULT_WIDTH = 1024;
+const TYPING_SPEED_MS = 100;
+const INITIAL_TYPING_DELAY_MS = 2000;
+const RESTART_DELAY_MS = 4000;
+const RESTART_GAP_MS = 1500;
+const SOUND_STOP_DELAY_MS = 5000;
+const CURSOR_BLINK_MS = 500;
+const AUDIO_VOLUME = 0.8;
+
+/* -------------------------------------------------------------------------- */
+/*                        External store subscriptions                        */
+/* -------------------------------------------------------------------------- */
+
+const subscribeNoop = () => () => {};
+const getIsClientSnapshot = () => true;
+const getIsServerSnapshot = () => false;
+
+const subscribeToResize = (callback) => {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("resize", callback);
+  return () => window.removeEventListener("resize", callback);
+};
+const getWidthSnapshot = () =>
+  typeof window === "undefined" ? SSR_DEFAULT_WIDTH : window.innerWidth;
+const getWidthServerSnapshot = () => SSR_DEFAULT_WIDTH;
+
+/* -------------------------------------------------------------------------- */
+/*                            Sound Effect System                             */
+/* -------------------------------------------------------------------------- */
+
 class SoundEffectSystem {
   constructor() {
     this.audio = null;
     this.initialized = false;
     this.soundEnabled = true;
-    this.isPlaying = false;
   }
 
-  init() {
+  init(src) {
     try {
-      if (!this.audio) {
-        // this.audio = new Audio('/viralaudio-descent-whoosh-long-cinematic-sound-effect-405921.mp3'); // Update filename as needed
-        // this.audio = new Audio('/typing1.mp3');
-        // this.audio = new Audio('/typing2.mp3');
-        this.audio.loop = false;
-        this.audio.preload = 'auto';
+      if (this.audio) {
+        this.initialized = true;
+        return true;
       }
+      if (!src) {
+        this.initialized = true;
+        return true;
+      }
+      this.audio = new Audio(src);
+      this.audio.loop = false;
+      this.audio.preload = "auto";
+      this.audio.volume = AUDIO_VOLUME;
       this.initialized = true;
       return true;
-    } catch (e) {
-      console.warn('Audio not supported');
+    } catch (err) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("[HeroSlogan] Audio not supported:", err);
+      }
       return false;
     }
   }
 
-  playSound() {
+  play() {
     if (!this.soundEnabled || !this.audio) return;
-    
     try {
-      // Reset and play
       this.audio.currentTime = 0;
-      this.audio.play().catch(e => {
-        // Autoplay blocked - user interaction needed
-        console.log('Audio playback requires user interaction');
-      });
-    } catch (e) {
-      // Silently fail
+      const promise = this.audio.play();
+      if (promise && typeof promise.catch === "function") {
+        promise.catch(() => {
+          // Autoplay blocked — expected until user interacts.
+        });
+      }
+    } catch {
+      // Ignore — playback is a progressive enhancement.
     }
   }
 
-  stopSound() {
-    if (this.audio) {
+  stop() {
+    if (!this.audio) return;
+    try {
       this.audio.pause();
       this.audio.currentTime = 0;
+    } catch {
+      // Ignore.
     }
   }
 
   setVolume(volume) {
-    if (this.audio) {
-      this.audio.volume = Math.max(0, Math.min(1, volume));
-    }
+    if (!this.audio) return;
+    this.audio.volume = Math.max(0, Math.min(1, volume));
+  }
+
+  setEnabled(enabled) {
+    this.soundEnabled = !!enabled;
   }
 }
 
-const soundSystem = new SoundEffectSystem();
+/* -------------------------------------------------------------------------- */
+/*                                 Component                                  */
+/* -------------------------------------------------------------------------- */
 
-const HeroSlogan = () => {
+const HeroSlogan = ({
+  videoSrcMp4 = "/bannerMain.mp4",
+  videoSrcWebm = "/sloganBanner.webm",
+  posterSrc = "/sloganBanner.png",
+  soundSrc = null,
+  className = "",
+}) => {
+  /* --------------------------- Client + viewport -------------------------- */
+
+  const isClient = useSyncExternalStore(
+    subscribeNoop,
+    getIsClientSnapshot,
+    getIsServerSnapshot
+  );
+
+  const viewportWidth = useSyncExternalStore(
+    subscribeToResize,
+    getWidthSnapshot,
+    getWidthServerSnapshot
+  );
+
+  const isMobile = viewportWidth < MOBILE_BREAKPOINT;
+  const videoAnimation = isMobile ? "videoZoomPanMobile" : "videoZoomPan";
+  const particleCount = isMobile ? 30 : 50;
+
+  /* --------------------------------- State -------------------------------- */
+
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-  const [isTextVisible, setIsTextVisible] = useState(true);
   const [particles, setParticles] = useState([]);
-  const [videoAnimation, setVideoAnimation] = useState('videoZoomPan');
-  const [isMounted, setIsMounted] = useState(false);
   const [currentCharIndex, setCurrentCharIndex] = useState(-1);
   const [showCursor, setShowCursor] = useState(true);
   const [isTypingComplete, setIsTypingComplete] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [typingSpeed, setTypingSpeed] = useState(100); // ms between chars
-  
-  const videoRef = useRef(null);
-  const animationTimerRef = useRef(null);
-  const animationTimeoutRef = useRef(null);
+
+  /* --------------------------------- Refs --------------------------------- */
+
+  const typingTimerRef = useRef(null);
+  const restartTimerRef = useRef(null);
+  const stopSoundTimerRef = useRef(null);
   const cursorTimerRef = useRef(null);
-  const fullText = WORDS.join('');
   const audioUnlockedRef = useRef(false);
+  const soundSystemRef = useRef(null);
+  const startTypingRef = useRef(null); // ← holds the latest startTyping
 
-  // Unlock audio on user interaction
-  const unlockAudio = useCallback(() => {
-    if (!audioUnlockedRef.current) {
-      const success = soundSystem.init();
-      if (success) {
-        audioUnlockedRef.current = true;
-        soundSystem.soundEnabled = soundEnabled;
-        soundSystem.setVolume(0.8);
-      }
-    }
-  }, [soundEnabled]);
+  if (soundSystemRef.current === null) {
+    soundSystemRef.current = new SoundEffectSystem();
+  }
 
-  // Play sound wrapper - plays the full 5-second sound
-  const playSound = useCallback(() => {
-    if (!soundEnabled || !audioUnlockedRef.current) return;
-    soundSystem.playSound();
-  }, [soundEnabled]);
+  /* ------------------------------ Static data ----------------------------- */
 
-  // Stop sound wrapper
-  const stopSound = useCallback(() => {
-    soundSystem.stopSound();
+  const fullText = useMemo(() => WORDS.join(""), []);
+
+  // Pure prefix-sum — no mutation.
+  const wordPositions = useMemo(() => {
+    const lengths = WORDS.map((word) => word.length);
+    return WORDS.map((word, wordIndex) => {
+      const startIndex = lengths
+        .slice(0, wordIndex)
+        .reduce((sum, len) => sum + len, 0);
+      return {
+        word,
+        chars: word.split(""),
+        startIndex,
+        wordIndex,
+      };
+    });
   }, []);
 
-  // Generate particles
+  /* ------------------------------- Callbacks ------------------------------ */
+
+  const unlockAudio = useCallback(() => {
+    const system = soundSystemRef.current;
+    if (!system || audioUnlockedRef.current) return;
+    const ok = system.init(soundSrc);
+    if (ok) {
+      audioUnlockedRef.current = true;
+      system.setEnabled(soundEnabled);
+      system.setVolume(AUDIO_VOLUME);
+    }
+  }, [soundSrc, soundEnabled]);
+
+  const playSound = useCallback(() => {
+    const system = soundSystemRef.current;
+    if (!system || !soundEnabled || !audioUnlockedRef.current) return;
+    system.play();
+  }, [soundEnabled]);
+
+  const stopSound = useCallback(() => {
+    soundSystemRef.current?.stop();
+  }, []);
+
+  const handleVideoLoad = useCallback(() => {
+    setIsVideoLoaded(true);
+  }, []);
+
+  /* -------------------------- Particles + cursor -------------------------- */
+
   useEffect(() => {
-    setIsMounted(true);
-    
+    if (!isClient) return;
+
     const generateParticles = () => {
-      const newParticles = [];
-      const particleCount = window.innerWidth < 768 ? 30 : 50;
-      
+      const next = new Array(particleCount);
       for (let i = 0; i < particleCount; i++) {
         const size = Math.random() * 6 + 2;
         const left = Math.random() * 100;
         const duration = Math.random() * 25 + 15;
         const delay = Math.random() * 15;
-        const color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+        const color =
+          PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
         const wobble = Math.random() * 20 + 10;
-        
-        newParticles.push(
+
+        next[i] = (
           <div
             key={i}
             className={styles.particle}
@@ -141,193 +249,190 @@ const HeroSlogan = () => {
               animationDelay: `${delay}s`,
               background: color,
               boxShadow: `0 0 ${size * 2}px ${color}`,
-              '--wobble': `${wobble}px`,
+              "--wobble": `${wobble}px`,
             }}
           />
         );
       }
-      setParticles(newParticles);
+      setParticles(next);
     };
 
-    generateParticles();
+    const rafId =
+      typeof requestAnimationFrame === "function"
+        ? requestAnimationFrame(generateParticles)
+        : setTimeout(generateParticles, 0);
 
-    const isMobile = window.innerWidth < 768;
-    setVideoAnimation(isMobile ? 'videoZoomPanMobile' : 'videoZoomPan');
-
-    // Reset animation state on mount
-    setCurrentCharIndex(-1);
-    setShowCursor(true);
-    setIsTypingComplete(false);
-
-    // Cursor blinking animation
     cursorTimerRef.current = setInterval(() => {
-      setShowCursor(prev => !prev);
-    }, 500);
+      setShowCursor((prev) => !prev);
+    }, CURSOR_BLINK_MS);
 
-    // Unlock audio on any user interaction
-    const events = ['click', 'touchstart', 'keydown'];
-    events.forEach(event => {
-      document.addEventListener(event, unlockAudio);
-    });
+    const events = ["click", "touchstart", "keydown"];
+    events.forEach((event) =>
+      document.addEventListener(event, unlockAudio, { passive: true })
+    );
 
     return () => {
-      if (animationTimerRef.current) {
-        clearInterval(animationTimerRef.current);
-      }
-      if (animationTimeoutRef.current) {
-        clearTimeout(animationTimeoutRef.current);
+      if (
+        typeof cancelAnimationFrame === "function" &&
+        typeof rafId === "number"
+      ) {
+        cancelAnimationFrame(rafId);
+      } else {
+        clearTimeout(rafId);
       }
       if (cursorTimerRef.current) {
         clearInterval(cursorTimerRef.current);
+        cursorTimerRef.current = null;
       }
-      events.forEach(event => {
-        document.removeEventListener(event, unlockAudio);
-      });
+      events.forEach((event) =>
+        document.removeEventListener(event, unlockAudio)
+      );
     };
-  }, [unlockAudio]);
+  }, [isClient, particleCount, unlockAudio]);
 
-  // Handle video load
-  const handleVideoLoad = useCallback(() => {
-    setIsVideoLoaded(true);
-  }, []);
+  /* ----------------------------- Typing loop ------------------------------ */
 
-  // Typing animation function - plays 5-second sound during typing
   const startTyping = useCallback(() => {
     const totalChars = fullText.length;
     let index = -1;
-    
-    // Clear any existing timer
-    if (animationTimerRef.current) {
-      clearInterval(animationTimerRef.current);
-      animationTimerRef.current = null;
+
+    if (typingTimerRef.current) {
+      clearInterval(typingTimerRef.current);
+      typingTimerRef.current = null;
     }
-    
-    // Reset state
+
     setCurrentCharIndex(-1);
     setIsTypingComplete(false);
     setShowCursor(true);
-    
-    // Play the 5-second sound effect when typing starts
-    playSound();
-    
-    // Start typing effect
-    animationTimerRef.current = setInterval(() => {
-      if (index < totalChars - 1) {
-        index++;
-        setCurrentCharIndex(index);
-      } else {
-        // Typing complete
-        clearInterval(animationTimerRef.current);
-        animationTimerRef.current = null;
-        setIsTypingComplete(true);
-        
-        // Stop sound after typing completes (or let it finish naturally)
-        setTimeout(() => {
-          stopSound();
-        }, 5000); // 5 seconds duration
-        
-        // Wait and restart
-        animationTimeoutRef.current = setTimeout(() => {
-          setCurrentCharIndex(-1);
-          setIsTypingComplete(false);
-          setTimeout(() => {
-            startTyping();
-          }, 1500);
-        }, 4000);
-      }
-    }, typingSpeed);
-  }, [fullText, playSound, stopSound, typingSpeed]);
 
-  // Start typing animation with initial delay
+    playSound();
+
+    typingTimerRef.current = setInterval(() => {
+      if (index < totalChars - 1) {
+        index += 1;
+        setCurrentCharIndex(index);
+        return;
+      }
+
+      clearInterval(typingTimerRef.current);
+      typingTimerRef.current = null;
+      setIsTypingComplete(true);
+
+      stopSoundTimerRef.current = setTimeout(() => {
+        stopSound();
+        stopSoundTimerRef.current = null;
+      }, SOUND_STOP_DELAY_MS);
+
+      restartTimerRef.current = setTimeout(() => {
+        setCurrentCharIndex(-1);
+        setIsTypingComplete(false);
+        restartTimerRef.current = setTimeout(() => {
+          // ✅ Recursion goes through the ref, not the closure binding.
+          startTypingRef.current?.();
+        }, RESTART_GAP_MS);
+      }, RESTART_DELAY_MS);
+    }, TYPING_SPEED_MS);
+  }, [fullText, playSound, stopSound]);
+
+  // Keep the ref in sync with the latest startTyping.
   useEffect(() => {
+    startTypingRef.current = startTyping;
+    return () => {
+      startTypingRef.current = null;
+    };
+  }, [startTyping]);
+
+  useEffect(() => {
+    if (!isClient) return;
+
     const initialDelay = setTimeout(() => {
-      startTyping();
-    }, 2000);
+      startTypingRef.current?.();
+    }, INITIAL_TYPING_DELAY_MS);
 
     return () => {
       clearTimeout(initialDelay);
-      if (animationTimeoutRef.current) {
-        clearTimeout(animationTimeoutRef.current);
-      }
-      if (animationTimerRef.current) {
-        clearInterval(animationTimerRef.current);
-      }
+      if (typingTimerRef.current) clearInterval(typingTimerRef.current);
+      if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
+      if (stopSoundTimerRef.current) clearTimeout(stopSoundTimerRef.current);
       stopSound();
     };
-  }, [startTyping, stopSound]);
+  }, [isClient, stopSound]);
 
-  // Memoize word data
-  const { wordPositions } = useMemo(() => {
-    let charIndex = 0;
-    const positions = WORDS.map((word, wordIdx) => {
-      const chars = word.split("");
-      const startIndex = charIndex;
-      charIndex += chars.length;
-      return {
-        word,
-        chars,
-        startIndex,
-        wordIndex: wordIdx,
-      };
-    });
-    return { 
-      wordPositions: positions,
-    };
-  }, []);
+  /* --------------------------- Sound toggle UI ---------------------------- */
 
-  if (!isMounted) {
-    return null;
+  const handleSoundToggle = useCallback(
+    (event) => {
+      event.stopPropagation();
+      const next = !soundEnabled;
+      setSoundEnabled(next);
+      soundSystemRef.current?.setEnabled(next);
+      unlockAudio();
+
+      if (next) {
+        if (currentCharIndex < fullText.length - 1) playSound();
+      } else {
+        stopSound();
+      }
+    },
+    [
+      soundEnabled,
+      unlockAudio,
+      currentCharIndex,
+      fullText.length,
+      playSound,
+      stopSound,
+    ]
+  );
+
+  /* -------------------------------- Render -------------------------------- */
+
+  if (!isClient) {
+    return (
+      <div
+        className={`${styles.heroSlogan} ${className}`}
+        aria-hidden="true"
+        suppressHydrationWarning
+      />
+    );
   }
 
   return (
-    <div className={styles.heroSlogan}>
-      {/* Sound Toggle */}
-      {/* <button 
-        className={styles.soundToggle}
-        onClick={(e) => {
-          e.stopPropagation();
-          const newState = !soundEnabled;
-          setSoundEnabled(newState);
-          soundSystem.soundEnabled = newState;
-          unlockAudio();
-          if (newState) {
-            // Resume typing sound if typing is active
-            if (currentCharIndex < fullText.length - 1) {
-              playSound();
-            }
-          } else {
-            stopSound();
-          }
-        }}
-        aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}
-        style={{
-          background: soundEnabled ? 'rgba(255, 215, 0, 0.15)' : 'rgba(255, 0, 0, 0.15)',
-          borderColor: soundEnabled ? 'rgba(255, 215, 0, 0.4)' : 'rgba(255, 0, 0, 0.4)',
-        }}
-      >
-        {soundEnabled ? '⌨️' : '🔇'}
-      </button> */}
+    <div className={`${styles.heroSlogan} ${className}`}>
+      {soundSrc && (
+        <button
+          type="button"
+          className={styles.soundToggle}
+          onClick={handleSoundToggle}
+          aria-label={soundEnabled ? "Mute sound" : "Unmute sound"}
+          aria-pressed={soundEnabled}
+          data-enabled={soundEnabled}
+        >
+          <span aria-hidden="true">{soundEnabled ? "⌨️" : "🔇"}</span>
+        </button>
+      )}
 
-      <div className={styles.animatedGradient} />
-      
-     <div className={styles.videoWrapper}>
-  <video
-    ref={videoRef}
-    className={`${styles.backgroundVideo} ${styles[videoAnimation]}`}
-    autoPlay
-    loop
-    muted
-    playsInline
-    preload="metadata"
-    onLoadedData={handleVideoLoad}
-    poster="/sloganBanner.png"
-  >
-    <source src="/bannerMain.mp4" type="video/mp4" />
-    <source src="/sloganBanner.webm" type="video/webm" />
-  </video>
+      <div className={styles.animatedGradient} aria-hidden="true" />
 
-  {!isVideoLoaded && <div className={styles.videoFallback} />}
-</div>
+      <div className={styles.videoWrapper}>
+        <video
+          className={`${styles.backgroundVideo} ${styles[videoAnimation]}`}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          onLoadedData={handleVideoLoad}
+          poster={posterSrc}
+          aria-hidden="true"
+        >
+          <source src={videoSrcMp4} type="video/mp4" />
+          {videoSrcWebm && <source src={videoSrcWebm} type="video/webm" />}
+        </video>
+
+        {!isVideoLoaded && (
+          <div className={styles.videoFallback} aria-hidden="true" />
+        )}
+      </div>
 
       {particles.length > 0 && (
         <div className={styles.particles} aria-hidden="true">
@@ -336,25 +441,28 @@ const HeroSlogan = () => {
       )}
 
       <div className={styles.overlay} aria-hidden="true" />
-      
-      <div className={`${styles.sloganContainer} ${isTextVisible ? styles.visible : ''}`}>
+
+      <div className={`${styles.sloganContainer} ${styles.visible}`}>
         <div className={styles.sloganTextWrapper}>
           <h1 className={styles.sloganText}>
-            <div className={styles.sloganLine}>
+            <span className={styles.sloganLine}>
               {wordPositions.map((wordData) => (
                 <span
                   key={`word-${wordData.wordIndex}`}
                   className={styles.wordWrapper}
                 >
                   {wordData.chars.map((char, charIdx) => {
-                    const isComma = char === ',';
+                    const isComma = char === ",";
                     const globalCharIndex = wordData.startIndex + charIdx;
                     const isRevealed = currentCharIndex >= globalCharIndex;
-                    
+
                     return (
                       <span
                         key={`char-${globalCharIndex}`}
-                        className={`${styles.char} ${isRevealed ? styles.charReveal : ''} ${isComma ? styles.comma : ''}`}
+                        className={`${styles.char} ${
+                          isRevealed ? styles.charReveal : ""
+                        } ${isComma ? styles.comma : ""}`}
+                        aria-hidden={!isRevealed}
                       >
                         {char}
                       </span>
@@ -363,14 +471,14 @@ const HeroSlogan = () => {
                 </span>
               ))}
               {!isTypingComplete && (
-                <span 
-                  className={`${styles.cursor} ${showCursor ? styles.cursorVisible : ''}`}
+                <span
+                  className={`${styles.cursor} ${
+                    showCursor ? styles.cursorVisible : ""
+                  }`}
                   aria-hidden="true"
-                >
-                  
-                </span>
+                />
               )}
-            </div>
+            </span>
           </h1>
         </div>
       </div>
