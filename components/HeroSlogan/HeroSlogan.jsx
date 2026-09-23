@@ -153,7 +153,7 @@ const HeroSlogan = ({
 
   /* --------------------------------- State -------------------------------- */
 
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  // const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [particles, setParticles] = useState([]);
   const [currentCharIndex, setCurrentCharIndex] = useState(-1);
   const [showCursor, setShowCursor] = useState(true);
@@ -217,9 +217,9 @@ const HeroSlogan = ({
     soundSystemRef.current?.stop();
   }, []);
 
-  const handleVideoLoad = useCallback(() => {
-    setIsVideoLoaded(true);
-  }, []);
+  // const handleVideoLoad = useCallback(() => {
+  //   setIsVideoLoaded(true);
+  // }, []);
 
   /* -------------------------- Particles + cursor -------------------------- */
 
@@ -421,7 +421,7 @@ const HeroSlogan = ({
           muted
           playsInline
           preload="metadata"
-          onLoadedData={handleVideoLoad}
+          // onLoadedData={handleVideoLoad}
           poster={posterSrc}
           aria-hidden="true"
         >
@@ -429,9 +429,9 @@ const HeroSlogan = ({
           {videoSrcWebm && <source src={videoSrcWebm} type="video/webm" />}
         </video>
 
-        {!isVideoLoaded && (
+        {/* {!isVideoLoaded && (
           <div className={styles.videoFallback} aria-hidden="true" />
-        )}
+        )} */}
       </div>
 
       {particles.length > 0 && (
