@@ -413,26 +413,7 @@ const HeroSlogan = ({
 
       <div className={styles.animatedGradient} aria-hidden="true" />
 
-      <div className={styles.videoWrapper}>
-        <video
-          className={`${styles.backgroundVideo} ${styles[videoAnimation]}`}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          // onLoadedData={handleVideoLoad}
-          poster={posterSrc}
-          aria-hidden="true"
-        >
-          <source src={videoSrcMp4} type="video/mp4" />
-          {videoSrcWebm && <source src={videoSrcWebm} type="video/webm" />}
-        </video>
-
-        {/* {!isVideoLoaded && (
-          <div className={styles.videoFallback} aria-hidden="true" />
-        )} */}
-      </div>
+      
 
       {particles.length > 0 && (
         <div className={styles.particles} aria-hidden="true">
@@ -482,6 +463,28 @@ const HeroSlogan = ({
           </h1>
         </div>
       </div>
+      
+      <div className={styles.videoWrapper}>
+        <video
+          className={`${styles.backgroundVideo} ${styles[videoAnimation]}`}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          // onLoadedData={handleVideoLoad}
+          poster={posterSrc}
+          aria-hidden="true"
+        >
+          <source src={videoSrcMp4} type="video/mp4" />
+          {videoSrcWebm && <source src={videoSrcWebm} type="video/webm" />}
+        </video>
+
+        {/* {!isVideoLoaded && (
+          <div className={styles.videoFallback} aria-hidden="true" />
+        )} */}
+      </div>
+
     </div>
   );
 };
