@@ -86,10 +86,19 @@ const routes = [
 export default function sitemap() {
   const lastModified = new Date();
 
-  return routes.map((route) => ({
-    url: `${BASE_URL}${route.path}`,
-    lastModified,
-    changeFrequency: route.changeFrequency,
-    priority: route.priority,
-  }));
+  return [
+    // Website pages
+    ...routes.map((route) => ({
+      url: `${BASE_URL}${route.path}`,
+      lastModified,
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+    })),
+
+    // PDF document
+    {
+      url: `${BASE_URL}/pdf/electrical.pdf`,
+      lastModified: new Date("2026-09-20"),
+    },
+  ];
 }

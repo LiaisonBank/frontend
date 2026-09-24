@@ -1,7 +1,9 @@
 import HomePage from "./home/page";
 
 export const metadata = {
-  title: "Liaison Bank | Business Licensing & Government Liaison Services Mumbai",
+  title: "Government Liaison, Licensing & Compliance Services in Mumbai | Liaison Bank",
+  // title: "Liaison Bank | Business Licensing & Government Liaison Services Mumbai",
+
   description:
     "Liaison Bank is a leading business licensing and government liaison consultancy in Mumbai offering statutory approvals, regulatory compliance, FSSAI, factory licensing, commercial permits, BMC approvals, and end-to-end licensing support.",
 

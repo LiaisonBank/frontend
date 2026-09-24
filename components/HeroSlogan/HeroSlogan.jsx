@@ -460,6 +460,10 @@ const HeroSlogan = ({
                 />
               )}
             </span>
+               <span className={styles.seoText}>
+                Business Licensing, Government Liaison and Compliance Services for
+                Businesses in Mumbai.
+              </span>
           </h1>
         </div>
       </div>

@@ -1,8 +1,8 @@
 import Awards from "./Awards.jsx";
 
 export const metadata = {
-  title:
-    "Awards & Recognition | Liaison Bank | Business Licensing & Government Liaison Experts",
+  title: "Awards & Recognition | Government Liaison Experts in Mumbai | Liaison Bank",
+  // title: "Awards & Recognition | Liaison Bank | Business Licensing & Government Liaison Experts",
 
   description:
     "Explore the awards, achievements, certifications, and industry recognition earned by Liaison Bank. Our commitment to excellence in business licensing, government liaisoning, statutory approvals, and regulatory compliance has made us a trusted consultancy across Mumbai and India.",
