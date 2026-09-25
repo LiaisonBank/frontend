@@ -55,6 +55,7 @@ export default function AboutUsLiaisonPage() {
       //   "Statutory Body Coordination",
       //   "Documentation & Formalities"
       // ]
+      href: "/our-services/liaisoning"
     },
     {
       id: 2,
@@ -65,8 +66,12 @@ export default function AboutUsLiaisonPage() {
         "Business Licenses & Registrations",
         "NOC & Certificate Procurements",
         "Industry-Specific Permits",
-        "License Renewal & Management"
-      ]
+        "License Renewal & Management",
+
+
+      ],
+      href: "our-services/licensing"
+
     },
     {
       id: 3,
@@ -78,7 +83,9 @@ export default function AboutUsLiaisonPage() {
         "MGL Documentation & Approvals",
         "Pipeline Installation",
         "Commissioning & Gas Charging"
-      ]
+      ],
+      href: "/our-services/piped-natural-gas"
+
     },
     {
       id: 4,
@@ -90,7 +97,9 @@ export default function AboutUsLiaisonPage() {
         "Fire NOC & Approvals",
         "Fire Certification",
         "Risk Assessment & Training"
-      ]
+      ],
+      href: "/our-services/fire"
+
     },
     {
       id: 5,
@@ -101,8 +110,11 @@ export default function AboutUsLiaisonPage() {
         "Electrical Safety Audits",
         "Compliance Verification",
         "Electrical NOC & Approvals",
-        "System Upgradation Support"
-      ]
+        "System Upgradation Support",
+
+      ],
+      href: "/our-services/electrical"
+
     },
     {
       id: 6,
@@ -114,7 +126,9 @@ export default function AboutUsLiaisonPage() {
         "License Renewal Management",
         "Documentation & Record Keeping",
         "24/7 Support & Assistance"
-      ]
+      ],
+      href: "/our-services/amc"
+
     }
   ];
 
@@ -207,21 +221,29 @@ export default function AboutUsLiaisonPage() {
                 const Icon = service.icon;
                 return (
                   <div key={index} className="col-lg-4 col-md-6">
-                    <div className="service-card">
-                      <div className="service-card-icon">
-                        <Icon size={28} />
+                                       <Link href={service.href} className="service-card-link">
+                      <div className="service-card">
+                        <div className="service-card-icon">
+                          <Icon size={28} />
+                        </div>
+                        <h3 className="service-card-title">{service.title}</h3>
+                        <p className="service-card-description">{service.description}</p>
+                        <ul className="service-card-features">
+                          {/* Uncomment if you want to show features
+                          {service.features?.map((feature, idx) => (
+                            <li key={idx}>
+                              <ChevronRight size={14} />
+                              {feature}
+                            </li>
+                          ))}
+                          */}
+                        </ul>
+                        <div className="service-card-cta">
+                          <span>Learn More</span>
+                          <ArrowRight size={16} />
+                        </div>
                       </div>
-                      <h3 className="service-card-title">{service.title}</h3>
-                      <p className="service-card-description">{service.description}</p>
-                      <ul className="service-card-features">
-                        {/* {service.features.map((feature, idx) => (
-                          <li key={idx}>
-                            <ChevronRight size={14} />
-                            {feature}
-                          </li>
-                        ))} */}
-                      </ul>
-                    </div>
+                    </Link>
                   </div>
                 );
               })}
