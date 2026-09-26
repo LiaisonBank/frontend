@@ -384,20 +384,21 @@ export default function Header() {
                         onMouseLeave={hasSubmenu ? closeMegaMenu : undefined}
                       >
                         {link.name === "Our Services" ? (
-                          <button
-                            type="button"
-                            className="nav-link bg-transparent border-0 cursor-pointer flex items-center gap-1"
-                            aria-haspopup="true"
-                            aria-expanded={isActive}
-                          >
-                            {link.name}
-                            <ChevronDown
-                              size={16}
-                              className="nav-arrow"
-                              aria-hidden="true"
-                            />
-                          </button>
-                        ) : link.href ? (
+  <button
+    type="button"
+    className="nav-link bg-transparent border-0 cursor-pointer flex items-center gap-1"
+    aria-haspopup="true"
+    aria-expanded={isActive}
+    onClick={() => handleNavigation("/our-services")}
+  >
+    {link.name}
+    <ChevronDown
+      size={16}
+      className="nav-arrow"
+      aria-hidden="true"
+    />
+  </button>
+) : link.href ? (
                           <button
                             type="button"
                             className="nav-link bg-transparent border-0 cursor-pointer"
