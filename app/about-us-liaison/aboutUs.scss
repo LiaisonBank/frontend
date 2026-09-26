@@ -553,6 +553,44 @@
           flex-shrink: 0;
         }
 
+
+        /* Service card link wrapper */
+.service-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+  
+  &:hover {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+/* Service card CTA */
+.service-card-cta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #f97316;
+  transition: all 0.3s ease;
+  
+  svg {
+    transition: transform 0.3s ease;
+  }
+}
+
+.service-card:hover .service-card-cta {
+  gap: 10px;
+  
+  svg {
+    transform: translateX(4px);
+  }
+}
+
         .sectors-section {
           padding: 50px 0;
           background: #faf9f8;

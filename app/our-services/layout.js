@@ -11,8 +11,8 @@ export const metadata = {
   metadataBase: new URL(SITE_URL),
 
   title: {
-    default:
-      "Our Services | Liaisoning, Licensing & Compliance Solutions",  // no "– Liaison Bank"
+    default:"Our Services | Government Liaisoning & Licensing Services in Mumbai | Liaison Bank",
+    // default:"Our Services | Liaisoning, Licensing & Compliance Solutions",  // no "– Liaison Bank"
     template: "%s | Our Services – Liaison Bank",
   },
 
