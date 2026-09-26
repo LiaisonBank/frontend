@@ -11,8 +11,8 @@ export const metadata = {
   metadataBase: new URL(SITE_URL),
 
   title: {
-    default:
-      "Press Releases | Liaisoning & Licensing News – Liaison Bank",
+    default: "Press Releases | Government Liaisoning & Licensing News | Liaison Bank",
+    // default: "Press Releases | Liaisoning & Licensing News – Liaison Bank",
     template: "%s | Press Releases – Liaison Bank",
   },
 

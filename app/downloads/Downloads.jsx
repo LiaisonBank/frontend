@@ -673,7 +673,7 @@ export default function Downloads() {
         .downloads-hero {
           position: relative;
           background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 50%, #0d1b2a 100%);
-          padding: 100px 0 70px;
+          padding: 100px 0 100px;
           overflow: hidden;
         }
 

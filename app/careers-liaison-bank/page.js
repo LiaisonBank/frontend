@@ -1,8 +1,8 @@
 import Career from "./Career.jsx";
 
 export const metadata = {
-  title:
-    "Careers | Join Liaison Bank | Business Licensing & Government Liaison Jobs Mumbai",
+  title: "Careers at Liaison Bank | Government Liaison Jobs in Mumbai",
+  // title: "Careers | Join Liaison Bank | Business Licensing & Government Liaison Jobs Mumbai",
 
   description:
     "Build your career with Liaison Bank. Explore exciting job opportunities in business licensing, government liaisoning, statutory approvals, regulatory compliance, project management, and corporate consulting. Join our growing team in Mumbai and shape the future of business compliance across India.",
@@ -61,7 +61,7 @@ export const metadata = {
   ],
 
   alternates: {
-    canonical: "https://www.liaisonbank.com/careers",
+    canonical: "https://www.liaisonbank.com/careers-liaison-bank",
   },
 
   openGraph: {

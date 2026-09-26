@@ -1,4 +1,3 @@
-// HeroSlogan.jsx
 "use client";
 
 import {
@@ -36,20 +35,40 @@ const CURSOR_BLINK_MS = 500;
 const AUDIO_VOLUME = 0.8;
 
 /* -------------------------------------------------------------------------- */
+/*                         Video SEO Configuration                             */
+/* -------------------------------------------------------------------------- */
+
+const VIDEO_SEO = {
+  name: "Liaison Bank Business Licensing and Government Liaison Services",
+
+  description:
+    "Liaison Bank provides business licensing, government liaison, compliance and approval services for businesses in Mumbai.",
+
+  uploadDate: "2026-09-20",
+
+  duration: "PT0M30S",
+};
+
+/* -------------------------------------------------------------------------- */
 /*                        External store subscriptions                        */
 /* -------------------------------------------------------------------------- */
 
 const subscribeNoop = () => () => {};
+
 const getIsClientSnapshot = () => true;
 const getIsServerSnapshot = () => false;
 
 const subscribeToResize = (callback) => {
   if (typeof window === "undefined") return () => {};
+
   window.addEventListener("resize", callback);
+
   return () => window.removeEventListener("resize", callback);
 };
+
 const getWidthSnapshot = () =>
   typeof window === "undefined" ? SSR_DEFAULT_WIDTH : window.innerWidth;
+
 const getWidthServerSnapshot = () => SSR_DEFAULT_WIDTH;
 
 /* -------------------------------------------------------------------------- */
@@ -69,29 +88,36 @@ class SoundEffectSystem {
         this.initialized = true;
         return true;
       }
+
       if (!src) {
         this.initialized = true;
         return true;
       }
+
       this.audio = new Audio(src);
       this.audio.loop = false;
       this.audio.preload = "auto";
       this.audio.volume = AUDIO_VOLUME;
       this.initialized = true;
+
       return true;
     } catch (err) {
       if (process.env.NODE_ENV !== "production") {
         console.warn("[HeroSlogan] Audio not supported:", err);
       }
+
       return false;
     }
   }
 
   play() {
     if (!this.soundEnabled || !this.audio) return;
+
     try {
       this.audio.currentTime = 0;
+
       const promise = this.audio.play();
+
       if (promise && typeof promise.catch === "function") {
         promise.catch(() => {
           // Autoplay blocked — expected until user interacts.
@@ -104,6 +130,7 @@ class SoundEffectSystem {
 
   stop() {
     if (!this.audio) return;
+
     try {
       this.audio.pause();
       this.audio.currentTime = 0;
@@ -114,6 +141,7 @@ class SoundEffectSystem {
 
   setVolume(volume) {
     if (!this.audio) return;
+
     this.audio.volume = Math.max(0, Math.min(1, volume));
   }
 
@@ -132,6 +160,13 @@ const HeroSlogan = ({
   posterSrc = "/sloganBanner.png",
   soundSrc = null,
   className = "",
+
+  /* ---------------------------- Video SEO props --------------------------- */
+
+  videoName = VIDEO_SEO.name,
+  videoDescription = VIDEO_SEO.description,
+  videoUploadDate = VIDEO_SEO.uploadDate,
+  videoDuration = VIDEO_SEO.duration,
 }) => {
   /* --------------------------- Client + viewport -------------------------- */
 
@@ -148,12 +183,15 @@ const HeroSlogan = ({
   );
 
   const isMobile = viewportWidth < MOBILE_BREAKPOINT;
-  const videoAnimation = isMobile ? "videoZoomPanMobile" : "videoZoomPan";
+
+  const videoAnimation = isMobile
+    ? "videoZoomPanMobile"
+    : "videoZoomPan";
+
   const particleCount = isMobile ? 30 : 50;
 
   /* --------------------------------- State -------------------------------- */
 
-  // const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [particles, setParticles] = useState([]);
   const [currentCharIndex, setCurrentCharIndex] = useState(-1);
   const [showCursor, setShowCursor] = useState(true);
@@ -168,7 +206,7 @@ const HeroSlogan = ({
   const cursorTimerRef = useRef(null);
   const audioUnlockedRef = useRef(false);
   const soundSystemRef = useRef(null);
-  const startTypingRef = useRef(null); // ← holds the latest startTyping
+  const startTypingRef = useRef(null);
 
   if (soundSystemRef.current === null) {
     soundSystemRef.current = new SoundEffectSystem();
@@ -178,13 +216,14 @@ const HeroSlogan = ({
 
   const fullText = useMemo(() => WORDS.join(""), []);
 
-  // Pure prefix-sum — no mutation.
   const wordPositions = useMemo(() => {
     const lengths = WORDS.map((word) => word.length);
+
     return WORDS.map((word, wordIndex) => {
       const startIndex = lengths
         .slice(0, wordIndex)
         .reduce((sum, len) => sum + len, 0);
+
       return {
         word,
         chars: word.split(""),
@@ -194,14 +233,97 @@ const HeroSlogan = ({
     });
   }, []);
 
-  /* ------------------------------- Callbacks ------------------------------ */
+  /* --------------------------- Video SEO URLs ----------------------------- */
+
+  const videoSeoData = useMemo(() => {
+    /*
+     * NEXT_PUBLIC_SITE_URL should be:
+     *
+     * NEXT_PUBLIC_SITE_URL=https://liaisonbank.com
+     *
+     * in .env.production
+     */
+
+    const siteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "https://liaisonbank.com";
+
+    const makeAbsoluteUrl = (url) => {
+      if (!url) return null;
+
+      if (
+        url.startsWith("http://") ||
+        url.startsWith("https://")
+      ) {
+        return url;
+      }
+
+      return `${siteUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+    };
+
+    return {
+      siteUrl,
+      contentUrl: makeAbsoluteUrl(videoSrcMp4),
+      thumbnailUrl: makeAbsoluteUrl(posterSrc),
+      embedUrl: siteUrl,
+    };
+  }, [videoSrcMp4, posterSrc]);
+
+  /* ----------------------------- Video JSON-LD ---------------------------- */
+
+  const videoJsonLd = useMemo(() => {
+    if (!videoSeoData.contentUrl || !videoSeoData.thumbnailUrl) {
+      return null;
+    }
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+
+      name: videoName,
+
+      description: videoDescription,
+
+      thumbnailUrl: [
+        videoSeoData.thumbnailUrl,
+      ],
+
+      uploadDate: videoUploadDate,
+
+      duration: videoDuration,
+
+      contentUrl: videoSeoData.contentUrl,
+
+      embedUrl: videoSeoData.embedUrl,
+
+      publisher: {
+        "@type": "Organization",
+        name: "Liaison Bank",
+        url: videoSeoData.siteUrl,
+      },
+
+      isFamilyFriendly: true,
+    };
+  }, [
+    videoName,
+    videoDescription,
+    videoUploadDate,
+    videoDuration,
+    videoSeoData,
+  ]);
+
+  /* -------------------------------- Callbacks ------------------------------ */
 
   const unlockAudio = useCallback(() => {
     const system = soundSystemRef.current;
+
     if (!system || audioUnlockedRef.current) return;
+
     const ok = system.init(soundSrc);
+
     if (ok) {
       audioUnlockedRef.current = true;
+
       system.setEnabled(soundEnabled);
       system.setVolume(AUDIO_VOLUME);
     }
@@ -209,17 +331,21 @@ const HeroSlogan = ({
 
   const playSound = useCallback(() => {
     const system = soundSystemRef.current;
-    if (!system || !soundEnabled || !audioUnlockedRef.current) return;
+
+    if (
+      !system ||
+      !soundEnabled ||
+      !audioUnlockedRef.current
+    ) {
+      return;
+    }
+
     system.play();
   }, [soundEnabled]);
 
   const stopSound = useCallback(() => {
     soundSystemRef.current?.stop();
   }, []);
-
-  // const handleVideoLoad = useCallback(() => {
-  //   setIsVideoLoaded(true);
-  // }, []);
 
   /* -------------------------- Particles + cursor -------------------------- */
 
@@ -228,13 +354,20 @@ const HeroSlogan = ({
 
     const generateParticles = () => {
       const next = new Array(particleCount);
+
       for (let i = 0; i < particleCount; i++) {
         const size = Math.random() * 6 + 2;
         const left = Math.random() * 100;
         const duration = Math.random() * 25 + 15;
         const delay = Math.random() * 15;
+
         const color =
-          PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+          PARTICLE_COLORS[
+            Math.floor(
+              Math.random() * PARTICLE_COLORS.length
+            )
+          ];
+
         const wobble = Math.random() * 20 + 10;
 
         next[i] = (
@@ -254,6 +387,7 @@ const HeroSlogan = ({
           />
         );
       }
+
       setParticles(next);
     };
 
@@ -267,8 +401,11 @@ const HeroSlogan = ({
     }, CURSOR_BLINK_MS);
 
     const events = ["click", "touchstart", "keydown"];
+
     events.forEach((event) =>
-      document.addEventListener(event, unlockAudio, { passive: true })
+      document.addEventListener(event, unlockAudio, {
+        passive: true,
+      })
     );
 
     return () => {
@@ -280,20 +417,27 @@ const HeroSlogan = ({
       } else {
         clearTimeout(rafId);
       }
+
       if (cursorTimerRef.current) {
         clearInterval(cursorTimerRef.current);
         cursorTimerRef.current = null;
       }
+
       events.forEach((event) =>
         document.removeEventListener(event, unlockAudio)
       );
     };
-  }, [isClient, particleCount, unlockAudio]);
+  }, [
+    isClient,
+    particleCount,
+    unlockAudio,
+  ]);
 
   /* ----------------------------- Typing loop ------------------------------ */
 
   const startTyping = useCallback(() => {
     const totalChars = fullText.length;
+
     let index = -1;
 
     if (typingTimerRef.current) {
@@ -310,12 +454,15 @@ const HeroSlogan = ({
     typingTimerRef.current = setInterval(() => {
       if (index < totalChars - 1) {
         index += 1;
+
         setCurrentCharIndex(index);
+
         return;
       }
 
       clearInterval(typingTimerRef.current);
       typingTimerRef.current = null;
+
       setIsTypingComplete(true);
 
       stopSoundTimerRef.current = setTimeout(() => {
@@ -326,17 +473,21 @@ const HeroSlogan = ({
       restartTimerRef.current = setTimeout(() => {
         setCurrentCharIndex(-1);
         setIsTypingComplete(false);
+
         restartTimerRef.current = setTimeout(() => {
-          // ✅ Recursion goes through the ref, not the closure binding.
           startTypingRef.current?.();
         }, RESTART_GAP_MS);
       }, RESTART_DELAY_MS);
     }, TYPING_SPEED_MS);
-  }, [fullText, playSound, stopSound]);
+  }, [
+    fullText,
+    playSound,
+    stopSound,
+  ]);
 
-  // Keep the ref in sync with the latest startTyping.
   useEffect(() => {
     startTypingRef.current = startTyping;
+
     return () => {
       startTypingRef.current = null;
     };
@@ -351,9 +502,19 @@ const HeroSlogan = ({
 
     return () => {
       clearTimeout(initialDelay);
-      if (typingTimerRef.current) clearInterval(typingTimerRef.current);
-      if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
-      if (stopSoundTimerRef.current) clearTimeout(stopSoundTimerRef.current);
+
+      if (typingTimerRef.current) {
+        clearInterval(typingTimerRef.current);
+      }
+
+      if (restartTimerRef.current) {
+        clearTimeout(restartTimerRef.current);
+      }
+
+      if (stopSoundTimerRef.current) {
+        clearTimeout(stopSoundTimerRef.current);
+      }
+
       stopSound();
     };
   }, [isClient, stopSound]);
@@ -363,13 +524,19 @@ const HeroSlogan = ({
   const handleSoundToggle = useCallback(
     (event) => {
       event.stopPropagation();
+
       const next = !soundEnabled;
+
       setSoundEnabled(next);
+
       soundSystemRef.current?.setEnabled(next);
+
       unlockAudio();
 
       if (next) {
-        if (currentCharIndex < fullText.length - 1) playSound();
+        if (currentCharIndex < fullText.length - 1) {
+          playSound();
+        }
       } else {
         stopSound();
       }
@@ -397,95 +564,198 @@ const HeroSlogan = ({
   }
 
   return (
-    <div className={`${styles.heroSlogan} ${className}`}>
-      {soundSrc && (
-        <button
-          type="button"
-          className={styles.soundToggle}
-          onClick={handleSoundToggle}
-          aria-label={soundEnabled ? "Mute sound" : "Unmute sound"}
-          aria-pressed={soundEnabled}
-          data-enabled={soundEnabled}
-        >
-          <span aria-hidden="true">{soundEnabled ? "⌨️" : "🔇"}</span>
-        </button>
+    <>
+      {/* ------------------------------------------------------------------ */}
+      {/* VideoObject JSON-LD                                               */}
+      {/* ------------------------------------------------------------------ */}
+
+      {videoJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(videoJsonLd),
+          }}
+        />
       )}
 
-      <div className={styles.animatedGradient} aria-hidden="true" />
+      <section
+        className={`${styles.heroSlogan} ${className}`}
+        aria-labelledby="hero-slogan-title"
+      >
+        {/* ---------------------------------------------------------------- */}
+        {/* Sound toggle                                                     */}
+        {/* ---------------------------------------------------------------- */}
 
-      
-
-      {particles.length > 0 && (
-        <div className={styles.particles} aria-hidden="true">
-          {particles}
-        </div>
-      )}
-
-      <div className={styles.overlay} aria-hidden="true" />
-
-      <div className={`${styles.sloganContainer} ${styles.visible}`}>
-        <div className={styles.sloganTextWrapper}>
-          <h1 className={styles.sloganText}>
-            <span className={styles.sloganLine}>
-              {wordPositions.map((wordData) => (
-                <span
-                  key={`word-${wordData.wordIndex}`}
-                  className={styles.wordWrapper}
-                >
-                  {wordData.chars.map((char, charIdx) => {
-                    const isComma = char === ",";
-                    const globalCharIndex = wordData.startIndex + charIdx;
-                    const isRevealed = currentCharIndex >= globalCharIndex;
-
-                    return (
-                      <span
-                        key={`char-${globalCharIndex}`}
-                        className={`${styles.char} ${
-                          isRevealed ? styles.charReveal : ""
-                        } ${isComma ? styles.comma : ""}`}
-                        aria-hidden={!isRevealed}
-                      >
-                        {char}
-                      </span>
-                    );
-                  })}
-                </span>
-              ))}
-              {!isTypingComplete && (
-                <span
-                  className={`${styles.cursor} ${
-                    showCursor ? styles.cursorVisible : ""
-                  }`}
-                  aria-hidden="true"
-                />
-              )}
+        {soundSrc && (
+          <button
+            type="button"
+            className={styles.soundToggle}
+            onClick={handleSoundToggle}
+            aria-label={
+              soundEnabled
+                ? "Mute sound"
+                : "Unmute sound"
+            }
+            aria-pressed={soundEnabled}
+            data-enabled={soundEnabled}
+          >
+            <span aria-hidden="true">
+              {soundEnabled ? "⌨️" : "🔇"}
             </span>
-          </h1>
+          </button>
+        )}
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Animated background                                              */}
+        {/* ---------------------------------------------------------------- */}
+
+        <div
+          className={styles.animatedGradient}
+          aria-hidden="true"
+        />
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Particles                                                        */}
+        {/* ---------------------------------------------------------------- */}
+
+        {particles.length > 0 && (
+          <div
+            className={styles.particles}
+            aria-hidden="true"
+          >
+            {particles}
+          </div>
+        )}
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Overlay                                                          */}
+        {/* ---------------------------------------------------------------- */}
+
+        <div
+          className={styles.overlay}
+          aria-hidden="true"
+        />
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Hero text                                                        */}
+        {/* ---------------------------------------------------------------- */}
+
+        <div
+          className={`${styles.sloganContainer} ${styles.visible}`}
+        >
+          <div className={styles.sloganTextWrapper}>
+            <h1
+              id="hero-slogan-title"
+              className={styles.sloganText}
+            >
+              <span className={styles.sloganLine}>
+                {wordPositions.map((wordData) => (
+                  <span
+                    key={`word-${wordData.wordIndex}`}
+                    className={styles.wordWrapper}
+                  >
+                    {wordData.chars.map(
+                      (char, charIdx) => {
+                        const isComma = char === ",";
+
+                        const globalCharIndex =
+                          wordData.startIndex +
+                          charIdx;
+
+                        const isRevealed =
+                          currentCharIndex >=
+                          globalCharIndex;
+
+                        return (
+                          <span
+                            key={`char-${globalCharIndex}`}
+                            className={`${styles.char} ${
+                              isRevealed
+                                ? styles.charReveal
+                                : ""
+                            } ${
+                              isComma
+                                ? styles.comma
+                                : ""
+                            }`}
+                            aria-hidden={!isRevealed}
+                          >
+                            {char}
+                          </span>
+                        );
+                      }
+                    )}
+                  </span>
+                ))}
+
+                {!isTypingComplete && (
+                  <span
+                    className={`${styles.cursor} ${
+                      showCursor
+                        ? styles.cursorVisible
+                        : ""
+                    }`}
+                    aria-hidden="true"
+                  />
+                )}
+              </span>
+
+              {/* ---------------------------------------------------------- */}
+              {/* SEO supporting text                                        */}
+              {/* ---------------------------------------------------------- */}
+
+              <span className={styles.seoText}>
+                Business Licensing, Government Liaison and
+                Compliance Services for Businesses in Mumbai.
+              </span>
+            </h1>
+          </div>
         </div>
-      </div>
-      
-      <div className={styles.videoWrapper}>
-        <video
-          className={`${styles.backgroundVideo} ${styles[videoAnimation]}`}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          // onLoadedData={handleVideoLoad}
-          poster={posterSrc}
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Background video                                                 */}
+        {/* ---------------------------------------------------------------- */}
+
+        <div
+          className={styles.videoWrapper}
           aria-hidden="true"
         >
-          <source src={videoSrcMp4} type="video/mp4" />
-          {videoSrcWebm && <source src={videoSrcWebm} type="video/webm" />}
-        </video>
+          <video
+            className={`${styles.backgroundVideo} ${
+              styles[videoAnimation]
+            }`}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            poster={posterSrc}
+            width="1920"
+            height="1080"
+          >
+            <source
+              src={videoSrcMp4}
+              type="video/mp4"
+            />
 
-        {/* {!isVideoLoaded && (
-          <div className={styles.videoFallback} aria-hidden="true" />
-        )} */}
-      </div>
+            {videoSrcWebm && (
+              <source
+                src={videoSrcWebm}
+                type="video/webm"
+              />
+            )}
+          </video>
+        </div>
 
-    </div>
+        {/* ---------------------------------------------------------------- */}
+        {/* Accessible video description                                     */}
+        {/* ---------------------------------------------------------------- */}
+
+        <p className={styles.videoDescription}>
+          {videoDescription}
+        </p>
+      </section>
+    </>
   );
 };
 
