@@ -2,7 +2,7 @@
 .heroSlogan {
   position: relative;
   width: 100%;
-  height: 700px;
+  height: calc(100vh - 80px);
   min-height: 700px;
   overflow: hidden;
   background: #0a0a1a;

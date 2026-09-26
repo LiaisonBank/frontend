@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState  } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -22,67 +22,345 @@ import { useModal } from "@/context/ModalContext";
 /* ============================================================================
    MOBILE MENU ITEM
    ============================================================================ */
+function MobileMenuItems({ items, onNavigate }) {
+  // Stack of { label, items, services? } — each level is a "panel"
+  const [stack, setStack] = useState([{ label: "Our Services", items: items || [] }]);
+  const [direction, setDirection] = useState("forward");
 
-function MobileMenuItems({
-  items,
-  level = 0,
-  openMenus,
-  onToggle,
-  onNavigate,
-}) {
+  const current = stack[stack.length - 1];
+  const isRoot = stack.length === 1;
+
+  const goForward = (node) => {
+    setDirection("forward");
+    setStack((prev) => [...prev, node]);
+  };
+
+  const goBack = () => {
+    if (isRoot) return;
+    setDirection("back");
+    setStack((prev) => prev.slice(0, -1));
+  };
+
+  const jumpTo = (index) => {
+    if (index === stack.length - 1) return;
+    setDirection("back");
+    setStack((prev) => prev.slice(0, index + 1));
+  };
+
+  return (
+    <div className="mobile-menu w-full overflow-hidden">
+      {/* Top breadcrumb bar */}
+      <div className="flex items-center gap-2 px-3 py-2 border-b bg-gray-50">
+        {!isRoot && (
+          <button
+            type="button"
+            onClick={goBack}
+            aria-label="Go back"
+            className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-200 active:bg-gray-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-5 h-5"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+        )}
+
+        <nav className="flex items-center gap-1 text-sm overflow-x-auto whitespace-nowrap">
+          {stack.map((level, i) => (
+            <span key={i} className="flex items-center gap-1">
+              {i > 0 && <span className="text-gray-400">/</span>}
+              <button
+                type="button"
+                onClick={() => jumpTo(i)}
+                className={`px-1 ${
+                  i === stack.length - 1
+                    ? "font-semibold text-gray-900"
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                {level.label}
+              </button>
+            </span>
+          ))}
+        </nav>
+      </div>
+
+      {/* Sliding panel */}
+      <div className="relative">
+        <Panel
+          key={stack.length}
+          direction={direction}
+          node={current}
+          onForward={goForward}
+          onNavigate={onNavigate}
+        />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Resolves the next-level children for a given node based on your API shape:
+ *   Category        → subCategories
+ *   subCategory     → items
+ *   item            → services (leaf)
+ */
+function getChildren(node) {
+  if (!node) return null;
+
+  // Category has subCategories
+  if (Array.isArray(node.subCategories) && node.subCategories.length > 0) {
+    return {
+      kind: "subCategories",
+      items: node.subCategories,
+    };
+  }
+
+  // subCategory has items
+  if (Array.isArray(node.items) && node.items.length > 0) {
+    return {
+      kind: "items",
+      items: node.items,
+    };
+  }
+
+  // Leaf item may have a `service` array (plain strings)
+  if (Array.isArray(node.service) && node.service.length > 0) {
+    return {
+      kind: "services",
+      items: node.service.map((s) => ({ name: s })),
+    };
+  }
+
+  return null;
+}
+
+/* ----------------------------------------------------------------------------
+   FEATURED PROJECTS PANEL
+   Rendered when a node has is_featured === true.
+   Groups children by status: Completed / In Progress / Upcoming
+   ---------------------------------------------------------------------------- */
+const FEATURED_GROUPS = [
+  { key: "completed", label: "Completed", statuses: ["completed", "complete", "done"] },
+  { key: "inprogress", label: "In Progress", statuses: ["inprogress", "in_progress", "in-progress", "ongoing", "running"] },
+  { key: "upcoming", label: "Upcoming", statuses: ["upcoming", "pending", "future"] },
+];
+
+function normalizeStatus(value) {
+  return String(value || "").trim().toLowerCase().replace(/\s+/g, "");
+}
+
+function FeaturedProjectsPanel({ node, animClass, onNavigate }) {
+  const projects = Array.isArray(node?.items) ? node.items : [];
+
+  // Bucket projects by status
+  const buckets = FEATURED_GROUPS.map((group) => ({
+    ...group,
+    projects: projects.filter((p) => {
+      const s = normalizeStatus(p?.status || p?.project_status || p?.state);
+      return group.statuses.map(normalizeStatus).includes(s);
+    }),
+  }));
+
+  const grouped = new Set(buckets.flatMap((b) => b.projects.map((p) => p?.id ?? p?.name)));
+  const ungrouped = projects.filter(
+    (p) => !grouped.has(p?.id ?? p?.name)
+  );
+
+  return (
+    <div className={`w-full ${animClass}`}>
+      {buckets.map((group) => (
+        <section key={group.key} className="mb-2">
+          {/* Group header */}
+          <div
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wide ${
+              group.key === "completed"
+                ? "bg-green-50 text-green-700"
+                : group.key === "inprogress"
+                ? "bg-amber-50 text-amber-700"
+                : "bg-blue-50 text-blue-700"
+            }`}
+          >
+            <span
+              className={`inline-block w-2 h-2 rounded-full ${
+                group.key === "completed"
+                  ? "bg-green-500"
+                  : group.key === "inprogress"
+                  ? "bg-amber-500"
+                  : "bg-blue-500"
+              }`}
+            />
+            {group.label}
+            <span className="ml-auto text-[10px] font-normal opacity-70">
+              {group.projects.length}
+            </span>
+          </div>
+
+          {group.projects.length === 0 ? (
+            <div className="px-4 py-3 text-sm text-gray-400 italic">
+              No {group.label.toLowerCase()} projects
+            </div>
+          ) : (
+            <ul>
+              {group.projects.map((project, idx) => (
+                <li key={`${group.key}-${project.id ?? project.name}-${idx}`}>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate?.(project)}
+                    className="flex items-start justify-between w-full px-4 py-3 text-left border-b hover:bg-gray-50 active:bg-gray-100"
+                  >
+                    <span className="flex-1">
+                      <span className="block truncate">{project.name}</span>
+                      {project.location && (
+                        <span className="block text-xs text-gray-500 mt-0.5">
+                          {project.location}
+                        </span>
+                      )}
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-4 h-4 text-gray-400 shrink-0 ml-2 mt-1"
+                    >
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))}
+
+      {/* Optional: any projects with unknown status */}
+      {ungrouped.length > 0 && (
+        <section className="mb-2">
+          <div className="px-4 py-2 text-xs font-semibold uppercase tracking-wide bg-gray-100 text-gray-600">
+            Other
+          </div>
+          <ul>
+            {ungrouped.map((project, idx) => (
+              <li key={`other-${project.id ?? project.name}-${idx}`}>
+                <button
+                  type="button"
+                  onClick={() => onNavigate?.(project)}
+                  className="flex items-center justify-between w-full px-4 py-3 text-left border-b hover:bg-gray-50 active:bg-gray-100"
+                >
+                  <span className="flex-1 truncate">{project.name}</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-4 h-4 text-gray-400 shrink-0 ml-2"
+                  >
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function Panel({ node, direction, onForward, onNavigate }) {
+  const animClass =
+    direction === "forward"
+      ? "animate-slide-in-right"
+      : "animate-slide-in-left";
+
+  // ✅ Condition: if this node is featured, show grouped projects
+  if (node?.is_featured === true) {
+    return (
+      <FeaturedProjectsPanel
+        node={node}
+        animClass={animClass}
+        onNavigate={onNavigate}
+      />
+    );
+  }
+
+  const items = node?.items || [];
+
   if (!Array.isArray(items) || items.length === 0) {
-    return null;
+    return (
+      <div className={`p-4 text-gray-500 text-sm ${animClass}`}>
+        No items to display
+      </div>
+    );
   }
 
   return (
-    <ul className={level > 0 ? "px-4" : "mobilesubmenu row"}>
+    <ul className={`w-full ${animClass}`}>
       {items.map((item, index) => {
         if (!item) return null;
 
-        const children =
-          item.submenu || item.projects || item.items || item.children;
-
-        const hasChildren = Array.isArray(children) && children.length > 0;
-        const menuKey = `${level}-${item.name}-${index}`;
-        const isExpanded = Boolean(openMenus[menuKey]);
+        const childInfo = getChildren(item);
+        const hasChildren = Boolean(childInfo);
 
         const handleClick = () => {
           if (hasChildren) {
-            onToggle(menuKey);
+            onForward({
+              label: item.name,
+              items: childInfo.items,
+              kind: childInfo.kind,
+              // 👇 carry the flag through so the next Panel knows
+              is_featured: item.is_featured === true,
+            });
             return;
           }
-          onNavigate(item);
+          onNavigate?.(item);
         };
 
         return (
-          <li key={menuKey}>
-            <div
-              className="flex items-center justify-between cursor-pointer"
+          <li key={`${item.id ?? item.name}-${index}`}>
+            <button
+              type="button"
               onClick={handleClick}
+              className="flex items-center justify-between w-full px-4 py-3 text-left border-b hover:bg-gray-50 active:bg-gray-100"
             >
-              <span className="flex-1">{item.name}</span>
+              <span className="flex-1 truncate">{item.name}</span>
               {hasChildren && (
-                <span className="ml-2 text-lg font-medium" aria-hidden="true">
-                  {isExpanded ? "-" : "+"}
-                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-4 h-4 text-gray-400 shrink-0 ml-2"
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
               )}
-            </div>
-
-            {hasChildren && isExpanded && (
-              <MobileMenuItems
-                items={children}
-                level={level + 1}
-                openMenus={openMenus}
-                onToggle={onToggle}
-                onNavigate={onNavigate}
-              />
-            )}
+            </button>
           </li>
         );
       })}
     </ul>
   );
 }
+
 
 /* ============================================================================
    HEADER

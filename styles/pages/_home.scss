@@ -394,7 +394,7 @@ section.ceo-message-full {
 
     @media (min-width: 1024px) {
       min-height: 700px;
-      height: 700px;
+      height: 100vh;
     }
   }
 
@@ -740,13 +740,15 @@ section.ceo-message-full {
       min-height: auto;
     }
 
-    .ceo-full-left {
-      min-height: 300px;
-      height: 300px;
-    }
+    // .ceo-full-left {
+    //   min-height: 300px;
+    //   height: 300px;
+    // }
 
     .ceo-full-right {
       padding: 0 20px;
+      align-items: center;
+      justify-content: center;
     }
 
     .ceo-full-name-wrapper {
@@ -773,10 +775,10 @@ section.ceo-message-full {
   // ==========================================
 
   @media (max-width: 480px) {
-    .ceo-full-left {
-      min-height: 200px;
-      height: 200px;
-    }
+    // .ceo-full-left {
+    //   min-height: 200px;
+    //   height: 200px;
+    // }
 
     .ceo-full-right {
       padding: 0 16px;
