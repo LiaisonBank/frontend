@@ -1,336 +1,215 @@
 // app/our-services/[slug]/[itemSlug]/page.jsx
-"use client";
+import SubServiceDetail from "./SubServiceDetail";
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import "./item-detail.scss";
-import { getImageUrl } from "../../../../lib/utils/getImagehelper";
-import ApiError from "@/components/ApiError/ApiError";
+const SITE_URL = "https://liaisonbank.com";
+const BACKEND_URL = "https://backend.liaisonbank.com";
+const BRAND = "Liaison Bank";
+const CITY = "Mumbai";
 
-export default function SubServiceDetail() {
-  const params = useParams();
-  const slug = params?.slug;
-  const itemSlug = params?.itemSlug;
+/* ---------------- server-side fetch ---------------- */
+async function getItemData(itemSlug) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/${itemSlug}`,
+      { next: { revalidate: 3600 } }
+    );
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
 
-  const [item, setItem] = useState(null);
-  const [parentCategory, setParentCategory] = useState(null);
-  const [relatedItems, setRelatedItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+/* ---------------- helpers ---------------- */
 
-  useEffect(() => {
-    if (!slug || !itemSlug) return;
+// Normalize smart quotes and whitespace; do NOT strip inner quotes
+function cleanText(str = "") {
+  return String(str)
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-    const fetchItemDetail = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+// Truncate at word boundary with ellipsis
+function truncate(str, max = 160) {
+  if (!str) return "";
+  if (str.length <= max) return str;
+  const cut = str.slice(0, max - 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  return (lastSpace > 100 ? cut.slice(0, lastSpace) : cut).trimEnd() + "…";
+}
 
-        const itemResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/${itemSlug}`
-        );
+// Case-insensitive keyword dedupe; keep first occurrence casing
+function dedupeKeywords(list) {
+  const seen = new Set();
+  const out = [];
+  for (const raw of list) {
+    if (!raw) continue;
+    const k = String(raw).trim();
+    if (!k) continue;
+    const key = k.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(k);
+  }
+  return out;
+}
 
-        if (!itemResponse.ok) {
-          if (itemResponse.status === 404) {
-            throw Object.assign(new Error("Item not found"), { status: 404 });
-          }
-          throw new Error(
-            `Failed to fetch item details: ${itemResponse.status}`
-          );
-        }
+/* ---------------- ✅ SEO metadata ---------------- */
+export async function generateMetadata({ params }) {
+  const { slug, itemSlug } = await params;
+  const itemData = await getItemData(itemSlug);
 
-        const itemData = await itemResponse.json();
-
-        if (!itemData || !itemData.id) {
-          throw new Error("Invalid response format from API");
-        }
-
-        /* ---------- servicesList ---------- */
-        let servicesList = [];
-        if (itemData.itemServices) {
-          if (Array.isArray(itemData.itemServices)) {
-            servicesList = itemData.itemServices;
-          } else if (typeof itemData.itemServices === "string") {
-            try {
-              const parsed = JSON.parse(itemData.itemServices);
-              servicesList = Array.isArray(parsed)
-                ? parsed
-                : [itemData.itemServices];
-            } catch {
-              servicesList = itemData.itemServices
-                .split(",")
-                .map((s) => s.trim())
-                .filter(Boolean);
-            }
-          }
-        }
-
-        /* ---------- content sections ---------- */
-        // API uses "contentSection" (singular). Also support "contentSections"
-        // and any stringified JSON just in case.
-        const rawSections =
-          itemData.contentSection ??
-          itemData.contentSections ??
-          itemData.content_section ??
-          null;
-
-        let sections = [];
-
-        if (Array.isArray(rawSections)) {
-          sections = rawSections;
-        } else if (typeof rawSections === "string") {
-          try {
-            const parsed = JSON.parse(rawSections);
-            sections = Array.isArray(parsed) ? parsed : [];
-          } catch {
-            sections = [];
-          }
-        }
-
-        // Normalize: make sure every section has title + content
-        sections = sections
-          .filter(Boolean)
-          .map((s) => ({
-            title: s?.title || s?.heading || "",
-            content: s?.content || s?.body || s?.description || "",
-          }))
-          .filter((s) => s.title || s.content);
-
-        setItem({
-          id: itemData.id,
-          name: itemData.name,
-          slug: itemData.slug,
-          description: itemData.description || "",
-          fullDescription:
-            itemData.full_description || itemData.description || "",
-          servicesList,
-          contentSections: sections,
-          subCategoryId: itemData.subCategoryId,
-          subCategoryName: itemData.subCategoryName,
-        });
-
-        /* ---------- parent category + related ---------- */
-        try {
-          const categoryResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/category/${slug}`
-          );
-
-          if (categoryResponse.ok) {
-            const categoryData = await categoryResponse.json();
-
-            setParentCategory({
-              id: categoryData.id,
-              name: categoryData.name,
-              slug: categoryData.slug,
-            });
-
-            const subcategories = categoryData.subcategories || [];
-            const siblings = [];
-
-            subcategories.forEach((sub) => {
-              const items = sub.items || [];
-              items.forEach((sibling) => {
-                if (sibling.slug === itemSlug) return;
-
-                let siblingServices = [];
-                if (sibling.itemServices) {
-                  if (Array.isArray(sibling.itemServices)) {
-                    siblingServices = sibling.itemServices;
-                  } else if (typeof sibling.itemServices === "string") {
-                    try {
-                      const parsed = JSON.parse(sibling.itemServices);
-                      siblingServices = Array.isArray(parsed) ? parsed : [];
-                    } catch {
-                      siblingServices = sibling.itemServices
-                        .split(",")
-                        .map((s) => s.trim())
-                        .filter(Boolean);
-                    }
-                  }
-                }
-
-                siblings.push({
-                  id: sibling.id,
-                  name: sibling.name,
-                  slug: sibling.slug,
-                  description: sibling.description || "",
-                  subcategorySlug: sub.slug,
-                  subcategoryName: sub.name,
-                  servicesList: siblingServices,
-                });
-              });
-            });
-
-            setRelatedItems(siblings.slice(0, 3));
-          }
-        } catch (relatedErr) {
-          console.error("Error fetching related items:", relatedErr);
-        }
-      } catch (err) {
-        console.error("Error fetching item detail:", err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
+  if (!itemData) {
+    return {
+      title: `Service Not Found | ${BRAND}`,
+      description: "The requested service could not be found.",
+      robots: { index: false, follow: true },
     };
-
-    fetchItemDetail();
-  }, [slug, itemSlug]);
-
-  /* ---------- loading ---------- */
-  if (loading) {
-    return (
-      <div className="item-loading">
-        <div className="container">
-          <div className="skeleton-hero" />
-          <div className="skeleton-body">
-            <div className="skeleton-line long" />
-            <div className="skeleton-line" />
-            <div className="skeleton-line short" />
-          </div>
-        </div>
-      </div>
-    );
   }
 
-  /* ---------- error ---------- */
-  if (error) {
-    const isNotFound = error.status === 404;
-    return (
-      <ApiError
-        title={
-          isNotFound ? "Service Not Found" : "Service Temporarily Unavailable"
-        }
-        message={
-          isNotFound
-            ? "The service you're looking for doesn't exist or has been removed."
-            : "Our service information is temporarily unavailable. Please try again shortly."
-        }
-        onRetry={() => window.location.reload()}
-        statusCode={
-          isNotFound
-            ? "ERR · NOT FOUND"
-            : error.status
-            ? `ERR · ${error.status}`
-            : "ERR · TIMEOUT"
-        }
-        statusTone={
-          isNotFound ? "info" : error.status >= 500 ? "danger" : "warning"
-        }
-        backToHome={() => window.open("/", "_self")}
-      />
-    );
-  }
+  const name = cleanText(itemData.name) || "Service";
+  const shortDescription = truncate(
+    cleanText(itemData.description) ||
+      `Get professional ${name} services in ${CITY}.`
+  );
 
-  if (!item) return null;
+  // Primary keyword = "{name} in Mumbai"
+  const primaryKeyword = `${name} in ${CITY}`;
+
+  const apiKeywords = Array.isArray(itemData.seo_keywords)
+    ? itemData.seo_keywords
+    : [];
+
+  const keywords = dedupeKeywords([
+    primaryKeyword,
+    name,
+    `${name} service in ${CITY}`,
+    `${name} consultant in ${CITY}`,
+    ...apiKeywords,
+  ]);
+
+  const seoTitle = `${name} | Service in ${CITY} | ${BRAND}`;
+  const canonical = `${SITE_URL}/our-services/${slug}/${itemSlug}`;
+
+  // OG image from item
+  const ogImage = itemData.image
+    ? `${BACKEND_URL}${itemData.image}`
+    : itemData.banner
+    ? `${BACKEND_URL}${itemData.banner}`
+    : `${SITE_URL}/og-default.jpg`;
+
+  return {
+    title: seoTitle,
+    description: shortDescription,
+    keywords,
+    alternates: { canonical },
+    openGraph: {
+      title: seoTitle,
+      description: shortDescription,
+      url: canonical,
+      siteName: BRAND,
+      type: "website",
+      locale: "en_US",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seoTitle,
+      description: shortDescription,
+      images: [ogImage],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+    category: "Business Services",
+  };
+}
+
+/* ---------------- Page ---------------- */
+export default async function Page({ params }) {
+  const { slug, itemSlug } = await params;
+  const itemData = await getItemData(itemSlug);
+
+  const itemName = itemData ? cleanText(itemData.name) : "";
 
   return (
-    <div className="item-page">
-      {/* =================== Breadcrumb =================== */}
-      <div className="item-header">
-        <div className="container">
-          <nav className="breadcrumbs" aria-label="Breadcrumb">
-            <Link href="/our-services">Services</Link>
-            <span className="sep">/</span>
-            {parentCategory && (
-              <>
-                <Link href={`/our-services/${parentCategory.slug}`}>
-                  {parentCategory.name}
-                </Link>
-                <span className="sep">/</span>
-              </>
-            )}
-            {item.subCategoryName && (
-              <>
-                <span className="crumb-muted">{item.subCategoryName}</span>
-                <span className="sep">/</span>
-              </>
-            )}
-            <span className="crumb-current">{item.name}</span>
-          </nav>
-        </div>
-      </div>
+    <>
+      {/* ✅ JSON-LD: Service schema */}
+      {itemData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Service",
+              name: itemName,
+              description: cleanText(itemData.description),
+              serviceType: itemName,
+              areaServed: { "@type": "City", name: CITY },
+              provider: {
+                "@type": "Organization",
+                name: BRAND,
+                url: SITE_URL,
+              },
+              url: `${SITE_URL}/our-services/${slug}/${itemSlug}`,
+              ...(itemData.image && {
+                image: `${BACKEND_URL}${itemData.image}`,
+              }),
+            }),
+          }}
+        />
+      )}
 
-      {/* =================== Hero =================== */}
-      <div className="item-hero">
-        <div className="container">
-          <div className="item-hero-main">
-            {item.subCategoryName && (
-              <span className="item-hero-tag">{item.subCategoryName}</span>
-            )}
-            <h1 className="item-hero-title">{item.name}</h1>
-            {item.description && (
-              <p className="item-hero-desc">{item.description}</p>
-            )}
-          </div>
-        </div>
-      </div>
+      {/* ✅ JSON-LD: BreadcrumbList schema */}
+      {itemData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  name: "Home",
+                  item: SITE_URL,
+                },
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  name: "Our Services",
+                  item: `${SITE_URL}/our-services`,
+                },
+                {
+                  "@type": "ListItem",
+                  position: 3,
+                  name: itemName,
+                  item: `${SITE_URL}/our-services/${slug}/${itemSlug}`,
+                },
+              ],
+            }),
+          }}
+        />
+      )}
 
-      {/* =================== Body =================== */}
-      <div className="item-body" id="details">
-        <div className="container">
-          <main className="item-main">
-            {/* servicesList chips */}
-            {item.servicesList.length > 0 && (
-              <section className="services-strip">
-                <h2 className="services-strip-title">What&apos;s included</h2>
-                <ul className="services-chips">
-                  {item.servicesList.map((service, i) => (
-                    <li key={i} className="service-chip">
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                      <span>{service}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {/* Overview (full_description) */}
-            {item.fullDescription && (
-              <section className="content-block">
-                <h2 className="content-title">Overview</h2>
-                <p className="content-text">{item.fullDescription}</p>
-              </section>
-            )}
-
-            {/* Content sections */}
-            {item.contentSections.length > 0 ? (
-              item.contentSections.map((section, i) => (
-                <section className="content-block" key={i}>
-                  {section.title && (
-                    <h2 className="content-title">{section.title}</h2>
-                  )}
-                  {section.content && (
-                    <div className="content-rich">{section.content}</div>
-                  )}
-                </section>
-              ))
-            ) : (
-              !item.fullDescription && (
-                <section className="content-block">
-                  <h2 className="content-title">Overview</h2>
-                  <p className="content-text">
-                    No additional details available for this service.
-                  </p>
-                </section>
-              )
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      <SubServiceDetail initialData={itemData} />
+    </>
   );
 }
