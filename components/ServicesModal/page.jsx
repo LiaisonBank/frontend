@@ -724,158 +724,157 @@ export default function ServicesModal() {
      Outside Click
      ========================================================================== */
 
-  useEffect(() => {
-    if (!serviceModalOpen) {
-      return undefined;
-    }
 
-    const handleClickOutside = (event) => {
-      const modal = modalRef.current;
+  /* ==========================================================================
+   Outside Click
+   ========================================================================== */
 
-      if (modal && !modal.contains(event.target) && !isClosingRef.current) {
-        closeModal();
-      }
-    };
+/* ==========================================================================
+   Outside Click
+   ========================================================================== */
 
-    document.addEventListener("click", handleClickOutside);
+useEffect(() => {
+  if (!serviceModalOpen) {
+    return undefined;
+    
+  }
 
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [serviceModalOpen, closeModal]);
+  const handleClickOutside = (event) => {
+    // Skip if we're already navigating or closing
+    if (isNavigatingRef.current) return;
+    if (isClosingRef.current) return;
 
+    const modal = modalRef.current;
+    if (!modal) return;
+
+    const target = event.target;
+
+    // Click is inside the modal → do nothing
+    if (modal.contains(target)) return;
+
+    // Click is on a nav trigger → do nothing
+    const isNavTrigger = target.closest?.(
+      ".services-section-name, .services-category-name, .services-section-pdf-icon, .services-category-pdf",
+    );
+    if (isNavTrigger) return;
+
+    closeModal();
+  };
+
+  document.addEventListener("click", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("click", handleClickOutside);
+  };
+}, [serviceModalOpen, closeModal]);
   /* ==========================================================================
      ESC Key
      ========================================================================== */
 
-  useEffect(() => {
-    if (!serviceModalOpen) {
-      return undefined;
-    }
+ /* ==========================================================================
+   Outside Click
+   ========================================================================== */
 
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape" && !isClosingRef.current) {
-        event.preventDefault();
 
-        closeModal();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [serviceModalOpen, closeModal]);
 
   /* ==========================================================================
      Lenis Scroll Lock
      ========================================================================== */
 
-  useEffect(() => {
-    if (!serviceModalOpen) {
-      return undefined;
-    }
-
-    const savedPosition = getLenisScroll();
-
-    modalScrollRef.current = savedPosition;
-
-    stopLenis();
-
-    return () => {
-      const position = modalScrollRef.current;
-
-      startLenis();
-
-      requestAnimationFrame(() => {
-        restoreLenisScroll(position);
-      });
-    };
-  }, [
-    serviceModalOpen,
-    getLenisScroll,
-    stopLenis,
-    startLenis,
-    restoreLenisScroll,
-  ]);
 
   /* ==========================================================================
      Section Hover
      ========================================================================== */
 
-  const handleSectionHover = useCallback((section) => {
-    if (!section) {
-      return;
-    }
+const handleSectionHover = useCallback((section) => {
+  if (!section) return;
+  setSelectedSection((current) =>
+    current?.id === section.id ? current : section,
+  );
+  setSelectedCategory(section.items?.[0] ?? null);
+  setExpandedItems({});
+  setExpandedServices({});
+}, []);
 
-    setSelectedSection((current) =>
-      current?.id === section.id ? current : section,
-    );
-
-    setSelectedCategory(section.items?.[0] ?? null);
-
-    setExpandedItems({});
-
-    setExpandedServices({});
-  }, []);
+const handleCategoryHover = useCallback((category) => {
+  if (!category) return;
+  setSelectedCategory((current) =>
+    current?.id === category.id ? current : category,
+  );
+  setExpandedItems({});
+  setExpandedServices({});
+}, []);
 
   /* ==========================================================================
      Category Hover
      ========================================================================== */
 
-  const handleCategoryHover = useCallback((category) => {
-    if (!category) {
-      return;
-    }
 
-    setSelectedCategory((current) =>
-      current?.id === category.id ? current : category,
-    );
 
-    /**
-     * Reset nested expansion when switching
-     * to another category.
-     */
-    setExpandedItems({});
 
-    setExpandedServices({});
-  }, []);
+/* ==========================================================================
+   Section Click — Always Navigate
+   ========================================================================== */
 
-  /* ==========================================================================
-     Section Click
-     ========================================================================== */
+const slugify = (value) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 
-  const handleSectionClick = useCallback((section) => {
-    if (!section) {
-      return;
-    }
+const isNavigatingRef = useRef(false);
 
-    setSelectedSection(section);
 
-    setSelectedCategory(section.items?.[0] ?? null);
+const handleSectionClick = useCallback(
+  (section) => {
+    if (!section) return;
 
-    setExpandedItems({});
+    const slug = section.slug || slugify(section.name);
+    if (!slug) return;
 
-    setExpandedServices({});
-  }, []);
+    isNavigatingRef.current = true;   // ← set flag
+    forceCloseModal();
+    router.push(`/our-services/${slug}`);
+  },
+  [forceCloseModal, router],
+);
 
   /* ==========================================================================
      Category Click
      ========================================================================== */
 
-  const handleCategoryClick = useCallback((category) => {
-    if (!category) {
+/* ==========================================================================
+   Category Click
+   ========================================================================== */
+
+const handleCategoryClick = useCallback(
+  (category) => {
+    
+    if (!category) return;
+
+    // Navigate to the category's own page
+    if (category.slug) {
+      closeModal();
+      router.push(`/our-services/${category.slug}`);
       return;
     }
 
+    // Fallback to href if API provides one
+    if (category.href) {
+      closeModal();
+      router.push(category.href);
+      return;
+    }
+
+    // Last resort: just select (original behavior)
     setSelectedCategory(category);
-
     setExpandedItems({});
-
     setExpandedServices({});
-  }, []);
-
+  },
+  [closeModal, router],
+);
   /* ==========================================================================
      Expand / Collapse Children
      ========================================================================== */
@@ -1061,65 +1060,56 @@ export default function ServicesModal() {
                       role="listitem"
                     >
                       <div className="services-section-row">
-                        <button
-                          type="button"
-                          className={`services-section-btn ${
-                            isActive ? "active" : ""
-                          }`}
-                          onClick={() => handleSectionClick(section)}
-                          onMouseEnter={() => handleSectionHover(section)}
-                          aria-current={isActive ? "page" : undefined}
-                        >
-                          <span
-                            className="services-section-name"
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent button's onClick from firing
-                              if (section.slug) {
-                                closeModal();
-                                router.push(`/our-services/${section.slug}`);
-                              }
-                            }}
-                            role="link"
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                e.preventDefault();
-                                if (section.slug) {
-                                  closeModal();
-                                  router.push(`/our-services/${section.slug}`);
-                                }
-                              }
-                            }}
-                          >
-                            {section.name}
-                          </span>
+{/* LEFT PANEL — inside servicesData.map */}
+<button
+  type="button"
+  className={`services-section-btn ${isActive ? "active" : ""}`}
+  onMouseEnter={() => handleSectionHover(section)}
+  aria-current={isActive ? "page" : undefined}
+>
+  <span
+    className="services-section-name"
+    role="link"
+    tabIndex={0}
+    style={{ cursor: "pointer" }}
+    onClick={(e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleSectionClick(section);
+    }}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSectionClick(section);
+      }
+    }}
+  >
+    {section.name}
+  </span>
 
-                          {section.pdf && (
-                            <a
-                              href={section.pdf}
-                              // target="_blank"
-                              rel="noopener noreferrer"
-                              className="services-section-pdf-icon"
-                              aria-label={`Open PDF for ${section.name}`}
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent button's onClick from firing
-                                e.preventDefault(); // Prevent default anchor behavior
-                                if (section.pdf) {
-                                  closeModal();
-                                  router.push("/downloads");
-                                }
-                              }}
-                            >
-                              {" "}
-                              <Image
-                                src="/images/pdf-icon.png"
-                                alt="PDF Icon"
-                                width={16}
-                                height={16}
-                              />
-                            </a>
-                          )}
-                        </button>
+  {section.pdf && (
+    <a
+      href={section.pdf}
+      rel="noopener noreferrer"
+      className="services-section-pdf-icon"
+      aria-label={`Open PDF for ${section.name}`}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        closeModal();
+        router.push("/downloads");
+      }}
+    >
+      <Image
+        src="/images/pdf-icon.png"
+        alt="PDF Icon"
+        width={16}
+        height={16}
+      />
+    </a>
+  )}
+</button>
                       </div>
                     </div>
                   );

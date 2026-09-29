@@ -89,6 +89,7 @@ export default function PressReleaseLiaisonbankPage({ pressReleases = [] }) {
   const handleLoadMore = () => setVisibleCount(filteredPressReleases.length);
 
   const handleLoadLess = () => {
+    
     setVisibleCount(ITEMS_PER_LOAD);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

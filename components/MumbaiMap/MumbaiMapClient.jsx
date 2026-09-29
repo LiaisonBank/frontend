@@ -667,7 +667,7 @@ function useProjects() {
 
       try {
         const response = await fetch(
-          `/api/geocode?location=${encodeURIComponent(location)}`,
+          `/api/v1/geocode?location=${encodeURIComponent(location)}`,
           {
             method: 'GET',
             cache: 'no-store',

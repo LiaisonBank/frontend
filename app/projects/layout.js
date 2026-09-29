@@ -5,7 +5,8 @@ export const metadata = {
   // ⚠️ metadataBase should be in the ROOT layout, not here.
   // If you don't have it in root, add: metadataBase: new URL("https://www.liaisonbank.com")
 
-    title: "Our Projects | Liaisoning & Licensing Services in Mumbai",
+    title: "Our Projects | Government Liaisoning Services in Mumbai | Liaison Bank",
+    // title: "Our Projects | Liaisoning & Licensing Services in Mumbai",
 
 
   description:

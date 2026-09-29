@@ -1,309 +1,237 @@
-.completed {
-  // =========================================================
-  // Variables
-  // =========================================================
-  $transition-speed: 0.2s;
-  $scroll-speed: 0.6s;
-
-  $primary-color: #0f172a;
-  $secondary-color: #e67e22;
-
-  $border-color: #e2e8f0;
-  $hover-bg: #f8fafc;
-
-  $text-primary: #17395f;
-  $text-secondary: #24476d;
-  $muted-color: #94a3b8;
-
-  // =========================================================
-  // Global
-  // =========================================================
-
-  // Body overflow for popup — applied to the element with .completed
-  // (typically <body class="completed">)
-  overflow: var(--popup-overflow, visible);
-
-  // =========================================================
-  // Section Title
-  // =========================================================
-  .section-title {
-    margin: 0;
-    padding: 1rem 0;
-    background-color: #ffffff;
-    text-align: center;
-
-    h3 {
-      position: relative;
-      display: inline-block;
-
-      margin-bottom: 1rem;
-      padding-bottom: 1rem;
-
-      font-size: 2rem;
-      font-weight: 600;
-      line-height: 1;
-
-      text-align: center;
-      text-transform: uppercase;
-
-      background: $secondary-color;
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-
-      z-index: 9;
-
-      &::after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        bottom: 0;
-
-        width: 90px;
-        height: 3px;
-
-        background: $secondary-color;
-        border-radius: 4px;
-
-        transform: translateX(-45%);
-      }
-
-      &::before {
-        content: "";
-        position: absolute;
-        left: 50%;
-        bottom: -6px;
-
-        width: 14px;
-        height: 14px;
-
-        background: #ffffff;
-        border: 3px solid $secondary-color;
-        border-radius: 50%;
-
-        transform: translateX(-45px);
-
-        animation: dot-flow 3s linear infinite alternate;
-
-        z-index: 2;
-      }
-    }
-  }
-
-  @keyframes dot-flow {
-    0%   { transform: translateX(-45px); }
-    100% { transform: translateX(45px); }
-  }
-
-  // =========================================================
-  // Main Grid
-  // =========================================================
-  .auto-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    width: 100%;
-    position: relative;
-
-    @media screen and (max-width: 768px) {
-      gap: 1.5rem;
-    }
-  }
-
-  // =========================================================
-  // Map button
-  // =========================================================
-  .mapblock {
-    display: block;
-    margin: 0 auto;
-    padding: 10px 20px;
-    text-align: center;
-
-    color: #fe6e00;
-    border-color: #fe6e00 !important;
-    background-color: transparent;
-
-    font-family: "arial", sans-serif;
-    font-size: 1.1rem !important;
-    font-weight: bold;
-    text-transform: none !important;
-
-    background-image: linear-gradient(
-      to left,
-      transparent,
-      transparent 50%,
-      #f97316 50%,
-      #ea580c
-    );
-    background-position: 100% 0;
-    background-size: 200% 100%;
-
-    transition: all 0.25s ease-in;
-
-    &:hover {
-      background-position: 0 0;
-      color: #fff;
-    }
-  }
-
-  .outline-theme-btn {
-    color: #fe6e00 !important;
-    border-color: #fe6e00 !important;
-    background-color: transparent;
-    padding: 12px 36px !important;
-    font-size: 1.1rem !important;
-    text-transform: none !important;
-    transition: all 0.3s ease !important;
-
-    &:hover {
-      color: #fff !important;
-      border-color: #fe6e00 !important;
-      background-color: rgba(254, 110, 0, 0.08) !important;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    &:active {
-      color: #fe6e00 !important;
-      border-color: #fe6e00 !important;
-      background-color: rgba(254, 110, 0, 0.12) !important;
-    }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  }
-
-  // =========================================================
-  // Main Table Container
-  // =========================================================
-  .client-table-container {
-    width: 100%;
-    position: relative;
-    background: #ffffff;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
   // =========================================================
   // Projects Hero Section
   // =========================================================
+  
   .projects-hero-section {
     position: relative;
     width: 100%;
-    min-height: 80vh;
+
+    min-height: 550px;
+    height: 575px;
+
     overflow: hidden;
     isolation: isolate;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     text-align: center;
-    color: #fff;
+     color: #fe6e00;
+
     padding: 4rem 1rem;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
 
-    // Y-axis parallax value updated from JS (default 0)
+    // Fallback background if video cannot load
+    background: linear-gradient(
+      135deg,
+      #1a1a2e 0%,
+      #16213e 50%,
+      #0f3460 100%
+    );
+
+    // Y-axis parallax value updated from JS
     --parallax-y: 0px;
+    
 
-    // ===== Background video =====
-    .bg-video {
+    // =======================================================
+    // Background Video Wrapper
+    // =======================================================
+    .projects-video-wrapper {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      min-width: 110%;
-      min-height: 110%;
-      width: auto;
-      height: auto;
-      transform: translate3d(-50%, calc(-35% + var(--parallax-y)), 0);
-      object-fit: cover;
-      z-index: 0;
-      pointer-events: none;
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      overflow: hidden;
+
+      z-index: -3;
+
+      transform: translate3d(
+        0,
+        var(--parallax-y, 0px),
+        0
+      );
+
       will-change: transform;
-      backface-visibility: hidden;
+
+      pointer-events: none;
+
+      // =====================================================
+      // Background Video
+      // =====================================================
+      .bg-video {
+        display: block;
+
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+        object-position: top  center;
+
+        pointer-events: none;
+
+        will-change: transform;
+
+        backface-visibility: hidden;
+      }
     }
 
-    // ===== Blue overlay =====
+    // =======================================================
+    // Background Overlay
+    // =======================================================
     .elementor-background-overlay {
       position: absolute;
       inset: 0;
+
       width: 100%;
       height: 100%;
+
+      z-index: -2;
+
+      pointer-events: none;
+
       background: linear-gradient(
         180deg,
         rgba(13, 34, 82, 0.85) 0%,
         rgba(13, 34, 82, 0.65) 45%,
         rgba(13, 34, 82, 0.85) 100%
       );
-      z-index: 1;
-      pointer-events: none;
 
       &::after {
         content: "";
+
         position: absolute;
         inset: 0;
+
         background: radial-gradient(
           ellipse at center,
           rgba(0, 0, 0, 0.35) 0%,
           transparent 70%
         );
+
         pointer-events: none;
       }
     }
 
-    // ===== Content above everything =====
+    // =======================================================
+    // Accessible Video Description
+    // =======================================================
+    .projects-video-description {
+      position: absolute;
+
+      width: 1px;
+      height: 1px;
+
+      padding: 0;
+      margin: -1px;
+
+      overflow: hidden;
+
+      clip: rect(0, 0, 0, 0);
+      clip-path: inset(50%);
+
+      white-space: nowrap;
+
+      border: 0;
+    }
+
+    // =======================================================
+    // Hero Content
+    // =======================================================
     .hero-content {
       position: relative;
+
       z-index: 2;
+
       width: 100%;
       max-width: 1200px;
+
       margin: 0 auto;
+
       text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
 
       h1 {
         font-size: 3.5rem;
         font-weight: 700;
-        color: #fff;
+        color: #fe6e00;
         letter-spacing: 2px;
         margin-bottom: 2rem;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        text-shadow:
+          2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      .mapblock{
+        text-align: center;
+        color: #fe6e00;
+        background-color: #0000;
+        background-image: linear-gradient(270deg, #0000, #0000 50%, #f97316 50%, #ea580c);
+        background-position: 100% 0;
+        background-size: 200% 100%;
+        margin: 0 auto;
+        padding: 10px 20px;
+        font-family: arial, sans-serif;
+        font-weight: 700;
+        transition: all .25s ease-in;
+        display: block;
+        text-transform: none !important;
+        border-color: #fe6e00 !important;
+        font-size: 1.1rem !important;
+        &:hover{
+          color: #fff;
+          background-position: 0 0;
+        }
       }
     }
 
-    // ===== Stats grid (only definition) =====
+    // =======================================================
+    // Stats Grid
+    // =======================================================
     .stats-grid {
       display: flex;
+
       justify-content: center;
       align-items: center;
+
       gap: 2.5rem;
+
       margin: 2rem auto 3rem;
       padding: 0 2rem;
+
       flex-wrap: wrap;
+
       max-width: 1200px;
 
       .stat-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex: 0 1 auto;
-        min-width: 160px;
-        background: rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        padding: 1.8rem 2.5rem;
+        background: #ffffff1f;
+        color: #fe6e00;
+        background-color: #0000;
+        background-image: linear-gradient(270deg, #0000, #0000 50%, #f97316 50%, #ea580c);
+        background-position: 100% 0;
+        background-size: 200% 100%;
+        border: 1px solid #fd7e14;
         border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        flex-direction: column;
+        flex: 0 auto;
+        align-items: center;
+        min-width: 160px;
+        padding: 1.8rem 2.5rem;
+        display: flex;
+        // box-shadow: 0 8px 32px #0000001a;
+        transition: all .25s ease-in;
+        cursor: pointer;
 
         &:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+          // transform: translateY(-4px);
 
+          // box-shadow:
+          //   0 12px 40px rgba(0, 0, 0, 0.15);
+        
+          background-position: 0 0;
           .stat-label,
           .stat-number,
           .total-value {
-            color: #f97316;
+            color: #fff;
             font-weight: 800;
           }
         }
@@ -312,310 +240,137 @@
       .stat-number,
       .total-value {
         display: block;
+
         font-size: 2.8rem;
         font-weight: 700;
-        color: #ffffff;
+        color: #fe6e00;
         line-height: 1.2;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+        text-shadow:
+          0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       .stat-label {
         display: block;
+
         font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.9);
+
+                color: #fe6e00;
+
+
         text-transform: uppercase;
         letter-spacing: 1.5px;
+
         margin-top: 0.5rem;
+
         font-weight: 500;
       }
 
-      // Responsive
+      // =====================================================
+      // Tablet Stats
+      // =====================================================
       @media (max-width: 768px) {
         gap: 1.5rem;
+
         padding: 0 1rem;
+
         margin: 1.5rem auto 2rem;
 
         .stat-item {
           min-width: 120px;
+
           padding: 1.2rem 1.5rem;
+
           flex: 1 1 40%;
         }
 
         .stat-number,
-        .total-value { font-size: 2rem; }
+        .total-value {
+          font-size: 2rem;
+        }
 
-        .stat-label { font-size: 0.75rem; }
+        .stat-label {
+          font-size: 0.75rem;
+        }
       }
 
+      // =====================================================
+      // Small Mobile Stats
+      // =====================================================
       @media (max-width: 480px) {
         gap: 1rem;
 
         .stat-item {
           min-width: 100px;
+
           padding: 1rem;
+
           flex: 1 1 100%;
         }
 
         .stat-number,
-        .total-value { font-size: 1.8rem; }
+        .total-value {
+          font-size: 1.8rem;
+        }
       }
     }
 
-    // ===== Reduced motion =====
-    @media (prefers-reduced-motion: reduce) {
-      .bg-video {
-        transform: translate3d(-50%, -50%, 0) !important;
-      }
-    }
-
+    // =======================================================
+    // Tablet
+    // =======================================================
     @media (max-width: 1024px) {
       min-height: calc(100vh - 75px);
+      height: calc(100vh - 75px);
     }
 
-    // ===== Mobile =====
-    @media (max-width: 768px) {
-      min-height: calc(100vh - 70px);
+    // =======================================================
+    // Mobile
+    // =======================================================
+    @media (max-width: 767px) {
+      min-height: calc(100vh - 75px);
+      height: calc(100vh - 75px);
 
-      .bg-video {
-        min-width: 130%;
-        min-height: 130%;
-      }
-
-      .hero-content h1 {
-        font-size: 2.5rem;
+      .hero-content {
+        h1 {
+          font-size: 2.5rem;
+        }
       }
     }
 
+    // =======================================================
+    // Small Mobile
+    // =======================================================
     @media (max-width: 480px) {
-      .hero-content h1 {
-        font-size: 2rem;
+      .hero-content {
+        h1 {
+          font-size: 2rem;
+        }
       }
     }
+
+    // =======================================================
+    // Very Small Screens
+    // =======================================================
     @media (max-width: 360px) {
       min-height: calc(100vh + 15px);
+
       .mapblock {
         padding: 10px 20px;
+
         font-size: 1rem !important;
       }
     }
-  }
 
-  // =========================================================
-  // Clear Filters Button
-  // =========================================================
-  .clear-filters-btn {
-    height: 44px;
-    padding: 0 18px;
-    border: 1px solid #222222;
-    border-radius: 6px;
-    background: #222222;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 500;
-    white-space: nowrap;
-    cursor: pointer;
-    transition:
-      background-color $transition-speed ease,
-      border-color $transition-speed ease,
-      transform $transition-speed ease;
+    // =======================================================
+    // Reduced Motion
+    // =======================================================
+    @media (prefers-reduced-motion: reduce) {
+      .projects-video-wrapper {
+        transform: none !important;
+      }
 
-    &:hover {
-      background: #444444;
-      border-color: #444444;
-    }
-
-    &:active { transform: translateY(1px); }
-
-    &:focus-visible {
-      outline: 2px solid $primary-color;
-      outline-offset: 2px;
-    }
-  }
-  .project-count-filter {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-
-    
-  }
-  // =========================================================
-  // Filter Result Info
-  // =========================================================
-  .project-results-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 30px;
-    margin: 0;
-    padding: 10px 20px;
-    background: #ffffff;
-    font-size: 13px;
-    color: #777777;
-
-    strong {
-      color: #222222;
-      font-weight: 600;
-    }
-    .total-projects {
-      font-size: 14px;
-      color: $text-secondary;
-
-      strong {
-        color: white;
-        font-weight: 600;
+      .projects-video-wrapper .bg-video {
+        animation: none !important;
       }
     }
   }
- .form-control {
-  border-color: #d1d5db;
-  box-shadow: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover {
-    border-color: #f97316;
-  }
-
-  &:focus {
-    border-color: #f97316;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
-    outline: none;
-  }
-
-  &::placeholder {
-    color: #9ca3af;
-  }
-}
-  // =========================================================
-  // Desktop Table
-  // =========================================================
-  .client-table {
-    width: 100%;
-    min-width: 700px;
-    margin: 0;
-    border-collapse: collapse;
-    table-layout: fixed;
-
-    thead {
-      background: #f8fafc;
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
-
-    .header-row {
-      height: 50px;
-      border-bottom: 1px solid $border-color;
-
-      th {
-        padding: 0 25px;
-        text-align: left;
-        font-size: 1rem;
-        font-weight: 600;
-        color: #1e3a5f;
-        white-space: nowrap;
-        background: #f8fafc;
-      }
-    }
-
-    tbody {
-      position: relative;
-      will-change: transform;
-      transform: translateZ(0);
-    }
-
-    .client-row {
-      height: 40px;
-      border-bottom: 1px solid #edf1f5;
-      background: #ffffff;
-      transition: background-color $transition-speed ease;
-
-      &:last-child { border-bottom: none; }
-      &:hover { background: $hover-bg; }
-
-      td {
-        padding: 0 25px;
-        font-size: 16px;
-        color: $text-secondary;
-        vertical-align: middle;
-      }
-    }
-
-    .item-name {
-      width: 32%;
-      font-weight: 600;
-      color: $text-primary;
-    }
-
-    .item-type   { width: 23%; }
-
-    .item-status {
-      width: 20%;
-      color: #008f4c;
-      font-weight: 600;
-
-      .MuiChip-root { vertical-align: middle; }
-    }
-
-    .item-location { width: 25%; }
-  }
-
-  // =========================================================
-  // Tablet
-  // =========================================================
-  @media screen and (max-width: 1199px) {
-    .project-filters {
-      grid-template-columns: minmax(220px, 1fr) 180px 200px auto;
-      gap: 12px;
-    }
-  }
-
-  @media screen and (max-width: 991px) {
-    .project-filters { grid-template-columns: 1fr 1fr; }
-    .project-search  { grid-column: 1 / -1; }
-    .clear-filters-btn { width: fit-content; }
-  }
-
-  // =========================================================
-  // Empty State
-  // =========================================================
-  .empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
-    color: $muted-color;
-
-    p {
-      margin: 0;
-      font-size: 1.125rem;
-    }
-  }
-
-  // =========================================================
-  // Small screens — outline button
-  // =========================================================
-  @media (max-width: 480px) {
-    .outline-theme-btn {
-      padding: 10px 24px !important;
-      font-size: 1rem !important;
-    }
-  }
-
-  // =========================================================
-  // Print
-  // =========================================================
-  @media print {
-    .project-filters,
-    .project-results-info {
-      display: none !important;
-    }
-  }
-}
-
-// =========================================================
-// Keyframes MUST be at root level (outside any selector)
-// so they aren't scoped/nested incorrectly by some compilers
-// =========================================================
-@keyframes dot-flow {
-  0%   { transform: translateX(-45px); }
-  100% { transform: translateX(45px); }
-}

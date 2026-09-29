@@ -1,8 +1,8 @@
 import Downloads from "./Downloads.jsx";
 
 export const metadata = {
-  title:
-    "Downloads Liaison Bank | Business Licensing & Government Liaison Consultants Mumbai",
+  title: "Liaison Bank Downloads | Government Liaison Services in Mumbai",
+  // title: "Downloads Liaison Bank | Business Licensing & Government Liaison Consultants Mumbai",
 
   description:
     "Contact Liaison Bank for expert business licensing, government liaisoning, statutory approvals, BMC permissions, regulatory compliance, FSSAI registration, factory licensing, and corporate consulting services. Visit our Mumbai office or connect with our experienced consultants today.",

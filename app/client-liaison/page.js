@@ -1,8 +1,8 @@
 import Clients from "./clients.jsx";
 
 export const metadata = {
-  title:
-    "Our Clients | Trusted Business Licensing & Government Liaison Partners | Liaison Bank",
+  title: "Our Clients | Trusted Government Liaison Partners in Mumbai | Liaison Bank",
+  // title: "Our Clients | Trusted Business Licensing & Government Liaison Partners | Liaison Bank",
 
   description:
     "Explore Liaison Bank's portfolio of trusted clients across commercial, industrial, healthcare, hospitality, education, retail, and real estate sectors. Discover why businesses rely on our expertise for government liaisoning, statutory approvals, regulatory compliance, and business licensing services across Mumbai and India.",

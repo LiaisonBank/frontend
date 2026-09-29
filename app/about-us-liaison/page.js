@@ -1,8 +1,8 @@
 import AboutClient from "./about.jsx";
 
 export const metadata = {
-  title:
-    "About Liaison Bank | Business Licensing & Government Liaison Experts Mumbai",
+  title: "About Liaison Bank | Government Liaison & Licensing Experts in Mumbai",
+  // title: "About Liaison Bank | Business Licensing & Government Liaison Experts Mumbai",
 
   description:
     "Learn about Liaison Bank, a trusted government liaison and business licensing consultancy in Mumbai. We specialize in statutory approvals, regulatory compliance, BMC permissions, FSSAI registration, factory licensing, and end-to-end business licensing solutions across India.",

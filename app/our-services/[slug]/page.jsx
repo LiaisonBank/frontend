@@ -480,7 +480,9 @@ export default function ServiceDetail() {
                               <div key={item.id} className="back-item-wrapper">
                                 <div className="back-item-header">
                                   <span className="back-item-number">{String(idx + 1).padStart(2, '0')}</span>
+                                    <Link href={`/our-services/${slug}/${item.slug}`}>
                                   <p className="back-item-name">{item.name}</p>
+                                  </Link>
                                 </div>
                                 
                                 {item.servicesList && item.servicesList.length > 0 && (
