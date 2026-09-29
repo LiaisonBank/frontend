@@ -46,6 +46,7 @@ export default function SubServiceDetail() {
           throw new Error("Invalid response format from API");
         }
 
+        /* ---------- servicesList ---------- */
         let servicesList = [];
         if (itemData.itemServices) {
           if (Array.isArray(itemData.itemServices)) {
@@ -65,17 +66,36 @@ export default function SubServiceDetail() {
           }
         }
 
+        /* ---------- content sections ---------- */
+        // API uses "contentSection" (singular). Also support "contentSections"
+        // and any stringified JSON just in case.
+        const rawSections =
+          itemData.contentSection ??
+          itemData.contentSections ??
+          itemData.content_section ??
+          null;
+
         let sections = [];
-        if (Array.isArray(itemData.contentSections)) {
-          sections = itemData.contentSections;
-        } else if (typeof itemData.contentSections === "string") {
+
+        if (Array.isArray(rawSections)) {
+          sections = rawSections;
+        } else if (typeof rawSections === "string") {
           try {
-            const parsed = JSON.parse(itemData.contentSections);
+            const parsed = JSON.parse(rawSections);
             sections = Array.isArray(parsed) ? parsed : [];
           } catch {
             sections = [];
           }
         }
+
+        // Normalize: make sure every section has title + content
+        sections = sections
+          .filter(Boolean)
+          .map((s) => ({
+            title: s?.title || s?.heading || "",
+            content: s?.content || s?.body || s?.description || "",
+          }))
+          .filter((s) => s.title || s.content);
 
         setItem({
           id: itemData.id,
@@ -90,6 +110,7 @@ export default function SubServiceDetail() {
           subCategoryName: itemData.subCategoryName,
         });
 
+        /* ---------- parent category + related ---------- */
         try {
           const categoryResponse = await fetch(
             `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/category/${slug}`
@@ -105,41 +126,39 @@ export default function SubServiceDetail() {
             });
 
             const subcategories = categoryData.subcategories || [];
-            let siblings = [];
+            const siblings = [];
 
             subcategories.forEach((sub) => {
               const items = sub.items || [];
               items.forEach((sibling) => {
-                if (sibling.slug !== itemSlug) {
-                  let siblingServices = [];
-                  if (sibling.itemServices) {
-                    if (Array.isArray(sibling.itemServices)) {
-                      siblingServices = sibling.itemServices;
-                    } else if (typeof sibling.itemServices === "string") {
-                      try {
-                        const parsed = JSON.parse(sibling.itemServices);
-                        siblingServices = Array.isArray(parsed)
-                          ? parsed
-                          : [];
-                      } catch {
-                        siblingServices = sibling.itemServices
-                          .split(",")
-                          .map((s) => s.trim())
-                          .filter(Boolean);
-                      }
+                if (sibling.slug === itemSlug) return;
+
+                let siblingServices = [];
+                if (sibling.itemServices) {
+                  if (Array.isArray(sibling.itemServices)) {
+                    siblingServices = sibling.itemServices;
+                  } else if (typeof sibling.itemServices === "string") {
+                    try {
+                      const parsed = JSON.parse(sibling.itemServices);
+                      siblingServices = Array.isArray(parsed) ? parsed : [];
+                    } catch {
+                      siblingServices = sibling.itemServices
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean);
                     }
                   }
-
-                  siblings.push({
-                    id: sibling.id,
-                    name: sibling.name,
-                    slug: sibling.slug,
-                    description: sibling.description || "",
-                    subcategorySlug: sub.slug,
-                    subcategoryName: sub.name,
-                    servicesList: siblingServices,
-                  });
                 }
+
+                siblings.push({
+                  id: sibling.id,
+                  name: sibling.name,
+                  slug: sibling.slug,
+                  description: sibling.description || "",
+                  subcategorySlug: sub.slug,
+                  subcategoryName: sub.name,
+                  servicesList: siblingServices,
+                });
               });
             });
 
@@ -159,6 +178,7 @@ export default function SubServiceDetail() {
     fetchItemDetail();
   }, [slug, itemSlug]);
 
+  /* ---------- loading ---------- */
   if (loading) {
     return (
       <div className="item-loading">
@@ -174,6 +194,7 @@ export default function SubServiceDetail() {
     );
   }
 
+  /* ---------- error ---------- */
   if (error) {
     const isNotFound = error.status === 404;
     return (
@@ -246,11 +267,11 @@ export default function SubServiceDetail() {
         </div>
       </div>
 
-      {/* =================== Body — full width =================== */}
+      {/* =================== Body =================== */}
       <div className="item-body" id="details">
         <div className="container">
           <main className="item-main">
-            {/* servicesList as full-width chip strip */}
+            {/* servicesList chips */}
             {item.servicesList.length > 0 && (
               <section className="services-strip">
                 <h2 className="services-strip-title">What&apos;s included</h2>
@@ -277,6 +298,7 @@ export default function SubServiceDetail() {
               </section>
             )}
 
+            {/* Overview (full_description) */}
             {item.fullDescription && (
               <section className="content-block">
                 <h2 className="content-title">Overview</h2>
@@ -284,11 +306,16 @@ export default function SubServiceDetail() {
               </section>
             )}
 
+            {/* Content sections */}
             {item.contentSections.length > 0 ? (
               item.contentSections.map((section, i) => (
                 <section className="content-block" key={i}>
-                  <h2 className="content-title">{section.title}</h2>
-                  <div className="content-rich">{section.content}</div>
+                  {section.title && (
+                    <h2 className="content-title">{section.title}</h2>
+                  )}
+                  {section.content && (
+                    <div className="content-rich">{section.content}</div>
+                  )}
                 </section>
               ))
             ) : (
