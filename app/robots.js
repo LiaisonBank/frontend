@@ -4,6 +4,6 @@ export default function robots() {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://liaisonbank.com/sitemap.xml",
+sitemap: "https://www.liaisonbank.com/sitemap.xml"
   };
 }
