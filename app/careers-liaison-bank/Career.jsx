@@ -15,6 +15,7 @@ import './career.scss';
 import RecruitemtnModal from "./RecruitemtnModal";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import EmployeeActivityGallery from "@/components/EmployeeActivityGallery/page";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,14 +37,14 @@ const services = [
   },
     {
     id: 5,
-    name: "Piped Natural Gas",
+    name: "PNG",
     slug: "Reliable Gas, Smarter Living.",
     image: "/PNG.png   ",
     description: "_____________________________________"
   },
     {
     id: 4,
-    name: "Fire",
+    name: "Fire Safety",
     slug: "Turning Safety into Security.",
     image: "/fire4.png",
     description: "____________________________________________"
@@ -569,6 +570,10 @@ export default function CareersLiaisonPage() {
       </section>
 
       <section className="hero-section"></section>
+
+      <section className="saturdayfun">
+          <EmployeeActivityGallery />
+      </section>
 
       {/* Benefits Section */}
       <section ref={benefitsRef} className="benefits-section" id="benefits">
