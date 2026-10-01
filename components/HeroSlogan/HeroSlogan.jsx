@@ -40,12 +40,9 @@ const AUDIO_VOLUME = 0.8;
 
 const VIDEO_SEO = {
   name: "Liaison Bank Business Licensing and Government Liaison Services",
-
   description:
     "Liaison Bank provides business licensing, government liaison, compliance and approval services for businesses in Mumbai.",
-
   uploadDate: "2026-09-20",
-
   duration: "PT0M30S",
 };
 
@@ -54,21 +51,17 @@ const VIDEO_SEO = {
 /* -------------------------------------------------------------------------- */
 
 const subscribeNoop = () => () => {};
-
 const getIsClientSnapshot = () => true;
 const getIsServerSnapshot = () => false;
 
 const subscribeToResize = (callback) => {
   if (typeof window === "undefined") return () => {};
-
-  window.addEventListener("resize", callback);
-
+  window.addEventListener("resize", callback, { passive: true });
   return () => window.removeEventListener("resize", callback);
 };
 
 const getWidthSnapshot = () =>
   typeof window === "undefined" ? SSR_DEFAULT_WIDTH : window.innerWidth;
-
 const getWidthServerSnapshot = () => SSR_DEFAULT_WIDTH;
 
 /* -------------------------------------------------------------------------- */
@@ -88,60 +81,45 @@ class SoundEffectSystem {
         this.initialized = true;
         return true;
       }
-
       if (!src) {
         this.initialized = true;
         return true;
       }
-
       this.audio = new Audio(src);
       this.audio.loop = false;
-      this.audio.preload = "auto";
+      this.audio.preload = "none"; // don't download until play() is called
       this.audio.volume = AUDIO_VOLUME;
       this.initialized = true;
-
       return true;
     } catch (err) {
       if (process.env.NODE_ENV !== "production") {
         console.warn("[HeroSlogan] Audio not supported:", err);
       }
-
       return false;
     }
   }
 
   play() {
     if (!this.soundEnabled || !this.audio) return;
-
     try {
       this.audio.currentTime = 0;
-
       const promise = this.audio.play();
-
       if (promise && typeof promise.catch === "function") {
-        promise.catch(() => {
-          // Autoplay blocked — expected until user interacts.
-        });
+        promise.catch(() => {});
       }
-    } catch {
-      // Ignore — playback is a progressive enhancement.
-    }
+    } catch {}
   }
 
   stop() {
     if (!this.audio) return;
-
     try {
       this.audio.pause();
       this.audio.currentTime = 0;
-    } catch {
-      // Ignore.
-    }
+    } catch {}
   }
 
   setVolume(volume) {
     if (!this.audio) return;
-
     this.audio.volume = Math.max(0, Math.min(1, volume));
   }
 
@@ -151,18 +129,153 @@ class SoundEffectSystem {
 }
 
 /* -------------------------------------------------------------------------- */
+/*                          Typing Slogan (client-only)                       */
+/* -------------------------------------------------------------------------- */
+
+function TypingSlogan({
+  isMobile,
+  soundEnabled,
+  playSound,
+  stopSound,
+  showCursor,
+  wordPositions,
+  fullText,
+}) {
+  const [currentCharIndex, setCurrentCharIndex] = useState(-1);
+  const [isTypingComplete, setIsTypingComplete] = useState(false);
+
+  const typingTimerRef = useRef(null);
+  const restartTimerRef = useRef(null);
+  const stopSoundTimerRef = useRef(null);
+  const startTypingRef = useRef(null);
+
+  const startTyping = useCallback(() => {
+    const totalChars = fullText.length;
+    let index = -1;
+
+    if (typingTimerRef.current) {
+      clearInterval(typingTimerRef.current);
+      typingTimerRef.current = null;
+    }
+
+    setCurrentCharIndex(-1);
+    setIsTypingComplete(false);
+    playSound();
+
+    typingTimerRef.current = setInterval(() => {
+      if (index < totalChars - 1) {
+        index += 1;
+        setCurrentCharIndex(index);
+        return;
+      }
+
+      clearInterval(typingTimerRef.current);
+      typingTimerRef.current = null;
+      setIsTypingComplete(true);
+
+      stopSoundTimerRef.current = setTimeout(() => {
+        stopSound();
+        stopSoundTimerRef.current = null;
+      }, SOUND_STOP_DELAY_MS);
+
+      restartTimerRef.current = setTimeout(() => {
+        setCurrentCharIndex(-1);
+        setIsTypingComplete(false);
+        restartTimerRef.current = setTimeout(() => {
+          startTypingRef.current?.();
+        }, RESTART_GAP_MS);
+      }, RESTART_DELAY_MS);
+    }, TYPING_SPEED_MS);
+  }, [fullText, playSound, stopSound]);
+
+  useEffect(() => {
+    startTypingRef.current = startTyping;
+    return () => {
+      startTypingRef.current = null;
+    };
+  }, [startTyping]);
+
+  useEffect(() => {
+    const initialDelay = setTimeout(() => {
+      startTypingRef.current?.();
+    }, INITIAL_TYPING_DELAY_MS);
+
+    return () => {
+      clearTimeout(initialDelay);
+      if (typingTimerRef.current) clearInterval(typingTimerRef.current);
+      if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
+      if (stopSoundTimerRef.current) clearTimeout(stopSoundTimerRef.current);
+      stopSound();
+    };
+  }, [stopSound]);
+
+  return (
+    <span className={styles.sloganLine}>
+      {wordPositions.map((wordData) => (
+        <span key={`word-${wordData.wordIndex}`} className={styles.wordWrapper}>
+          {wordData.chars.map((char, charIdx) => {
+            const globalCharIndex = wordData.startIndex + charIdx;
+            const isRevealed = currentCharIndex >= globalCharIndex;
+            return (
+              <span
+                key={`char-${globalCharIndex}`}
+                className={`${styles.char} ${
+                  isRevealed ? styles.charReveal : ""
+                }`}
+                aria-hidden={!isRevealed}
+              >
+                {char}
+              </span>
+            );
+          })}
+        </span>
+      ))}
+
+      {!isTypingComplete && (
+        <span
+          className={`${styles.cursor} ${
+            showCursor ? styles.cursorVisible : ""
+          }`}
+          aria-hidden="true"
+        />
+      )}
+    </span>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*                    Static Slogan (SSR + mobile fallback)                   */
+/* -------------------------------------------------------------------------- */
+
+function StaticSlogan({ wordPositions }) {
+  return (
+    <span className={styles.sloganLine}>
+      {wordPositions.map((wordData) => (
+        <span key={`word-${wordData.wordIndex}`} className={styles.wordWrapper}>
+          {wordData.chars.map((char, charIdx) => (
+            <span
+              key={`char-${wordData.startIndex + charIdx}`}
+              className={`${styles.char} ${styles.charStatic}`}
+            >
+              {char}
+            </span>
+          ))}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /*                                 Component                                  */
 /* -------------------------------------------------------------------------- */
 
 const HeroSlogan = ({
   videoSrcMp4 = "/bannerMain.mp4",
   videoSrcWebm = "/sloganBanner.webm",
-  posterSrc = "/sloganBanner.png",
+  posterSrc = "/sloganBanner.webp",
   soundSrc = null,
   className = "",
-
-  /* ---------------------------- Video SEO props --------------------------- */
-
   videoName = VIDEO_SEO.name,
   videoDescription = VIDEO_SEO.description,
   videoUploadDate = VIDEO_SEO.uploadDate,
@@ -184,29 +297,57 @@ const HeroSlogan = ({
 
   const isMobile = viewportWidth < MOBILE_BREAKPOINT;
 
-  const videoAnimation = isMobile
-    ? "videoZoomPanMobile"
-    : "videoZoomPan";
+  /* ----------------------------- Motion / data-saver detection ------------ */
 
-  const particleCount = isMobile ? 30 : 50;
+  // null on server, boolean on client
+  const [shouldPlayVideo, setShouldPlayVideo] = useState(null);
+
+  useEffect(() => {
+    if (!isClient) return;
+
+    const conn =
+      navigator.connection ||
+      navigator.mozConnection ||
+      navigator.webkitConnection;
+
+    const saveData = conn?.saveData === true;
+    const slowEffective =
+      conn?.effectiveType &&
+      ["slow-2g", "2g", "3g"].includes(conn.effectiveType);
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    const isSmallScreen = window.innerWidth < MOBILE_BREAKPOINT;
+
+    // Play video only when: not saving data, not slow, not reduced-motion
+    const ok = !saveData && !slowEffective && !prefersReducedMotion;
+    setShouldPlayVideo(ok);
+
+    // Log for debugging (remove in prod)
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[HeroSlogan] video decision", {
+        saveData,
+        slowEffective,
+        prefersReducedMotion,
+        isSmallScreen,
+        willPlay: ok,
+      });
+    }
+  }, [isClient]);
 
   /* --------------------------------- State -------------------------------- */
 
   const [particles, setParticles] = useState([]);
-  const [currentCharIndex, setCurrentCharIndex] = useState(-1);
   const [showCursor, setShowCursor] = useState(true);
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   /* --------------------------------- Refs --------------------------------- */
 
-  const typingTimerRef = useRef(null);
-  const restartTimerRef = useRef(null);
-  const stopSoundTimerRef = useRef(null);
   const cursorTimerRef = useRef(null);
   const audioUnlockedRef = useRef(false);
   const soundSystemRef = useRef(null);
-  const startTypingRef = useRef(null);
 
   if (soundSystemRef.current === null) {
     soundSystemRef.current = new SoundEffectSystem();
@@ -217,13 +358,11 @@ const HeroSlogan = ({
   const fullText = useMemo(() => WORDS.join(""), []);
 
   const wordPositions = useMemo(() => {
-    const lengths = WORDS.map((word) => word.length);
-
+    const lengths = WORDS.map((w) => w.length);
     return WORDS.map((word, wordIndex) => {
       const startIndex = lengths
         .slice(0, wordIndex)
         .reduce((sum, len) => sum + len, 0);
-
       return {
         word,
         chars: word.split(""),
@@ -236,28 +375,12 @@ const HeroSlogan = ({
   /* --------------------------- Video SEO URLs ----------------------------- */
 
   const videoSeoData = useMemo(() => {
-    /*
-     * NEXT_PUBLIC_SITE_URL should be:
-     *
-     * NEXT_PUBLIC_SITE_URL=https://liaisonbank.com
-     *
-     * in .env.production
-     */
-
     const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://liaisonbank.com";
+      process.env.NEXT_PUBLIC_SITE_URL || "https://liaisonbank.com";
 
     const makeAbsoluteUrl = (url) => {
       if (!url) return null;
-
-      if (
-        url.startsWith("http://") ||
-        url.startsWith("https://")
-      ) {
-        return url;
-      }
-
+      if (url.startsWith("http://") || url.startsWith("https://")) return url;
       return `${siteUrl}${url.startsWith("/") ? "" : "/"}${url}`;
     };
 
@@ -272,36 +395,23 @@ const HeroSlogan = ({
   /* ----------------------------- Video JSON-LD ---------------------------- */
 
   const videoJsonLd = useMemo(() => {
-    if (!videoSeoData.contentUrl || !videoSeoData.thumbnailUrl) {
-      return null;
-    }
+    if (!videoSeoData.contentUrl || !videoSeoData.thumbnailUrl) return null;
 
     return {
       "@context": "https://schema.org",
       "@type": "VideoObject",
-
       name: videoName,
-
       description: videoDescription,
-
-      thumbnailUrl: [
-        videoSeoData.thumbnailUrl,
-      ],
-
+      thumbnailUrl: [videoSeoData.thumbnailUrl],
       uploadDate: videoUploadDate,
-
       duration: videoDuration,
-
       contentUrl: videoSeoData.contentUrl,
-
       embedUrl: videoSeoData.embedUrl,
-
       publisher: {
         "@type": "Organization",
         name: "Liaison Bank",
         url: videoSeoData.siteUrl,
       },
-
       isFamilyFriendly: true,
     };
   }, [
@@ -316,14 +426,10 @@ const HeroSlogan = ({
 
   const unlockAudio = useCallback(() => {
     const system = soundSystemRef.current;
-
     if (!system || audioUnlockedRef.current) return;
-
     const ok = system.init(soundSrc);
-
     if (ok) {
       audioUnlockedRef.current = true;
-
       system.setEnabled(soundEnabled);
       system.setVolume(AUDIO_VOLUME);
     }
@@ -331,15 +437,7 @@ const HeroSlogan = ({
 
   const playSound = useCallback(() => {
     const system = soundSystemRef.current;
-
-    if (
-      !system ||
-      !soundEnabled ||
-      !audioUnlockedRef.current
-    ) {
-      return;
-    }
-
+    if (!system || !soundEnabled || !audioUnlockedRef.current) return;
     system.play();
   }, [soundEnabled]);
 
@@ -347,27 +445,61 @@ const HeroSlogan = ({
     soundSystemRef.current?.stop();
   }, []);
 
-  /* -------------------------- Particles + cursor -------------------------- */
+  /* -------------------------- Cursor blink + audio unlock ------------------ */
 
   useEffect(() => {
     if (!isClient) return;
 
+    cursorTimerRef.current = setInterval(() => {
+      setShowCursor((prev) => !prev);
+    }, CURSOR_BLINK_MS);
+
+    const events = ["click", "touchstart", "keydown"];
+    events.forEach((event) =>
+      document.addEventListener(event, unlockAudio, { passive: true })
+    );
+
+    return () => {
+      if (cursorTimerRef.current) {
+        clearInterval(cursorTimerRef.current);
+        cursorTimerRef.current = null;
+      }
+      events.forEach((event) =>
+        document.removeEventListener(event, unlockAudio)
+      );
+    };
+  }, [isClient, unlockAudio]);
+
+  /* -------------------------- Particles (deferred) ------------------------- */
+
+  useEffect(() => {
+    if (!isClient) return;
+
+    // Skip particles entirely on mobile — visual cost outweighs benefit
+    if (isMobile) return;
+
+    const conn =
+      navigator.connection ||
+      navigator.mozConnection ||
+      navigator.webkitConnection;
+    if (conn?.saveData) return;
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    const particleCount = 50;
+
     const generateParticles = () => {
       const next = new Array(particleCount);
-
       for (let i = 0; i < particleCount; i++) {
         const size = Math.random() * 6 + 2;
         const left = Math.random() * 100;
         const duration = Math.random() * 25 + 15;
         const delay = Math.random() * 15;
-
         const color =
-          PARTICLE_COLORS[
-            Math.floor(
-              Math.random() * PARTICLE_COLORS.length
-            )
-          ];
-
+          PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
         const wobble = Math.random() * 20 + 10;
 
         next[i] = (
@@ -387,194 +519,62 @@ const HeroSlogan = ({
           />
         );
       }
-
       setParticles(next);
     };
 
-    const rafId =
-      typeof requestAnimationFrame === "function"
-        ? requestAnimationFrame(generateParticles)
-        : setTimeout(generateParticles, 0);
+    const hasIdle = typeof window.requestIdleCallback === "function";
+    let handle;
 
-    cursorTimerRef.current = setInterval(() => {
-      setShowCursor((prev) => !prev);
-    }, CURSOR_BLINK_MS);
-
-    const events = ["click", "touchstart", "keydown"];
-
-    events.forEach((event) =>
-      document.addEventListener(event, unlockAudio, {
-        passive: true,
-      })
-    );
-
-    return () => {
-      if (
-        typeof cancelAnimationFrame === "function" &&
-        typeof rafId === "number"
-      ) {
-        cancelAnimationFrame(rafId);
-      } else {
-        clearTimeout(rafId);
-      }
-
-      if (cursorTimerRef.current) {
-        clearInterval(cursorTimerRef.current);
-        cursorTimerRef.current = null;
-      }
-
-      events.forEach((event) =>
-        document.removeEventListener(event, unlockAudio)
-      );
-    };
-  }, [
-    isClient,
-    particleCount,
-    unlockAudio,
-  ]);
-
-  /* ----------------------------- Typing loop ------------------------------ */
-
-  const startTyping = useCallback(() => {
-    const totalChars = fullText.length;
-
-    let index = -1;
-
-    if (typingTimerRef.current) {
-      clearInterval(typingTimerRef.current);
-      typingTimerRef.current = null;
+    if (hasIdle) {
+      handle = window.requestIdleCallback(generateParticles, { timeout: 2000 });
+    } else {
+      handle = setTimeout(generateParticles, 800);
     }
 
-    setCurrentCharIndex(-1);
-    setIsTypingComplete(false);
-    setShowCursor(true);
-
-    playSound();
-
-    typingTimerRef.current = setInterval(() => {
-      if (index < totalChars - 1) {
-        index += 1;
-
-        setCurrentCharIndex(index);
-
-        return;
-      }
-
-      clearInterval(typingTimerRef.current);
-      typingTimerRef.current = null;
-
-      setIsTypingComplete(true);
-
-      stopSoundTimerRef.current = setTimeout(() => {
-        stopSound();
-        stopSoundTimerRef.current = null;
-      }, SOUND_STOP_DELAY_MS);
-
-      restartTimerRef.current = setTimeout(() => {
-        setCurrentCharIndex(-1);
-        setIsTypingComplete(false);
-
-        restartTimerRef.current = setTimeout(() => {
-          startTypingRef.current?.();
-        }, RESTART_GAP_MS);
-      }, RESTART_DELAY_MS);
-    }, TYPING_SPEED_MS);
-  }, [
-    fullText,
-    playSound,
-    stopSound,
-  ]);
-
-  useEffect(() => {
-    startTypingRef.current = startTyping;
-
     return () => {
-      startTypingRef.current = null;
+      if (hasIdle && typeof window.cancelIdleCallback === "function") {
+        window.cancelIdleCallback(handle);
+      } else {
+        clearTimeout(handle);
+      }
     };
-  }, [startTyping]);
-
-  useEffect(() => {
-    if (!isClient) return;
-
-    const initialDelay = setTimeout(() => {
-      startTypingRef.current?.();
-    }, INITIAL_TYPING_DELAY_MS);
-
-    return () => {
-      clearTimeout(initialDelay);
-
-      if (typingTimerRef.current) {
-        clearInterval(typingTimerRef.current);
-      }
-
-      if (restartTimerRef.current) {
-        clearTimeout(restartTimerRef.current);
-      }
-
-      if (stopSoundTimerRef.current) {
-        clearTimeout(stopSoundTimerRef.current);
-      }
-
-      stopSound();
-    };
-  }, [isClient, stopSound]);
+  }, [isClient, isMobile]);
 
   /* --------------------------- Sound toggle UI ---------------------------- */
 
   const handleSoundToggle = useCallback(
     (event) => {
       event.stopPropagation();
-
       const next = !soundEnabled;
-
       setSoundEnabled(next);
-
       soundSystemRef.current?.setEnabled(next);
-
       unlockAudio();
-
       if (next) {
-        if (currentCharIndex < fullText.length - 1) {
-          playSound();
-        }
+        playSound();
       } else {
         stopSound();
       }
     },
-    [
-      soundEnabled,
-      unlockAudio,
-      currentCharIndex,
-      fullText.length,
-      playSound,
-      stopSound,
-    ]
+    [soundEnabled, unlockAudio, playSound, stopSound]
   );
 
   /* -------------------------------- Render -------------------------------- */
 
-  if (!isClient) {
-    return (
-      <div
-        className={`${styles.heroSlogan} ${className}`}
-        aria-hidden="true"
-        suppressHydrationWarning
-      />
-    );
-  }
+  // Determine if video should render a <video> or just the poster
+  // On server: render <video> for SEO (crawlers see it), but no autoplay attrs yet
+  // On client: decide based on connection
+  const renderVideoElement = isClient ? shouldPlayVideo !== false : true;
 
   return (
     <>
       {/* ------------------------------------------------------------------ */}
-      {/* VideoObject JSON-LD                                               */}
+      {/* VideoObject JSON-LD — SSR'd, crawlable                             */}
       {/* ------------------------------------------------------------------ */}
 
       {videoJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(videoJsonLd),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }}
         />
       )}
 
@@ -582,178 +582,97 @@ const HeroSlogan = ({
         className={`${styles.heroSlogan} ${className}`}
         aria-labelledby="hero-slogan-title"
       >
-        {/* ---------------------------------------------------------------- */}
-        {/* Sound toggle                                                     */}
-        {/* ---------------------------------------------------------------- */}
-
-        {soundSrc && (
+        {/* Sound toggle — client only */}
+        {isClient && soundSrc && (
           <button
             type="button"
             className={styles.soundToggle}
             onClick={handleSoundToggle}
-            aria-label={
-              soundEnabled
-                ? "Mute sound"
-                : "Unmute sound"
-            }
+            aria-label={soundEnabled ? "Mute sound" : "Unmute sound"}
             aria-pressed={soundEnabled}
             data-enabled={soundEnabled}
           >
-            <span aria-hidden="true">
-              {soundEnabled ? "⌨️" : "🔇"}
-            </span>
+            <span aria-hidden="true">{soundEnabled ? "🔊" : "🔇"}</span>
           </button>
         )}
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Animated background                                              */}
-        {/* ---------------------------------------------------------------- */}
+        {/* Animated gradient — pure CSS, no cost */}
+        <div className={styles.animatedGradient} aria-hidden="true" />
 
-        <div
-          className={styles.animatedGradient}
-          aria-hidden="true"
-        />
-
-        {/* ---------------------------------------------------------------- */}
-        {/* Particles                                                        */}
-        {/* ---------------------------------------------------------------- */}
-
+        {/* Particles — only render when we actually generated them */}
         {particles.length > 0 && (
-          <div
-            className={styles.particles}
-            aria-hidden="true"
-          >
+          <div className={styles.particles} aria-hidden="true">
             {particles}
           </div>
         )}
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Overlay                                                          */}
-        {/* ---------------------------------------------------------------- */}
+        <div className={styles.overlay} aria-hidden="true" />
 
-        <div
-          className={styles.overlay}
-          aria-hidden="true"
-        />
-
-        {/* ---------------------------------------------------------------- */}
-        {/* Hero text                                                        */}
-        {/* ---------------------------------------------------------------- */}
-
-        <div
-          className={`${styles.sloganContainer} ${styles.visible}`}
-        >
+        {/* Hero text */}
+        <div className={`${styles.sloganContainer} ${styles.visible}`}>
           <div className={styles.sloganTextWrapper}>
-            <h1
-              id="hero-slogan-title"
-              className={styles.sloganText}
-            >
-              <span className={styles.sloganLine}>
-                {wordPositions.map((wordData) => (
-                  <span
-                    key={`word-${wordData.wordIndex}`}
-                    className={styles.wordWrapper}
-                  >
-                    {wordData.chars.map(
-                      (char, charIdx) => {
-                        const isComma = char === ",";
+            <h1 id="hero-slogan-title" className={styles.sloganText}>
+              {isClient && !isMobile ? (
+                <TypingSlogan
+                  isMobile={isMobile}
+                  soundEnabled={soundEnabled}
+                  playSound={playSound}
+                  stopSound={stopSound}
+                  showCursor={showCursor}
+                  wordPositions={wordPositions}
+                  fullText={fullText}
+                />
+              ) : (
+                <StaticSlogan wordPositions={wordPositions} />
+              )}
 
-                        const globalCharIndex =
-                          wordData.startIndex +
-                          charIdx;
-
-                        const isRevealed =
-                          currentCharIndex >=
-                          globalCharIndex;
-
-                        return (
-                          <span
-                            key={`char-${globalCharIndex}`}
-                            className={`${styles.char} ${
-                              isRevealed
-                                ? styles.charReveal
-                                : ""
-                            } ${
-                              isComma
-                                ? styles.comma
-                                : ""
-                            }`}
-                            aria-hidden={!isRevealed}
-                          >
-                            {char}
-                          </span>
-                        );
-                      }
-                    )}
-                  </span>
-                ))}
-
-                {!isTypingComplete && (
-                  <span
-                    className={`${styles.cursor} ${
-                      showCursor
-                        ? styles.cursorVisible
-                        : ""
-                    }`}
-                    aria-hidden="true"
-                  />
-                )}
-              </span>
-
-              {/* ---------------------------------------------------------- */}
-              {/* SEO supporting text                                        */}
-              {/* ---------------------------------------------------------- */}
-
+              {/* SEO supporting text — always SSR'd */}
               <span className={styles.seoText}>
-                Business Licensing, Government Liaison and
-                Compliance Services for Businesses in Mumbai.
+                Business Licensing, Government Liaison and Compliance Services
+                for Businesses in Mumbai.
               </span>
             </h1>
           </div>
         </div>
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Background video                                                 */}
-        {/* ---------------------------------------------------------------- */}
-
-        <div
-          className={styles.videoWrapper}
-          aria-hidden="true"
-        >
-          <video
-            className={`${styles.backgroundVideo} ${
-              styles[videoAnimation]
-            }`}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            poster={posterSrc}
-            width="1920"
-            height="1080"
-          >
-            <source
-              src={videoSrcMp4}
-              type="video/mp4"
+        {/* Background media */}
+        <div className={styles.videoWrapper} aria-hidden="true">
+          {renderVideoElement ? (
+            <video
+              className={styles.backgroundVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              fetchPriority="high"
+              poster={posterSrc}
+              width="1280"
+              height="720"
+              disablePictureInPicture
+              controls={false}
+            >
+              <source src={videoSrcMp4} type="video/mp4" />
+              {videoSrcWebm && (
+                <source src={videoSrcWebm} type="video/webm" />
+              )}
+            </video>
+          ) : (
+            // Data-saver / slow network / reduced motion: just show poster as img
+            <img
+              className={styles.backgroundPoster}
+              src={posterSrc}
+              alt=""
+              fetchPriority="high"
+              decoding="async"
+              width="1280"
+              height="720"
             />
-
-            {videoSrcWebm && (
-              <source
-                src={videoSrcWebm}
-                type="video/webm"
-              />
-            )}
-          </video>
+          )}
         </div>
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Accessible video description                                     */}
-        {/* ---------------------------------------------------------------- */}
-
-        <p className={styles.videoDescription}>
-          {videoDescription}
-        </p>
+        {/* Accessible video description — SSR'd for SEO */}
+        <p className={styles.videoDescription}>{videoDescription}</p>
       </section>
     </>
   );

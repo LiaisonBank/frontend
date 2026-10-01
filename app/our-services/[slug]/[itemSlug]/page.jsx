@@ -1,202 +1,215 @@
 // app/our-services/[slug]/[itemSlug]/page.jsx
-"use client";
+import SubServiceDetail from "./SubServiceDetail";
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import "./item-detail.scss";
-import { getImageUrl } from "../../../../lib/utils/getImagehelper";
+const SITE_URL = "https://liaisonbank.com";
+const BACKEND_URL = "https://backend.liaisonbank.com";
+const BRAND = "Liaison Bank";
+const CITY = "Mumbai";
 
-const FALLBACK_IMAGE = '/images/expertisebg.png';
+/* ---------------- server-side fetch ---------------- */
+async function getItemData(itemSlug) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/${itemSlug}`,
+      { next: { revalidate: 3600 } }
+    );
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
 
-export default function ItemDetail() {
-  const params = useParams();
-  const slug = params?.slug; // Category slug
-  const itemSlug = params?.itemSlug; // Item slug from URL
-  
-  const [item, setItem] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+/* ---------------- helpers ---------------- */
 
-  useEffect(() => {
-    if (!slug || !itemSlug) return;
+// Normalize smart quotes and whitespace; do NOT strip inner quotes
+function cleanText(str = "") {
+  return String(str)
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-    const fetchItemDetail = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+// Truncate at word boundary with ellipsis
+function truncate(str, max = 160) {
+  if (!str) return "";
+  if (str.length <= max) return str;
+  const cut = str.slice(0, max - 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  return (lastSpace > 100 ? cut.slice(0, lastSpace) : cut).trimEnd() + "…";
+}
 
-        // Fetch item directly by slug
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/${itemSlug}`
-        );
+// Case-insensitive keyword dedupe; keep first occurrence casing
+function dedupeKeywords(list) {
+  const seen = new Set();
+  const out = [];
+  for (const raw of list) {
+    if (!raw) continue;
+    const k = String(raw).trim();
+    if (!k) continue;
+    const key = k.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(k);
+  }
+  return out;
+}
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch item: ${response.status}`);
-        }
+/* ---------------- ✅ SEO metadata ---------------- */
+export async function generateMetadata({ params }) {
+  const { slug, itemSlug } = await params;
+  const itemData = await getItemData(itemSlug);
 
-        const result = await response.json();
-
-        // Handle different response structures
-        let itemData;
-        if (result.data) {
-          itemData = result.data;
-        } else if (result.success && result.data) {
-          itemData = result.data;
-        } else {
-          itemData = result;
-        }
-
-        if (!itemData || !itemData.id) {
-          throw new Error("Invalid item data format");
-        }
-
-        // Process item image
-        let itemImageUrl = FALLBACK_IMAGE;
-        if (itemData.image) {
-          try {
-            itemImageUrl = getImageUrl(itemData.image);
-          } catch (err) {
-            itemImageUrl = FALLBACK_IMAGE;
-          }
-        }
-
-        const processedItem = {
-          ...itemData,
-          imageUrl: itemImageUrl,
-          categorySlug: slug,
-          categoryName: slug?.replace(/-/g, ' ') || 'Services',
-        };
-
-        setItem(processedItem);
-
-      } catch (err) {
-        console.error("Error fetching item detail:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+  if (!itemData) {
+    return {
+      title: `Service Not Found | ${BRAND}`,
+      description: "The requested service could not be found.",
+      robots: { index: false, follow: true },
     };
-
-    fetchItemDetail();
-  }, [slug, itemSlug]);
-
-  if (loading) {
-    return (
-      <div className="item-detail-loading">
-        <div className="container">
-          <div className="skeleton-wrapper">
-            <div className="skeleton-hero"></div>
-            <div className="skeleton-content"></div>
-          </div>
-        </div>
-      </div>
-    );
   }
 
-  if (error || !item) {
-    return (
-      <div className="item-detail-error">
-        <div className="container">
-          <div className="error-box">
-            <div className="error-icon">🔍</div>
-            <h2>Item Not Found</h2>
-            <p>{error || "The service item you're looking for doesn't exist."}</p>
-            <Link href={`/our-services/${slug}`} className="back-btn">
-              <span>←</span> Back to Services
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const name = cleanText(itemData.name) || "Service";
+  const shortDescription = truncate(
+    cleanText(itemData.description) ||
+      `Get professional ${name} services in ${CITY}.`
+  );
 
-  // Get subcategory name from the item data
-  const subcategoryName = item.subCategoryName || 'Service';
+  // Primary keyword = "{name} in Mumbai"
+  const primaryKeyword = `${name} in ${CITY}`;
+
+  const apiKeywords = Array.isArray(itemData.seo_keywords)
+    ? itemData.seo_keywords
+    : [];
+
+  const keywords = dedupeKeywords([
+    primaryKeyword,
+    name,
+    `${name} service in ${CITY}`,
+    `${name} consultant in ${CITY}`,
+    ...apiKeywords,
+  ]);
+
+  const seoTitle = `${name} | Service in ${CITY} | ${BRAND}`;
+  const canonical = `${SITE_URL}/our-services/${slug}/${itemSlug}`;
+
+  // OG image from item
+  const ogImage = itemData.image
+    ? `${BACKEND_URL}${itemData.image}`
+    : itemData.banner
+    ? `${BACKEND_URL}${itemData.banner}`
+    : `${SITE_URL}/og-default.jpg`;
+
+  return {
+    title: seoTitle,
+    description: shortDescription,
+    keywords,
+    alternates: { canonical },
+    openGraph: {
+      title: seoTitle,
+      description: shortDescription,
+      url: canonical,
+      siteName: BRAND,
+      type: "website",
+      locale: "en_US",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seoTitle,
+      description: shortDescription,
+      images: [ogImage],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+    category: "Business Services",
+  };
+}
+
+/* ---------------- Page ---------------- */
+export default async function Page({ params }) {
+  const { slug, itemSlug } = await params;
+  const itemData = await getItemData(itemSlug);
+
+  const itemName = itemData ? cleanText(itemData.name) : "";
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="item-hero">
-        <div 
-          className="item-hero-bg" 
-          style={{ 
-            backgroundImage: `url(${item.imageUrl || FALLBACK_IMAGE})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
+      {/* ✅ JSON-LD: Service schema */}
+      {itemData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Service",
+              name: itemName,
+              description: cleanText(itemData.description),
+              serviceType: itemName,
+              areaServed: { "@type": "City", name: CITY },
+              provider: {
+                "@type": "Organization",
+                name: BRAND,
+                url: SITE_URL,
+              },
+              url: `${SITE_URL}/our-services/${slug}/${itemSlug}`,
+              ...(itemData.image && {
+                image: `${BACKEND_URL}${itemData.image}`,
+              }),
+            }),
           }}
-        ></div>
-        <div className="container">
-          <div className="item-hero-content">
-            <Link href={`/our-services/${slug}`} className="item-back-link">
-              ← Back to {item.categoryName || 'Services'}
-            </Link>
-            <span className="item-breadcrumb">
-              {item.categoryName || 'Services'} / {subcategoryName} / {item.name}
-            </span>
-            <h1 className="item-title">{item.name}</h1>
-            {item.description && (
-              <p className="item-desc">{item.description}</p>
-            )}
-         
-          </div>
-        </div>
-      </section>
+        />
+      )}
 
-      {/* Item Detail Section */}
-      <section className="item-detail-section">
-        <div className="container">
-          <div className="item-detail-grid">
-            {item.imageUrl && (
-              <div className="item-image-wrap">
-                <img
-                  src={item.imageUrl}
-                  alt={item.name}
-                  className="item-main-image"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = FALLBACK_IMAGE;
-                  }}
-                />
-                {subcategoryName && (
-                  <div className="item-badge">{subcategoryName}</div>
-                )}
-              </div>
-            )}
-            <div className="item-info-wrap">
-              <h2>About {item.name}</h2>
-              {item.full_description ? (
-                item.full_description.split('\r\n\r\n').map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ))
-              ) : (
-                <p>{item.description || `Professional ${item.name} services tailored to your needs.`}</p>
-              )}
-              {item.itemServices && item.itemServices.length > 0 && (
-                <div className="item-features">
-                  <h3>Services Offered</h3>
-                  <ul>
-                    {item.itemServices.map((service, idx) => (
-                      <li key={idx}>
-                        <span className="check-icon">✓</span>
-                        {service.replace(/-/g, ' ')}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <div className="item-cta">
-                <Link href="/contact-us-liaison-bank" className="item-cta-primary">
-                  Get a Quote
-                </Link>
-                <Link href={`/our-services/${slug}`} className="item-cta-secondary">
-                  View All Services
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ✅ JSON-LD: BreadcrumbList schema */}
+      {itemData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  name: "Home",
+                  item: SITE_URL,
+                },
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  name: "Our Services",
+                  item: `${SITE_URL}/our-services`,
+                },
+                {
+                  "@type": "ListItem",
+                  position: 3,
+                  name: itemName,
+                  item: `${SITE_URL}/our-services/${slug}/${itemSlug}`,
+                },
+              ],
+            }),
+          }}
+        />
+      )}
+
+      <SubServiceDetail initialData={itemData} />
     </>
   );
 }
