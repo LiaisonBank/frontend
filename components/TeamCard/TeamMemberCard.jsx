@@ -89,20 +89,23 @@ const TeamMemberCard = ({ member = {} }) => {
                 <span className="info-value">{designation}</span>
               </div>
 
-              <div className="info-item">
-                <span className="info-label">
-                  <EmailIcon width={20} height={20} />
-                </span>
-                {email && (
-                  <a
-                    href={`mailto:${email}`}
-                    className="email-link"
-                    onClick={handleEmailClick}
-                  >
-                    <span className="info-value">{email}</span>
-                  </a>
+              {email &&
+                name !== "Mr. Ghanashyam Sankhe" &&
+                name !== "Mr. Vilas Mate" && (
+                  <div className="info-item email">
+                    <span className="info-label">
+                      <EmailIcon width={20} height={20} />
+                    </span>
+
+                    <a
+                      href={`mailto:${email}`}
+                      className="email-link"
+                      onClick={handleEmailClick}
+                    >
+                      <span className="info-value">{email}</span>
+                    </a>
+                  </div>
                 )}
-              </div>
 
               <div className="info-item">
                 <span className="info-label">
