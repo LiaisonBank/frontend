@@ -369,7 +369,7 @@ import AuthModal from '../AuthModal';
                 )}
               </div>
               
-              <div className="location-dropdown">
+              <div className="location-dropdown d-none">
                 <MapPin size={18} className="location-icon" />
                 <select
                   value={selectedLocation}
@@ -405,17 +405,17 @@ import AuthModal from '../AuthModal';
                 </span>
               )}
               
-              <button 
+              {/* <button 
                 className={`filter-chip ${selectedLocation ? 'active' : ''}`}
                 onClick={() => setShowFilters(!showFilters)}
               >
                 Locations ▼
-              </button>
+              </button> */}
               <button 
                 className={`filter-chip ${selectedDepartment ? 'active' : ''}`}
                 onClick={() => setShowFilters(!showFilters)}
               >
-                Work Locations ▼
+                Work Department ▼
               </button>
               <button 
                 className="filter-chip sort-chip"
@@ -441,7 +441,7 @@ import AuthModal from '../AuthModal';
                   </select>
                 </div>
 
-                <div className="filter-group">
+                <div className="filter-group d-none">
                   <label>Location</label>
                   <select
                     value={selectedLocation}
@@ -467,9 +467,7 @@ import AuthModal from '../AuthModal';
                   </select>
                 </div>
 
-                <button className="clear-filters-btn" onClick={clearFilters}>
-                  Clear All
-                </button>
+                <button className="clear-filters-btn" onClick={clearFilters}>Clear All</button>
               </div>
             )}
           </div>
@@ -520,15 +518,12 @@ import AuthModal from '../AuthModal';
                 {filteredJobs.map((job, index) => {
                   const orangeShade = getOrangeShade(index);
                   return (
-                    <div key={job.name || job.id || index} className="job-card">
-                      <div className="job-card-header" style={{ backgroundColor: orangeShade }}>
-                        {getFormattedJobTitle(job)}
+                    <div key={job.name || job.id || index} className="job-card card  variant-interactive-ring">
+                      <div className="card-header">
+                        <h2>{getFormattedJobTitle(job)}</h2>  
                       </div>
-                      
-                      <div className="job-card-body">
+                      <div className="job-card-body card-body">
                         {/* Service Type Badge */}
-                       
-                        
                         {/* Job Meta */}
                         <div className="job-meta">
                           {getOpenings(job) && (

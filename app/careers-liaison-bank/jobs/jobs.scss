@@ -277,7 +277,7 @@ footer {
   // Jobs Grid Section
   .jobs-grid-section {
     padding: 40px 0 60px;
-    background: #f5f6fa;
+    background: #fff;
     min-height: 400px;
 
     .loading-state {
@@ -403,9 +403,13 @@ footer {
         background: #ffffff;
         border-radius: 6px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         transition: all 0.3s ease;
-        border: 1px solid #6c757d;
+        border: none;
+        width: 100%;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
 
         &:hover {
           transform: translateY(-6px);
@@ -617,6 +621,195 @@ footer {
         }
       }
     }
+  }
+}
+
+/* ============================================================
+   VARIANT O: INTERACTIVE RING RIPPLE
+   Single ring, in card-body
+   ============================================================ */
+
+.variant-interactive-ring {
+  position: relative;
+  background: rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 10px 36px rgba(234, 88, 12, 0.16);
+  user-select: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 237, 213, 0.55) 0%,
+      rgba(255, 255, 255, 0.2) 100%
+    );
+    z-index: -3;
+  }
+
+  .card-header {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(
+      135deg,
+      rgba(249, 115, 22, 0.9) 0%,
+      rgba(234, 88, 12, 0.9) 100%
+    );
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding:1.25rem 1.5rem;
+    h2 {
+      color: #ffffff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+
+  .card-body {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    isolation: isolate;
+
+    &:hover {
+      .click-hint {
+        opacity: 1;
+      }
+    }
+  }
+
+  .click-hint {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(194, 65, 12, 0.65);
+    pointer-events: none;
+    z-index: 3;
+    font-weight: 700;
+    opacity: 0.55;
+    transition: opacity 0.3s ease;
+  }
+
+  .meta-item {
+    color: #7c2d12;
+    font-weight: 500;
+
+    .icon {
+      color: #ea580c;
+    }
+  }
+
+  .summary {
+    color: #7c2d12;
+
+    strong {
+      color: #431407;
+    }
+  }
+
+  .card-footer {
+    border-top: 1px solid rgba(249, 115, 22, 0.28);
+  }
+
+  .view-details {
+    color: #c2410c;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 52px rgba(234, 88, 12, 0.3);
+  }
+}
+
+
+/* ============================================================
+   RING CLICK RIPPLE
+   ============================================================ */
+
+.ring-click {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(249, 115, 22, 0.65);
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+  animation: ringExpand 1000ms ease-out forwards;
+  z-index: 1;
+
+  box-shadow:
+    0 0 12px rgba(249, 115, 22, 0.35),
+    inset 0 0 12px rgba(249, 115, 22, 0.15);
+}
+
+
+/* ============================================================
+   RING EXPAND ANIMATION
+   ============================================================ */
+
+@keyframes ringExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+    border-width: 3px;
+  }
+
+  60% {
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+
+/* ============================================================
+   BACKDROP-FILTER FALLBACK
+   ============================================================ */
+
+@supports not (backdrop-filter: blur(10px)) {
+  .variant-aurora,
+  .variant-holo,
+  .variant-shimmer,
+  .variant-prism,
+  .variant-liquid,
+  .variant-ripple,
+  .variant-particle,
+  .variant-interactive,
+  .variant-interactive-ring {
+    background: rgba(255, 237, 213, 0.95);
+  }
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .variant-aurora::before,
+  .variant-holo::before,
+  .variant-holo::after,
+  .variant-shimmer::after,
+  .variant-prism::after,
+  .variant-liquid::after,
+  .variant-ripple::after,
+  .variant-ripple .ripple-2,
+  .variant-particle .particles span,
+  .ripple-click,
+  .ring-click {
+    animation: none;
   }
 }
 
