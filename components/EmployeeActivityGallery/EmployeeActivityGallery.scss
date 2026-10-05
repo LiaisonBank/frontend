@@ -1,0 +1,140 @@
+
+.employee-activity-section {
+  padding: 80px 0;
+  background-color: #f9fafb;
+
+  @media (max-width: 768px) {
+    padding: 60px 0;
+  }
+}
+
+.employee-activity-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+
+  @media (max-width: 600px) {
+    padding: 0 16px;
+  }
+}
+
+.employee-activity-heading {
+  text-align: center;
+  margin-bottom: 48px;
+
+  .employee-activity-label {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #f97316;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 16px;
+    line-height: 1.2;
+  }
+
+  p {
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #4b5563;
+  }
+}
+
+.employee-masonry {
+  column-count: 3;
+  column-gap: 18px;
+
+  @media (max-width: 900px) {
+    column-count: 2;
+  }
+
+  @media (max-width: 600px) {
+    column-count: 1;
+  }
+}
+
+.employee-masonry-item {
+  break-inside: avoid;
+  margin-bottom: 18px;
+}
+
+.employee-image-wrapper {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  cursor: zoom-in;
+  text-decoration: none;
+  background-color: #e5e7eb;
+
+  &:focus-visible {
+    outline: 3px solid #f97316;
+    outline-offset: 2px;
+  }
+}
+
+.employee-activity-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.45s ease;
+  will-change: transform;
+}
+
+.employee-image-wrapper:hover .employee-activity-image {
+  transform: scale(1.06);
+}
+
+.employee-image-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  background: linear-gradient(to top,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.35) 40%,
+      rgba(0, 0, 0, 0) 70%);
+  color: #ffffff;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    transform: translateY(8px);
+    transition: transform 0.3s ease;
+  }
+}
+
+.employee-image-wrapper:hover .employee-image-overlay {
+  opacity: 1;
+
+  span {
+    transform: translateY(0);
+  }
+}
+
+.fancybox__caption {
+  font-size: 14px;
+  text-align: center;
+  padding: 12px 20px;
+}
+
+.fancybox__thumbs {
+  .fancybox__thumb {
+    border-radius: 6px;
+    overflow: hidden;
+  }
+}
