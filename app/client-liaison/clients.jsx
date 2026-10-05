@@ -64,10 +64,9 @@ export default function ClientLiaisonbankPage() {
 
         <div className="elementor-background-overlay"></div>
 
-        <div className="hero-content position-absolute top-50 start-50 translate-middle text-center">
-          <h1>CLIENTS</h1>
-
-          <div className="stats-grid">
+        <div className="hero-content position-absolute top-50 start-50 translate-middle text-center motion-text">
+          <h1>Trusted by Businesses Across Mumbai</h1>
+          <div className="stats-grid d-none">
             <div className="stat-item">
               <CountUp end={count} className="total-value"/>
               {/* <span className="stat-number">
