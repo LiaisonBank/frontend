@@ -601,7 +601,8 @@ body:has(.has-single-submenu:hover) .menu-overlay {
     cursor: pointer;
     color: white;
     outline: none;
-    background: linear-gradient(135deg, rgb(249, 115, 22) 0%, rgb(234, 88, 12) 100%);
+    background:#000;
+    // background: linear-gradient(135deg, rgb(249, 115, 22) 0%, rgb(234, 88, 12) 100%);
     &.enquire{
       &:hover{
          i{
