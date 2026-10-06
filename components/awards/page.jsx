@@ -1,5 +1,5 @@
 // AwardP.jsx
-// Production-ready Swiper example with API integration
+// Production-ready continuous scrolling Swiper with API integration
 // Install: npm i swiper @fancyapps/ui
 
 "use client";
@@ -8,11 +8,12 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import { Autoplay, FreeMode } from "swiper/modules";
 import { Fancybox } from "@fancyapps/ui";
 import { getImageUrl } from "@/lib/utils/getImagehelper";
 
 import "swiper/css";
+import "swiper/css/free-mode";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 // import "./AwardP.scss";
 
@@ -36,12 +37,11 @@ export default function AwardP() {
         if (!response.ok) {
           throw new Error("Failed to fetch awards");
         }
-        
+
         const result = await response.json();
         console.log("API Response:", result);
-        
+
         if (result.success && result.data && result.data.length > 0) {
-          // Transform API data
           const apiCertificates = result.data.map((item) => ({
             id: item.id,
             src: getImageUrl(item.file),
@@ -49,7 +49,7 @@ export default function AwardP() {
             description: item.description,
             original: item,
           }));
-          
+
           setCertificates(apiCertificates);
         } else {
           setCertificates([]);
@@ -95,13 +95,15 @@ export default function AwardP() {
 
       on: {
         reveal: () => {
+          // Pause the continuous scroll while viewing
           swiperRef.current?.autoplay?.stop();
         },
 
         close: () => {
+          // Resume the continuous scroll after closing
           swiperRef.current?.autoplay?.start();
         },
-      }
+      },
     });
 
     return () => {
@@ -145,13 +147,17 @@ export default function AwardP() {
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
-            modules={[Autoplay]}
+            modules={[Autoplay, FreeMode]}
             dir="rtl"
             loop={true}
-            speed={600}
+            speed={5000}          // ⬅️ high speed = smooth continuous motion
             spaceBetween={24}
             grabCursor={true}
             slidesPerView={4}
+            freeMode={{
+              enabled: true,
+              momentum: false,     // ⬅️ prevents flick / momentum stopping
+            }}
             breakpoints={{
               0: {
                 slidesPerView: 1,
@@ -171,12 +177,12 @@ export default function AwardP() {
               },
             }}
             autoplay={{
-              interval: 0,
+              delay: 0,            // ⬅️ no delay between slides
               disableOnInteraction: false,
               pauseOnMouseEnter: true,
-
+              stopOnLastSlide: false,
             }}
-            className="certificate-swiper"
+            className="certificate-swiper continuous-scroll"
           >
             {/* Double the certificates for seamless looping */}
             {[...certificates, ...certificates].map((certificate, index) => (
@@ -208,7 +214,10 @@ export default function AwardP() {
         </div>
 
         <div className="col-8 mx-auto text-center d-flex align-items-center justify-content-center">
-          <Link href="/awards" className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4">
+          <Link
+            href="/awards"
+            className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4"
+          >
             View More
           </Link>
         </div>

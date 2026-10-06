@@ -65,7 +65,7 @@ export default function ClientLiaisonbankPage() {
         <div className="elementor-background-overlay"></div>
 
         <div className="hero-content position-absolute top-50 start-50 translate-middle text-center motion-text">
-          <h1>Trusted by Businesses Across Mumbai</h1>
+          <h1>Every Milestone We Achieve is a Reflection of our Clients Trust.</h1>
           <div className="stats-grid d-none">
             <div className="stat-item">
               <CountUp end={count} className="total-value"/>
@@ -88,7 +88,7 @@ export default function ClientLiaisonbankPage() {
         <div className="container">
           <div className="row justify-content-center text-center">
             <div className="section-title">
-              <h3>Every Milestone We Achieve is a Reflection of our Clients Trust.</h3>
+              {/* <h3>Every Milestone We Achieve is a Reflection of our Clients Trust.</h3> */}
             </div>
             <div className="client-section">
               <div className="row justify-content-center text-center">
