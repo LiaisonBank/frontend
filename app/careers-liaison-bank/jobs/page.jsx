@@ -14,6 +14,7 @@ import {
 import "./jobs.scss";
 import JobDetailsModal from "./JobDetailsModal";
 import AuthModal from "../AuthModal";
+import AnimatedSearch from "@/components/AnimatedSearch/page";
 
 function JobsPageContent() {
   const searchParams = useSearchParams();
@@ -378,7 +379,7 @@ function JobsPageContent() {
       <section className="jobs-hero">
         <div className="container">
           {/* AnimatedSearch pinned to top-right of hero */}
-          <div className="animated-search-corner">
+          {/* <div className="animated-search-corner">
             <AnimatedSearch
               value={searchTerm}
               onChange={(event) => {
@@ -392,7 +393,7 @@ function JobsPageContent() {
               closeOnSubmit={false}
               closeOnOutsideClick={false}
             />
-          </div>
+          </div> */}
 
           <div className="hero-content">
             <h1>Build Your Career with LiaisonBank</h1>
