@@ -63,7 +63,7 @@ const services = [
 ];
 
 const OTHER_OPTIONS = [
-  { id: 1, name: "Administration", link: "/careers-liaison-bank/jobs?service=Administration" },
+  { id: 1, name: "Administration", link: "/careers-liaison-bank/jobs?service=Work%20Department&department=Administration%20%26%20Facilities%20-%20DBRE" },
   { id: 2, name: "Human Resource", link: "/careers-liaison-bank/jobs?service=Human%20Resource" },
   { id: 3, name: "Accountant", link: "/careers-liaison-bank/jobs?service=Accountant" },
   { id: 4, name: "Sales", link: "/careers-liaison-bank/jobs?service=Sales" },
