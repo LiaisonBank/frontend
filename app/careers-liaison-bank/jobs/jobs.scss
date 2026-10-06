@@ -188,8 +188,10 @@ header, footer, #sticky-icon {
           z-index: 10;
           overflow: hidden;
           border-radius: 999px;
-          transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-            max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.3s ease, transform 0.3s ease;
+
+          // transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+          //   max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           will-change: width;
 
           // ----------------------------------------------------------
@@ -291,7 +293,8 @@ header, footer, #sticky-icon {
 
           // --- Expanded State ---
           &.expanded {
-            width: 100%;
+            // width: 100%;
+            width: 300px;
             max-width: 300px;
 
             .search-input-field {
