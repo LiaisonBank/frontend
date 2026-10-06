@@ -462,51 +462,54 @@ body {
 }
 
 /* ===== STATS & CONTACT SECTION ===== */
-.contact-section {
+
+body.ourservices{
+  .contact-section {
   padding: 60px 0;
   background: #ffffff;
 }
+.stats-contact-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
 
-// .stats-contact-wrapper {
-//   display: flex;
-//   flex-direction: column;
-//   gap: 40px;
-// }
+.stats-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  // background: white;
+  border-radius: 16px;
+  // border: 1px solid #f6f2ee;
+  gap: 80px;
+  padding: 32px 40px;
+}
 
-// .stats-grid {
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   gap: 0;
-//   background: #fcfbf8;
-//   border-radius: 16px;
-//   border: 1px solid #f6f2ee;
-//   gap: 80px;
-//   padding: 32px 40px;
-// }
+.stat-item-simple {
+  text-align: center;
+  padding: 0 32px;
+}
 
-// .stat-item-simple {
-//   text-align: center;
-//   padding: 0 32px;
-// }
+.stat-number {
+  display: block;
+  font-size: 32px;
+  font-weight: 800;
+  color: #E8720D;
+}
 
-// .stat-number {
-//   display: block;
-//   font-size: 32px;
-//   font-weight: 800;
-//   color: #E8720D;
-// }
+.stat-label-simple {
+  font-size: 14px;
+  color: #64748b;
+}
 
-// .stat-label-simple {
-//   font-size: 14px;
-//   color: #64748b;
-// }
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: #e2e8f0;
+}
 
-// .stat-divider {
-//   width: 1px;
-//   height: 40px;
-//   background: #e2e8f0;
-// }
+}
 
 .contact-grid-simple {
   display: flex;

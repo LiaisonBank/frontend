@@ -194,7 +194,7 @@ const handleSubmit = async (e) => {
       },
     });
 //  const baseUrl = 'http://localhost:8000'
- const baseUrl = 'https://backend.liaisonbank.com/'
+ const baseUrl = 'https://backend.liaisonbank.com'
 
 
     const response = await fetch(`${baseUrl}/api/hiring/apply`, {

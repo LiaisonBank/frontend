@@ -1,18 +1,9 @@
 // app/careers-liaison-bank/jobs/jobs.scss
-header {
+
+// Reset global elements for this page
+header, footer, #sticky-icon {
   display: none !important;
 }
-
-
-
-#sticky-icon {
-  display: none !important;
-}
-
-footer {
-  display: none !important;
-}
-
 
 .jobs-page {
   background: #f5f6fa;
@@ -23,14 +14,20 @@ footer {
     margin: 0 auto;
     padding: 0 24px;
   }
+/* ============================================
+   AnimatedSearch — top-right corner of hero
+   ============================================ */
 
+  // ============================================
   // Hero Section
+  // ============================================
   .jobs-hero {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    padding: 40px 0 32px;
+    padding: 60px 0 40px;
     position: relative;
     overflow: hidden;
 
+    // Decorative background circles
     &::before {
       content: '';
       position: absolute;
@@ -57,7 +54,7 @@ footer {
 
     .hero-content {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 40px;
       position: relative;
       z-index: 1;
 
@@ -65,176 +62,57 @@ footer {
         font-size: 36px;
         font-weight: 800;
         color: #ffffff;
-        margin-bottom: 8px;
+        margin-bottom: 12px;
         letter-spacing: -0.02em;
       }
 
       p {
         font-size: 16px;
         color: rgba(255, 255, 255, 0.8);
-        max-width: 500px;
+        max-width: 600px;
         margin: 0 auto;
+        line-height: 1.6;
       }
     }
 
+    // ============================================
+    // Search & Filters Section
+    // ============================================
     .search-section {
       position: relative;
       z-index: 1;
 
-      .search-container {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        padding: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-
-        .search-box {
-          flex: 1;
-          position: relative;
-          display: flex;
-          align-items: center;
-
-          .search-icon {
-            position: absolute;
-            left: 14px;
-            color: rgba(255, 255, 255, 0.5);
-          }
-
-          .search-input {
-            width: 100%;
-            padding: 12px 40px 12px 44px;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #ffffff;
-            font-size: 15px;
-
-            &::placeholder {
-              color: rgba(255, 255, 255, 0.5);
-            }
-          }
-
-          .clear-search {
-            position: absolute;
-            right: 10px;
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 50%;
-            transition: all 0.2s ease;
-
-            &:hover {
-              color: #ffffff;
-              background: rgba(255, 255, 255, 0.1);
-            }
-          }
-        }
-
-        .location-dropdown {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 0 16px;
-          border-left: 1px solid rgba(255, 255, 255, 0.15);
-          min-width: 180px;
-
-          .location-icon {
-            color: rgba(255, 255, 255, 0.5);
-            flex-shrink: 0;
-          }
-
-          .location-select {
-            background: transparent;
-            border: none;
-            color: #ffffff;
-            font-size: 14px;
-            outline: none;
-            cursor: pointer;
-            padding: 10px 0;
-            width: 100%;
-
-            option {
-              background: #1a1a2e;
-              color: #ffffff;
-            }
-          }
-        }
-      }
-
-      .filter-chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 16px;
-        align-items: center;
-
-        .jobs-count {
-          color: rgba(255, 255, 255, 0.8);
-          font-size: 14px;
-          font-weight: 600;
-          margin-right: 8px;
-        }
-
-        .filter-chip {
-          padding: 6px 16px;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 20px;
-          color: rgba(255, 255, 255, 0.8);
-          font-size: 13px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-weight: 500;
-
-          &:hover {
-            background: rgba(255, 255, 255, 0.2);
-          }
-
-          &.active {
-            background: #f97316;
-            border-color: #f97316;
-            color: #ffffff;
-          }
-
-          &.sort-chip {
-            &:hover {
-              background: rgba(249, 115, 22, 0.3);
-              border-color: #f97316;
-            }
-          }
-        }
-      }
-
       .filters-expanded {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: flex-end;
         gap: 16px;
-        margin-top: 16px;
         padding: 20px;
         background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
         border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
 
+        // Standard Filter Group
         .filter-group {
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 8px;
+          flex: 1;
+          min-width: 0;
 
           label {
-            font-size: 12px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.6);
             text-transform: uppercase;
             letter-spacing: 0.5px;
           }
 
           select {
-            padding: 8px 12px;
+            width: 100%;
+            padding: 10px 14px;
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 8px;
@@ -242,6 +120,12 @@ footer {
             font-size: 14px;
             outline: none;
             cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+            transition: border-color 0.2s ease;
 
             &:focus {
               border-color: #f97316;
@@ -254,27 +138,199 @@ footer {
           }
         }
 
-        .clear-filters-btn {
-          padding: 8px 20px;
-          background: rgba(249, 115, 22, 0.2);
-          color: #f97316;
-          border: 1px solid rgba(249, 115, 22, 0.3);
-          border-radius: 8px;
-          cursor: pointer;
-          font-weight: 600;
-          transition: all 0.3s ease;
-          align-self: flex-end;
-          font-size: 14px;
+        // Action Group (Count + Clear Button)
+        .action-group {
+          flex: 0 0 auto;
+          min-width: 140px;
 
-          &:hover {
-            background: rgba(249, 115, 22, 0.3);
+          .jobs-count {
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
+          }
+
+          .clear-filters-btn {
+            width: 100%;
+            padding: 10px 20px;
+            background: rgba(249, 115, 22, 0.15);
+            color: #f97316;
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+
+            &:hover {
+              background: rgba(249, 115, 22, 0.25);
+              border-color: #f97316;
+            }
+          }
+        }
+
+        // ============================================
+        // Animated Search Wrapper
+        // ============================================
+        .search-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          height: 42px;
+          width: 42px; // Collapsed: circle
+          flex-shrink: 0;
+          flex-grow: 0;
+          z-index: 10;
+          overflow: hidden;
+          border-radius: 999px;
+            transition: width 0.3s ease, transform 0.3s ease;
+
+          // transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+          //   max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          will-change: width;
+
+          // ----------------------------------------------------------
+          // Search Input
+          // ----------------------------------------------------------
+          .search-input-field {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            min-width: 0;
+            padding: 0 48px 0 20px; // Right space for button, left for text
+            border-radius: 21px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: #1a1a2e;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, visibility 0.25s ease,
+              border-color 0.25s ease;
+
+            &::placeholder {
+              color: rgba(255, 255, 255, 0.5);
+            }
+
+            &:focus {
+              border-color: #f97316;
+            }
+          }
+
+          // ----------------------------------------------------------
+          // Search Toggle Button
+          // ----------------------------------------------------------
+          .search-toggle-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            flex: 0 0 42px;
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            min-height: 42px;
+            border-radius: 50%;
+            background: #f97316;
+            border: none;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease,
+              box-shadow 0.3s ease, transform 0.3s ease;
+            z-index: 2;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+            -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+
+            &:hover {
+              background: #e0680e;
+              transform: scale(1.05);
+            }
+
+            &:active {
+              transform: scale(0.97);
+            }
+
+            &:focus-visible {
+              outline: 2px solid #ffffff;
+              outline-offset: 2px;
+            }
+
+            // Isolate the icon so SVG cannot stretch or overflow
+            .icon-wrap {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              width: 24px;
+              height: 24px;
+              line-height: 0;
+              overflow: hidden;
+              flex-shrink: 0;
+              pointer-events: none;
+
+              // Replays on every icon swap thanks to React's `key`
+              animation: iconPop 0.25s ease;
+
+              svg {
+                display: block;
+                width: 24px;
+                height: 24px;
+                flex-shrink: 0;
+                transition: transform 0.3s ease;
+              }
+            }
+          }
+
+          // --- Expanded State ---
+          &.expanded {
+            // width: 100%;
+            width: 300px;
+            max-width: 300px;
+
+            .search-input-field {
+              opacity: 1;
+              visibility: visible;
+              pointer-events: auto;
+              border-color: #f97316;
+            }
+
+            .search-toggle-btn {
+              background: transparent;
+              box-shadow: none;
+              color: #f97316;
+
+              &:hover {
+                background: rgba(249, 115, 22, 0.1);
+                transform: none;
+              }
+
+              &:active {
+                transform: none;
+              }
+
+              .icon-wrap svg {
+                transform: rotate(90deg);
+              }
+            }
           }
         }
       }
     }
   }
 
+  // ============================================
   // Jobs Grid Section
+  // ============================================
   .jobs-grid-section {
     padding: 40px 0 60px;
     background: #fff;
@@ -299,9 +355,7 @@ footer {
       }
 
       @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
+        to { transform: rotate(360deg); }
       }
     }
 
@@ -309,16 +363,8 @@ footer {
       text-align: center;
       padding: 80px 0;
 
-      .error-icon {
-        font-size: 48px;
-        margin-bottom: 16px;
-      }
-
-      .error-message {
-        color: #e74c3c;
-        font-size: 18px;
-        margin-bottom: 20px;
-      }
+      .error-icon { font-size: 48px; margin-bottom: 16px; }
+      .error-message { color: #e74c3c; font-size: 18px; margin-bottom: 20px; }
 
       .retry-btn {
         padding: 12px 36px;
@@ -341,34 +387,22 @@ footer {
 
     .empty-state {
       text-align: center;
-    padding: 80px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 60%;
-    justify-content: center;
-    margin: auto;
+      padding: 80px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 60%;
+      justify-content: center;
+      margin: auto;
 
-      .empty-icon {
-        color: #d5cbc0;
-        margin-bottom: 16px;
-      }
-
-      h3 {
-        font-size: 24px;
-        color: #1a1a2e;
-        margin-bottom: 8px;
-      }
+      .empty-icon { color: #d5cbc0; margin-bottom: 16px; }
+      h3 { font-size: 24px; color: #1a1a2e; margin-bottom: 8px; }
 
       p {
-        color: #7a8a9e;
         margin-bottom: 24px;
-        font-size: 26px;
-        display: flex;
+        font-size: 20px;
         text-align: center;
-        align-items: center;
-       justify-content: center;
-       color: #e0680e;
+        color: #e0680e;
       }
 
       .clear-filters-btn.primary {
@@ -389,8 +423,39 @@ footer {
         }
       }
     }
+    .service-type-header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 24px;
+      span{
+        font-size: 14px;
+        font-weight: 500;
+        color: #7a8a9e;
+        margin-left: 12px;
+      }
+    }
 
-    // Jobs Grid - Simple grid
+    .service-type-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 24px;
+
+      span {
+        font-size: 14px;
+        font-weight: 500;
+        color: #7a8a9e;
+        margin-left: 12px;
+      }
+    }
+
     .jobs-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -398,18 +463,13 @@ footer {
       width: 100%;
       margin-bottom: 40px;
 
-
       .job-card {
         background: #ffffff;
-        border-radius: 6px;
-        overflow: hidden;
-        // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        transition: all 0.3s ease;
-        border: none;
-        width: 100%;
         border-radius: 16px;
         overflow: hidden;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        width: 100%;
 
         &:hover {
           transform: translateY(-6px);
@@ -418,14 +478,11 @@ footer {
 
           .view-job-btn {
             gap: 12px;
-
-            svg {
-              transform: translateX(4px);
-            }
+            svg { transform: translateX(4px); }
           }
         }
 
-        .job-card-header {
+        .card-header {
           padding: 16px 20px;
           display: flex;
           justify-content: space-between;
@@ -433,56 +490,35 @@ footer {
           min-height: 56px;
           color: whitesmoke;
           font-weight: bold;
+          background: linear-gradient(135deg, rgba(249, 115, 22, 0.9) 0%, rgba(234, 88, 12, 0.9) 100%);
+          position: relative;
+          z-index: 2;
 
-          .job-card-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+          h2 {
             color: #ffffff;
-            font-size: 13px;
-            font-weight: 600;
-            opacity: 0.9;
-
-            svg {
-              opacity: 0.8;
-            }
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0;
           }
 
-          .trending-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 12px;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(4px);
-            color: #ffffff;
-            font-size: 10px;
-            font-weight: 700;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
-
-            svg {
-              width: 12px;
-              height: 12px;
-            }
+          &::before {
+            content: "";
+            position: absolute;
+            transform: translateX(-100%);
+            pointer-events: none;
+            inset: 0px;
+            background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+            animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
           }
         }
 
         .job-card-body {
           padding: 20px;
-
-          .job-title {
-            font-size: 17px;
-            font-weight: 700;
-            color: #1a1a2e;
-            margin: 0 0 12px 0;
-            line-height: 1.3;
-            min-height: 44px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-          }
+          position: relative;
+          overflow: hidden;
+          cursor: pointer;
+          isolation: isolate;
 
           .job-meta {
             display: flex;
@@ -533,90 +569,17 @@ footer {
               text-decoration: none;
               font-size: 14px;
               transition: all 0.3s ease;
+              background: none;
+              border: none;
+              cursor: pointer;
 
               &:hover {
                 gap: 12px;
                 color: #e0680e;
               }
 
-              svg {
-                transition: transform 0.3s ease;
-              }
+              svg { transition: transform 0.3s ease; }
             }
-          }
-        }
-      }
-    }
-
-    // Pagination - Separated from grid, always at bottom
-    .pagination-wrapper {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      clear: both;
-      position: relative;
-      padding-top: 24px;
-      margin-top: 0;
-      border-top: 1px solid #e8e2da;
-    }
-
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-
-      .pagination-btn {
-        padding: 8px 20px;
-        background: #ffffff;
-        border: 1px solid #e8e2da;
-        border-radius: 8px;
-        color: #1a1a2e;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 500;
-        font-size: 14px;
-
-        &:hover:not(:disabled) {
-          border-color: #f97316;
-          color: #f97316;
-        }
-
-        &:disabled {
-          opacity: 0.4;
-          cursor: not-allowed;
-        }
-      }
-
-      .pagination-numbers {
-        display: flex;
-        gap: 4px;
-
-        .pagination-number {
-          min-width: 36px;
-          height: 36px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #ffffff;
-          border: 1px solid #e8e2da;
-          border-radius: 8px;
-          color: #1a1a2e;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-weight: 500;
-          font-size: 14px;
-
-          &:hover {
-            border-color: #f97316;
-            color: #f97316;
-          }
-
-          &.active {
-            background: #f97316;
-            border-color: #f97316;
-            color: #ffffff;
           }
         }
       }
@@ -624,11 +587,23 @@ footer {
   }
 }
 
-/* ============================================================
-   VARIANT O: INTERACTIVE RING RIPPLE
-   Single ring, in card-body
-   ============================================================ */
+// ============================================================
+// Icon Pop Animation (for search toggle open/close swap)
+// ============================================================
+@keyframes iconPop {
+  from {
+    transform: scale(0.6) rotate(-45deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
 
+// ============================================================
+// Variant: Interactive Ring
+// ============================================================
 .variant-interactive-ring {
   position: relative;
   background: rgba(255, 255, 255, 0.42);
@@ -643,86 +618,8 @@ footer {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 237, 213, 0.55) 0%,
-      rgba(255, 255, 255, 0.2) 100%
-    );
+    background: linear-gradient(135deg, rgba(255, 237, 213, 0.55) 0%, rgba(255, 255, 255, 0.2) 100%);
     z-index: -3;
-  }
-
-  .card-header {
-    position: relative;
-    z-index: 2;
-    background: linear-gradient(
-      135deg,
-      rgba(249, 115, 22, 0.9) 0%,
-      rgba(234, 88, 12, 0.9) 100%
-    );
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding:1.25rem 1.5rem;
-    h2 {
-      color: #ffffff;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin: 0;
-    }
-  }
-
-  .card-body {
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    isolation: isolate;
-
-    &:hover {
-      .click-hint {
-        opacity: 1;
-      }
-    }
-  }
-
-  .click-hint {
-    position: absolute;
-    bottom: 0.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.65rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: rgba(194, 65, 12, 0.65);
-    pointer-events: none;
-    z-index: 3;
-    font-weight: 700;
-    opacity: 0.55;
-    transition: opacity 0.3s ease;
-  }
-
-  .meta-item {
-    color: #7c2d12;
-    font-weight: 500;
-
-    .icon {
-      color: #ea580c;
-    }
-  }
-
-  .summary {
-    color: #7c2d12;
-
-    strong {
-      color: #431407;
-    }
-  }
-
-  .card-footer {
-    border-top: 1px solid rgba(249, 115, 22, 0.28);
-  }
-
-  .view-details {
-    color: #c2410c;
   }
 
   &:hover {
@@ -731,151 +628,86 @@ footer {
   }
 }
 
-
-/* ============================================================
-   RING CLICK RIPPLE
-   ============================================================ */
-
-.ring-click {
-  position: absolute;
-  border-radius: 50%;
-  border: 2px solid rgba(249, 115, 22, 0.65);
-  transform: translate(-50%, -50%) scale(0);
-  pointer-events: none;
-  animation: ringExpand 1000ms ease-out forwards;
-  z-index: 1;
-
-  box-shadow:
-    0 0 12px rgba(249, 115, 22, 0.35),
-    inset 0 0 12px rgba(249, 115, 22, 0.15);
-}
-
-
-/* ============================================================
-   RING EXPAND ANIMATION
-   ============================================================ */
-
 @keyframes ringExpand {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 1;
-    border-width: 3px;
-  }
-
-  60% {
-    opacity: 0.85;
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0;
-    border-width: 1px;
-  }
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; border-width: 3px; }
+  60% { opacity: 0.85; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; border-width: 1px; }
 }
 
-
-/* ============================================================
-   BACKDROP-FILTER FALLBACK
-   ============================================================ */
-
-@supports not (backdrop-filter: blur(10px)) {
-  .variant-aurora,
-  .variant-holo,
-  .variant-shimmer,
-  .variant-prism,
-  .variant-liquid,
-  .variant-ripple,
-  .variant-particle,
-  .variant-interactive,
-  .variant-interactive-ring {
-    background: rgba(255, 237, 213, 0.95);
-  }
+@keyframes ctaShimmer {
+  100% { transform: translateX(100%); }
 }
 
-
-/* ============================================================
-   REDUCED MOTION
-   ============================================================ */
-
+// ============================================================
+// Reduced Motion Support
+// ============================================================
 @media (prefers-reduced-motion: reduce) {
-  .variant-aurora::before,
-  .variant-holo::before,
-  .variant-holo::after,
-  .variant-shimmer::after,
-  .variant-prism::after,
-  .variant-liquid::after,
-  .variant-ripple::after,
-  .variant-ripple .ripple-2,
-  .variant-particle .particles span,
-  .ripple-click,
-  .ring-click {
-    animation: none;
+  .jobs-page .search-wrapper,
+  .jobs-page .search-input-field,
+  .jobs-page .search-toggle-btn,
+  .jobs-page .search-toggle-btn .icon-wrap,
+  .jobs-page .search-toggle-btn .icon-wrap svg {
+    transition: none !important;
+    animation: none !important;
   }
 }
 
-// Responsive
+// ============================================================
+// Responsive Adjustments
+// ============================================================
+
 @media (max-width: 1024px) {
-  .jobs-grid-section {
-    .jobs-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
+  .jobs-grid-section .jobs-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
 }
 
 @media (max-width: 768px) {
   .jobs-page {
     .jobs-hero {
-      padding: 28px 0 24px;
+      padding: 40px 0 30px;
 
-      .hero-content {
-        h1 {
-          font-size: 28px;
-        }
+      .hero-content h1 { font-size: 28px; }
+      .hero-content p { font-size: 14px; }
 
-        p {
-          font-size: 14px;
-        }
-      }
+      .search-section .filters-expanded {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
 
-      .search-section {
-        .search-container {
-          flex-direction: column;
-          padding: 4px;
+        .filter-group { width: 100%; }
+        .action-group { width: 100%; }
 
-          .search-box {
-            width: 100%;
+        // Mobile Search Animation
+        .search-wrapper {
+          width: 100%;
+          max-width: none;
+          justify-content: flex-start;
+          height: 42px;
+
+          .search-input-field {
+            width: calc(100% - 52px);
+            inset: auto;
+            left: 0;
+            top: 0;
+            height: 100%;
+            border-radius: 8px;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            border-color: rgba(255, 255, 255, 0.12);
           }
 
-          .location-dropdown {
-            width: 100%;
-            border-left: none;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 12px;
-          }
-        }
-
-        .filter-chips {
-          gap: 6px;
-
-          .jobs-count {
-            width: 100%;
-            margin-bottom: 4px;
+          .search-toggle-btn {
+            right: 0;
+            border-radius: 8px;
           }
 
-          .filter-chip {
-            font-size: 12px;
-            padding: 4px 12px;
-          }
-        }
-
-        .filters-expanded {
-          grid-template-columns: 1fr;
-          padding: 16px;
-
-          .clear-filters-btn {
-            width: 100%;
-            text-align: center;
+          &.expanded {
+            .search-input-field {
+              border-color: #f97316;
+            }
           }
         }
       }
@@ -891,100 +723,20 @@ footer {
         margin-bottom: 30px;
       }
 
-      .pagination-wrapper {
-        padding-top: 16px;
-      }
-
-      .pagination {
-        flex-wrap: wrap;
-        gap: 6px;
-
-        .pagination-numbers {
-          order: 3;
-          width: 100%;
-          justify-content: center;
-          margin-top: 4px;
-        }
-
-        .pagination-btn {
-          flex: 1;
-          text-align: center;
-          padding: 8px 16px;
-          font-size: 13px;
-        }
+      .empty-state {
+        width: 100%;
+        p { font-size: 18px; }
       }
     }
   }
 }
 
 @media (max-width: 480px) {
-  .jobs-page {
-    .jobs-hero {
-      .hero-content {
-        h1 {
-          font-size: 24px;
-        }
-      }
+  .jobs-page .jobs-hero {
+    .hero-content h1 { font-size: 24px; }
 
-      .search-section {
-        .search-container {
-          .search-box {
-            .search-input {
-              font-size: 14px;
-              padding: 10px 36px 10px 40px;
-            }
-          }
-        }
-      }
-    }
-
-    .jobs-grid-section {
-      .jobs-grid {
-        .job-card {
-          .job-card-header {
-            padding: 12px 16px;
-            min-height: 48px;
-
-            .job-card-badge {
-              font-size: 12px;
-            }
-          }
-
-          .job-card-body {
-            padding: 16px;
-
-            .job-title {
-              font-size: 15px;
-            }
-
-            .job-meta .job-meta-item {
-              font-size: 12px;
-            }
-
-            .job-description {
-              font-size: 12px;
-              min-height: 40px;
-            }
-          }
-        }
-      }
-
-      .pagination-wrapper {
-        padding-top: 12px;
-      }
-
-      .pagination {
-        .pagination-btn {
-          font-size: 12px;
-          padding: 6px 14px;
-        }
-
-        .pagination-number {
-          min-width: 32px;
-          height: 32px;
-          font-size: 13px;
-        }
-      }
+    .search-section .filters-expanded {
+      padding: 16px;
     }
   }
 }

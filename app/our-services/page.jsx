@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import "./ourservices.scss";
 import { getImageUrl } from "../../lib/utils/getImagehelper";
 import ApiError from "@/components/ApiError/ApiError";
+import useBodyClass from "@/components/useBodyClass";
 import Image from "next/image";
 
 // Fallback image
@@ -14,6 +15,7 @@ const FALLBACK_IMAGE = '/images/Firefly_Gemini_Flash_generate_liaisoning_img_521
 const HERO_BACKGROUND = '/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png';
 
 export default function OurServices() {
+    useBodyClass("ourservices");
   const [servicesData, setServicesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
