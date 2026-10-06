@@ -1,17 +1,12 @@
+// components/AnimatedSearch/AnimatedSearch.scss
 .animated-search {
   --search-size: 68px;
   --search-width: 520px;
 
-  --search-overlay: rgba(0, 0, 0, 0.5);
+  --search-gradient-solid: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
 
-  --search-gradient-solid: linear-gradient(
-    135deg,
-    #f97316 0%,
-    #ea580c 100%
-  );
-
-  --search-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.18);
+  --search-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+  --search-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   position: relative;
   width: 100%;
@@ -25,74 +20,28 @@
   z-index: 100;
 
   // ==============================================
-  // BACKDROP
-  // ==============================================
-
-  &__backdrop {
-    position: fixed;
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    padding: 0;
-    margin: 0;
-    border: 0;
-
-    background: var(--search-overlay);
-
-    opacity: 0;
-    visibility: hidden;
-
-    // Grow from the search input's position and size
-    transform: scale(0.02);
-    transform-origin: center center;
-
-    pointer-events: none;
-    cursor: default;
-
-    transition:
-      opacity 350ms ease,
-      visibility 0s linear 350ms,
-      transform 550ms cubic-bezier(0.22, 1, 0.36, 1);
-
-    z-index: -1;
-
-    &:focus {
-      outline: none;
-    }
-  }
-
-  // ==============================================
   // CONTAINER
   // ==============================================
-
   &__container {
     position: relative;
-
     width: var(--search-size);
     height: var(--search-size);
-
     z-index: 2;
 
     transition:
-      width 450ms cubic-bezier(0.22, 1, 0.36, 1),
+      width 450ms var(--search-ease),
       filter 300ms ease;
   }
 
   // ==============================================
   // FORM
   // ==============================================
-
   &__form {
     position: relative;
-
     width: 100%;
     height: 100%;
-
     overflow: hidden;
     border-radius: 999px;
-
     background: #ffffff;
 
     box-shadow:
@@ -107,10 +56,8 @@
   // ==============================================
   // INPUT WRAPPER
   // ==============================================
-
   &__input-wrapper {
     position: absolute;
-
     top: 0;
     left: 0;
     right: var(--search-size);
@@ -118,14 +65,12 @@
 
     display: flex;
     align-items: center;
-
     overflow: hidden;
   }
 
   // ==============================================
   // ACCESSIBLE LABEL
   // ==============================================
-
   &__label {
     position: absolute;
 
@@ -146,7 +91,6 @@
   // ==============================================
   // INPUT
   // ==============================================
-
   &__input {
     width: 100%;
     height: 100%;
@@ -165,12 +109,11 @@
     line-height: 1;
 
     opacity: 0;
-
     transform: translate3d(0, 15px, 0);
 
     transition:
       opacity 250ms ease,
-      transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+      transform 350ms var(--search-ease);
 
     appearance: none;
 
@@ -183,7 +126,8 @@
       outline: none;
     }
 
-    &::-webkit-search-cancel-button {
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
       display: none;
     }
 
@@ -195,7 +139,6 @@
   // ==============================================
   // BUTTON
   // ==============================================
-
   &__button {
     position: absolute;
 
@@ -230,32 +173,30 @@
     &::before {
       content: "";
       position: absolute;
+      inset: 0;
+
       transform: translateX(-100%);
       pointer-events: none;
-      inset: 0px;
+
       background: linear-gradient(
         120deg,
         transparent 30%,
         rgba(255, 255, 255, 0.3) 50%,
         transparent 70%
       );
-      animation: 4.5s ease-in-out 1.5s infinite normal none running
-        ctaShimmer;
+
+      animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
     }
 
     svg {
       display: block;
       flex-shrink: 0;
-
-      transition:
-        transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 250ms var(--search-ease);
     }
 
     &:hover {
       transform: scale(1.04);
-
-      box-shadow:
-        0 8px 25px rgba(234, 88, 12, 0.35);
+      box-shadow: 0 8px 25px rgba(234, 88, 12, 0.35);
     }
 
     &:active {
@@ -270,7 +211,6 @@
     &:disabled {
       opacity: 0.55;
       cursor: not-allowed;
-
       transform: none;
       box-shadow: none;
     }
@@ -279,29 +219,9 @@
   // ==============================================
   // OPEN STATE
   // ==============================================
-
   &--open {
     .animated-search__container {
-      width: min(
-        var(--search-width),
-        calc(100vw - 32px)
-      );
-    }
-
-    // Backdrop grows from the input area to full screen
-    .animated-search__backdrop {
-      opacity: 1;
-      visibility: visible;
-
-      transform: scale(1);
-      transform-origin: center center;
-
-      pointer-events: auto;
-
-      transition:
-        opacity 350ms ease,
-        visibility 0s,
-        transform 550ms cubic-bezier(0.22, 1, 0.36, 1);
+      width: min(var(--search-width), calc(100vw - 32px));
     }
 
     .animated-search__form {
@@ -310,24 +230,24 @@
 
     .animated-search__input {
       opacity: 1;
-
       transform: translate3d(0, 0, 0);
 
       transition:
         opacity 300ms ease 120ms,
-        transform 350ms cubic-bezier(0.22, 1, 0.36, 1) 100ms;
+        transform 350ms var(--search-ease) 100ms;
     }
 
     .animated-search__button {
       background: #ffffff;
       color: #ea580c;
-
+      padding: 0 4px;
       box-shadow: none;
+      width: 5rem;
+      height: 70px;
 
       &:hover {
         background: #ffffff;
         color: #f97316;
-
         transform: none;
         box-shadow: none;
       }
@@ -341,7 +261,6 @@
   // ==============================================
   // DISABLED
   // ==============================================
-
   &--disabled {
     opacity: 0.65;
   }
@@ -349,7 +268,6 @@
   // ==============================================
   // TABLET
   // ==============================================
-
   @media (max-width: 768px) {
     --search-size: 64px;
     --search-width: 480px;
@@ -358,7 +276,6 @@
   // ==============================================
   // MOBILE
   // ==============================================
-
   @media (max-width: 576px) {
     --search-size: 60px;
 
@@ -381,15 +298,29 @@
   // ==============================================
   // REDUCED MOTION
   // ==============================================
-
   @media (prefers-reduced-motion: reduce) {
-    &__backdrop,
     &__container,
     &__form,
     &__input,
     &__button,
     &__button svg {
       transition: none !important;
+      animation: none !important;
     }
+  }
+}
+
+/* ================================================
+   SHIMMER KEYFRAMES
+================================================ */
+@keyframes ctaShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  60% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }
