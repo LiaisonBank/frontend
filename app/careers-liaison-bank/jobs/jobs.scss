@@ -23,7 +23,62 @@ footer {
     margin: 0 auto;
     padding: 0 24px;
   }
+/* ============================================
+   AnimatedSearch — top-right corner of hero
+   ============================================ */
 
+.jobs-hero {
+  position: relative;
+  overflow: visible;
+
+  .container {
+    position: relative;
+  }
+
+  .animated-search-corner {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 50;
+    width: auto;
+    max-width: 360px;
+
+    /* Ensure dropdown/menu from AnimatedSearch is visible */
+    pointer-events: auto;
+  }
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 992px) {
+  .jobs-hero .animated-search-corner {
+    max-width: 300px;
+    top: 1rem;
+    right: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .jobs-hero .animated-search-corner {
+    position: static;
+    margin: 0 auto 1.25rem;
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .jobs-hero .animated-search-corner > * {
+    width: 100%;
+    max-width: 480px;
+  }
+}
+
+@media (max-width: 480px) {
+  .jobs-hero .animated-search-corner {
+    margin-bottom: 1rem;
+  }
+}
   // Hero Section
   .jobs-hero {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -263,7 +318,7 @@ footer {
           cursor: pointer;
           font-weight: 600;
           transition: all 0.3s ease;
-          align-self: flex-end;
+          // align-self: flex-end;
           font-size: 14px;
 
           &:hover {
@@ -387,6 +442,21 @@ footer {
           transform: translateY(-2px);
           box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3);
         }
+      }
+    }
+    .service-type-header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 24px;
+      span{
+        font-size: 14px;
+        font-weight: 500;
+        color: #7a8a9e;
+        margin-left: 12px;
       }
     }
 
@@ -662,6 +732,15 @@ footer {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding:1.25rem 1.5rem;
+     &::before{
+    content: "";
+    position: absolute;
+    transform: translateX(-100%);
+    pointer-events: none;
+    inset: 0px;
+    background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+    animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+  }
     h2 {
       color: #ffffff;
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);

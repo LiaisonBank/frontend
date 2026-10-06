@@ -82,6 +82,7 @@
     }
   }
   .total-projects {
+    position: relative;
      background: white;
         border:1px solid #f05100;
         color: #f05100;
@@ -90,6 +91,15 @@
       // background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
       border-radius: 100px;
       // color: white;
+      &::before{
+    content: "";
+    position: absolute;
+    transform: translateX(-100%);
+    pointer-events: none;
+    inset: 0px;
+    background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+    animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+  }
     }
   .project-results-info {
     display: flex;
@@ -343,20 +353,50 @@
       }
 
       .status-completed {
+        position: relative;
         background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
         color: white;
+         &::before{
+          content: "";
+          position: absolute;
+          transform: translateX(-100%);
+          pointer-events: none;
+          inset: 0px;
+          background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+          animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+        }
       }
 
       .status-in-progress {
+        position: relative;
         // background: #f59e0b;
         background:linear-gradient(0deg, #b45309 -86.4%, #f59e0b 94.15%);;
         color: white;
+         &::before{
+          content: "";
+          position: absolute;
+          transform: translateX(-100%);
+          pointer-events: none;
+          inset: 0px;
+          background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+          animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+        }
       }
 
       .status-upcoming {
+        position: relative;
         background: white;
         border:1px solid #f05100;
         color: #f05100;
+         &::before{
+          content: "";
+          position: absolute;
+          transform: translateX(-100%);
+          pointer-events: none;
+          inset: 0px;
+          background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+          animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+        }
       }
 
       .status-default {
@@ -491,7 +531,7 @@
       rgba(255, 255, 255, 0)
     );
 
-    color: var(--theme-color, #1976d2);
+    color: var(--themeht-primary-color);
     font-size: 0.85rem;
     font-weight: 500;
 
@@ -500,7 +540,7 @@
       height: 26px;
       border-radius: 50%;
       border: 3px solid rgba(25, 118, 210, 0.15);
-      border-top-color: var(--theme-color, #1976d2);
+      border-top-color: var(--themeht-primary-color);
       animation: spin 0.7s linear infinite;
     }
   }
