@@ -4,6 +4,8 @@
 import { useState, useEffect, useRef } from 'react';
 import './JobDetailsModal.scss';
 import { useRouter } from "next/navigation";
+import { FaShareNodes } from "react-icons/fa6";
+
 
 const JobDetailsModal = ({ job, isOpen, onClose, onRequireLogin }) => {
   const router = useRouter();
@@ -336,8 +338,8 @@ const getSkills = () => {
   if (!hasContent) return null;
 
   return (
-    <div 
-      className="modal-overlay" 
+    <div
+      className="modal-overlay"
       onClick={onClose}
       ref={modalRef}
       tabIndex={-1}
@@ -352,182 +354,201 @@ const getSkills = () => {
         }
       }}
     >
-      <div 
-        className="modal-container" 
+      <div className="modal-content-container">
+      <div
+        className="modal-container job-modal"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* --- HEADER --- */}
-        <div className="modal-header">
-          <div className="modal-header-left">
-            <button className="close-btn" onClick={onClose} aria-label="Close">
-              ✕
-            </button>
-            <div className="header-title">
-              {jobTitle || 'Job Details'}
+        
+          {/* --- HEADER --- */}
+          <div className="modal-header job-header">
+            <div className="modal-header-left">
+              <div className="header-title">
+                {/* {jobTitle || 'Job Details'} */}
+                {jobTitle && <h1 className="job-title">{jobTitle}</h1>}
+              </div>
+            </div>
+            <div className="modal-header-right">
+              <button
+                className="share-btn"
+                onClick={handleShare}
+                aria-label="Share"
+              >
+                {/* Share */}
+                <FaShareNodes size={20} />
+              </button>
+              <button
+                className="close-btn"
+                onClick={onClose}
+                aria-label="Close"
+              >
+                ✕
+              </button>
             </div>
           </div>
-          <div className="modal-header-right">
-            <button className="share-btn" onClick={handleShare} aria-label="Share">
-              Share
-            </button>
-          </div>
-        </div>
 
-        {/* --- SCROLLABLE CONTENT --- */}
-        <div className="modal-content-wrapper" ref={contentRef}>
-          <div className="modal-content">
-            
-            {/* --- JOB TITLE --- */}
-            {jobTitle && <h1 className="job-title">{jobTitle}</h1>}
+          {/* --- SCROLLABLE CONTENT --- */}
+          <div className="modal-content-wrapper" ref={contentRef}>
+            <div className="modal-content">
+              {/* --- JOB TITLE --- */}
+              {/* {jobTitle && <h1 className="job-title">{jobTitle}</h1>} */}
 
-            {/* --- JOB META --- */}
-            {(company || location || jobType || openings || salary || experience) && (
-              <div className="job-meta-grid">
-             
-                {location && (
-                  <div className="meta-item">
-                    <span className="meta-label">Location:</span>
-                    <span>{location}</span>
-                  </div>
-                )}
-                {jobType && (
-                  <div className="meta-item">
-                    <span className="meta-label">Type:</span>
-                    <span>{jobType}</span>
-                  </div>
-                )}
-                {openings && (
-                  <div className="meta-item">
-                    <span className="meta-label">Openings:</span>
-                    <span>{openings}</span>
-                  </div>
-                )}
-                {salary && (
-                  <div className="meta-item">
-                    <span className="meta-label">Salary:</span>
-                    <span>{salary}</span>
-                  </div>
-                )}
-                {experience && (
-                  <div className="meta-item">
-                    <span className="meta-label">Experience:</span>
-                    <span>{experience}</span>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* --- JOB DESCRIPTION --- */}
-            {description && (
-              <div className="info-section">
-                <h2>Job Description</h2>
-                <p>{description}</p>
-              </div>
-            )}
-
-            {/* --- JOB SUMMARY --- */}
-            {summary && (
-              <div className="info-section">
-                <h2>Job Summary</h2>
-                <p>{summary}</p>
-              </div>
-            )}
-
-            {/* --- ROLES AND RESPONSIBILITIES --- */}
-            {responsibilities.length > 0 && (
-              <div className="info-section">
-                <h2>Roles and Responsibilities</h2>
-                <ul className="list-items">
-                  {responsibilities.map((resp, index) => (
-                    <li key={index}>{safeString(resp)}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* --- REQUIRED SKILLS --- */}
-            {skills.length > 0 && (
-              <div className="info-section">
-                <h2>Required Skills</h2>
-                <div className="list-items">
-                  {skills.map((skill, index) => (
-                    <li key={index} className="skill-tag">{safeString(skill)}</li>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* --- EDUCATION --- */}
-            {education.length > 0 && (
-              <div className="info-section">
-                <h2>Education</h2>
-                <ul className="list-items">
-                  {education.map((edu, index) => (
-                    <li key={index}>{safeString(edu)}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-
-
-            {/* --- JOB INFO --- */}
-            {(jobId || department || jobType || experience || applyBefore) && (
-              <div className="job-info-footer">
-                <h2>Job Information</h2>
-                <div className="details-list">
-                  {jobId && (
-                    <div className="detail-item">
-                      <span className="label">Job ID : </span>
-                       <span className="value">{jobId}</span>
-                    </div>
-                  )}
-                  {department && (
-                    <div className="detail-item">
-                      <span className="label">Department :</span>
-                      <span className="value">{department}</span>
+              {/* --- JOB META --- */}
+              {(company ||
+                location ||
+                jobType ||
+                openings ||
+                salary ||
+                experience) && (
+                <div className="job-meta-grid">
+                  {location && (
+                    <div className="meta-item">
+                      <span className="meta-label">Location:</span>
+                      <span>{location}</span>
                     </div>
                   )}
                   {jobType && (
-                    <div className="detail-item">
-                      <span className="label">Employment Type :</span>
-                      <span className="value">{jobType}</span>
+                    <div className="meta-item">
+                      <span className="meta-label">Type:</span>
+                      <span>{jobType}</span>
+                    </div>
+                  )}
+                  {openings && (
+                    <div className="meta-item">
+                      <span className="meta-label">Openings:</span>
+                      <span>{openings}</span>
+                    </div>
+                  )}
+                  {salary && (
+                    <div className="meta-item">
+                      <span className="meta-label">Salary:</span>
+                      <span>{salary}</span>
                     </div>
                   )}
                   {experience && (
-                    <div className="detail-item">
-                      <span className="label">Experience :</span>
-                      <span className="value">{experience}</span>
-                    </div>
-                  )}
-                  {applyBefore && (
-                    <div className="detail-item">
-                      <span className="label">Apply Before</span>
-                      <span className="value">{formatDate(applyBefore)}</span>
+                    <div className="meta-item">
+                      <span className="meta-label">Experience:</span>
+                      <span>{experience}</span>
                     </div>
                   )}
                 </div>
+              )}
+
+              {/* --- JOB DESCRIPTION --- */}
+              {description && (
+                <div className="info-section">
+                  <h2>Job Description</h2>
+                  <p>{description}</p>
+                </div>
+              )}
+
+              {/* --- JOB SUMMARY --- */}
+              {summary && (
+                <div className="info-section">
+                  <h2>Job Summary</h2>
+                  <p>{summary}</p>
+                </div>
+              )}
+
+              {/* --- ROLES AND RESPONSIBILITIES --- */}
+              {responsibilities.length > 0 && (
+                <div className="info-section">
+                  <h2>Roles and Responsibilities</h2>
+                  <ul className="list-items">
+                    {responsibilities.map((resp, index) => (
+                      <li key={index}>{safeString(resp)}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* --- REQUIRED SKILLS --- */}
+              {skills.length > 0 && (
+                <div className="info-section">
+                  <h2>Required Skills</h2>
+                  <div className="list-items">
+                    {skills.map((skill, index) => (
+                      <li key={index} className="skill-tag">
+                        {safeString(skill)}
+                      </li>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* --- EDUCATION --- */}
+              {education.length > 0 && (
+                <div className="info-section">
+                  <h2>Education</h2>
+                  <ul className="list-items">
+                    {education.map((edu, index) => (
+                      <li key={index}>{safeString(edu)}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* --- JOB INFO --- */}
+              {(jobId ||
+                department ||
+                jobType ||
+                experience ||
+                applyBefore) && (
+                <div className="job-info-footer">
+                  <h2>Job Information</h2>
+                  <div className="details-list">
+                    {jobId && (
+                      <div className="detail-item">
+                        <span className="label">Job ID : </span>
+                        <span className="value">{jobId}</span>
+                      </div>
+                    )}
+                    {department && (
+                      <div className="detail-item">
+                        <span className="label">Department :</span>
+                        <span className="value">{department}</span>
+                      </div>
+                    )}
+                    {jobType && (
+                      <div className="detail-item">
+                        <span className="label">Employment Type :</span>
+                        <span className="value">{jobType}</span>
+                      </div>
+                    )}
+                    {experience && (
+                      <div className="detail-item">
+                        <span className="label">Experience :</span>
+                        <span className="value">{experience}</span>
+                      </div>
+                    )}
+                    {applyBefore && (
+                      <div className="detail-item">
+                        <span className="label">Apply Before</span>
+                        <span className="value">{formatDate(applyBefore)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* --- APPLY BUTTON --- */}
+              <div className="apply-section">
+                <button
+                  className="apply-btn"
+                  onClick={handleApply}
+                  disabled={isApplying}
+                >
+                  {isApplying ? (
+                    <>
+                      <span className="spinner" />
+                      Applying...
+                    </>
+                  ) : (
+                    "APPLY NOW"
+                  )}
+                </button>
               </div>
-            )}
-
-            {/* --- APPLY BUTTON --- */}
-            <div className="apply-section">
-              <button 
-                className="apply-btn"
-                onClick={handleApply}
-                disabled={isApplying}
-              >
-                {isApplying ? (
-                  <>
-                    <span className="spinner" />
-                    Applying...
-                  </>
-                ) : (
-                  'APPLY NOW'
-                )}
-              </button>
             </div>
-
           </div>
         </div>
       </div>
