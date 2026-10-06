@@ -167,9 +167,6 @@ body:not(.home) {
   }
 }
 
-
-
-
 .page-header {
   position: relative;
   text-align: center;
@@ -226,7 +223,6 @@ body:not(.home) {
   text-align: center;
   background-color: #fff;
 }
-
 
 .menu-button {
   display: none;
@@ -1242,3 +1238,29 @@ input:focus, textarea:focus, select:focus{
   }
 }
 // CHATBOT ENDS
+.btn-primary {
+  background: linear-gradient(115deg, var(--themeht-primary-color), var(--themeht-secondary-color));
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &::before{
+    content: "";
+    position: absolute;
+    transform: translateX(-100%);
+    pointer-events: none;
+    inset: 0px;
+    background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+    animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+  }
+}
+@keyframes ctaShimmer {
+0% {
+    transform: translateX(-100%);
+}
+100% {
+    transform: translateX(100%);
+}
+}

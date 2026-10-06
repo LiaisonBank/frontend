@@ -63,11 +63,11 @@ const services = [
 ];
 
 const OTHER_OPTIONS = [
-  { id: 1, name: "Administration", link: "/careers-liaison-bank/jobs?service=Work%20Department&department=Administration%20%26%20Facilities%20-%20DBRE" },
-  { id: 2, name: "Human Resource", link: "/careers-liaison-bank/jobs?service=Human%20Resource" },
-  { id: 3, name: "Accountant", link: "/careers-liaison-bank/jobs?service=Accountant" },
-  { id: 4, name: "Sales", link: "/careers-liaison-bank/jobs?service=Sales" },
-  { id: 5, name: "Information Technology", link: "/careers-liaison-bank/jobs?service=Information%20Technology" },
+  { id: 1, name: "Administration", link: "/careers-liaison-bank/jobs?department=Administration%20%26%20Facilities%20-%20DBRE" },
+  { id: 2, name: "Human Resource", link: "/careers-liaison-bank/jobs?department=Human%20Resource" },
+  { id: 3, name: "Accountant", link: "/careers-liaison-bank/jobs?department=ACCOUNTS DEPARTMENT - DBRE" },
+  { id: 4, name: "Sales", link: "/careers-liaison-bank/jobs?department=Sales" },
+  { id: 5, name: "Information Technology", link: "/careers-liaison-bank/jobs?department=IT DEPARTMENT - DBRE" },
 ];
 
 const BENEFITS = [
@@ -610,7 +610,7 @@ export default function CareersLiaisonPage() {
                 />
                 <div className="featured-overlay">
                   <h3>{activeService.slug}</h3>
-                  <span className="featured-cta">
+                  <span className="featured-view">
                     View Openings <ArrowUpRight size={18} />
                   </span>
                 </div>
