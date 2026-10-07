@@ -18,12 +18,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 // ---------- SERVICE DATA ----------
 const services = [
-  { id: 1, name: "Liaisoning", slug: "Linking Needs With The Right Solutions", image: "/liaisoning-in-real-estate.jpg", description: "____________________________" },
-  { id: 2, name: "Licensing", slug: "We Handle the Process. You Build the Future.", image: "/licensing-services.png", description: "_______________________________________________" },
-  { id: 5, name: "Piped Natural Gas", slug: "Reliable Gas, Smarter Living.", image: "/PNG.png", description: "_____________________________________" },
-  { id: 4, name: "Fire Safety", slug: "Turning Safety into Security.", image: "/fire4.png", description: "____________________________________________" },
-  { id: 3, name: "Electrical", slug: "Powering Your Needs, Connecting Your Future.", image: "/Electrical.png", description: "________________________________________________" },
-  { id: 6, name: "AMC", slug: "Protect Performance. Preserve Value.", image: "/dummyAMC.png", description: "_______________________________________" },
+  { id: 1, name: "Liaisoning", slug: "Linking Needs With The Right Solutions", link:"Liaisoning", image: "/liaisoning-in-real-estate.jpg", description: "____________________________" },
+  { id: 2, name: "Licensing", slug: "We Handle the Process. You Build the Future.", link:"Licensing", image: "/licensing-services.png", description: "_______________________________________________" },
+  { id: 5, name: "Piped Natural Gas", slug: "Reliable Gas, Smarter Living.", link:"PNG", image: "/PNG.png", description: "_____________________________________" },
+  { id: 4, name: "Fire Safety", slug: "Turning Safety into Security.", link:"Fire Safety", image: "/fire4.png", description: "____________________________________________" },
+  { id: 3, name: "Electrical", slug: "Powering Your Needs, Connecting Your Future.", link:"Electrical", image: "/Electrical.png", description: "________________________________________________" },
+  { id: 6, name: "AMC", slug: "Protect Performance. Preserve Value.", link:"AMC", image: "/dummyAMC.png", description: "_______________________________________" },
 ];
 
 const OTHER_OPTIONS = [
@@ -57,6 +57,8 @@ export default function CareersLiaisonPage() {
   const heroRef = useRef(null);
   const heroContentRef = useRef(null);
   const heroTitleRef = useRef(null);
+  const saturdayFunRef = useRef(null);
+  const saturdayFunHeaderRef = useRef(null);
   const benefitsRef = useRef(null);
   const servicesRef = useRef(null);
   const ctaRef = useRef(null);
@@ -167,6 +169,61 @@ export default function CareersLiaisonPage() {
           scrollTrigger: onceConfig(trigger),
         });
       };
+
+      // ---- Saturday Fun section (Employee Activity Gallery) ----
+      animate(
+        saturdayFunRef.current,
+        { opacity: 0, y: 100 },
+        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" },
+        saturdayFunRef.current
+      );
+
+      // Saturday Fun heading (if present inside the section)
+      const saturdayHeader =
+        saturdayFunHeaderRef.current ||
+        saturdayFunRef.current?.querySelector("h2, .section-header");
+      if (saturdayHeader) {
+        gsap.fromTo(
+          saturdayHeader,
+          { opacity: 0, y: 40, scale: 0.96 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: saturdayHeader,
+              start: "top 90%",
+              toggleActions: "play none none none",
+              once: true,
+              invalidateOnRefresh: true,
+            },
+          }
+        );
+      }
+
+      // Stagger any gallery items inside saturdayfun (auto-detect common classes)
+      const galleryItems = saturdayFunRef.current?.querySelectorAll(
+        ".gallery-item, .activity-card, .employee-activity-card, .gallery-card"
+      );
+      if (galleryItems?.length) {
+        gsap.set(galleryItems, { opacity: 0, y: 60, scale: 0.95 });
+        ScrollTrigger.batch(galleryItems, {
+          start: "top 88%",
+          once: true,
+          onEnter: (batch) =>
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.9,
+              stagger: 0.12,
+              ease: "power3.out",
+              overwrite: true,
+            }),
+        });
+      }
 
       // Benefits section wrapper
       animate(
@@ -400,8 +457,8 @@ export default function CareersLiaisonPage() {
   };
 
   const activeServiceJobsHref = useMemo(
-    () => `/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.name)}`,
-    [activeService.name]
+    () => `/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.link)}`,
+    [activeService.link]
   );
 
   return (
@@ -429,7 +486,8 @@ export default function CareersLiaisonPage() {
 
       <section className="hero-section" />
 
-      <section className="saturdayfun">
+      {/* Saturday Fun / Employee Activity Gallery */}
+      <section ref={saturdayFunRef} className="saturdayfun" id="saturdayfun">
         <EmployeeActivityGallery />
       </section>
 

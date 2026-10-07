@@ -14,7 +14,6 @@ import {
 import "./jobs.scss";
 import JobDetailsModal from "./JobDetailsModal";
 import AuthModal from "../AuthModal";
-import AnimatedSearch from "@/components/AnimatedSearch/page";
 
 function JobsPageContent() {
   const searchParams = useSearchParams();
@@ -201,7 +200,7 @@ function JobsPageContent() {
           new Date(b.posted_on || b.creation)
       );
     }
-
+    console.log("Filtered Jobs:", result);
     setFilteredJobs(result);
   }, [
     searchTerm,
@@ -222,7 +221,7 @@ function JobsPageContent() {
   );
 
   const serviceTypes = useMemo(
-    () => [...new Set(jobs.map((job) => getServiceType(job)).filter(Boolean))],
+    () => [...new Set([...jobs.map((job) => getServiceType(job)).filter(Boolean), "AMC"])].sort(),
     [jobs, getServiceType]
   );
 
