@@ -8,7 +8,92 @@ header, footer, #sticky-icon {
 .jobs-page {
   background: #f5f6fa;
   min-height: 100vh;
+  
+        .hero-particles {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 1;
+        }
 
+        .particle {
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(239, 127, 26, 0.06);
+          animation: float 20s ease-in-out infinite;
+        }
+
+        .particle-1 {
+          width: 300px;
+          height: 300px;
+          top: -150px;
+          right: -80px;
+          animation-delay: 0s;
+        }
+        .particle-2 {
+          width: 200px;
+          height: 200px;
+          bottom: -60px;
+          left: -60px;
+          animation-delay: -5s;
+        }
+        .particle-3 {
+          width: 150px;
+          height: 150px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          animation-delay: -10s;
+        }
+        .particle-4 {
+          width: 100px;
+          height: 100px;
+          top: 15%;
+          right: 15%;
+          animation-delay: -3s;
+        }
+        .particle-5 {
+          width: 80px;
+          height: 80px;
+          bottom: 25%;
+          left: 10%;
+          animation-delay: -7s;
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(20px, -30px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        .hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          background: rgba(239, 127, 26, 0.15);
+          color: #ef7f1a;
+          padding: 8px 24px;
+          border-radius: 50px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+          margin-bottom: 20px;
+          border: 1px solid rgba(239, 127, 26, 0.2);
+          position: relative;
+          z-index: 2;
+          backdrop-filter: blur(10px);
+        }
+  .hero-shape {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+  }
+  .hero-shape svg {
+    display: block;
+    width: 100%;
+  }
   .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -23,7 +108,7 @@ header, footer, #sticky-icon {
   // ============================================
   .jobs-hero {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    padding: 60px 0 40px;
+    padding: 60px 0 80px;
     position: relative;
     overflow: hidden;
 
@@ -72,6 +157,7 @@ header, footer, #sticky-icon {
         max-width: 600px;
         margin: 0 auto;
         line-height: 1.6;
+        text-align: center;
       }
     }
 
@@ -80,7 +166,7 @@ header, footer, #sticky-icon {
     // ============================================
     .search-section {
       position: relative;
-      z-index: 1;
+      z-index: 3;
 
       .filters-expanded {
         display: flex;
