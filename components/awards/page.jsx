@@ -216,7 +216,7 @@ export default function AwardP() {
         <div className="col-8 mx-auto text-center d-flex align-items-center justify-content-center">
           <Link
             href="/awards"
-            className="themeht-btn btn btn-primary btn-lg primary-btn d-flex align-items-center mr-2 mt-4"
+            className="themeht-btn btn btn-lg primary-btn d-flex align-items-center mr-2 mt-4"
           >
             View More
           </Link>

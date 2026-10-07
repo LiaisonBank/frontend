@@ -1005,6 +1005,17 @@ section.ceo-message-full {
       font-family: var(--font-family);
       font-weight: 500;
       text-decoration: none;
+       position: relative;
+        z-index: 2;
+        &::before{
+          content: "";
+          pointer-events: none;
+          position: absolute;
+          transform: translateX(-100%);
+          background: linear-gradient(120deg, rgba(0, 0, 0, 0) 30%, rgba(255, 255, 255, 0.3) 50%, rgba(0, 0, 0, 0) 70%);
+          animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+          inset: 0px;
+        } 
       &.primary-btn {
         // background: linear-gradient(
         //   115deg,
