@@ -1460,9 +1460,9 @@ $border-left-color_2: rgba(255, 107, 0, 0.3);
 section[data-section-name="Fire"]
  {
     background-image: linear-gradient(#00000073, #00000073), url(/images/fire.webp);
-    background-position: left center;
+    background-position: top center;
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: cover;
     height: 430px;
     position: relative;
     overflow: hidden;
@@ -1470,7 +1470,7 @@ section[data-section-name="Fire"]
 section[data-section-name="Electrical"]
  {
     background-image: linear-gradient(#00000073, #00000073), url(/images/electrical.webp);
-    background-position: left center;
+    background-position: top center;
     background-repeat: no-repeat;
     background-size: cover;
     height: 430px;
