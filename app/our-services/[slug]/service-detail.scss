@@ -403,7 +403,7 @@ $font-5xl: 58px;
     border-radius: $radius-lg;
     box-shadow: $shadow-sm;
     overflow: visible;
-
+    border:1px solid #ea580c;
     &:hover {
       box-shadow: $shadow-lg;
     }
@@ -435,7 +435,7 @@ $font-5xl: 58px;
     // Top header with name
     .subcategory-front-header {
       padding: 16px 20px;
-      background: white;
+      background: $primary-gradient;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -443,9 +443,9 @@ $font-5xl: 58px;
       min-height: 60px;
 
       .subcategory-front-name {
-        font-size: 24px;
-        color: $primary-gradient;
-        font-weight: 700;
+        font-size: 1.2rem;
+        color: white;
+        font-weight: 550;
         margin: 0;
         line-height: 1.3;
         letter-spacing: -0.02em;
@@ -596,7 +596,7 @@ $font-5xl: 58px;
     // Back header with name
     .flip-back-header {
       padding: 16px 20px;
-      background: white;
+      background: $primary-gradient;
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -633,9 +633,9 @@ $font-5xl: 58px;
       }
 
       .flip-back-title {
-        font-size: 24px;
-        color: $dark;
-        font-weight: 700;
+        font-size: 1.2rem;
+        color: white;
+        font-weight: 550;
         margin: 0;
         line-height: 1.3;
         word-wrap: break-word;
@@ -698,24 +698,59 @@ $font-5xl: 58px;
       }
 
       .back-item-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding: 12px 14px;
-        background: $gray-50;
-        // border-radius: $radius-sm;
-        border-left: 3px solid $primary-light;
-        transition: $transition;
+  position: relative;
+  overflow: hidden;
 
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  background: $gray-50;
+  border-left: 3px solid $primary-light;
+  transition: $transition;
+
+  // Animated background
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #ea580c;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+    z-index: 0;
+  }
+
+  // Keep content above the animated background
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:hover {
+    color: white;
+
+    &::before {
+      transform: scaleX(1);
+    }
+
+    span {
+      background: white;
+      color: #ea580c;
+    }
+
+    p.back-item-name {
+      color: white;
+    }
+  }
         @media (max-width: 768px) {
           padding: 10px 12px;
         }
-
-        &:hover {
-          background: $primary-subtle;
-          border-left-color: $primary;
-          transform: translateX(2px);
-        }
+        // &:hover {
+        //   background: $primary-subtle;
+        //   border-left-color: $primary;
+        //   transform: translateX(2px);
+        // }
 
         .back-item-header {
           display: flex;
