@@ -582,13 +582,15 @@ export default function ServiceDetail() {
                   className="related-modern-card"
                 >
                   <div className="related-modern-image">
-                    <img
-                      src={related.image}
-                      alt={related.name}
+                    <Image
+                      src={related.image || FALLBACK_IMAGE}
+                      alt={related.name || "Related service"}
+                      width={400}
+                      height={300}
                       onError={(e) => {
-                        e.currentTarget.onerror = null;
                         e.currentTarget.src = FALLBACK_IMAGE;
                       }}
+                      className="related-image"
                     />
                   </div>
                   <div className="related-modern-info">
