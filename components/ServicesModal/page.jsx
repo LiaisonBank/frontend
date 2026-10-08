@@ -19,6 +19,29 @@ const CLOSE_ANIMATION_DURATION = 300;
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
 
+/**
+ * Section-aware "Under Development" configuration for the RIGHT panel.
+ *
+ * key         → normalized LEFT panel section name
+ * title       → headline shown in the panel
+ * description → supporting copy
+ * image       → background image path (put files in /public/images/…)
+ */
+const SECTION_UNDER_DEVELOPMENT = Object.freeze({
+  fire: {
+    title: "Fire Services Coming Soon",
+    description:
+      "We are currently preparing our Fire Safety services. Our team is finalising certifications, equipment, and compliance documentation. Please check back shortly.",
+    image: "/images/under-development-fire.jpg",
+  },
+  electrical: {
+    title: "Electrical Services Coming Soon",
+    description:
+      "We are currently preparing our Electrical services. Our team is finalising certifications, equipment, and compliance documentation. Please check back shortly.",
+    image: "/images/under-development-electrical.jpg",
+  },
+});
+
 /* ==========================================================================
    Utility Helpers
    ========================================================================== */
@@ -38,6 +61,96 @@ const normalizeName = (value) =>
  */
 const getEntityId = (entity, fallback = "") =>
   entity?.id ?? entity?._id ?? entity?.name ?? fallback;
+
+/**
+ * Converts any value into a URL-safe slug.
+ */
+const slugify = (value) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+
+/**
+ * Resolves the section-specific "Under Development" config.
+ *
+ * Returns null if the section has no custom config.
+ */
+const getSectionUnderDevelopment = (sectionName) => {
+  const key = normalizeName(sectionName);
+  return SECTION_UNDER_DEVELOPMENT[key] ?? null;
+};
+
+/* ==========================================================================
+   Section Under Development (Right Panel)
+   ========================================================================== */
+
+/**
+ * Custom "Under Development" UI/UX shown in the RIGHT panel for
+ * specific Left Panel sections (Fire, Electrical).
+ *
+ * Uses a background image + overlay + glass card layout.
+ */
+function SectionUnderDevelopment({ config, sectionName }) {
+  const title = config?.title ?? "Coming Soon";
+  const description =
+    config?.description ??
+    "This section is currently under development. Please check back shortly.";
+  const image = config?.image ?? "/images/under-development.jpg";
+
+  return (
+    <section
+      className="services-section-ud"
+      role="status"
+      aria-live="polite"
+      data-section-name={sectionName}
+      aria-label={`${sectionName} services under development`}
+    >
+      {/* Background image layer */}
+      <div className="services-section-ud-bg" aria-hidden="true">
+        <Image
+          src={image}
+          alt=""
+          fill
+          priority={false}
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="services-section-ud-bg-img"
+        />
+        <div className="services-section-ud-bg-overlay" />
+      </div>
+
+      {/* Content card */}
+      <div className="services-section-ud-card">
+        <div className="services-section-ud-badge">
+          <span className="services-section-ud-dot" aria-hidden="true" />
+          Under Development
+        </div>
+
+        <h3 className="services-section-ud-title">{title}</h3>
+
+        <p className="services-section-ud-desc">{description}</p>
+
+        <div className="services-section-ud-actions">
+          <Link
+            href="/contact-us-liaison-bank"
+            className="services-section-ud-btn primary"
+          >
+            Contact Us
+          </Link>
+
+          <Link
+            href="/downloads"
+            className="services-section-ud-btn secondary"
+          >
+            View Downloads
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 /* ==========================================================================
    Skeleton Loader
@@ -203,9 +316,9 @@ function ServiceChildren({
 
               {isExpandable && (
                 <span
-                  className={`service-child-toggle ${isExpandable ? "has-children" : ""} ${
-                    isActive ? "active" : ""
-                  }`}
+                  className={`service-child-toggle ${
+                    isExpandable ? "has-children" : ""
+                  } ${isActive ? "active" : ""}`}
                   aria-hidden="true"
                 >
                   {isOpen ? (
@@ -261,34 +374,26 @@ function ServiceChildren({
                   }
                 }}
               >
-                {child.service.map((serviceItem, serviceIndex) => {
-                  const serviceSlug = String(serviceItem)
-                    .trim()
-                    .toLowerCase()
-                    .replace(/\s+/g, "-");
-
-                  return (
-                    <li
-                      key={`${itemKey}-service-${serviceIndex}`}
-                      className="service-service-item"
+                {child.service.map((serviceItem, serviceIndex) => (
+                  <li
+                    key={`${itemKey}-service-${serviceIndex}`}
+                    className="service-service-item"
+                  >
+                    <span className="service-service-dot" aria-hidden="true">
+                      •
+                    </span>
+                    <Link
+                      href="/contact-us-liaison-bank"
+                      className="service-service-name"
                     >
-                      <span className="service-service-dot" aria-hidden="true">
-                        •
-                      </span>
-                      {/* <Link href={`/services/${serviceSlug}`} className="service-service-name"> */}
-                      <Link
-                        href="/contact-us-liaison-bank"
-                        className="service-service-name"
-                      >
-                        {serviceItem}
-                      </Link>
-                    </li>
-                  );
-                })}
+                      {serviceItem}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             )}
 
-            {/* Nested Children - Scrollable */}
+            {/* Nested Children */}
             {hasChildren && isExpanded && (
               <div className="service-child-children" role="list">
                 <ServiceChildren
@@ -332,30 +437,25 @@ export default function ServicesModal() {
 
   const isClosingRef = useRef(false);
   const isMountedRef = useRef(true);
+  const isNavigatingRef = useRef(false);
 
   /* ==========================================================================
      State
      ========================================================================== */
 
   const [servicesData, setServicesData] = useState([]);
-
   const [loading, setLoading] = useState(false);
-
   const [error, setError] = useState(null);
-
   const [isClosing, setIsClosing] = useState(false);
-
   const [selectedSection, setSelectedSection] = useState(null);
-
   const [selectedCategory, setSelectedCategory] = useState(null);
-
   const [expandedItems, setExpandedItems] = useState({});
-
   const [expandedServices, setExpandedServices] = useState({});
 
   /* ==========================================================================
      Normalize API Data
      ========================================================================== */
+
   const normalizeServiceData = useCallback((categories) => {
     if (!Array.isArray(categories)) {
       return [];
@@ -464,6 +564,7 @@ export default function ServicesModal() {
       const normalizedData = normalizeServiceData(result.data);
 
       setServicesData(normalizedData);
+
       /* --------------------------------------------------------------
          Initialize first section/category
          -------------------------------------------------------------- */
@@ -473,11 +574,8 @@ export default function ServicesModal() {
       const firstCategory = firstSection?.items?.[0] ?? null;
 
       setSelectedSection(firstSection);
-
       setSelectedCategory(firstCategory);
-
       setExpandedItems({});
-
       setExpandedServices({});
     } catch (err) {
       if (err?.name === "AbortError" || controller.signal.aborted) {
@@ -498,23 +596,6 @@ export default function ServicesModal() {
      Find Licensing Category
      ========================================================================== */
 
-  /**
-   * Finds the top-level category whose name is "Licensing".
-   *
-   * API:
-   *
-   * {
-   *   name: "Licensing",
-   *   subCategories: [...]
-   * }
-   *
-   * After normalization:
-   *
-   * {
-   *   name: "Licensing",
-   *   items: [...]
-   * }
-   */
   const licensingCategory = useMemo(() => {
     if (!Array.isArray(servicesData)) {
       return null;
@@ -531,30 +612,6 @@ export default function ServicesModal() {
      Special AMC → Licenses Renewal Mapping
      ========================================================================== */
 
-  /**
-   * IMPORTANT:
-   *
-   * Normal flow:
-   *
-   * selectedSection
-   *      ↓
-   * selectedCategory
-   *      ↓
-   * displayCategory
-   *
-   *
-   * Special flow:
-   *
-   * AMC
-   *   ↓
-   * Licenses Renewal
-   *   ↓
-   * find Licensing
-   *   ↓
-   * Licensing.items
-   *   ↓
-   * display as children
-   */
   const displayCategory = useMemo(() => {
     if (!selectedCategory) {
       return null;
@@ -565,19 +622,12 @@ export default function ServicesModal() {
     const isLicensesRenewal =
       normalizeName(selectedCategory?.name) === "licenses renewal";
 
-    /**
-     * Normal category:
-     * return exactly what API provided.
-     */
+    /* Normal category: return exactly what API provided. */
     if (!isAMC || !isLicensesRenewal) {
       return selectedCategory;
     }
 
-    /**
-     * AMC → Licenses Renewal
-     *
-     * Use Licensing subcategories.
-     */
+    /* AMC → Licenses Renewal: use Licensing subcategories. */
     if (!licensingCategory) {
       return selectedCategory;
     }
@@ -586,17 +636,35 @@ export default function ServicesModal() {
       ? licensingCategory.items
       : [];
 
-    /**
-     * Do NOT mutate selectedCategory.
-     *
-     * Create a new object instead.
-     */
+    /* Do NOT mutate selectedCategory — create a new object. */
     return {
       ...selectedCategory,
-
       children: licensingItems,
     };
   }, [selectedCategory, selectedSection, licensingCategory]);
+
+  /* ==========================================================================
+     Right Panel — Section-Aware Under Development Config
+     ========================================================================== */
+
+  const sectionUnderDevelopment = useMemo(
+    () => getSectionUnderDevelopment(selectedSection?.name),
+    [selectedSection?.name],
+  );
+
+  const hasServiceOfferings = useMemo(() => {
+    if (!displayCategory) return false;
+
+    const hasDirectServices =
+      Array.isArray(displayCategory.service) &&
+      displayCategory.service.length > 0;
+
+    const hasChildren =
+      Array.isArray(displayCategory.children) &&
+      displayCategory.children.length > 0;
+
+    return hasDirectServices || hasChildren;
+  }, [displayCategory]);
 
   /* ==========================================================================
      Fetch When Modal Opens
@@ -623,7 +691,6 @@ export default function ServicesModal() {
       cancelled = true;
 
       abortControllerRef.current?.abort();
-
       abortControllerRef.current = null;
     };
   }, [serviceModalOpen, fetchServices]);
@@ -639,12 +706,10 @@ export default function ServicesModal() {
 
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
-
       closeTimerRef.current = null;
     }
 
     isClosingRef.current = true;
-
     setIsClosing(true);
 
     closeTimerRef.current = setTimeout(() => {
@@ -653,11 +718,9 @@ export default function ServicesModal() {
       }
 
       setServiceModalOpen(false);
-
       setIsClosing(false);
 
       isClosingRef.current = false;
-
       closeTimerRef.current = null;
     }, CLOSE_ANIMATION_DURATION);
   }, [setServiceModalOpen]);
@@ -669,12 +732,10 @@ export default function ServicesModal() {
   const forceCloseModal = useCallback(() => {
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
-
       closeTimerRef.current = null;
     }
 
     isClosingRef.current = false;
-
     setIsClosing(false);
 
     setServiceModalOpen(false);
@@ -692,7 +753,6 @@ export default function ServicesModal() {
 
       if (closeTimerRef.current) {
         clearTimeout(closeTimerRef.current);
-
         closeTimerRef.current = null;
       }
     }
@@ -710,7 +770,6 @@ export default function ServicesModal() {
 
       if (closeTimerRef.current) {
         clearTimeout(closeTimerRef.current);
-
         closeTimerRef.current = null;
       }
 
@@ -724,157 +783,116 @@ export default function ServicesModal() {
      Outside Click
      ========================================================================== */
 
+  useEffect(() => {
+    if (!serviceModalOpen) {
+      return undefined;
+    }
 
-  /* ==========================================================================
-   Outside Click
-   ========================================================================== */
+    const handleClickOutside = (event) => {
+      // Skip if we're already navigating or closing
+      if (isNavigatingRef.current) return;
+      if (isClosingRef.current) return;
 
-/* ==========================================================================
-   Outside Click
-   ========================================================================== */
+      const modal = modalRef.current;
+      if (!modal) return;
 
-useEffect(() => {
-  if (!serviceModalOpen) {
-    return undefined;
-    
-  }
+      const target = event.target;
 
-  const handleClickOutside = (event) => {
-    // Skip if we're already navigating or closing
-    if (isNavigatingRef.current) return;
-    if (isClosingRef.current) return;
+      // Click is inside the modal → do nothing
+      if (modal.contains(target)) return;
 
-    const modal = modalRef.current;
-    if (!modal) return;
+      // Click is on a nav trigger → do nothing
+      const isNavTrigger = target.closest?.(
+        ".services-section-name, .services-category-name, .services-section-pdf-icon, .services-category-pdf",
+      );
+      if (isNavTrigger) return;
 
-    const target = event.target;
+      closeModal();
+    };
 
-    // Click is inside the modal → do nothing
-    if (modal.contains(target)) return;
+    document.addEventListener("click", handleClickOutside);
 
-    // Click is on a nav trigger → do nothing
-    const isNavTrigger = target.closest?.(
-      ".services-section-name, .services-category-name, .services-section-pdf-icon, .services-category-pdf",
-    );
-    if (isNavTrigger) return;
-
-    closeModal();
-  };
-
-  document.addEventListener("click", handleClickOutside);
-
-  return () => {
-    document.removeEventListener("click", handleClickOutside);
-  };
-}, [serviceModalOpen, closeModal]);
-  /* ==========================================================================
-     ESC Key
-     ========================================================================== */
-
- /* ==========================================================================
-   Outside Click
-   ========================================================================== */
-
-
-
-  /* ==========================================================================
-     Lenis Scroll Lock
-     ========================================================================== */
-
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [serviceModalOpen, closeModal]);
 
   /* ==========================================================================
      Section Hover
      ========================================================================== */
 
-const handleSectionHover = useCallback((section) => {
-  if (!section) return;
-  setSelectedSection((current) =>
-    current?.id === section.id ? current : section,
-  );
-  setSelectedCategory(section.items?.[0] ?? null);
-  setExpandedItems({});
-  setExpandedServices({});
-}, []);
-
-const handleCategoryHover = useCallback((category) => {
-  if (!category) return;
-  setSelectedCategory((current) =>
-    current?.id === category.id ? current : category,
-  );
-  setExpandedItems({});
-  setExpandedServices({});
-}, []);
-
-  /* ==========================================================================
-     Category Hover
-     ========================================================================== */
-
-
-
-
-/* ==========================================================================
-   Section Click — Always Navigate
-   ========================================================================== */
-
-const slugify = (value) =>
-  String(value ?? "")
-    .trim()
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-
-const isNavigatingRef = useRef(false);
-
-
-const handleSectionClick = useCallback(
-  (section) => {
+  const handleSectionHover = useCallback((section) => {
     if (!section) return;
 
-    const slug = section.slug || slugify(section.name);
-    if (!slug) return;
+    setSelectedSection((current) =>
+      current?.id === section.id ? current : section,
+    );
 
-    isNavigatingRef.current = true;   // ← set flag
-    forceCloseModal();
-    router.push(`/our-services/${slug}`);
-  },
-  [forceCloseModal, router],
-);
+    setSelectedCategory(section.items?.[0] ?? null);
+    setExpandedItems({});
+    setExpandedServices({});
+  }, []);
+
+  const handleCategoryHover = useCallback((category) => {
+    if (!category) return;
+
+    setSelectedCategory((current) =>
+      current?.id === category.id ? current : category,
+    );
+
+    setExpandedItems({});
+    setExpandedServices({});
+  }, []);
+
+  /* ==========================================================================
+     Section Click — Always Navigate
+     ========================================================================== */
+
+  const handleSectionClick = useCallback(
+    (section) => {
+      if (!section) return;
+
+      const slug = section.slug || slugify(section.name);
+      if (!slug) return;
+
+      isNavigatingRef.current = true;
+
+      forceCloseModal();
+      router.push(`/our-services/${slug}`);
+    },
+    [forceCloseModal, router],
+  );
 
   /* ==========================================================================
      Category Click
      ========================================================================== */
 
-/* ==========================================================================
-   Category Click
-   ========================================================================== */
+  const handleCategoryClick = useCallback(
+    (category) => {
+      if (!category) return;
 
-const handleCategoryClick = useCallback(
-  (category) => {
-    
-    if (!category) return;
+      // Navigate to the category's own page
+      if (category.slug) {
+        closeModal();
+        router.push(`/our-services/${category.slug}`);
+        return;
+      }
 
-    // Navigate to the category's own page
-    if (category.slug) {
-      closeModal();
-      router.push(`/our-services/${category.slug}`);
-      return;
-    }
+      // Fallback to href if API provides one
+      if (category.href) {
+        closeModal();
+        router.push(category.href);
+        return;
+      }
 
-    // Fallback to href if API provides one
-    if (category.href) {
-      closeModal();
-      router.push(category.href);
-      return;
-    }
+      // Last resort: just select (original behavior)
+      setSelectedCategory(category);
+      setExpandedItems({});
+      setExpandedServices({});
+    },
+    [closeModal, router],
+  );
 
-    // Last resort: just select (original behavior)
-    setSelectedCategory(category);
-    setExpandedItems({});
-    setExpandedServices({});
-  },
-  [closeModal, router],
-);
   /* ==========================================================================
      Expand / Collapse Children
      ========================================================================== */
@@ -886,9 +904,7 @@ const handleCategoryClick = useCallback(
       const isCurrentlyExpanded = Boolean(previous[key]);
 
       if (!isCurrentlyExpanded) {
-        const nextState = {
-          ...previous,
-        };
+        const nextState = { ...previous };
 
         Object.keys(nextState).forEach((existingKey) => {
           const existingLevel = parseInt(existingKey.split("-").pop(), 10);
@@ -921,9 +937,7 @@ const handleCategoryClick = useCallback(
       const isCurrentlyExpanded = Boolean(previous[key]);
 
       if (!isCurrentlyExpanded) {
-        const nextState = {
-          ...previous,
-        };
+        const nextState = { ...previous };
 
         Object.keys(nextState).forEach((existingKey) => {
           const existingLevel = parseInt(existingKey.split("-").pop(), 10);
@@ -952,14 +966,7 @@ const handleCategoryClick = useCallback(
   const hasSubcategories = Boolean(selectedSection?.items?.length);
 
   /* ==========================================================================
-     Render Guard - MOVED TO THE END AFTER ALL HOOKS
-     ========================================================================== */
-
-  // All hooks must be called before any conditional returns
-  // This ensures hooks are always called in the same order
-
-  /* ==========================================================================
-     Error State
+     Render Guards
      ========================================================================== */
 
   if (!serviceModalOpen && !isClosing) {
@@ -1060,56 +1067,57 @@ const handleCategoryClick = useCallback(
                       role="listitem"
                     >
                       <div className="services-section-row">
-{/* LEFT PANEL — inside servicesData.map */}
-<button
-  type="button"
-  className={`services-section-btn ${isActive ? "active" : ""}`}
-  onMouseEnter={() => handleSectionHover(section)}
-  aria-current={isActive ? "page" : undefined}
->
-  <span
-    className="services-section-name"
-    role="link"
-    tabIndex={0}
-    style={{ cursor: "pointer" }}
-    onClick={(e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      handleSectionClick(section);
-    }}
-    onKeyDown={(e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        e.stopPropagation();
-        handleSectionClick(section);
-      }
-    }}
-  >
-    {section.name}
-  </span>
+                        <button
+                          type="button"
+                          className={`services-section-btn ${
+                            isActive ? "active" : ""
+                          }`}
+                          onMouseEnter={() => handleSectionHover(section)}
+                          aria-current={isActive ? "page" : undefined}
+                        >
+                          <span
+                            className="services-section-name"
+                            role="link"
+                            tabIndex={0}
+                            style={{ cursor: "pointer" }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              handleSectionClick(section);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleSectionClick(section);
+                              }
+                            }}
+                          >
+                            {section.name}
+                          </span>
 
-  {section.pdf && (
-    <a
-      href={section.pdf}
-      rel="noopener noreferrer"
-      className="services-section-pdf-icon"
-      aria-label={`Open PDF for ${section.name}`}
-      onClick={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        closeModal();
-        router.push("/downloads");
-      }}
-    >
-      <Image
-        src="/images/pdf-icon.png"
-        alt="PDF Icon"
-        width={16}
-        height={16}
-      />
-    </a>
-  )}
-</button>
+                          {section.pdf && (
+                            <a
+                              href={section.pdf}
+                              rel="noopener noreferrer"
+                              className="services-section-pdf-icon"
+                              aria-label={`Open PDF for ${section.name}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                closeModal();
+                                router.push("/downloads");
+                              }}
+                            >
+                              <Image
+                                src="/images/pdf-icon.png"
+                                alt="PDF Icon"
+                                width={16}
+                                height={16}
+                              />
+                            </a>
+                          )}
+                        </button>
                       </div>
                     </div>
                   );
@@ -1213,9 +1221,20 @@ const handleCategoryClick = useCallback(
               className="services-right-panel"
               aria-label="Service details"
             >
-              {displayCategory ? (
+              {/*
+                Priority 1: Section-specific Under Development (Fire / Electrical)
+                Priority 2: API-driven Under Development flag
+                Priority 3: Regular service details
+                Priority 4: Empty state
+              */}
+              {sectionUnderDevelopment ? (
+                <SectionUnderDevelopment
+                  config={sectionUnderDevelopment}
+                  sectionName={selectedSection?.name ?? ""}
+                />
+              ) : displayCategory ? (
                 <article className="services-details">
-                  {/* Under Development */}
+                  {/* Under Development (API flag) */}
                   {displayCategory.isUnderDevelopment ? (
                     <div className="services-details-under-development">
                       <UnderDevelopment />
@@ -1260,7 +1279,7 @@ const handleCategoryClick = useCallback(
                           </section>
                         )}
 
-                      {/* Recursive Children */}
+                      {/* Recursive Children OR Empty fallback */}
                       {Array.isArray(displayCategory.children) &&
                       displayCategory.children.length > 0 ? (
                         <div className="services-details-children" role="list">
@@ -1275,7 +1294,15 @@ const handleCategoryClick = useCallback(
                           </ServiceChildren>
                         </div>
                       ) : (
-                        <div className="services-details-no-content" />
+                        !hasServiceOfferings && (
+                          <div
+                            className="services-details-not-available"
+                            role="status"
+                            aria-live="polite"
+                          >
+                            <p>Not Available</p>
+                          </div>
+                        )
                       )}
                     </>
                   )}
