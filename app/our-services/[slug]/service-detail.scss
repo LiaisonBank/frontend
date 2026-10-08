@@ -708,7 +708,7 @@ $font-5xl: 58px;
   background: $gray-50;
   border-left: 3px solid $primary-light;
   transition: $transition;
-
+    min-height: 50px;
   // Animated background
   &::before {
     content: "";
@@ -741,6 +741,12 @@ $font-5xl: 58px;
 
     p.back-item-name {
       color: white;
+    }
+    li{
+      span{
+        background: none !important;
+        color: white  !important;
+      }
     }
   }
         @media (max-width: 768px) {
