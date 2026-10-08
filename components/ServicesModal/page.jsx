@@ -29,13 +29,13 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
  */
 const SECTION_UNDER_DEVELOPMENT = Object.freeze({
   fire: {
-    title: "Fire Services Coming Soon",
+    title: "Fire Services",
     description:
       "We are currently preparing our Fire Safety services. Our team is finalising certifications, equipment, and compliance documentation. Please check back shortly.",
     image: "/images/under-development-fire.jpg",
   },
   electrical: {
-    title: "Electrical Services Coming Soon",
+    title: "Electrical Services",
     description:
       "We are currently preparing our Electrical services. Our team is finalising certifications, equipment, and compliance documentation. Please check back shortly.",
     image: "/images/under-development-electrical.jpg",
