@@ -337,6 +337,17 @@ header, footer, #sticky-icon {
             box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
             -webkit-tap-highlight-color: transparent;
             overflow: hidden;
+            position: relative;
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                animation: shimmer 2s infinite;
+            }
 
             &:hover {
               background: #e0680e;
@@ -387,7 +398,8 @@ header, footer, #sticky-icon {
               opacity: 1;
               visibility: visible;
               pointer-events: auto;
-              border-color: #f97316;
+              // border-color: #f97316;
+              border:1px solid #f973164d;
             }
 
             .search-toggle-btn {
