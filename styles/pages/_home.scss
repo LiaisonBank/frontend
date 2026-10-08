@@ -459,7 +459,16 @@ section.ceo-message-full {
       font-size: 32px;
       font-weight: 700;
       line-height: 1.1;
-      color: #f97316;
+       /* 1. Define the gradient background */
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      
+      /* 2. Clip the background so it only stays within the text boundaries */
+      -webkit-background-clip: text;
+      background-clip: text;
+      
+      /* 3. Make the text color transparent so the background gradient shows through */
+      -webkit-text-fill-color: transparent;
+      color: transparent;
 
       @media (min-width: 768px) {
         font-size: 38px;
