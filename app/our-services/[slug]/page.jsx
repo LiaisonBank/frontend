@@ -10,21 +10,20 @@ import { getImageUrl } from "../../../lib/utils/getImagehelper";
 import ApiError from "@/components/ApiError/ApiError";
 
 // Fallback image
-const FALLBACK_IMAGE =
-  "/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png";
+const FALLBACK_IMAGE = '/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png';
 
 export default function ServiceDetail() {
   const params = useParams();
   const slug = params?.slug;
-
+  
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [relatedServices, setRelatedServices] = useState([]);
-
+  
   // Track flip state for each card
   const [flippedCards, setFlippedCards] = useState({});
-
+  
   // Refs for timeout handling
   const timeoutRefs = useRef({});
   const containerRefs = useRef({});
@@ -40,13 +39,11 @@ export default function ServiceDetail() {
         setError(null);
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/category/${slug}`,
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/category/${slug}`
         );
 
         if (!response.ok) {
-          throw new Error(
-            `Failed to fetch service details: ${response.status}`,
-          );
+          throw new Error(`Failed to fetch service details: ${response.status}`);
         }
 
         const result = await response.json();
@@ -56,7 +53,7 @@ export default function ServiceDetail() {
         }
 
         const categoryData = result;
-
+        
         const imagePath = categoryData.image || null;
         let fullImageUrl = FALLBACK_IMAGE;
         if (imagePath) {
@@ -76,81 +73,70 @@ export default function ServiceDetail() {
           }
         }
 
-        const processedSubcategories = (categoryData.subcategories || []).map(
-          (sub) => {
-            let subImageUrl = null;
-            if (sub.image) {
-              try {
-                subImageUrl = getImageUrl(sub.image);
-              } catch (err) {
-                console.error("Error loading subcategory image:", err);
+        const processedSubcategories = (categoryData.subcategories || []).map((sub) => {
+          let subImageUrl = null;
+          if (sub.image) {
+            try {
+              subImageUrl = getImageUrl(sub.image);
+            } catch (err) {
+              console.error('Error loading subcategory image:', err);
+            }
+          }
+
+          const processedItems = (sub.items || []).map((item) => {
+            let servicesList = [];
+            if (item.itemServices) {
+              if (Array.isArray(item.itemServices)) {
+                servicesList = item.itemServices;
+              } else if (typeof item.itemServices === 'string') {
+                try {
+                  const parsed = JSON.parse(item.itemServices);
+                  servicesList = Array.isArray(parsed) ? parsed : [item.itemServices];
+                } catch {
+                  servicesList = item.itemServices.split(',').map(s => s.trim()).filter(s => s);
+                }
               }
             }
 
-            const processedItems = (sub.items || []).map((item) => {
-              let servicesList = [];
-              if (item.itemServices) {
-                if (Array.isArray(item.itemServices)) {
-                  servicesList = item.itemServices;
-                } else if (typeof item.itemServices === "string") {
-                  try {
-                    const parsed = JSON.parse(item.itemServices);
-                    servicesList = Array.isArray(parsed)
-                      ? parsed
-                      : [item.itemServices];
-                  } catch {
-                    servicesList = item.itemServices
-                      .split(",")
-                      .map((s) => s.trim())
-                      .filter((s) => s);
-                  }
-                }
+            let itemImageUrl = null;
+            if (item.image) {
+              try {
+                itemImageUrl = getImageUrl(item.image);
+              } catch (err) {
+                console.error('Error loading item image:', err);
               }
-
-              let itemImageUrl = null;
-              if (item.image) {
-                try {
-                  itemImageUrl = getImageUrl(item.image);
-                } catch (err) {
-                  console.error("Error loading item image:", err);
-                }
-              }
-
-              return {
-                ...item,
-                imageUrl: itemImageUrl,
-                hasImage: !!itemImageUrl,
-                servicesList: servicesList,
-              };
-            });
+            }
 
             return {
-              ...sub,
-              imageUrl: subImageUrl,
-              hasImage: !!subImageUrl,
-              items: processedItems,
-              itemCount: processedItems.length,
+              ...item,
+              imageUrl: itemImageUrl,
+              hasImage: !!itemImageUrl,
+              servicesList: servicesList,
             };
-          },
-        );
+          });
+
+          return {
+            ...sub,
+            imageUrl: subImageUrl,
+            hasImage: !!subImageUrl,
+            items: processedItems,
+            itemCount: processedItems.length,
+          };
+        });
 
         const transformedService = {
           id: categoryData.id,
           name: categoryData.name,
           slug: categoryData.slug,
           description: categoryData.description,
-          fullDescription:
-            categoryData.full_description || categoryData.description,
+          fullDescription: categoryData.full_description || categoryData.description,
           image: fullImageUrl,
           imageAlt: categoryData.image_alt || categoryData.name,
           banner: bannerUrl,
           bannerAlt: categoryData.banner_alt || categoryData.name,
           subcategories: processedSubcategories,
           totalSubcategories: processedSubcategories.length,
-          totalItems: processedSubcategories.reduce(
-            (acc, sub) => acc + sub.items.length,
-            0,
-          ),
+          totalItems: processedSubcategories.reduce((acc, sub) => acc + sub.items.length, 0),
         };
 
         setService(transformedService);
@@ -158,31 +144,23 @@ export default function ServiceDetail() {
         // Fetch related services
         try {
           const allCategoriesResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/categories`,
+            `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/categories`
           );
-
+          
           if (allCategoriesResponse.ok) {
             const allCategoriesResult = await allCategoriesResponse.json();
             let categories = [];
             if (Array.isArray(allCategoriesResult)) {
               categories = allCategoriesResult;
-            } else if (
-              allCategoriesResult.success &&
-              allCategoriesResult.data
-            ) {
+            } else if (allCategoriesResult.success && allCategoriesResult.data) {
               categories = allCategoriesResult.data;
-            } else if (
-              allCategoriesResult.data &&
-              Array.isArray(allCategoriesResult.data)
-            ) {
+            } else if (allCategoriesResult.data && Array.isArray(allCategoriesResult.data)) {
               categories = allCategoriesResult.data;
             }
-
+            
             if (categories.length > 0) {
               const related = categories
-                .filter(
-                  (cat) => cat.id !== categoryData.id && cat.slug !== slug,
-                )
+                .filter((cat) => cat.id !== categoryData.id && cat.slug !== slug)
                 .slice(0, 3)
                 .map((cat) => {
                   const imgPath = cat.image || null;
@@ -198,8 +176,7 @@ export default function ServiceDetail() {
                     id: cat.id,
                     name: cat.name,
                     slug: cat.slug,
-                    description:
-                      cat.description || `Expert ${cat.name} services`,
+                    description: cat.description || `Expert ${cat.name} services`,
                     image: imgUrl,
                   };
                 });
@@ -207,8 +184,9 @@ export default function ServiceDetail() {
             }
           }
         } catch (relatedErr) {
-          console.error("Error fetching related services:", relatedErr);
+          console.error('Error fetching related services:', relatedErr);
         }
+
       } catch (err) {
         console.error("Error fetching service detail:", err);
         setError(err.message);
@@ -222,9 +200,9 @@ export default function ServiceDetail() {
 
   // Toggle flip state for a card
   const toggleFlip = (cardId, isFlipped) => {
-    setFlippedCards((prev) => ({
+    setFlippedCards(prev => ({
       ...prev,
-      [cardId]: isFlipped,
+      [cardId]: isFlipped
     }));
   };
 
@@ -242,10 +220,10 @@ export default function ServiceDetail() {
   const handleCardMouseLeave = (cardId) => {
     // Check if we're scrolling
     const container = containerRefs.current[cardId];
-    if (container && container.dataset.isScrolling === "true") {
+    if (container && container.dataset.isScrolling === 'true') {
       return;
     }
-
+    
     // Delay flipping back to prevent accidental flips
     timeoutRefs.current[cardId] = setTimeout(() => {
       toggleFlip(cardId, false);
@@ -257,11 +235,11 @@ export default function ServiceDetail() {
   const handleScrollStart = (cardId) => {
     const container = containerRefs.current[cardId];
     if (container) {
-      container.dataset.isScrolling = "true";
+      container.dataset.isScrolling = 'true';
     }
     // Ensure card stays flipped during scroll
     toggleFlip(cardId, true);
-
+    
     // Clear any existing scroll timeout
     if (scrollTimeoutRefs.current[cardId]) {
       clearTimeout(scrollTimeoutRefs.current[cardId]);
@@ -278,7 +256,7 @@ export default function ServiceDetail() {
       }
       scrollTimeoutRefs.current[cardId] = setTimeout(() => {
         if (container) {
-          container.dataset.isScrolling = "false";
+          container.dataset.isScrolling = 'false';
         }
         delete scrollTimeoutRefs.current[cardId];
       }, 300);
@@ -289,45 +267,45 @@ export default function ServiceDetail() {
   const handleWheelScroll = (e, cardId) => {
     const element = e.currentTarget;
     const delta = e.deltaY;
-
+    
     // Get scroll boundaries
     const scrollTop = element.scrollTop;
     const scrollHeight = element.scrollHeight;
     const clientHeight = element.clientHeight;
     const maxScroll = scrollHeight - clientHeight;
-
+    
     // Check if we're at the boundaries
     const isAtTop = scrollTop === 0;
     const isAtBottom = scrollTop >= maxScroll - 1;
-
+    
     // If at top and scrolling up, or at bottom and scrolling down, let the event pass through
     if ((isAtTop && delta < 0) || (isAtBottom && delta > 0)) {
       // Allow the wheel event to pass through to the parent
       return;
     }
-
+    
     // Otherwise, prevent default and handle the scroll
     e.preventDefault();
     e.stopPropagation();
-
+    
     // Scroll the element
     element.scrollTop += delta;
-
+    
     // Update scroll state
     const container = containerRefs.current[cardId];
     if (container) {
-      container.dataset.isScrolling = "true";
+      container.dataset.isScrolling = 'true';
       toggleFlip(cardId, true);
-
+      
       // Clear existing timeout
       if (scrollTimeoutRefs.current[cardId]) {
         clearTimeout(scrollTimeoutRefs.current[cardId]);
       }
-
+      
       // Set timeout to mark scrolling as ended
       scrollTimeoutRefs.current[cardId] = setTimeout(() => {
         if (container) {
-          container.dataset.isScrolling = "false";
+          container.dataset.isScrolling = 'false';
         }
         delete scrollTimeoutRefs.current[cardId];
       }, 300);
@@ -392,20 +370,17 @@ export default function ServiceDetail() {
     );
   }
 
+
+
   return (
     <>
       {/* Modern Hero with Split Layout */}
       <section className="hero-modern">
-        <div
-          className="hero-modern-bg"
-          style={{ backgroundImage: `url(${service.banner})` }}
-        ></div>
+        <div className="hero-modern-bg" style={{ backgroundImage: `url(${service.banner})` }}></div>
         <div className="container">
           <div className="hero-modern-content">
             <div className="hero-modern-left">
-              <Link href="/our-services" className="hero-back-link">
-                ← Back to Services
-              </Link>
+              <Link href="/our-services" className="hero-back-link">← Back to Services</Link>
               <h1 className="hero-title">{service.name}</h1>
               <p className="hero-desc">{service.description}</p>
             </div>
@@ -425,15 +400,15 @@ export default function ServiceDetail() {
             {service.subcategories.map((subcategory) => {
               const cardId = `card-${subcategory.id}`;
               const isFlipped = flippedCards[cardId] || false;
-
+              
               return (
-                <div
-                  key={subcategory.id}
+                <div 
+                  key={subcategory.id} 
                   className="subcategory-flip-container"
                 >
                   {/* The flip card */}
-                  <div
-                    className={`subcategory-flip-card-wrapper ${isFlipped ? "flipped" : ""}`}
+                  <div 
+                    className={`subcategory-flip-card-wrapper ${isFlipped ? 'flipped' : ''}`}
                     ref={(el) => {
                       if (el) {
                         containerRefs.current[cardId] = el;
@@ -447,14 +422,12 @@ export default function ServiceDetail() {
                       <div className="subcategory-flip-front">
                         {/* Header with name */}
                         <div className="subcategory-front-header">
-                          <h3 className="subcategory-front-name">
-                            {subcategory.name}
-                          </h3>
+                          <h3 className="subcategory-front-name">{subcategory.name}</h3>
                           <span className="subcategory-front-count">
                             {subcategory.itemCount}
                           </span>
                         </div>
-
+                        
                         {/* Image section */}
                         <div className="subcategory-front-image-wrapper">
                           {subcategory.hasImage && subcategory.imageUrl ? (
@@ -466,11 +439,11 @@ export default function ServiceDetail() {
                             />
                           ) : (
                             <div className="subcategory-no-image">
-                              <h3 className="subcategory-name-only">
-                                {subcategory.name}
-                              </h3>
+                              <h3 className="subcategory-name-only">{subcategory.name}</h3>
                             </div>
                           )}
+                          
+                      
                         </div>
                       </div>
 
@@ -479,9 +452,7 @@ export default function ServiceDetail() {
                         {/* Header with name */}
                         <div className="flip-back-header">
                           <div className="flip-back-title-wrapper">
-                            <h4 className="flip-back-title">
-                              {subcategory.name}
-                            </h4>
+                            <h4 className="flip-back-title">{subcategory.name}</h4>
                           </div>
                           <span className="flip-back-count">
                             {subcategory.itemCount}
@@ -489,7 +460,7 @@ export default function ServiceDetail() {
                         </div>
 
                         {/* Items list */}
-                        <div
+                        <div 
                           className="flip-back-items-list"
                           ref={(el) => {
                             if (el) {
@@ -506,53 +477,38 @@ export default function ServiceDetail() {
                         >
                           {subcategory.items && subcategory.items.length > 0 ? (
                             subcategory.items.map((item, idx) => (
-                              <Link
-                                key={item.id}
-                                href={`/our-services/${slug}/${item.slug}`}
-                                className="back-item-wrapper"
-                              >
+                              <div key={item.id} className="back-item-wrapper">
                                 <div className="back-item-header">
-                                  <span className="back-item-number">
-                                    {String(idx + 1).padStart(2, "0")}
-                                  </span>
-
+                                  <span className="back-item-number">{String(idx + 1).padStart(2, '0')}</span>
+                                    <Link href={`/our-services/${slug}/${item.slug}`}>
                                   <p className="back-item-name">{item.name}</p>
+                                  </Link>
                                 </div>
-
-                                {item.servicesList &&
-                                  item.servicesList.length > 0 && (
-                                    <ul className="back-item-services-list">
-                                      {item.servicesList.map(
-                                        (serviceName, serviceIdx) => (
-                                          <li
-                                            key={serviceIdx}
-                                            className="back-service-item"
-                                          >
-                                            <span className="back-service-dot">
-                                              •
-                                            </span>
-
-                                            <span className="back-service-name">
-                                              {serviceName}
-                                            </span>
-                                          </li>
-                                        ),
-                                      )}
-                                    </ul>
-                                  )}
-                              </Link>
+                                
+                                {item.servicesList && item.servicesList.length > 0 && (
+                                  <ul className="back-item-services-list">
+                                    {item.servicesList.map((serviceName, serviceIdx) => (
+                                      <li key={serviceIdx} className="back-service-item">
+                                        <span className="back-service-dot">•</span>
+                                        <span className="back-service-name">{serviceName}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
                             ))
                           ) : (
-                            <div
-                              style={{
-                                color: "#999",
-                                textAlign: "center",
-                                padding: "30px 0",
-                                fontSize: "14px",
-                              }}
-                            />
+                            <div style={{ 
+                              color: '#999', 
+                              textAlign: 'center', 
+                              padding: '30px 0',
+                              fontSize: '14px'
+                            }}>
+                            </div>
                           )}
                         </div>
+
+                       
                       </div>
                     </div>
                   </div>
@@ -570,17 +526,11 @@ export default function ServiceDetail() {
             <div className="related-header">
               <span className="related-badge">Related</span>
               <h2 className="related-title">Other Services</h2>
-              <p className="related-subtitle">
-                Discover more solutions from our expertise
-              </p>
+              <p className="related-subtitle">Discover more solutions from our expertise</p>
             </div>
             <div className="related-modern-grid">
               {relatedServices.map((related) => (
-                <Link
-                  key={related.id}
-                  href={`/our-services/${related.slug}`}
-                  className="related-modern-card"
-                >
+                <Link key={related.id} href={`/our-services/${related.slug}`} className="related-modern-card">
                   <div className="related-modern-image">
                     <Image
                       src={related.image || FALLBACK_IMAGE}
