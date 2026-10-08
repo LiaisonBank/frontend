@@ -123,7 +123,7 @@ function SectionUnderDevelopment({ config, sectionName }) {
 
       {/* Content card */}
       <div className="services-section-ud-card">
-        <div className="services-section-ud-badge">
+        <div className="services-section-ud-badge d-none">
           <span className="services-section-ud-dot" aria-hidden="true" />
           Under Development
         </div>
