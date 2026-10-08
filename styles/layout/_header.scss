@@ -734,7 +734,9 @@ header {
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
-
+.services-details-not-available{
+  display: none;
+}
 /* --- Content card --- */
 .services-section-ud-card {
   position: relative;
