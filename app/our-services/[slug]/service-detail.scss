@@ -708,7 +708,7 @@ $font-5xl: 58px;
   background: $gray-50;
   border-left: 3px solid $primary-light;
   transition: $transition;
-    min-height: 50px;
+    min-height: max-content;
   // Animated background
   &::before {
     content: "";

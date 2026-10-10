@@ -1,274 +1,899 @@
+// components/modals/QuoteModal.jsx
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { Fancybox } from "@fancyapps/ui";
+import React, {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import Swal from "sweetalert2";
+import { inr, prettyName } from "../../lib/format";
+import { hasVisitControl, hasUnitControl } from "../../lib/visibility";
+import { computeItemAmount } from "../../lib/calculations";
 
-import useBodyClass from "@/components/useBodyClass";
-import { getImageUrl } from "@/lib/utils/getImagehelper";
+const QUOTE_FORM_ID = "quote-form";
 
-import "@fancyapps/ui/dist/fancybox/fancybox.css";
-import ApiError from "@/components/ApiError/ApiError";
+// Coalescing window (ms) for the mousedown→focus→click burst. Well below
+// human perception, but long enough to collapse the native event cascade.
+const GUARD_COALESCE_MS = 400;
 
-export default function AwardPage() {
-  useBodyClass("awards-recognition");
-
-  const galleryRef = useRef(null);
-
-  const [animateCards, setAnimateCards] = useState(false);
-  const [certificates, setCertificates] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+export default function QuoteModal({
+  styles,
+  isBulk,
+  activeQuoteItems,
+  quoteSummary,
+  form,
+  shippingLocked,
+  submitting,
+  onChange,
+  onSameAsSiteToggle,
+  onSubmit,
+  onClose,
+}) {
   /**
-   * Fetch awards from API
+   * View mode = every field is read-only / disabled and the "Preview
+   * Quotation" button is swapped for an "Edit Details" button.
+   *
+   * Flow:
+   *   edit  ──[Preview Quotation]──▶  view  ──[Edit Details]──▶  edit
+   *                                     │
+   *                                     └──[Submit Request]──▶ onSubmit()
+   *
+   * While in view mode, ANY attempt to edit a field triggers a single
+   * SweetAlert asking the user to confirm switching back to edit mode.
    */
-  const fetchAwards = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const [isViewMode, setIsViewMode] = useState(false);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards`
-      );
+  // Refs for focus management / scroll locking
+  const panelRef = useRef(null);
+  const previouslyFocusedRef = useRef(null);
 
-      if (!response.ok) {
-        const err = new Error("Failed to fetch awards");
-        err.status = response.status;
-        throw err;
-      }
+  // Prevent multiple SweetAlerts stacking if the user mashes a field
+  const swalOpenRef = useRef(false);
 
-      const result = await response.json();
-      console.log("API Response:", result);
+  // Timestamp of the last guard invocation, used to coalesce the
+  // mousedown → focus → click event burst into one popup.
+  const lastGuardAtRef = useRef(0);
 
-      if (result.success && result.data && result.data.length > 0) {
-        const apiCertificates = result.data.map((item) => ({
-          id: item.id,
-          src: getImageUrl(item.file),
-          caption: item.title || "Award Certificate",
-          description: item.description,
-          original: item,
-        }));
+  // Remember which field the user tried to edit so we can focus it after
+  // switching back to edit mode.
+  const pendingFocusRef = useRef(null);
 
-        setCertificates(apiCertificates);
-      } else {
-        setCertificates([]);
-        // Treat empty as an error state (as you did before)
-        const err = new Error("No awards found");
-        err.code = "EMPTY";
-        throw err;
-      }
-    } catch (err) {
-      console.error("Error fetching awards:", err);
-      setError({
-        message: err.message || "Something went wrong",
-        status: err.status,
-        code: err.code,
-      });
-      setCertificates([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Pending <select> to auto-open after the user confirms edit mode.
+  // Cleared on the next render so it only fires once.
+  const pendingSelectRef = useRef(null);
 
+  // Stable, SSR-safe id
+  const titleId = useId();
+
+  /* ------------------------------------------------------------------ *
+   * 1. Focus management + body scroll lock
+   * ------------------------------------------------------------------ */
   useEffect(() => {
-    fetchAwards();
-  }, [fetchAwards]);
+    previouslyFocusedRef.current =
+      typeof document !== "undefined" ? document.activeElement : null;
 
-  /**
-   * Always start from top.
-   */
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      window.scrollTo(0, 0);
-    });
-  }, []);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
-  /**
-   * Fancybox
-   */
-  useEffect(() => {
-    if (!galleryRef.current || certificates.length === 0) return;
-
-    Fancybox.bind(galleryRef.current, '[data-fancybox="certificates"]', {
-      animated: true,
-      Carousel: { infinite: true },
-      Thumbs: { autoStart: false },
-      Toolbar: {
-        display: {
-          left: [],
-          middle: ["zoomIn", "zoomOut", "toggle1to1"],
-          right: ["slideshow", "fullscreen", "close"],
-        },
-      },
-    });
+    const t = window.setTimeout(() => {
+      panelRef.current?.focus();
+    }, 0);
 
     return () => {
-      Fancybox.unbind(galleryRef.current);
-      Fancybox.close();
+      window.clearTimeout(t);
+      document.body.style.overflow = prevOverflow;
+
+      const el = previouslyFocusedRef.current;
+      if (el && typeof el.focus === "function") el.focus();
     };
-  }, [certificates]);
+  }, []);
 
-  /**
-   * Card animation
-   */
+  /* ------------------------------------------------------------------ *
+   * 2. Escape key handling (respects submitting + view mode + Swal)
+   * ------------------------------------------------------------------ */
   useEffect(() => {
-    if (!galleryRef.current) return;
+    const onKeyDown = (e) => {
+      if (e.key !== "Escape") return;
+      if (submitting) return;
+      if (swalOpenRef.current) return; // let Swal handle Escape itself
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        setAnimateCards(true);
-        observer.disconnect();
-      },
-      { threshold: 0.25 }
-    );
+      if (isViewMode) {
+        setIsViewMode(false);
+      } else {
+        onClose?.();
+      }
+    };
 
-    observer.observe(galleryRef.current);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isViewMode, submitting, onClose]);
 
-    return () => observer.disconnect();
-  }, [certificates]);
+  /* ------------------------------------------------------------------ *
+   * 3. Auto-open a pending <select> right after edit mode is enabled.
+   *
+   *    When the user confirms the SweetAlert from a <select>, we save
+   *    the select element and, once `isViewMode` flips to false (i.e.
+   *    after React commits the re-render), we programmatically open the
+   *    native dropdown. `showPicker()` is the modern API; we fall back
+   *    to `focus()` + a synthetic click for older browsers.
+   * ------------------------------------------------------------------ */
+  useEffect(() => {
+    if (isViewMode) return;
 
-  // ---------- Shared page header (extracted to avoid duplication) ----------
-  const PageHeader = (
-    <div className="page-header">
-      <div className="inner-header">
-        <div className="page-title">
-          <div className="container">
-            <div className="row justify-content-center text-center">
-              <div className="col-lg-10">
-                <div className="theme-breadcrumb-box">
-                  <h1>Awards and Certifications</h1>
+    const el = pendingSelectRef.current;
+    if (!el) return;
 
-                  <nav aria-label="breadcrumb" className="page-breadcrumb">
-                    <ol className="breadcrumb justify-content-center">
-                      <li className="breadcrumb-item">
-                        <Link href="/">
-                          <i className="bi bi-house-door me-1" />
-                          Home
-                        </Link>
-                      </li>
+    pendingSelectRef.current = null;
 
-                      <li
-                        className="breadcrumb-item active"
-                        aria-current="page"
-                      >
-                        Awards &amp; Certifications
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    const t = window.setTimeout(() => {
+      try {
+        if (typeof el.showPicker === "function") {
+          el.showPicker();
+        } else {
+          el.focus();
+          // Fallback: dispatch a click so the native dropdown opens on
+          // browsers where showPicker() is unavailable.
+          el.click();
+        }
+      } catch {
+        try {
+          el.focus();
+        } catch {
+          /* noop */
+        }
+      }
+    }, 0);
+
+    return () => window.clearTimeout(t);
+  }, [isViewMode]);
+
+  /* ------------------------------------------------------------------ *
+   * 4. Guard: intercept any edit attempt while in view mode.
+   *
+   *    Fires once per user gesture. Rapid mousedown/focus/click bursts
+   *    are coalesced via `lastGuardAtRef`, and an already-open Swal
+   *    short-circuits immediately via `swalOpenRef`.
+   * ------------------------------------------------------------------ */
+  const guardViewMode = useCallback(
+    (e) => {
+      if (!isViewMode) return false;
+
+      // Remember the element the user tried to interact with so we can
+      // re-focus it after they confirm.
+      pendingFocusRef.current = e?.target || null;
+
+      // Coalesce rapid-fire events (mousedown → focus → click) into one.
+      const now = Date.now();
+      if (now - lastGuardAtRef.current < GUARD_COALESCE_MS) return true;
+      lastGuardAtRef.current = now;
+
+      // Already showing a Swal? Don't stack.
+      if (swalOpenRef.current) return true;
+      swalOpenRef.current = true;
+
+      Swal.fire({
+        title: "Enable Edit Details mode?",
+        text: "You are currently viewing the preview. Switch back to edit mode to make changes?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, enable editing",
+        cancelButtonText: "Stay in preview",
+        reverseButtons: true,
+        focusCancel: true,
+        allowOutsideClick: false,
+        allowEscapeKey: true,
+        customClass: {
+          container: "quote-modal-swal",
+        },
+      })
+        .then((result) => {
+          if (!result.isConfirmed) return;
+
+          setIsViewMode(false);
+
+          const el = pendingFocusRef.current;
+          pendingFocusRef.current = null;
+
+          if (!el || typeof el.focus !== "function") return;
+
+          // After React commits the mode flip, focus the pending field.
+          window.setTimeout(() => {
+            try {
+              if (
+                typeof el.select === "function" &&
+                el.tagName === "INPUT" &&
+                el.type !== "checkbox" &&
+                el.type !== "radio"
+              ) {
+                el.select();
+              } else {
+                el.focus();
+              }
+            } catch {
+              try {
+                el.focus();
+              } catch {
+                /* noop */
+              }
+            }
+          }, 0);
+        })
+        .finally(() => {
+          swalOpenRef.current = false;
+        });
+
+      return true;
+    },
+    [isViewMode]
   );
 
-  // Loading state
-  if (loading) {
-    return (
-      <>
-        {PageHeader}
+  /* ------------------------------------------------------------------ *
+   * 5. Form change handlers — ignored while in view mode
+   * ------------------------------------------------------------------ */
+  const handleChange = useCallback(
+    (e) => {
+      if (guardViewMode(e)) return;
+      onChange?.(e);
+    },
+    [guardViewMode, onChange]
+  );
 
-        <section
-          className="certificate-section"
-          aria-labelledby="certificates-heading"
+  const handleSameAsSiteToggle = useCallback(
+    (e) => {
+      if (guardViewMode(e)) return;
+      onSameAsSiteToggle?.(e);
+    },
+    [guardViewMode, onSameAsSiteToggle]
+  );
+
+  /**
+   * Single interaction handler used by every editable field.
+   *
+   * Using `onMouseDown` (not `onClick`) means it fires BEFORE the native
+   * focus event, so we only need ONE handler per field — no more double
+   * SweetAlert from `onClick` + `onFocus` firing together.
+   */
+  const handleFieldInteract = useCallback(
+    (e) => {
+      guardViewMode(e);
+    },
+    [guardViewMode]
+  );
+
+  /**
+   * Dropdown-specific handler.
+   *
+   * In view mode we DO NOT disable the <select> — instead we intercept
+   * the mousedown BEFORE the native dropdown opens, prevent the default
+   * so nothing pops up, and run the guard. On confirm, the pending
+   * select is remembered and auto-opened by the effect in section 3.
+   */
+  const handleSelectInteract = useCallback(
+    (e) => {
+      if (!isViewMode) return;
+
+      // Capture the <select> element (the handler is attached directly
+      // to it, so `e.currentTarget` is the select).
+      const selectEl = e?.currentTarget;
+
+      // Block the native dropdown from opening while in view mode.
+      e?.preventDefault?.();
+      e?.stopPropagation?.();
+
+      // Remember the select so we can auto-open it after confirmation.
+      if (selectEl && selectEl.tagName === "SELECT") {
+        pendingSelectRef.current = selectEl;
+      }
+
+      // Run the same guard (this shows the SweetAlert once).
+      guardViewMode(e);
+    },
+    [isViewMode, guardViewMode]
+  );
+
+  /* ------------------------------------------------------------------ *
+   * 6. Submit logic
+   *    - "Preview Quotation" (type=submit, data-intent="preview"):
+   *         switches the form into view mode.
+   *    - "Submit Request" (type=submit, data-intent="submit"):
+   *         only enabled once in view mode; calls onSubmit.
+   *
+   *    `e.nativeEvent.submitter` is the canonical, race-free way to
+   *    determine which button triggered the submit.
+   * ------------------------------------------------------------------ */
+  const handleFormSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+
+      const submitter =
+        e.nativeEvent?.submitter ||
+        (typeof document !== "undefined" ? document.activeElement : null);
+
+      const intent =
+        submitter?.dataset?.intent ||
+        submitter?.getAttribute?.("data-intent");
+
+      if (intent === "preview") {
+        setIsViewMode(true);
+        return;
+      }
+
+      if (intent === "submit") {
+        if (!isViewMode) return;
+        onSubmit?.(e);
+      }
+    },
+    [isViewMode, onSubmit]
+  );
+
+  /* ------------------------------------------------------------------ *
+   * 7. Return to edit mode — defensive against event bubbling
+   * ------------------------------------------------------------------ */
+  const handleEditDetails = useCallback((e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    setIsViewMode(false);
+  }, []);
+
+  /* ------------------------------------------------------------------ *
+   * 8. Memoised preview rows
+   * ------------------------------------------------------------------ */
+  const previewRows = useMemo(() => {
+    return activeQuoteItems.map((it, idx) => {
+      const showVisit = hasVisitControl(it);
+      const showUnit = hasUnitControl(it);
+
+      const parts = [];
+      if (showVisit) {
+        parts.push(
+          `${it.visits || 1} visit${(it.visits || 1) > 1 ? "s" : ""}`
+        );
+      }
+      if (showUnit) {
+        parts.push(
+          `${it.units || 1} unit${(it.units || 1) > 1 ? "s" : ""}`
+        );
+      }
+      parts.push(it.uom || it.stock_uom || "Nos");
+      if (it.amc_sub_type_name) parts.push(it.amc_sub_type_name);
+
+      return {
+        key: `${it.item_code}-${idx}`,
+        title: prettyName(it.item_name || it.item_code),
+        subtitle: parts.join(" · "),
+        thumb: (it.item_name || it.item_code).slice(0, 2).toUpperCase(),
+        amount:
+          it.rate && it.rate > 0
+            ? inr(
+                computeItemAmount(it) * (showVisit ? it.visits || 1 : 1),
+                it.currency
+              )
+            : "On request",
+      };
+    });
+  }, [activeQuoteItems]);
+
+  const closeFromBackdrop = useCallback(() => {
+    if (submitting) return;
+    if (swalOpenRef.current) return;
+    onClose?.();
+  }, [submitting, onClose]);
+
+  /* ------------------------------------------------------------------ *
+   * Render
+   * ------------------------------------------------------------------ */
+  return (
+    <div
+      className={styles.cartModal}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      onClick={closeFromBackdrop}
+      suppressHydrationWarning
+    >
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        className={`${styles.cartModal__panel} ${styles["cartModal__panel--wide"]}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          className={styles.cartModal__close}
+          aria-label="Close"
+          onClick={closeFromBackdrop}
+          disabled={submitting}
         >
-          <div className="container">
-            <div className="certificate-loading">
-              <div className="loading-spinner"></div>
-              <p>Loading awards...</p>
+          ×
+        </button>
+
+        <div className={styles.cartModal__head}>
+          <span className={styles.cartModal__eyebrow}>
+            {isBulk ? "BULK QUOTE" : "ITEM QUOTE"}
+          </span>
+          <h2 id={titleId}>
+            {isBulk ? (
+              <>
+                Quote for <span>all items.</span>
+              </>
+            ) : (
+              <>
+                Quote for <span>this item.</span>
+              </>
+            )}
+          </h2>
+          <p>
+            {isBulk
+              ? `We'll review your ${quoteSummary.totalVisits} visit${
+                  quoteSummary.totalVisits > 1 ? "s" : ""
+                } and ${quoteSummary.totalUnits} unit${
+                  quoteSummary.totalUnits > 1 ? "s" : ""
+                } and get back with a detailed quotation within 24 hours.`
+              : `We'll review "${prettyName(
+                  activeQuoteItems[0]?.item_name ||
+                    activeQuoteItems[0]?.item_code ||
+                    ""
+                )}" and get back with a detailed quotation.`}
+          </p>
+        </div>
+
+        <div className={styles.cartModal__preview}>
+          {previewRows.map((row) => (
+            <div key={row.key} className={styles.cartModal__previewRow}>
+              <div className={styles.cartModal__previewThumb}>
+                {row.thumb}
+              </div>
+              <div className={styles.cartModal__previewInfo}>
+                <strong title={row.title}>{row.title}</strong>
+                <span>{row.subtitle}</span>
+              </div>
+              <div className={styles.cartModal__previewPrice}>
+                {row.amount}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <form
+          id={QUOTE_FORM_ID}
+          className={styles.cartModal__form}
+          onSubmit={handleFormSubmit}
+          noValidate={false}
+          data-view-mode={isViewMode ? "true" : "false"}
+        >
+          {/* -------------------- Contact details -------------------- */}
+          <div className={styles.formSection}>
+            <span className={styles.formSection__label}>Contact details</span>
+            <div className={styles.cartModal__grid}>
+              <label>
+                <span>Full Name *</span>
+                <input
+                  type="text"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="e.g. Ananya Sharma"
+                  autoComplete="name"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>Company Name</span>
+                <input
+                  type="text"
+                  name="company_name"
+                  value={form.company_name}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="e.g. ABC Technologies Pvt Ltd"
+                  autoComplete="organization"
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>Phone *</span>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="+91 98765 43210"
+                  autoComplete="tel"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>Email *</span>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="you@company.com"
+                  autoComplete="email"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  suppressHydrationWarning
+                />
+              </label>
             </div>
           </div>
-        </section>
-      </>
-    );
-  }
 
-  // Error state → use ApiError component
-  if (error) {
-    return (
-      <>
-        {PageHeader}
-
-        <ApiError
-          title="Unable to Load Awards"
-          message={
-            error.code === "EMPTY"
-              ? "No awards are available right now. Please check back soon."
-              : error.message ||
-                "We couldn't load the awards right now. Please try again in a moment."
-          }
-          statusLabel="AWARDS API"
-          statusCode={
-            error.code === "EMPTY"
-              ? "EMPTY"
-              : error.status
-              ? `ERR · ${error.status}`
-              : "ERR"
-          }
-          statusTone={error.code === "EMPTY" ? "info" : "danger"}
-          onRetry={fetchAwards}
-        />
-      </>
-    );
-  }
-
-  // (No need for a separate empty state now — empty is handled above via ApiError.)
-
-  return (
-    <>
-      {PageHeader}
-
-      <section
-        className="certificate-section"
-        aria-labelledby="certificates-heading"
-      >
-        <div className="container">
-          <div ref={galleryRef} className="certificate-masonry">
-            {certificates.map((certificate, index) => (
-              <article
-                key={certificate.id || `cert-${index}`}
-                className={`certificate-card certificate-item-wrapper ${
-                  animateCards ? "animate" : ""
-                }`}
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <a
-                  href={certificate.src}
-                  data-fancybox="certificates"
-                  data-caption={certificate.caption}
-                  className="certificate-link"
-                  aria-label={`Open ${certificate.caption}`}
+          {/* -------------------- Billing details -------------------- */}
+          <div className={styles.formSection}>
+            <span className={styles.formSection__label}>Billing details</span>
+            <div className={styles.cartModal__grid}>
+              <label className={styles.cartModal__full}>
+                <span>Service Address *</span>
+                <textarea
+                  name="address"
+                  rows="2"
+                  value={form.address}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="Building, street, area"
+                  autoComplete="street-address"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>City *</span>
+                <input
+                  type="text"
+                  name="city"
+                  value={form.city}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="Mumbai"
+                  autoComplete="address-level2"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>State *</span>
+                <input
+                  type="text"
+                  name="state"
+                  value={form.state}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="Maharashtra"
+                  autoComplete="address-level1"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>Pincode *</span>
+                <input
+                  type="text"
+                  name="pincode"
+                  value={form.pincode}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="400069"
+                  inputMode="numeric"
+                  autoComplete="postal-code"
+                  pattern="[0-9]{4,10}"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>Property Type</span>
+                <select
+                  name="property_type"
+                  value={form.property_type}
+                  onChange={handleChange}
+                  onMouseDown={handleSelectInteract}
+                  disabled={false} /* never disabled — we intercept clicks instead */
+                  aria-readonly={isViewMode}
+                  data-view-mode={isViewMode ? "true" : "false"}
+                  suppressHydrationWarning
                 >
-                  <div className="certificate-image-wrapper">
-                    <Image
-                      src={certificate.src}
-                      alt={certificate.caption}
-                      width={700}
-                      height={1000}
-                      className="certificate-image"
-                      loading="lazy"
-                      sizes="(max-width:576px) 100vw,
-                             (max-width:768px) 50vw,
-                             (max-width:1200px) 33vw,
-                             25vw"
-                      unoptimized={true}
-                    />
-                  </div>
-
-                  <div className="certificate-caption">
-                    {certificate.caption}
-                  </div>
-                </a>
-              </article>
-            ))}
+                  <option value="Commercial">Commercial</option>
+                  <option value="Residential">Residential</option>
+                  <option value="Industrial">Industrial</option>
+                  <option value="Institutional">Institutional</option>
+                </select>
+              </label>
+            </div>
           </div>
-        </div>
-      </section>
-    </>
+
+          {/* -------------------- Shipping details -------------------- */}
+          <div className={styles.formSection}>
+            <div className={styles.formSection__head}>
+              <span className={styles.formSection__label}>
+                Shipping details
+              </span>
+              <label className={styles.cartModal__checkbox}>
+                <input
+                  type="checkbox"
+                  checked={form.sameAsSite}
+                  onChange={handleSameAsSiteToggle}
+                  onMouseDown={handleFieldInteract}
+                  disabled={isViewMode}
+                  aria-readonly={isViewMode}
+                  suppressHydrationWarning
+                />
+                <span
+                  className={styles.cartModal__checkboxBox}
+                  aria-hidden="true"
+                >
+                  <svg
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    width="14"
+                    height="14"
+                  >
+                    <path
+                      d="M3 8.5L6.5 12L13 4.5"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span className={styles.cartModal__checkboxLabel}>
+                  Same as Billing details
+                </span>
+              </label>
+            </div>
+            <div className={styles.cartModal__grid}>
+              <label className={styles.cartModal__full}>
+                <span>Shipping Address *</span>
+                <textarea
+                  name="shipping_address"
+                  rows="2"
+                  value={form.shipping_address}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="Building, street, area"
+                  autoComplete="shipping street-address"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  disabled={shippingLocked}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>Shipping City *</span>
+                <input
+                  type="text"
+                  name="shipping_city"
+                  value={form.shipping_city}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="Mumbai"
+                  autoComplete="shipping address-level2"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  disabled={shippingLocked}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>Shipping Email *</span>
+                <input
+                  type="email"
+                  name="shipping_email"
+                  value={form.shipping_email}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="you@company.com"
+                  autoComplete="shipping email"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  disabled={shippingLocked}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>Shipping Mobile *</span>
+                <input
+                  type="tel"
+                  name="shipping_mobile"
+                  value={form.shipping_mobile}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="+91 98765 43210"
+                  autoComplete="shipping tel"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  disabled={shippingLocked}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>Shipping State *</span>
+                <input
+                  type="text"
+                  name="shipping_state"
+                  value={form.shipping_state}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="Maharashtra"
+                  autoComplete="shipping address-level1"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  disabled={shippingLocked}
+                  suppressHydrationWarning
+                />
+              </label>
+              <label>
+                <span>Shipping Pincode *</span>
+                <input
+                  type="text"
+                  name="shipping_pincode"
+                  value={form.shipping_pincode}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="400069"
+                  inputMode="numeric"
+                  autoComplete="shipping postal-code"
+                  pattern="[0-9]{4,10}"
+                  required
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  disabled={shippingLocked}
+                  suppressHydrationWarning
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* -------------------- AMC preferences -------------------- */}
+          <div className={styles.formSection}>
+            <span className={styles.formSection__label}>
+              AMC preferences
+            </span>
+            <div className={styles.cartModal__grid}>
+              <label>
+                <span>Duration</span>
+                <select
+                  name="duration"
+                  value={form.duration}
+                  onChange={handleChange}
+                  onMouseDown={handleSelectInteract}
+                  disabled={false} /* never disabled — we intercept clicks instead */
+                  aria-readonly={isViewMode}
+                  data-view-mode={isViewMode ? "true" : "false"}
+                  suppressHydrationWarning
+                >
+                  <option value="3 Months">3 Months</option>
+                  <option value="6 Months">6 Months</option>
+                  <option value="12 Months">12 Months</option>
+                </select>
+              </label>
+              <label className={styles.cartModal__full}>
+                <span>Remarks (optional)</span>
+                <textarea
+                  name="notes"
+                  rows="2"
+                  value={form.notes}
+                  onChange={handleChange}
+                  onMouseDown={handleFieldInteract}
+                  placeholder="AMC services required for office premises…"
+                  readOnly={isViewMode}
+                  aria-readonly={isViewMode}
+                  suppressHydrationWarning
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* -------------------- Summary -------------------- */}
+          <div className={styles.cartModal__summary}>
+            <div>
+              <span>Total visits</span>
+              <strong>{quoteSummary.totalVisits}</strong>
+            </div>
+            <div>
+              <span>Total units</span>
+              <strong>{quoteSummary.totalUnits}</strong>
+            </div>
+            <div>
+              <span>Estimated subtotal</span>
+              <strong>
+                {inr(quoteSummary.subtotal, quoteSummary.currency)}
+              </strong>
+            </div>
+          </div>
+
+          {isViewMode && (
+            <div
+              className={styles.cartModal__previewConfirmed}
+              role="status"
+              aria-live="polite"
+            >
+              ✓ Preview confirmed. You can now submit your request, or click
+              “Edit Details” to make changes.
+            </div>
+          )}
+
+          {/* -------------------- Actions -------------------- */}
+          <div className={styles.cartModal__actions}>
+            <button
+              type="button"
+              className={`${styles.btn} ${styles["btn--ghost"]}`}
+              onClick={onClose}
+              disabled={submitting}
+            >
+              Cancel
+            </button>
+
+            {isViewMode ? (
+              <button
+                type="button"
+                className={`${styles.btn} ${styles["btn--preview"]}`}
+                onClick={handleEditDetails}
+                disabled={submitting}
+              >
+                Edit Details
+              </button>
+            ) : (
+              <button
+                type="submit"
+                form={QUOTE_FORM_ID}
+                data-intent="preview"
+                className={`${styles.btn} ${styles["btn--preview"]}`}
+                disabled={submitting}
+              >
+                Preview Quotation
+              </button>
+            )}
+
+            <button
+              type="submit"
+              form={QUOTE_FORM_ID}
+              data-intent="submit"
+              className={`${styles.btn} ${styles["btn--primary"]}`}
+              disabled={submitting || !isViewMode}
+              aria-disabled={submitting || !isViewMode}
+              title={
+                !isViewMode
+                  ? "Please preview and confirm before submitting"
+                  : undefined
+              }
+            >
+              {submitting ? "Submitting…" : "Submit Request"}
+              {!submitting && <span>↗</span>}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
