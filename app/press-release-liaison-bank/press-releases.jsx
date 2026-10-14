@@ -1,11 +1,10 @@
 "use client";
 
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import Select, { components } from "react-select";
 import useBodyClass from "@/components/useBodyClass";
 import PressReleaseCard from "./PressReleaseCard";
 import CountUp from "@/hooks/Countup";
-
 
 // Custom MenuList that prevents page scroll while scrolling inside the dropdown
 const MenuList = (props) => {
@@ -25,18 +24,27 @@ const MenuList = (props) => {
 export default function PressReleaseLiaisonbankPage({ pressReleases = [] }) {
   useBodyClass("pressrelease");
 
-  const ITEMS_PER_LOAD = 10;
- 
+  // Number of items per row in your grid (used to load 2 rows at a time)
+  const ITEMS_PER_ROW = 3;
+  const ROWS_PER_LOAD = 2;
+  const ITEMS_PER_LOAD = ITEMS_PER_ROW * ROWS_PER_LOAD; // 6 items = 2 rows
+
+  // Delay (ms) to show the spinner before new rows appear
+  const LOAD_DELAY = 800;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("All");
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const heroRef = useRef(null);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-    // ✅ Total count of ALL press releases
+
+  const loadMoreRef = useRef(null);
+  const loadTimeoutRef = useRef(null);
+
+  // ✅ Total count of ALL press releases
   const totalCount = pressReleases.length;
 
   const categoryOptions = useMemo(() => {
@@ -74,7 +82,15 @@ export default function PressReleaseLiaisonbankPage({ pressReleases = [] }) {
     [filteredPressReleases, visibleCount]
   );
 
-  const resetVisibleCount = () => setVisibleCount(ITEMS_PER_LOAD);
+  const resetVisibleCount = () => {
+    // Clear any pending load when filters change
+    if (loadTimeoutRef.current) {
+      clearTimeout(loadTimeoutRef.current);
+      loadTimeoutRef.current = null;
+    }
+    setIsLoadingMore(false);
+    setVisibleCount(ITEMS_PER_LOAD);
+  };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -86,13 +102,52 @@ export default function PressReleaseLiaisonbankPage({ pressReleases = [] }) {
     resetVisibleCount();
   };
 
-  const handleLoadMore = () => setVisibleCount(filteredPressReleases.length);
+  // ✅ Infinite scroll with a visual loading delay before showing next rows
+  const loadMore = useCallback(() => {
+    if (isLoadingMore) return;
+    if (visibleCount >= filteredPressReleases.length) return;
 
-  const handleLoadLess = () => {
-    
-    setVisibleCount(ITEMS_PER_LOAD);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    setIsLoadingMore(true);
+
+    // Show spinner for LOAD_DELAY ms, then append next batch
+    loadTimeoutRef.current = setTimeout(() => {
+      setVisibleCount((prev) => {
+        if (prev >= filteredPressReleases.length) return prev;
+        return Math.min(prev + ITEMS_PER_LOAD, filteredPressReleases.length);
+      });
+      setIsLoadingMore(false);
+      loadTimeoutRef.current = null;
+    }, LOAD_DELAY);
+  }, [isLoadingMore, visibleCount, filteredPressReleases.length]);
+
+  useEffect(() => {
+    const node = loadMoreRef.current;
+    if (!node) return;
+
+    // Stop observing if all items are shown
+    if (visibleCount >= filteredPressReleases.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadMore();
+        }
+      },
+      { rootMargin: "200px 0px" } // Trigger slightly before reaching bottom
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [loadMore, visibleCount, filteredPressReleases.length]);
+
+  // Cleanup any pending timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (loadTimeoutRef.current) {
+        clearTimeout(loadTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -112,39 +167,14 @@ export default function PressReleaseLiaisonbankPage({ pressReleases = [] }) {
         </div>
       </div>
 
-      <section  className="pr-hero-section" ref={heroRef}>
-          {/* <video
-          className="bg-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="/images/projects-poster.png"
-        >
-          <source
-            src="/videos/projects-bg.mp4"
-            type="video/mp4"
-          />
-
-          <source
-            src="/videos/projects-bg.webm"
-            type="video/webm"
-          />
-
-          Your browser does not support the video tag.
-        </video> */}
-
+      <section className="pr-hero-section" ref={heroRef}>
         <div className="elementor-background-overlay" />
 
         <div className="hero-content position-absolute top-50 start-50 translate-middle text-center">
           <h1>Press Release</h1>
           <div className="stats-grid">
             <div className="stat-item">
-              <CountUp end={totalCount} className="total-value"/>
-              {/* <span className="stat-number">
-                {loading ? "..." : count || "0"}
-              </span> */}
+              <CountUp end={totalCount} className="total-value" />
               <span className="stat-label">PRESS RELEASE</span>
             </div>
           </div>
@@ -154,11 +184,6 @@ export default function PressReleaseLiaisonbankPage({ pressReleases = [] }) {
             </div>
           )}
         </div>
-        {/* <div className="container">
-          <p className="mb-0 text-muted">
-            Total Press Releases: <strong>{totalCount}</strong>
-          </p>
-        </div> */}
       </section>
 
       <section className="py-4 border-bottom">
@@ -218,27 +243,31 @@ export default function PressReleaseLiaisonbankPage({ pressReleases = [] }) {
                 <PressReleaseCard key={item.id} item={item} />
               ))}
             </div>
-            <div className="col-12 text-center mt-5">
-              {visibleCount < filteredPressReleases.length && (
-                <button
-                  type="button"
-                  className="themeht-btn btn btn-primary btn-lg primary-btn d-inline-flex align-items-center mt-4"
-                  onClick={handleLoadMore}
-                >
-                  Load More
-                </button>
-              )}
-              {visibleCount >= filteredPressReleases.length &&
-                filteredPressReleases.length > ITEMS_PER_LOAD && (
-                  <button
-                    type="button"
-                    className="themeht-btn btn btn-primary btn-lg primary-btn d-inline-flex align-items-center mt-4"
-                    onClick={handleLoadLess}
-                  >
-                    Load Less
-                  </button>
+
+            {/* Loading spinner + sentinel for infinite scroll */}
+            {visibleCount < filteredPressReleases.length && (
+              <div
+                ref={loadMoreRef}
+                className="text-center py-4"
+                aria-live="polite"
+              >
+                {isLoadingMore ? (
+                  <div className="d-inline-flex align-items-center gap-2">
+                    <div
+                      className="spinner-border text-warning"
+                      role="status"
+                      style={{ width: "1.5rem", height: "1.5rem" }}
+                    >
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                    <span className="text-muted">Loading more...</span>
+                  </div>
+                ) : (
+                  // Invisible spacer so the sentinel still has height to trigger
+                  <div style={{ height: 40 }} />
                 )}
-            </div>
+              </div>
+            )}
           </>
         )}
       </section>
