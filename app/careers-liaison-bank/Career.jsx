@@ -27,11 +27,12 @@ const services = [
 ];
 
 const OTHER_OPTIONS = [
-  { id: 1, name: "Administration", link: "/careers-liaison-bank/jobs?department=Administration%20%26%20Facilities%20-%20DBRE" },
-  { id: 2, name: "Human Resource", link: "/careers-liaison-bank/jobs?department=Human%20Resource" },
-  { id: 3, name: "Accountant", link: "/careers-liaison-bank/jobs?department=ACCOUNTS%20DEPARTMENT%20-%20DBRE" },
-  { id: 4, name: "Sales", link: "/careers-liaison-bank/jobs?department=Sales" },
+  { id: 1, name: "Accountant", link: "/careers-liaison-bank/jobs?department=ACCOUNTS DEPARTMENT - DBRE" },
+  { id: 2, name: "Administration", link: "/careers-liaison-bank/jobs?department=ADMINISTRATOR - DBRE" },
+  { id: 3, name: "Architecture", link: "/careers-liaison-bank/jobs?department=ARCHITECTURE DEPARTMENT - DBRE" },
+  { id: 4, name: "Human Resource", link: "/careers-liaison-bank/jobs?department=HUMAN RESOURCE - DBRE" },
   { id: 5, name: "Information Technology", link: "/careers-liaison-bank/jobs?department=IT%20DEPARTMENT%20-%20DBRE" },
+  { id: 6, name: "Sales", link: "/careers-liaison-bank/jobs?department=SALES - DBRE" },
 ];
 
 const BENEFITS = [

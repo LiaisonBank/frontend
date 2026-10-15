@@ -450,9 +450,9 @@ export default function ServiceDetail() {
                           <h3 className="subcategory-front-name">
                             {subcategory.name}
                           </h3>
-                          <span className="subcategory-front-count">
+                          {/* <span className="subcategory-front-count">
                             {subcategory.itemCount}
-                          </span>
+                          </span> */}
                         </div>
 
                         {/* Image section */}
@@ -483,9 +483,9 @@ export default function ServiceDetail() {
                               {subcategory.name}
                             </h4>
                           </div>
-                          <span className="flip-back-count">
+                          {/* <span className="flip-back-count">
                             {subcategory.itemCount}
-                          </span>
+                          </span> */}
                         </div>
 
                         {/* Items list */}

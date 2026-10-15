@@ -113,6 +113,22 @@ $border-left-color_2: rgba(255, 107, 0, 0.3);
 		background-position: -200% 0;
 	}
 }
+.services-modal-overlay {
+  opacity: 1;
+  transition: opacity 160ms ease;
+  will-change: opacity;
+}
+
+.services-modal-overlay.is-closing {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.services-modal-overlay.is-closing .services-modal {
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
 /* Dark mode support for skeleton */
 /* Responsive skeleton */
 .services-modal-overlay {
