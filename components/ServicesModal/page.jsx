@@ -180,18 +180,7 @@ function SkeletonLoader({ hasSubcategories = true }) {
         </div>
 
         {/* CENTER */}
-        <div
-          className="services-center-panel skeleton-panel"
-          onWheel={(event) => {
-            event.stopPropagation();
-
-            const element = event.currentTarget;
-
-            if (event.deltaY !== 0) {
-              element.scrollTop += event.deltaY;
-            }
-          }}
-        >
+        <div className="services-center-panel skeleton-panel">
           {Array.from({ length: 5 }, (_, index) => (
             <div
               className="skeleton-category-item"
@@ -780,42 +769,34 @@ export default function ServicesModal() {
   }, []);
 
   /* ==========================================================================
-     Outside Click
+     Overlay Click — Close Modal
      ========================================================================== */
 
-  useEffect(() => {
-    if (!serviceModalOpen) {
-      return undefined;
+  /**
+   * Closes the modal when the user clicks anywhere on the overlay
+   * (i.e. outside the modal content itself).
+   *
+   * We rely on `event.target === event.currentTarget` so clicks that
+   * originate inside the modal but bubble up to the overlay do NOT
+   * accidentally close it.
+   */
+  const handleOverlayClick = useCallback(
+    (event) => {
+      if (event.target !== event.currentTarget) {
+        return;
+      }
+
+    // Ignore clicks if the modal is no longer open.
+    if (!serviceModalOpen || !isMountedRef.current) {
+      return;
     }
 
-    const handleClickOutside = (event) => {
-      // Skip if we're already navigating or closing
-      if (isNavigatingRef.current) return;
-      if (isClosingRef.current) return;
-
-      const modal = modalRef.current;
-      if (!modal) return;
-
-      const target = event.target;
-
-      // Click is inside the modal → do nothing
-      if (modal.contains(target)) return;
-
-      // Click is on a nav trigger → do nothing
-      const isNavTrigger = target.closest?.(
-        ".services-section-name, .services-category-name, .services-section-pdf-icon, .services-category-pdf",
-      );
-      if (isNavTrigger) return;
-
-      closeModal();
-    };
-
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [serviceModalOpen, closeModal]);
+    // Invoke closeModal twice.
+    closeModal();
+    closeModal();
+    },
+   [closeModal, serviceModalOpen],
+  );
 
   /* ==========================================================================
      Section Hover
@@ -980,6 +961,7 @@ export default function ServicesModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="services-error-title"
+        onClick={handleOverlayClick}
       >
         <div
           ref={modalRef}
@@ -1028,6 +1010,7 @@ export default function ServicesModal() {
       role="dialog"
       aria-modal="true"
       aria-label="Services menu"
+      onClick={handleOverlayClick}
     >
       <div
         ref={modalRef}
