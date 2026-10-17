@@ -1,0 +1,414 @@
+
+.digital-pr-page {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 32px 0 72px;
+  color: #172033;
+
+  .digital-pr-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e6eaf0;
+
+    a {
+      color: #344765;
+      font-size: 0.94rem;
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover,
+      &:focus-visible {
+        color: #0d5db8;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .digital-pr-hero {
+    padding: clamp(36px, 7vw, 76px) 0 34px;
+    max-width: 820px;
+
+    h1 {
+      margin: 8px 0 16px;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+    }
+
+    > p:last-child {
+      max-width: 720px;
+      color: #596579;
+      font-size: 1.08rem;
+      line-height: 1.8;
+    }
+  }
+
+  .digital-pr-eyebrow {
+    color: #0d5db8;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .digital-pr-details,
+  .digital-pr-record-list,
+  .digital-pr-publication-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 28px 0;
+  }
+
+  .digital-pr-detail,
+  .digital-pr-record,
+  .digital-pr-publication {
+    min-width: 0;
+    padding: 22px;
+    background: #fff;
+    border: 1px solid #e5eaf1;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgb(16 35 65 / 4%);
+    overflow-wrap: anywhere;
+  }
+
+  .digital-pr-detail dt {
+    margin-bottom: 8px;
+    color: #667085;
+    font-size: 0.86rem;
+    font-weight: 600;
+  }
+
+  .digital-pr-detail dd {
+    margin: 0;
+    line-height: 1.65;
+    font-weight: 600;
+  }
+
+  .digital-pr-record h2,
+  .digital-pr-publication h2 {
+    margin: 0 0 12px;
+    font-size: 1.25rem;
+    line-height: 1.4;
+  }
+
+  .digital-pr-record p,
+  .digital-pr-publication p {
+    color: #4f5b6e;
+    line-height: 1.7;
+  }
+
+  .digital-pr-date {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .digital-pr-record a,
+  .digital-pr-publication a {
+    display: inline-block;
+    margin-top: 8px;
+    color: #075eb7;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .digital-pr-empty {
+    padding: 28px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    color: #596579;
+    line-height: 1.7;
+  }
+
+  .digital-pr-disclaimer {
+    margin-top: 32px;
+    padding-top: 18px;
+    border-top: 1px solid #e6eaf0;
+    color: #667085;
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+// ==========================================
+// Variables
+// ==========================================
+$primary-blue: #0056b3; // Adjust to match your exact brand blue
+$text-dark: #1e293b;
+$text-gray: #64748b;
+$brand-orange: #f97316;
+$brand-orange-gradient: linear-gradient(90deg, #f97316 0%, #ea580c 100%);
+$bg-light: #f8fafc;
+$border-color: #e2e8f0;
+
+// ==========================================
+// Page Header Section
+// ==========================================
+.page-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  
+  .category-label {
+    color: $primary-blue;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .page-title {
+    font-size: 3rem;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .page-description {
+    color: $text-gray;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    max-width: 600px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid $border-color;
+  }
+}
+
+// ==========================================
+// Floating Side Action Buttons
+// ==========================================
+.side-actions {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 50;
+
+  .action-btn {
+    background-color: #000000;
+    color: #ffffff;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 25px 25px 0; // Creates the pill shape on the right side
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #333333;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+// ==========================================
+// Call to Action (CTA) Banner
+// ==========================================
+.cta-banner {
+  background: $brand-orange-gradient;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 60px;
+
+  .cta-inner-card {
+    background-color: #ffffff;
+    padding: 24px 48px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    
+    h2 {
+      color: $brand-orange;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+}
+
+// ==========================================
+// Footer Section
+// ==========================================
+.site-footer {
+  background-color: $bg-light;
+  padding: 60px 20px;
+  color: $text-dark;
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 40px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // Column 1: About
+  .footer-col-about {
+    .logo {
+      max-width: 180px;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: $text-gray;
+      
+      strong {
+        color: $text-dark;
+      }
+    }
+  }
+
+  // Column 2: Quick Links
+  .footer-col-links {
+    .section-heading {
+      color: $brand-orange;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      position: relative;
+      padding-bottom: 8px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100px;
+        height: 2px;
+        background-color: $brand-orange;
+      }
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+
+      a {
+        color: $text-dark;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: $brand-orange;
+        }
+      }
+    }
+  }
+
+  // Column 3: Contact
+  .footer-col-contact {
+    .section-heading {
+      color: $brand-orange;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      position: relative;
+      padding-bottom: 8px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100px;
+        height: 2px;
+        background-color: $brand-orange;
+      }
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      color: $text-dark;
+      font-weight: 600;
+      line-height: 1.5;
+
+      svg {
+        color: $brand-orange;
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+      }
+    }
+  }
+}
+
+// ==========================================
+// Floating Chat Button (Bottom Right)
+// ==========================================
+.floating-chat-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: $brand-orange-gradient;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+  cursor: pointer;
+  z-index: 100;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  svg {
+    color: #ffffff;
+    width: 28px;
+    height: 28px;
+  }
+}
+  @media (max-width: 680px) {
+    width: min(100% - 28px, 1120px);
+    padding-top: 20px;
+
+    .digital-pr-details,
+    .digital-pr-record-list,
+    .digital-pr-publication-list {
+      grid-template-columns: 1fr;
+    }
+
+    .digital-pr-detail,
+    .digital-pr-record,
+    .digital-pr-publication {
+      padding: 18px;
+    }
+  }
+}
