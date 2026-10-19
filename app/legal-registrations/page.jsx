@@ -1,5 +1,5 @@
-import RegistryRecordsView from "@/components/digital-pr/RegistryRecordsView";
-import { UnavailableState } from "@/components/digital-pr/PublicDataState";
+import RegistryRecordsView from "@/components/Digital-Pr/RegistryRecordsView";
+import { UnavailableState } from "@/components/Digital-Pr/PublicDataState";
 import { getPublicRegistryRecords } from "@/lib/api/digitalPrPublicApi";
 
 export const metadata = {

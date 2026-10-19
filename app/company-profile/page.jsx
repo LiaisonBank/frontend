@@ -1,7 +1,7 @@
-import CompanyProfileView from "@/components/digital-pr/CompanyProfileView";
-import { UnavailableState } from "@/components/digital-pr/PublicDataState";
+import CompanyProfileView from "@/components/Digital-Pr/CompanyProfileView";
+import { UnavailableState } from "@/components/Digital-Pr/PublicDataState";
 import { getPublicCompanyProfile } from "@/lib/api/digitalPrPublicApi";
-
+import "./Digital-pr.scss"
 export const metadata = {
   title: "Company Profile | LiaisonBank",
   description:
