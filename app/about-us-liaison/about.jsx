@@ -48,6 +48,7 @@ export default function AboutUsLiaisonPage() {
       id: 1,
       title: "Liaisoning Services",
       icon: Briefcase,
+      tag: "Government Relations",
       description: "End-to-end liaisoning services helping businesses navigate complex government regulations and statutory requirements with ease.",
       // features: [
       //   "Government Approvals & Permissions",
@@ -60,6 +61,7 @@ export default function AboutUsLiaisonPage() {
     {
       id: 2,
       title: "Licensing Services",
+      tag: "Compliance",
       icon: FileCheck,
       description: "Comprehensive licensing solutions across various sectors, ensuring your business remains compliant and fully operational.",
       features: [
@@ -76,6 +78,7 @@ export default function AboutUsLiaisonPage() {
     {
       id: 3,
       title: "PNG Services",
+      tag: "Infrastructure",
       icon: Flame,
       description: "Complete Piped Natural Gas solutions from site survey to commissioning for commercial, residential, and industrial establishments.",
       features: [
@@ -90,6 +93,7 @@ export default function AboutUsLiaisonPage() {
     {
       id: 4,
       title: "Fire Safety Services",
+      tag: "Risk Audit",
       icon: Shield,
       description: "Comprehensive fire safety audits, risk assessments, and certification services ensuring your establishment meets all safety regulations.",
       features: [
@@ -104,6 +108,7 @@ export default function AboutUsLiaisonPage() {
     {
       id: 5,
       title: "Electrical Services",
+      tag: "Engeneering",
       icon: Plug,
       description: "Professional electrical audit and certification services ensuring your electrical systems are safe, compliant, and efficient.",
       features: [
@@ -119,6 +124,7 @@ export default function AboutUsLiaisonPage() {
     {
       id: 6,
       title: "AMC Services",
+      tag: "Maintanence",
       icon: Clock,
       description: "Comprehensive annual maintenance contracts ensuring your business remains compliant throughout the year with dedicated support.",
       features: [
@@ -209,44 +215,44 @@ export default function AboutUsLiaisonPage() {
         <section className="services-section">
           <div className="container">
             <div className="row justify-content-center">
-              <div className="col-lg-10">
+              <div className="col-lg-10 pb-5">
                 <div className="section-header">
-                  <h2 className="section-title">What We Offer</h2>
-                 
+                  <h3 className="section-title">What We Offer</h3>
                 </div>
               </div>
             </div>
             <div className="row justify-content-center">
               {services.map((service, index) => {
-                const Icon = service.icon;
-                return (
-                  <div key={index} className="col-lg-4 col-md-6">
-                                       <Link href={service.href} className="service-card-link">
-                      <div className="service-card">
-                        <div className="service-card-icon">
-                          <Icon size={28} />
-                        </div>
-                        <h3 className="service-card-title">{service.title}</h3>
-                        <p className="service-card-description">{service.description}</p>
-                        <ul className="service-card-features">
-                          {/* Uncomment if you want to show features
-                          {service.features?.map((feature, idx) => (
-                            <li key={idx}>
-                              <ChevronRight size={14} />
-                              {feature}
-                            </li>
-                          ))}
-                          */}
-                        </ul>
-                        <div className="service-card-cta">
-                          <span>Learn More</span>
-                          <ArrowRight size={16} />
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                );
-              })}
+  const Icon = service.icon;
+  return (
+    <div key={index} className="col-lg-4 col-md-6 p-3 service-card-wrapper">
+      <Link href={service.href} className="service-card-link">
+        <div className="service-card">
+          
+          {/* NEW: Header wrapper to put Icon and Title side-by-side */}
+          <div className="service-card-header">
+            <div className="service-card-icon"> 
+              <Icon size={28} /> 
+            </div>
+            <div className="service-card-title-group">
+              <h3 className="service-card-title">{service.title}</h3>
+              {/* Assuming you have a 'tag' property in your service object */}
+              {service.tag && <span className="service-card-tag">{service.tag}</span>}
+            {/* <div class="service-tag">{service.tag}</div> */}
+            </div>
+          </div>
+
+          <p className="service-card-description">{service.description}</p>
+          
+          <div className="service-card-cta">
+            <span>View Details</span>
+            <ArrowRight size={16} />
+          </div>
+        </div>
+      </Link>
+    </div>
+  );
+})}
             </div>
           </div>
         </section>
@@ -257,8 +263,7 @@ export default function AboutUsLiaisonPage() {
             <div className="row justify-content-center">
               <div className="col-lg-10">
                 <div className="section-header">
-                  <h2 className="section-title">Sectors We Serve</h2>
-                 
+                  <h3 className="section-title">Sectors We Serve</h3>
                 </div>
                 <div className="sectors-grid ">
                   {sectors.map((sector, idx) => {

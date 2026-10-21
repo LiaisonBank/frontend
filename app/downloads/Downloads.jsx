@@ -786,6 +786,7 @@ export default function Downloads() {
           line-height: 1.8;
           position: relative;
           z-index: 2;
+          text-align: center;
         }
 
         .hero-shape {
@@ -986,6 +987,7 @@ export default function Downloads() {
           color: #6b7280;
           cursor: pointer;
           transition: all 0.3s ease;
+         
         }
         .btn-fullscreen:hover {
           border-color: #ef7f1a;
@@ -1008,12 +1010,18 @@ export default function Downloads() {
           transition: all 0.3s ease;
           white-space: nowrap;
           border: none;
+          position: relative;
+            &::before{
+            content: "";
+            position: absolute;
+            transform: translateX(-100%);
+            pointer-events: none;
+            inset: 0px;
+            background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+            animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+          }
         }
-        .btn-download-pdf:hover {
-          background: #e06b0e;
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(239, 127, 26, 0.3);
-        }
+        
 
         /* VIEWER */
         .pdf-viewer-container {

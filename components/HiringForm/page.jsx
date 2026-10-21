@@ -5,8 +5,10 @@ import Swal from "sweetalert2";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
+
 export default function HiringForm() {
  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 
 const ALLOWED_FILE_TYPES = [
   "application/pdf",
@@ -191,8 +193,11 @@ const handleSubmit = async (e) => {
         Swal.showLoading();
       },
     });
+//  const baseUrl = 'http://localhost:8000'
+ const baseUrl = 'https://backend.liaisonbank.com'
 
-    const response = await fetch("/api/v1/hiring", {
+
+    const response = await fetch(`${baseUrl}/api/hiring/apply`, {
       method: "POST",
       body: formData,
       cache: "no-store",

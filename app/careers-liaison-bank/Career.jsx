@@ -1,362 +1,296 @@
 "use client";
+
 import Link from "next/link";
-import useBodyClass from '@/components/useBodyClass';
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import {
-  ArrowUpRight,
-  PenTool,
-  Target,
-  Star,
-} from 'lucide-react';
-import AuthModal from './AuthModal';
-import './career.scss';
-import RecruitemtnModal from "./RecruitemtnModal";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowUpRight } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import useBodyClass from "@/components/useBodyClass";
+import AuthModal from "./AuthModal";
+import RecruitemtnModal from "./RecruitemtnModal";
+import EmployeeActivityGallery from "@/components/EmployeeActivityGallery/page";
+import "./career.scss";
+
 gsap.registerPlugin(ScrollTrigger);
 
-// ---------- SERVICE DATA (6 items) ----------
+// ---------- SERVICE DATA ----------
 const services = [
-  {
-    id: 1,
-    name: "Liaisoning",
-    slug: "Linking Needs With The Right Solutions",
-    image: "/liaisoning-in-real-estate.jpg",
-    description: "____________________________"
-  },
-  {
-    id: 2,
-    name: "Licensing",
-    slug: "We Handle the Process. You Build the Future.",
-    image: "/licensing-services.png",
-    description: "_______________________________________________"
-  },
-    {
-    id: 5,
-    name: "Piped Natural Gas",
-    slug: "Reliable Gas, Smarter Living.",
-    image: "/PNG.png   ",
-    description: "_____________________________________"
-  },
-    {
-    id: 4,
-    name: "Fire",
-    slug: "Turning Safety into Security.",
-    image: "/fire4.png",
-    description: "____________________________________________"
-  },
-  {
-    id: 3,
-    name: "Electrical",
-    slug: "Powering Your Needs, Connecting Your Future.",
-    image: "/Electrical.png",
-    description: "________________________________________________"
-  },
+  { id: 1, name: "Liaisoning", slug: "Linking Needs With The Right Solutions", link:"Liaisoning", image: "/liaisoning-in-real-estate.jpg", description: "____________________________" },
+  { id: 2, name: "Licensing", slug: "We Handle the Process. You Build the Future.", link:"Licensing", image: "/licensing-services.png", description: "_______________________________________________" },
+  { id: 5, name: "Piped Natural Gas", slug: "Reliable Gas, Smarter Living.", link:"PNG", image: "/PNG.png", description: "_____________________________________" },
+  { id: 4, name: "Fire Safety", slug: "Turning Safety into Security.", link:"Fire Safety", image: "/fire4.png", description: "____________________________________________" },
+  { id: 3, name: "Electrical", slug: "Powering Your Needs, Connecting Your Future.", link:"Electrical", image: "/Electrical.png", description: "________________________________________________" },
+  { id: 6, name: "AMC", slug: "Protect Performance. Preserve Value.", link:"AMC", image: "/dummyAMC.png", description: "_______________________________________" },
+];
 
+const OTHER_OPTIONS = [
+  { id: 1, name: "Accountant", link: "/careers-liaison-bank/jobs?department=ACCOUNTS DEPARTMENT - DBRE" },
+  { id: 2, name: "Administration", link: "/careers-liaison-bank/jobs?department=ADMINISTRATOR - DBRE" },
+  { id: 3, name: "Architecture", link: "/careers-liaison-bank/jobs?department=ARCHITECTURE DEPARTMENT - DBRE" },
+  { id: 4, name: "Human Resource", link: "/careers-liaison-bank/jobs?department=HUMAN RESOURCE - DBRE" },
+  { id: 5, name: "Information Technology", link: "/careers-liaison-bank/jobs?department=IT%20DEPARTMENT%20-%20DBRE" },
+  { id: 6, name: "Sales", link: "/careers-liaison-bank/jobs?department=SALES - DBRE" },
+];
 
-  {
-    id: 6,
-    name: "AMC",
-    slug: "Protect Performance. Preserve Value.",
-    image: "/dummyAMC.png",
-    description: "_______________________________________"
-  }
+const BENEFITS = [
+  { title: "Career Advancement", tag: "Inclusive Culture", description: "Build a strong foundation for your future with industry exposure, valuable experience, and opportunities for long-term growth.", image: "/meaningfullWork.jpg" },
+  { title: "Meaningful Work", tag: "ESG Initiatives", description: "Contribute to real projects that create business impact while gaining practical, hands-on experience.", image: "/CareerAdvancement.png" },
+  { title: "Continuous Learning", tag: "Fair Opportunity", description: "Develop technical and professional skills through mentorship, collaboration, and continuous learning opportunities.", image: "/ContinuousLearning.png" },
 ];
 
 export default function CareersLiaisonPage() {
-  useBodyClass('careers');
+  useBodyClass("careers");
+
+  const router = useRouter();
 
   const [activeService, setActiveService] = useState(services[0]);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState('login');
+  const [authMode, setAuthMode] = useState("login");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const router = useRouter();
-  
-  // Refs for sections
+  const [showOthersDropdown, setShowOthersDropdown] = useState(false);
+
+  // Refs
   const heroRef = useRef(null);
   const heroContentRef = useRef(null);
   const heroTitleRef = useRef(null);
-  const cultureRef = useRef(null);
+  const saturdayFunRef = useRef(null);
+  const saturdayFunHeaderRef = useRef(null);
   const benefitsRef = useRef(null);
   const servicesRef = useRef(null);
   const ctaRef = useRef(null);
 
-  // Hero banner animation - open from zero on load + scroll effects
+  const heroScrollTriggerRef = useRef(null);
+
+  // ---------- 1. HERO LOAD + SCROLL ANIMATION ----------
   useEffect(() => {
+    if (!heroRef.current || !heroContentRef.current || !heroTitleRef.current) return;
+
+    const hero = heroRef.current;
+    const content = heroContentRef.current;
+    const title = heroTitleRef.current;
+
     const ctx = gsap.context(() => {
-      // Set initial state - completely hidden
-      gsap.set(heroRef.current, {
-        scale: 0,
-        opacity: 0,
-        borderRadius: "0px",
-        transformOrigin: "center center",
-      });
+      gsap.set(hero, { scale: 0, opacity: 0, borderRadius: "0px", transformOrigin: "center center" });
+      gsap.set(content, { scale: 0, opacity: 0, y: 0 });
+      gsap.set(title, { opacity: 0, y: 30 });
 
-      gsap.set(heroContentRef.current, {
-        scale: 0,
-        opacity: 0,
-        y: 0,
-      });
-
-      gsap.set(heroTitleRef.current, {
-        opacity: 0,
-        y: 30,
-      });
-
-      // 1. INITIAL LOAD ANIMATION - Open from zero (scale 0 to 1)
       const loadTl = gsap.timeline({
         defaults: { ease: "power3.out" },
-        delay: 0.2 // Slight delay for dramatic effect
+        delay: 0.2,
       });
 
-      // Hero container: scale from 0 to 1 with spring effect
-      loadTl.to(heroRef.current, {
-        scale: 1,
-        opacity: 1,
-        borderRadius: "0px",
-        duration: 1.2,
-        ease: "back.out(1.7)",
-      })
-      // Hero content: scale from 0 to 1 with slight delay
-      .to(heroContentRef.current, {
-        scale: 1,
-        opacity: 1,
-        duration: 1.2,
-        ease: "power2.out",
-      }, "-=0.6")
-      // Title text: fade in with animation
-      .to(heroTitleRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.7,
-        ease: "power2.out",
-      }, "-=0.4");
+      loadTl
+        .to(hero, { scale: 1, opacity: 1, duration: 1.2, ease: "back.out(1.7)" })
+        .to(content, { scale: 1, opacity: 1, duration: 1.2, ease: "power2.out" }, "-=0.6")
+        .to(title, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, "-=0.4");
 
-      
-      // 2. SCROLL ANIMATION - Scale back to 0 from center
-      const setupScrollAnimation = () => {
-        // Kill any existing scroll triggers
-        ScrollTrigger.getAll().forEach(st => {
-          if (st.trigger === heroRef.current) {
-            st.kill();
-          }
-        });
+      loadTl.eventCallback("onComplete", () => {
+        if (heroScrollTriggerRef.current) {
+          heroScrollTriggerRef.current.kill();
+          heroScrollTriggerRef.current = null;
+        }
 
-        // Set transform origin to center for scaling from center
-        gsap.set(heroRef.current, {
-          transformOrigin: "center center",
-          scale: 1,
-          borderRadius: "0px",
-          opacity: 1,
-        });
-
-        gsap.set(heroContentRef.current, {
-          scale: 1,
-          opacity: 1,
-          y: 0,
-        });
-
-        // Create scroll trigger - scales to 0 from center
-        const heroScrollTrigger = ScrollTrigger.create({
-          trigger: heroRef.current,
+        heroScrollTriggerRef.current = ScrollTrigger.create({
+          trigger: hero,
           start: "top top",
           end: "bottom -20%",
           scrub: 1.5,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const progress = Math.min(self.progress, 1);
-            
-            // Only apply scroll effects when scrolling
-            if (progress > 0) {
-              // Hero container: scale from 1 to 0 (center origin)
-              const scale = 1 - progress;
-              const opacity = 1 - (progress * 0.5);
-              const borderRadius = progress * 50;
-              
-              gsap.set(heroRef.current, {
-                scale: Math.max(scale, 0),
-                borderRadius: `0px 0px ${borderRadius}px ${borderRadius}px`,
-                opacity: Math.max(opacity, 0.5),
-                force3D: true,
-              });
-              
-              // Content: scales and moves up
-              const contentScale = 1 - (progress * 0.6);
-              const contentOpacity = 1 - (progress * 0.7);
-              const contentY = -progress * 80;
-              
-              gsap.set(heroContentRef.current, {
-                scale: Math.max(contentScale, 0.4),
-                opacity: Math.max(contentOpacity, 0.3),
-                y: contentY,
-                force3D: true,
-              });
-            }
-          }
+            if (progress <= 0) return;
+
+            const scale = Math.max(1 - progress, 0);
+            const borderRadius = progress * 50;
+            const opacity = Math.max(1 - progress * 0.5, 0.5);
+
+            gsap.set(hero, {
+              scale,
+              borderRadius: `0px 0px ${borderRadius}px ${borderRadius}px`,
+              opacity,
+              force3D: true,
+            });
+
+            const contentScale = Math.max(1 - progress * 0.6, 0.4);
+            const contentOpacity = Math.max(1 - progress * 0.7, 0.3);
+            const contentY = -progress * 80;
+
+            gsap.set(content, {
+              scale: contentScale,
+              opacity: contentOpacity,
+              y: contentY,
+              force3D: true,
+            });
+          },
         });
 
-        heroRef.current._scrollTrigger = heroScrollTrigger;
-      };
-
-      // Setup scroll animation after load completes
-      loadTl.eventCallback("onComplete", setupScrollAnimation);
-
-      // Fallback: setup after timeout if callback fails
-      setTimeout(setupScrollAnimation, 1500);
-
+        // 🔑 Refresh everything below the hero after the hero settled
+        ScrollTrigger.refresh();
+      });
     }, heroRef);
 
     return () => {
-      if (heroRef.current && heroRef.current._scrollTrigger) {
-        heroRef.current._scrollTrigger.kill();
+      if (heroScrollTriggerRef.current) {
+        heroScrollTriggerRef.current.kill();
+        heroScrollTriggerRef.current = null;
       }
       ctx.revert();
     };
   }, []);
 
-  // Scroll animations for all sections
+  // ---------- 2. SECTION SCROLL ANIMATIONS (robust) ----------
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Refresh ScrollTrigger after a small delay
-      setTimeout(() => {
-        ScrollTrigger.refresh();
-      }, 100);
+    let refreshTimeout = null;
+    let rafId = null;
 
-      // CULTURE SECTION
-      gsap.fromTo(
-        cultureRef.current,
-        { opacity: 0, y: 80 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: cultureRef.current,
-            start: "top 85%",
-            end: "top 40%",
-            toggleActions: "play none none reverse",
-            invalidateOnRefresh: true,
-          },
-        }
+    const ctx = gsap.context(() => {
+      const refresh = () => {
+        rafId = requestAnimationFrame(() => ScrollTrigger.refresh());
+      };
+
+      // Common config — plays ONCE, never reverses to blank
+      const onceConfig = (trigger) => ({
+        trigger,
+        start: "top 85%",
+        toggleActions: "play none none none",
+        once: true,
+        invalidateOnRefresh: true,
+      });
+
+      // ---- Section fade-slide ----
+      const animate = (target, fromVars, toVars, trigger) => {
+        if (!target || !trigger) return;
+        gsap.fromTo(target, fromVars, {
+          ...toVars,
+          scrollTrigger: onceConfig(trigger),
+        });
+      };
+
+      // ---- Saturday Fun section (Employee Activity Gallery) ----
+      animate(
+        saturdayFunRef.current,
+        { opacity: 0, y: 100 },
+        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" },
+        saturdayFunRef.current
       );
 
-      // Culture cards stagger animation
-      const cultureCards = cultureRef.current?.querySelectorAll('.culture-card');
-      if (cultureCards) {
+      // Saturday Fun heading (if present inside the section)
+      const saturdayHeader =
+        saturdayFunHeaderRef.current ||
+        saturdayFunRef.current?.querySelector("h2, .section-header");
+      if (saturdayHeader) {
         gsap.fromTo(
-          cultureCards,
-          { opacity: 0, y: 50, scale: 0.95 },
+          saturdayHeader,
+          { opacity: 0, y: 40, scale: 0.96 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
             duration: 0.9,
-            stagger: 0.15,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: cultureRef.current,
-              start: "top 80%",
-              end: "top 30%",
-              toggleActions: "play none none reverse",
+              trigger: saturdayHeader,
+              start: "top 90%",
+              toggleActions: "play none none none",
+              once: true,
               invalidateOnRefresh: true,
             },
           }
         );
       }
 
-      // BENEFITS SECTION
-      gsap.fromTo(
+      // Stagger any gallery items inside saturdayfun (auto-detect common classes)
+      const galleryItems = saturdayFunRef.current?.querySelectorAll(
+        ".gallery-item, .activity-card, .employee-activity-card, .gallery-card"
+      );
+      if (galleryItems?.length) {
+        gsap.set(galleryItems, { opacity: 0, y: 60, scale: 0.95 });
+        ScrollTrigger.batch(galleryItems, {
+          start: "top 88%",
+          once: true,
+          onEnter: (batch) =>
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.9,
+              stagger: 0.12,
+              ease: "power3.out",
+              overwrite: true,
+            }),
+        });
+      }
+
+      // Benefits section wrapper
+      animate(
         benefitsRef.current,
         { opacity: 0, y: 80 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: benefitsRef.current,
-            start: "top 85%",
-            end: "top 40%",
-            toggleActions: "play none none reverse",
-            invalidateOnRefresh: true,
-          },
-        }
+        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" },
+        benefitsRef.current
       );
 
-      // Benefits cards stagger animation
-      const benefitCards = benefitsRef.current?.querySelectorAll('.benefit-card-wrapper');
-      if (benefitCards) {
-        gsap.fromTo(
-          benefitCards,
-          { opacity: 0, y: 60, scale: 0.9 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 1,
-            stagger: 0.2,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: benefitsRef.current,
-              start: "top 80%",
-              end: "top 30%",
-              toggleActions: "play none none reverse",
-              invalidateOnRefresh: true,
-            },
-          }
-        );
-      }
-
-      // SERVICES SECTION
-      gsap.fromTo(
+      // Services section wrapper
+      animate(
         servicesRef.current,
         { opacity: 0, x: -50 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 1.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: servicesRef.current,
-            start: "top 85%",
-            end: "top 40%", 
-            toggleActions: "play none none reverse",
-            invalidateOnRefresh: true,
-          },
-        }
+        { opacity: 1, x: 0, duration: 1.2, ease: "power3.out" },
+        servicesRef.current
       );
 
-      // Services tabs stagger animation
-      const tabButtons = servicesRef.current?.querySelectorAll('.tab-btn');
-      if (tabButtons) {
-        gsap.fromTo(
-          tabButtons,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            stagger: 0.08,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: servicesRef.current,
-              start: "top 80%",
-              end: "top 30%",
-              toggleActions: "play none none reverse",
-              invalidateOnRefresh: true,
-            },
-          }
-        );
+      // CTA section wrapper
+      animate(
+        ctaRef.current,
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+        ctaRef.current
+      );
+
+      // ---- Batched benefit cards ----
+      const benefitCards = benefitsRef.current?.querySelectorAll(".benefit-card-wrapper");
+      if (benefitCards?.length) {
+        gsap.set(benefitCards, { opacity: 0, y: 60, scale: 0.9 });
+        ScrollTrigger.batch(benefitCards, {
+          start: "top 85%",
+          once: true,
+          onEnter: (batch) =>
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 1,
+              stagger: 0.15,
+              ease: "power3.out",
+              overwrite: true,
+            }),
+        });
       }
 
-      // Featured service image animation
-      const featuredImage = servicesRef.current?.querySelector('.featured-image');
+      // ---- Batched service tab buttons ----
+      const tabButtons = servicesRef.current?.querySelectorAll(".tab-btn");
+      if (tabButtons?.length) {
+        gsap.set(tabButtons, { opacity: 0, y: 30 });
+        ScrollTrigger.batch(tabButtons, {
+          start: "top 85%",
+          once: true,
+          onEnter: (batch) =>
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              stagger: 0.08,
+              ease: "power2.out",
+              overwrite: true,
+            }),
+        });
+      }
+
+      // Featured image
+      const featuredImage = servicesRef.current?.querySelector(".featured-image");
       if (featuredImage) {
         gsap.fromTo(
           featuredImage,
@@ -368,36 +302,17 @@ export default function CareersLiaisonPage() {
             ease: "power2.out",
             scrollTrigger: {
               trigger: featuredImage,
-              start: "top 85%",
-              end: "top 40%",
-              toggleActions: "play none none reverse",
+              start: "top 90%",
+              toggleActions: "play none none none",
+              once: true,
               invalidateOnRefresh: true,
             },
           }
         );
       }
 
-      // CTA SECTION
-      gsap.fromTo(
-        ctaRef.current,
-        { opacity: 0, y: 60 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ctaRef.current,
-            start: "top 85%",
-            end: "top 40%",
-            toggleActions: "play none none reverse",
-            invalidateOnRefresh: true,
-          },
-        }
-      );
-
-      // CTA Box animation with scale
-      const ctaBox = ctaRef.current?.querySelector('.cta-box');
+      // CTA box
+      const ctaBox = ctaRef.current?.querySelector(".cta-box");
       if (ctaBox) {
         gsap.fromTo(
           ctaBox,
@@ -409,17 +324,17 @@ export default function CareersLiaisonPage() {
             ease: "back.out(1.7)",
             scrollTrigger: {
               trigger: ctaBox,
-              start: "top 85%",
-              end: "top 40%",
-              toggleActions: "play none none reverse",
+              start: "top 90%",
+              toggleActions: "play none none none",
+              once: true,
               invalidateOnRefresh: true,
             },
           }
         );
       }
 
-      // Benefits header animation
-      const benefitsHeader = benefitsRef.current?.querySelector('.benefits-header h2');
+      // Benefits header
+      const benefitsHeader = benefitsRef.current?.querySelector(".benefits-header h2");
       if (benefitsHeader) {
         gsap.fromTo(
           benefitsHeader,
@@ -433,17 +348,16 @@ export default function CareersLiaisonPage() {
             scrollTrigger: {
               trigger: benefitsHeader,
               start: "top 90%",
-              end: "top 50%",
-              toggleActions: "play none none reverse",
+              toggleActions: "play none none none",
+              once: true,
               invalidateOnRefresh: true,
             },
           }
         );
       }
 
-      // Section headers animation
-      const sectionHeaders = document.querySelectorAll('.section-header');
-      sectionHeaders.forEach((header) => {
+      // Generic section headers
+      document.querySelectorAll(".section-header").forEach((header) => {
         gsap.fromTo(
           header,
           { opacity: 0, y: 40 },
@@ -455,62 +369,84 @@ export default function CareersLiaisonPage() {
             scrollTrigger: {
               trigger: header,
               start: "top 90%",
-              end: "top 50%",
-              toggleActions: "play none none reverse",
+              toggleActions: "play none none none",
+              once: true,
               invalidateOnRefresh: true,
             },
           }
         );
       });
 
-    }, []);
+      // ---- Refresh once page is fully ready ----
+      const doRefresh = () => refresh();
 
-    return () => ctx.revert();
-  }, []);
+      if (document.readyState === "complete") {
+        doRefresh();
+      } else {
+        window.addEventListener("load", doRefresh, { once: true });
+      }
 
-  // Refresh ScrollTrigger on resize and route changes
-  useEffect(() => {
-    const handleRefresh = () => {
-      ScrollTrigger.refresh();
-    };
+      if (document.fonts?.ready) {
+        document.fonts.ready.then(doRefresh);
+      }
 
-    window.addEventListener('resize', handleRefresh);
-    window.addEventListener('orientationchange', handleRefresh);
+      // Safety net for late-loading gallery images
+      refreshTimeout = window.setTimeout(() => ScrollTrigger.refresh(), 1500);
+    });
 
     return () => {
-      window.removeEventListener('resize', handleRefresh);
-      window.removeEventListener('orientationchange', handleRefresh);
+      if (refreshTimeout) clearTimeout(refreshTimeout);
+      if (rafId) cancelAnimationFrame(rafId);
+      ctx.revert();
     };
   }, []);
 
+  // ---------- 3. RESIZE HANDLING (debounced) ----------
   useEffect(() => {
-    const token = localStorage.getItem('career_token');
-    const userData = localStorage.getItem('career_user');
-    if (token && userData) {
-      try {
-        if (userData && userData !== 'undefined' && userData !== 'null') {
-          const parsedUser = JSON.parse(userData);
-          setIsAuthenticated(true);
-          setUser(parsedUser);
-        } else {
-          localStorage.removeItem('career_token');
-          localStorage.removeItem('career_user');
-        }
-      } catch (e) {
-        localStorage.removeItem('career_token');
-        localStorage.removeItem('career_user');
-        console.error('Error parsing user data:', e);
+    let timeout = null;
+    const handleRefresh = () => {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => ScrollTrigger.refresh(), 200);
+    };
+    window.addEventListener("resize", handleRefresh);
+    window.addEventListener("orientationchange", handleRefresh);
+    return () => {
+      if (timeout) clearTimeout(timeout);
+      window.removeEventListener("resize", handleRefresh);
+      window.removeEventListener("orientationchange", handleRefresh);
+    };
+  }, []);
+
+  // ---------- 4. AUTH BOOTSTRAP ----------
+  useEffect(() => {
+    const token = localStorage.getItem("career_token");
+    const userData = localStorage.getItem("career_user");
+
+    if (!token || !userData || userData === "undefined" || userData === "null") {
+      if (token || userData) {
+        localStorage.removeItem("career_token");
+        localStorage.removeItem("career_user");
       }
+      return;
+    }
+
+    try {
+      const parsedUser = JSON.parse(userData);
+      setIsAuthenticated(true);
+      setUser(parsedUser);
+    } catch (e) {
+      localStorage.removeItem("career_token");
+      localStorage.removeItem("career_user");
+      console.error("Error parsing user data:", e);
     }
   }, []);
 
-
-  
-  const handleApplyClick = (job) => {
+  // ---------- HANDLERS ----------
+  const handleApplyClick = (_job) => {
     if (isAuthenticated) {
-      router.push('/careers-liaison-bank/candidate-dashboard');
+      router.push("/careers-liaison-bank/candidate-dashboard");
     } else {
-      setAuthMode('login');
+      setAuthMode("login");
       setIsAuthModalOpen(true);
     }
   };
@@ -521,31 +457,10 @@ export default function CareersLiaisonPage() {
     setIsAuthModalOpen(false);
   };
 
-  
-  // Benefits data
-  const benefits = [
-    {
-      title: "Career Advancement",
-      tag: "Inclusive Culture",
-      description: "Build a strong foundation for your future with industry exposure, valuable experience, and opportunities for long-term growth.",
-      // image: "/CareerAdvancement.png"
-      image: "/meaningfullWork.jpg"
-    },
-      {
-      title: "Meaningful Work",
-      tag: "ESG Initiatives",
-      description: "Contribute to real projects thatcreate business impact whilegaining practical, hands-on experience.",
-      // image: "/meaningfullWork.jpg"
-      image: "/CareerAdvancement.png"
-    },
-    {
-      title: "Continuous Learning",
-      tag: "Fair Opportunity",
-      description: "Develop technical and professional skills through mentorship, collaboration, and continuous learning opportunities.",
-      image: "/ContinuousLearning.png"
-    }
-  
-  ];
+  const activeServiceJobsHref = useMemo(
+    () => `/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.link)}`,
+    [activeService.link]
+  );
 
   return (
     <div className="careers-page">
@@ -562,13 +477,20 @@ export default function CareersLiaisonPage() {
         <div className="container" ref={heroContentRef}>
           <div className="page-title">
             <h2 ref={heroTitleRef}>
-              A culture that inspires people to take ownership, unlock their potential, embrace growth, and transform their ambitions into meaningful and rewarding careers
+              A culture that inspires people to take ownership, unlock their
+              potential, embrace growth, and transform their ambitions into
+              meaningful and rewarding careers
             </h2>
           </div>
         </div>
       </section>
 
-      <section className="hero-section"></section>
+      <section className="hero-section" />
+
+      {/* Saturday Fun / Employee Activity Gallery */}
+      <section ref={saturdayFunRef} className="saturdayfun" id="saturdayfun">
+        <EmployeeActivityGallery />
+      </section>
 
       {/* Benefits Section */}
       <section ref={benefitsRef} className="benefits-section" id="benefits">
@@ -578,28 +500,19 @@ export default function CareersLiaisonPage() {
           </div>
 
           <div className="benefits-grid-cards">
-            {benefits.map((benefit, index) => (
-              <div 
-                key={index} 
-                className={`benefit-card-wrapper ${hoveredIndex === index ? 'active' : ''}`}
+            {BENEFITS.map((benefit, index) => (
+              <div
+                key={benefit.title}
+                className={`benefit-card-wrapper ${hoveredIndex === index ? "active" : ""}`}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
                 <div className="benefit-card-hover">
                   <div className="benefit-card-image">
-                    <Image 
-                    src={benefit.image} 
-                    alt={benefit.title} 
-                    width={800}
-                    height={500}
-                    />
-                    
-                    {/* 1. The short vertical label on the left */}
+                    <Image src={benefit.image} alt={benefit.title} width={800} height={500} />
                     <div className="benefit-card-label">
                       <span>{benefit.title}</span>
                     </div>
-
-                    {/* 2. The overlay that appears on hover */}
                     <div className="benefit-card-overlay">
                       <h3 className="benefit-title">{benefit.title}</h3>
                       <p className="benefit-description">{benefit.description}</p>
@@ -611,61 +524,86 @@ export default function CareersLiaisonPage() {
           </div>
         </div>
       </section>
-      
-{/* Services Section */}
-<section ref={servicesRef} className="services-section" id="openings">
-  <div className="container">
-    <div className="section-header">
-      <h2 className="job-header">Current Openings</h2>
-    </div>
 
-    <div className="services-tabs">
-      {services.map((service) => (
-        <button
-          key={service.id}
-          className={`tab-btn ${activeService.id === service.id ? 'active' : ''}`}
-          onClick={() => setActiveService(service)}
-          onMouseEnter={() => setActiveService(service)} // Add hover support
-          onFocus={() => setActiveService(service)} // For accessibility
-        >
-          {service.name}
-        </button>
-      ))}
-    </div>
-   <Link
-            href={`/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.name)}`}
+      {/* Services Section */}
+      <section ref={servicesRef} className="services-section" id="openings">
+        <div className="container">
+          <div className="section-header">
+            <h2 className="job-header">Current Openings</h2>
+          </div>
+
+          <div className="services-tabs">
+            {services.map((service) => (
+              <button
+                key={service.id}
+                type="button"
+                className={`tab-btn ${activeService.id === service.id ? "active" : ""}`}
+                onClick={() => setActiveService(service)}
+                onMouseEnter={() => setActiveService(service)}
+                onFocus={() => setActiveService(service)}
+              >
+                {service.name}
+              </button>
+            ))}
+
+            <div
+              className="others-wrapper"
+              onMouseEnter={() => setShowOthersDropdown(true)}
+              onMouseLeave={() => setShowOthersDropdown(false)}
+            >
+              <button
+                type="button"
+                className="tab-btn"
+                onClick={() => setShowOthersDropdown((prev) => !prev)}
+                onFocus={() => setShowOthersDropdown(true)}
+              >
+                More +
+              </button>
+
+              {showOthersDropdown && (
+                <div className="others-dropdown">
+                  {OTHER_OPTIONS.map((option) => (
+                    <a
+                      key={option.id}
+                      href={option.link}
+                      className="dropdown-item"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {option.name}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <Link
+            href={activeServiceJobsHref}
             target="_blank"
             rel="noopener noreferrer"
             className="view-link featured-view"
           >
-    <div className="featured-service">
-      <div className="featured-image">
-        <Image
-         
-          src={activeService.image} 
-          alt={activeService.name}
-          className="featured-image-img"
-          fill
-          unoptimized
-        />
-        <div className="featured-overlay">
-          <h3>{activeService.slug}</h3>
-          
-          <h2
-            href={`/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.name)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="view-link featured-view"
-          >
-            View Openings <ArrowUpRight size={18} />
-          </h2>
+            <div className="featured-service">
+              <div className="featured-image">
+                <Image
+                  src={activeService.image}
+                  alt={activeService.name}
+                  className="featured-image-img"
+                  fill
+                  unoptimized
+                />
+                <div className="featured-overlay">
+                  <h3>{activeService.slug}</h3>
+                  <span className="featured-view">
+                    View Openings <ArrowUpRight size={18} />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Link>
         </div>
-      </div>
-    </div>
-    </Link>
-  </div>
-</section>
-
+      </section>
 
       {/* CTA Section */}
       <section ref={ctaRef} className="cta-section">
@@ -675,11 +613,12 @@ export default function CareersLiaisonPage() {
               <span className="cta-tag">Join Our Team</span>
               <h3>Ready to make an impact?</h3>
               <div className="cta-actions">
-                <Link 
+                <Link
                   href="/careers-liaison-bank/jobs"
                   target="_blank"
-                  rel="noopener noreferrer"                
-                className="btn-primary">
+                  rel="noopener noreferrer"
+                  className="btn-primary"
+                >
                   View All Openings <ArrowUpRight />
                 </Link>
               </div>
