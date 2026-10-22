@@ -22,6 +22,11 @@ import {
   Award,
   Star,
   ThumbsUp,
+  Landmark,
+  Fuel,
+  ShieldCheck,
+  Zap,
+  Wrench,
 } from "lucide-react";
 import "./aboutUs.scss"
 
@@ -47,7 +52,7 @@ export default function AboutUsLiaisonPage() {
     {
       id: 1,
       title: "Liaisoning Services",
-      icon: Briefcase,
+      icon: Landmark,
       tag: "Government Relations",
       description: "End-to-end liaisoning services helping businesses navigate complex government regulations and statutory requirements with ease.",
       // features: [
@@ -79,7 +84,7 @@ export default function AboutUsLiaisonPage() {
       id: 3,
       title: "PNG Services",
       tag: "Infrastructure",
-      icon: Flame,
+      icon: Fuel,
       description: "Complete Piped Natural Gas solutions from site survey to commissioning for commercial, residential, and industrial establishments.",
       features: [
         "Site Survey & Assessment",
@@ -94,7 +99,7 @@ export default function AboutUsLiaisonPage() {
       id: 4,
       title: "Fire Safety Services",
       tag: "Risk Audit",
-      icon: Shield,
+      icon: ShieldCheck,
       description: "Comprehensive fire safety audits, risk assessments, and certification services ensuring your establishment meets all safety regulations.",
       features: [
         "Fire Safety Audits",
@@ -109,7 +114,7 @@ export default function AboutUsLiaisonPage() {
       id: 5,
       title: "Electrical Services",
       tag: "Engeneering",
-      icon: Plug,
+      icon: Zap,
       description: "Professional electrical audit and certification services ensuring your electrical systems are safe, compliant, and efficient.",
       features: [
         "Electrical Safety Audits",
@@ -125,7 +130,7 @@ export default function AboutUsLiaisonPage() {
       id: 6,
       title: "AMC Services",
       tag: "Maintanence",
-      icon: Clock,
+      icon: Wrench,
       description: "Comprehensive annual maintenance contracts ensuring your business remains compliant throughout the year with dedicated support.",
       features: [
         "Compliance Monitoring",
@@ -197,13 +202,9 @@ export default function AboutUsLiaisonPage() {
                 <div className="welcome-box">
                   <span className="welcome-label">About Us</span>
                   <p className="welcome-text">
-                    <span className="welcome-brand">Liaison Bank </span> provides end-to-end liaisoning, licensing,
-                    regulatory compliance, helping businesses and individuals efficiently navigate government
-                    requirements and regulatory processes. We act as a professional interface between our clients
-                    and government departments, regulatory authorities, and statutory bodies, supporting them with
-                    approvals, permissions, NOCs, and compliance requirements. Our services cover PNG (Natural Gas),
-                    Fire &amp; Electrical, and other regulatory and statutory requirements, ensuring a smooth and
-                    efficient process from initiation to completion.
+                    <span className="welcome-brand">Liaison Bank </span> provides end-to-end liaisoning, licensing, and regulatory compliance services to help businesses and individuals navigate complex government procedures and statutory requirements with greater clarity and efficiency. We serve as a professional interface between our clients and government departments, regulatory authorities, and statutory bodies, helping coordinate the processes involved in obtaining necessary approvals, permissions, No Objection Certificates (NOCs), licenses, and other regulatory clearances.
+
+Our approach focuses on simplifying administrative procedures, facilitating coordination, and supporting clients throughout the regulatory process, from initial consultation and documentation to application coordination and approval follow-ups. We understand that navigating regulatory requirements can involve multiple stages, documentation requirements, and interactions with various authorities. Our objective is to make these processes more organized, transparent, and manageable for our clients.
                   </p>
                 </div>
               </div>
@@ -237,7 +238,7 @@ export default function AboutUsLiaisonPage() {
             <div className="service-card-title-group">
               <h3 className="service-card-title">{service.title}</h3>
               {/* Assuming you have a 'tag' property in your service object */}
-              {service.tag && <span className="service-card-tag">{service.tag}</span>}
+              {/* {service.tag && <span className="service-card-tag">{service.tag}</span>} */}
             {/* <div class="service-tag">{service.tag}</div> */}
             </div>
           </div>

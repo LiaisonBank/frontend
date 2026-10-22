@@ -957,7 +957,9 @@ export default function ServicesModal() {
   if (error && servicesData.length === 0 && !loading) {
     return (
       <div
-        className="services-modal-overlay"
+        className={`services-modal-overlay ${
+  isClosing ? "is-closing" : ""
+}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="services-error-title"
@@ -1006,7 +1008,9 @@ export default function ServicesModal() {
 
   return (
     <div
-      className="services-modal-overlay"
+      className={`services-modal-overlay ${
+  isClosing ? "is-closing" : ""
+}`}
       role="dialog"
       aria-modal="true"
       aria-label="Services menu"
