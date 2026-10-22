@@ -65,49 +65,228 @@ import { useLayoutEffect } from "react";
     const ctaRef = useRef(null);
     const heroScrollTriggerRef = useRef(null);
     const tabsRef = useRef(null);
+    const tabsDragRef = useRef({
+      isPointerDown: false,
+      startX: 0,
+      lastX: 0,
+      scrollLeft: 0,
+      hasMoved: false,
+      originalScrollBehavior: "",
+      originalScrollSnapType: "",
+    });
+    const suppressTabClickRef = useRef(false);
+    const autoScrollPausedRef = useRef(false);
 
-  // ---------- 0. AUTO-SCROLL ACTIVE TAB INTO VIEW (LEFT-ALIGNED) ----------
+    // ---------- HORIZONTAL TAB DRAGGING ----------
+    const handleTabsPointerEnter = () => {
+      // Pause automatic motion while the user is interacting with the row.
+      autoScrollPausedRef.current = true;
+    };
+
+    const handleTabsPointerLeave = () => {
+      if (!tabsDragRef.current.isPointerDown) {
+        autoScrollPausedRef.current = false;
+      }
+    };
+
+    // ---------- HORIZONTAL TAB DRAGGING ----------
+    
+const handleTabsPointerDown = (event) => {
+  // Only handle the primary mouse button or touch/pen input.
+  if (event.pointerType === "mouse" && event.button !== 0) return;
+
+  const container = tabsRef.current;
+  if (!container) return;
+
+  // Clear any stale click suppression from a previous drag.
+  suppressTabClickRef.current = false;
+
+  const drag = tabsDragRef.current;
+
+  drag.isPointerDown = true;
+  drag.startX = event.clientX;
+  drag.lastX = event.clientX;
+  drag.scrollLeft = container.scrollLeft;
+  drag.hasMoved = false;
+  drag.originalScrollBehavior = container.style.scrollBehavior;
+  drag.originalScrollSnapType = container.style.scrollSnapType;
+
+  autoScrollPausedRef.current = true;
+
+  container.style.scrollBehavior = "auto";
+  container.style.scrollSnapType = "none";
+  container.classList.add("is-dragging");
+
+  // IMPORTANT:
+  // Do not capture the pointer here.
+  // Normal button clicks must work without pointer capture.
+};
+
+
+    
+const handleTabsPointerMove = (event) => {
+  const container = tabsRef.current;
+  const drag = tabsDragRef.current;
+
+  if (!container || !drag.isPointerDown) return;
+
+  const totalDelta = event.clientX - drag.startX;
+
+  // Require an actual drag, not a small movement during a click.
+  if (!drag.hasMoved && Math.abs(totalDelta) > 8) {
+    drag.hasMoved = true;
+
+    // Capture only after the user actually starts dragging.
+    try {
+      container.setPointerCapture(event.pointerId);
+    } catch {
+      // Pointer capture may be unavailable.
+    }
+  }
+
+  if (!drag.hasMoved) return;
+
+  event.preventDefault();
+
+  // Move the row immediately with the mouse.
+  container.scrollLeft = drag.scrollLeft - totalDelta;
+  drag.lastX = event.clientX;
+};
+
+
+    const handleTabsPointerEnd = () => {
+      const container = tabsRef.current;
+      const drag = tabsDragRef.current;
+      if (!drag.isPointerDown) return;
+
+      const didDrag = drag.hasMoved;
+      drag.isPointerDown = false;
+      drag.hasMoved = false;
+      if (container) {
+        container.classList.remove("is-dragging");
+        container.style.scrollBehavior = drag.originalScrollBehavior;
+        container.style.scrollSnapType = drag.originalScrollSnapType;
+      }
+
+      // Don't let the mouse-up after a drag activate a tab.
+        if (didDrag) {
+        suppressTabClickRef.current = true;
+        window.setTimeout(() => {
+          suppressTabClickRef.current = false;
+        }, 250);
+      }
+
+      // Stay paused if the pointer is still over the tabs. Auto-scroll resumes
+      // after the pointer leaves the row.
+      autoScrollPausedRef.current = Boolean(container?.matches(":hover"));
+    };
+
+    const handleTabsClickCapture = (event) => {
+      if (!suppressTabClickRef.current) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      suppressTabClickRef.current = false;
+    };
+    // ---------- CONTINUOUS AUTO-SCROLL WHILE IDLE ----------
+    
+
 useEffect(() => {
   const container = tabsRef.current;
   if (!container) return;
 
-  // Defer to next frame so the .active class is committed to the DOM
-  const raf = requestAnimationFrame(() => {
-    const activeBtn = container.querySelector(".tab-btn.active");
-    if (!activeBtn) return;
+  let animationFrameId;
+  let previousTime = 0;
+  let direction = 1;
 
-    const containerRect = container.getBoundingClientRect();
-    const btnRect = activeBtn.getBoundingClientRect();
+  const SPEED = 30; // Pixels per second
 
-    // Button's left/right relative to the scrollable content (not the viewport)
-    const btnLeft = btnRect.left - containerRect.left + container.scrollLeft;
-    const btnRight = btnLeft + btnRect.width;
+  // Override smooth scrolling for immediate scrollLeft updates.
+  const previousBehavior = container.style.scrollBehavior;
+  container.style.scrollBehavior = "auto";
 
-    const viewLeft = container.scrollLeft;
-    const viewRight = viewLeft + container.clientWidth;
+  const animate = (time) => {
+    const elapsed = previousTime
+      ? Math.min((time - previousTime) / 1000, 0.05)
+      : 0;
 
-    // Leave a little breathing room on both sides
-    const PAD = 16;
-    const fullyVisible =
-      btnLeft >= viewLeft + PAD &&
-      btnRight <= viewRight - PAD;
+    previousTime = time;
 
-    if (fullyVisible) return;
+    const maxScroll = container.scrollWidth - container.clientWidth;
 
-    // Center the active tab if possible, else scroll just enough
-    const target = Math.max(
-      0,
-      Math.min(
-        btnLeft - (container.clientWidth - btnRect.width) / 2,
-        container.scrollWidth - container.clientWidth
-      )
-    );
+    // Pause only while the user is actively dragging.
+    if (
+      maxScroll > 2 &&
+      !tabsDragRef.current.isPointerDown
+    ) {
+      let nextPosition =
+        container.scrollLeft + direction * SPEED * elapsed;
 
-    container.scrollTo({ left: target, behavior: "smooth" });
-  });
+      if (nextPosition >= maxScroll) {
+        nextPosition = maxScroll;
+        direction = -1;
+      } else if (nextPosition <= 0) {
+        nextPosition = 0;
+        direction = 1;
+      }
 
-  return () => cancelAnimationFrame(raf);
-}, [activeService]);
+      container.scrollLeft = nextPosition;
+    }
+
+    animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animationFrameId = requestAnimationFrame(animate);
+
+  return () => {
+    cancelAnimationFrame(animationFrameId);
+    container.style.scrollBehavior = previousBehavior;
+  };
+}, []);
+
+
+  // ---------- 0. AUTO-SCROLL ACTIVE TAB INTO VIEW (LEFT-ALIGNED) ----------
+// useEffect(() => {
+//   const container = tabsRef.current;
+//   if (!container) return;
+
+//   // Defer to next frame so the .active class is committed to the DOM
+//   const raf = requestAnimationFrame(() => {
+//     const activeBtn = container.querySelector(".tab-btn.active");
+//     if (!activeBtn) return;
+
+//     const containerRect = container.getBoundingClientRect();
+//     const btnRect = activeBtn.getBoundingClientRect();
+
+//     // Button's left/right relative to the scrollable content (not the viewport)
+//     const btnLeft = btnRect.left - containerRect.left + container.scrollLeft;
+//     const btnRight = btnLeft + btnRect.width;
+
+//     const viewLeft = container.scrollLeft;
+//     const viewRight = viewLeft + container.clientWidth;
+
+//     // Leave a little breathing room on both sides
+//     const PAD = 16;
+//     const fullyVisible =
+//       btnLeft >= viewLeft + PAD &&
+//       btnRight <= viewRight - PAD;
+
+//     if (fullyVisible) return;
+
+//     // Center the active tab if possible, else scroll just enough
+//     const target = Math.max(
+//       0,
+//       Math.min(
+//         btnLeft - (container.clientWidth - btnRect.width) / 2,
+//         container.scrollWidth - container.clientWidth
+//       )
+//     );
+
+//     container.scrollTo({ left: target, behavior: "smooth" });
+//   });
+
+//   return () => cancelAnimationFrame(raf);
+// }, [activeService]);
 
     // ---------- 1. HERO LOAD + SCROLL ANIMATION ----------
     useEffect(() => {
@@ -492,14 +671,30 @@ useEffect(() => {
             </div>
 
             {/* ✅ Scrollable tabs row — services + other options inline, no dropdown */}
-            <div className="services-tabs" ref={tabsRef}>
+            <div
+              className="services-tabs"
+              ref={tabsRef}
+              // onPointerEnter={handleTabsPointerEnter}
+              // onPointerLeave={handleTabsPointerLeave}
+              onPointerDown={handleTabsPointerDown}
+              onPointerMove={handleTabsPointerMove}
+              onPointerUp={handleTabsPointerEnd}
+              onPointerCancel={handleTabsPointerEnd}
+              onLostPointerCapture={handleTabsPointerEnd}
+              onClickCapture={handleTabsClickCapture}
+            >
               {services.map((service) => (
                 <button
                   key={service.id}
                   type="button"
                   className={`tab-btn ${activeService.id === service.id ? "active" : ""}`}
                   onClick={() => setActiveService(service)}
-                  onMouseEnter={() => setActiveService(service)}
+                  onMouseEnter={() => {
+                    // Don't let hover-driven state changes fight with click-and-drag scrolling.
+                    if (!tabsDragRef.current.isPointerDown) {
+                      setActiveService(service);
+                    }
+                  }}
                   onFocus={() => setActiveService(service)}
                 >
                   {service.name}
@@ -520,30 +715,41 @@ useEffect(() => {
               ))}
             </div>
 
-            <Link
-              href={activeServiceJobsHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="view-link featured-view"
-            >
-              <div className="featured-service">
-                <div className="featured-image">
-                  <Image
-                    src={activeService.image}
-                    alt={activeService.name}
-                    className="featured-image-img"
-                    fill
-                    unoptimized
-                  />
-                  <div className="featured-overlay">
-                    <h3>{activeService.slug}</h3>
-                    <span className="featured-view">
-                      View Openings <ArrowUpRight size={18} />
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Link>
+            
+<Link
+  href={activeServiceJobsHref}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="career-opening-card career-opening-card--design3"
+>
+  <div className="career-opening-card__visual">
+    <Image
+      src={activeService.image}
+      alt={activeService.name}
+      fill
+      sizes="(max-width: 700px) 100vw, 1120px"
+      className="career-opening-card__image"
+      unoptimized
+    />
+    <div className="career-opening-card__image-overlay" />
+  </div>
+
+  <div className="career-opening-card__content">
+    <span className="career-opening-card__accent" />
+
+    <h3 className="career-opening-card__title">
+      {activeService.slug}
+    </h3>
+
+    <span className="career-opening-card__cta">
+      View Openings
+      <span className="career-opening-card__arrow">
+        <ArrowUpRight size={20} />
+      </span>
+    </span>
+  </div>
+</Link>
+
           </div>
         </section>
 
