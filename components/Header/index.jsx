@@ -24,7 +24,7 @@ import { useModal } from "@/context/ModalContext";
    ============================================================================ */
 function MobileMenuItems({ items, onNavigate }) {
   // Stack of { label, items, services? } — each level is a "panel"
-  const [stack, setStack] = useState([{ label: "Our Services", items: items || [] }]);
+  const [stack, setStack] = useState([{ label: "Menu", items: items || [] }]);
   const [direction, setDirection] = useState("forward");
 
   const current = stack[stack.length - 1];
@@ -77,7 +77,7 @@ function MobileMenuItems({ items, onNavigate }) {
           {stack.map((level, i) => (
             <span key={i} className="flex items-center gap-1">
               {i > 0 && <span className="text-gray-400">/</span>}
-              <button
+              {/* <button
                 type="button"
                 onClick={() => jumpTo(i)}
                 className={`px-1 ${
@@ -87,7 +87,7 @@ function MobileMenuItems({ items, onNavigate }) {
                 }`}
               >
                 {level.label}
-              </button>
+              </button> */}
             </span>
           ))}
         </nav>
@@ -547,36 +547,42 @@ export default function Header() {
                   className="d-flex align-items-end"
                   style={{ gap: "5px", width: "max-content" }}
                 >
-                  <Image
-                    src={logo}
-                    width={52}
-                    height={60}
-                    title="Liaisonbank"
-                    alt="Liaisonbank"
-                    priority
-                    className="lg-1"
-                    style={{
-                      width: "auto",
-                      height: "45px",
-                      objectFit: "contain",
-                      display: "block",
-                    }}
-                  />
+                  <div
+  className="d-flex align-items-end"
+  style={{ gap: "5px", width: "max-content" }}
+>
+  <Image
+    src={logo}
+    width={52}
+    height={60}
+    title="Liaisonbank"
+    alt="Liaisonbank"
+    priority
+    className="lg-1"
+    style={{
+      width: "auto",
+      height: "45px",
+      objectFit: "contain",
+      display: "block",
+    }}
+  />
 
-                  <Image
-                    src={isOpen ? whitename : name}
-                    width={140}
-                    height={35}
-                    title="Liaisonbank"
-                    alt="Liaisonbank"
-                    priority
-                    style={{
-                      width: "auto",
-                      height: "45px",
-                      objectFit: "contain",
-                      display: "block",
-                    }}
-                  />
+  <Image
+    src={name}
+    width={140}
+    height={35}
+    title="Liaisonbank"
+    alt="Liaisonbank"
+    priority
+    className="mobile-logo-name"
+    style={{
+      width: "auto",
+      height: "45px",
+      objectFit: "contain",
+      display: "block",
+    }}
+  />
+</div>
                 </div>
 
                 {/* OVAL LINE — full row width */}

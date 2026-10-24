@@ -827,6 +827,53 @@ section.ceo-message-full {
 }
 
 
+/* =========================================
+   MOBILE FIX — CEO VIEW PROFILE VISIBILITY
+   ========================================= */
+
+@media (max-width: 480px) {
+  section.ceo-message-full {
+    .ceo-full-quote-container {
+      /* Reserve enough space for quote + profile link */
+      min-height: 300px;
+      overflow: visible;
+    }
+
+    .ceo-full-quote-item.active {
+      overflow: visible;
+    }
+
+    .ceo-full-view-profile {
+      position: relative;
+      z-index: 5;
+      display: block;
+      width: 100%;
+      margin-top: 8px;
+      padding-bottom: 16px;
+      text-align: right;
+
+      .ceo-full-profile-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-top: 18px;
+        padding-bottom: 8px;
+        font-size: 16px;
+        line-height: 1.5;
+        white-space: nowrap;
+      }
+
+      .ceo-full-profile-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+
+
 
 
 
@@ -2404,7 +2451,7 @@ section.ceo-message-full {
       .certificate-section {
 
         .certificate-item {
-          width: 170px;
+          width: 130px;
         }
 
         .certificate-track {
@@ -2445,6 +2492,7 @@ section.ceo-message-full {
 
         .certificate-caption {
           font-size: 12px;
+          
         }
       }
     }

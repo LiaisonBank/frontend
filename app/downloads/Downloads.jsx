@@ -1430,6 +1430,169 @@ export default function Downloads() {
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        
+/* =========================================
+   MOBILE RESPONSIVENESS — DOWNLOADS PAGE
+   ========================================= */
+
+@media (max-width: 768px) {
+  /* Leave sufficient space below the fixed navbar */
+  .downloads-hero {
+    padding: 125px 0 55px;
+  }
+
+  /* Keep category filters in one horizontally scrollable row */
+  .filter-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 12px 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .filter-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-btn {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 44px;
+    padding: 9px 13px;
+    white-space: nowrap;
+  }
+
+  .filter-label {
+    font-size: 13px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  /* Reduce horizontal padding around the document */
+  .downloads-section {
+    padding: 20px 12px 40px;
+  }
+
+  .pdf-flipbook-card {
+    width: 100%;
+    min-width: 0;
+    border-radius: 12px;
+  }
+
+  .pdf-card-header {
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .pdf-title {
+    font-size: 1.1rem;
+    line-height: 1.35;
+  }
+
+  .pdf-description {
+    font-size: 0.85rem;
+    line-height: 1.55;
+  }
+
+  .pdf-actions {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .btn-download-pdf {
+    min-width: 0;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+
+  .flipbook-wrapper {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .flipbook-container {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .downloads-hero {
+    padding: 120px 0 45px;
+  }
+
+  .hero-title {
+    font-size: 1.8rem;
+    line-height: 1.2;
+  }
+
+  .hero-description {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    padding: 0 12px;
+  }
+
+  /* Readable filter labels without wrapping */
+  .filter-wrapper {
+    gap: 7px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .filter-btn {
+    min-height: 42px;
+    padding: 9px 12px;
+  }
+
+  .filter-label {
+    font-size: 12px;
+  }
+
+  .downloads-section {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .pdf-card-header {
+    padding: 14px 12px;
+  }
+
+  .pdf-actions {
+    align-items: stretch;
+  }
+
+  .btn-fullscreen {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .btn-download-pdf {
+    flex: 1;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  .pdf-viewer-container {
+    min-height: 150px;
+  }
+
+  .page-btn-left {
+    left: 5px;
+  }
+
+  .page-btn-right {
+    right: 5px;
+  }
+}
+
       `}</style>
     </>
   );
