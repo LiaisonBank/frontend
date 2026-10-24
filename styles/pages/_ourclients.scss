@@ -308,3 +308,40 @@
     }
   }
 }
+
+
+/* =========================================
+   MOBILE: 3 CLIENTS IN ONE ROW
+   ========================================= */
+
+@media (max-width: 600px) {
+  .client {
+    .client-section {
+      padding: 24px 8px;
+
+      .client-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        width: 100%;
+        max-width: 100%;
+        gap: 8px;
+        justify-content: stretch;
+        align-items: stretch;
+      }
+
+      .client-item {
+        width: 100% !important;
+        min-width: 0;
+        height: 90px;
+        padding: 8px;
+        border-radius: 8px;
+
+        img {
+          max-width: 100%;
+          max-height: 65%;
+          object-fit: contain;
+        }
+      }
+    }
+  }
+}

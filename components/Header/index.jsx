@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState  } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -24,7 +24,7 @@ import { useModal } from "@/context/ModalContext";
    ============================================================================ */
 function MobileMenuItems({ items, onNavigate }) {
   // Stack of { label, items, services? } — each level is a "panel"
-  const [stack, setStack] = useState([{ label: "Our Services", items: items || [] }]);
+  const [stack, setStack] = useState([{ label: "Menu", items: items || [] }]);
   const [direction, setDirection] = useState("forward");
 
   const current = stack[stack.length - 1];
@@ -77,7 +77,7 @@ function MobileMenuItems({ items, onNavigate }) {
           {stack.map((level, i) => (
             <span key={i} className="flex items-center gap-1">
               {i > 0 && <span className="text-gray-400">/</span>}
-              <button
+              {/* <button
                 type="button"
                 onClick={() => jumpTo(i)}
                 className={`px-1 ${
@@ -87,7 +87,7 @@ function MobileMenuItems({ items, onNavigate }) {
                 }`}
               >
                 {level.label}
-              </button>
+              </button> */}
             </span>
           ))}
         </nav>
@@ -181,22 +181,20 @@ function FeaturedProjectsPanel({ node, animClass, onNavigate }) {
         <section key={group.key} className="mb-2">
           {/* Group header */}
           <div
-            className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wide ${
-              group.key === "completed"
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wide ${group.key === "completed"
                 ? "bg-green-50 text-green-700"
                 : group.key === "inprogress"
-                ? "bg-amber-50 text-amber-700"
-                : "bg-blue-50 text-blue-700"
-            }`}
+                  ? "bg-amber-50 text-amber-700"
+                  : "bg-blue-50 text-blue-700"
+              }`}
           >
             <span
-              className={`inline-block w-2 h-2 rounded-full ${
-                group.key === "completed"
+              className={`inline-block w-2 h-2 rounded-full ${group.key === "completed"
                   ? "bg-green-500"
                   : group.key === "inprogress"
-                  ? "bg-amber-500"
-                  : "bg-blue-500"
-              }`}
+                    ? "bg-amber-500"
+                    : "bg-blue-500"
+                }`}
             />
             {group.label}
             <span className="ml-auto text-[10px] font-normal opacity-70">
@@ -441,6 +439,30 @@ export default function Header() {
     setServiceModalOpen(false);
   }, [clearMegaCloseTimer, setServiceModalOpen]);
 
+
+  // Close the mobile menu when switching to desktop view
+useEffect(() => {
+  const desktopMedia = window.matchMedia("(min-width: 1280px)");
+
+  const handleViewportChange = (event) => {
+    if (event.matches) {
+      setIsOpen(false);
+      closeAllMenus();
+    }
+  };
+
+  desktopMedia.addEventListener("change", handleViewportChange);
+
+  // Ensure the mobile menu is closed on desktop initially
+  if (desktopMedia.matches) {
+    setIsOpen(false);
+    closeAllMenus();
+  }
+
+  return () => {
+    desktopMedia.removeEventListener("change", handleViewportChange);
+  };
+}, [closeAllMenus]);
   /* --------------------------------------------------------------------------
      Navigation
      -------------------------------------------------------------------------- */
@@ -517,9 +539,8 @@ export default function Header() {
           ====================================================================== */}
 
       <header
-        className={`fixed w-full z-50 py-2 transition-all ${
-          isSticky ? "is-sticky" : ""
-        }`}
+        className={`fixed w-full z-50 py-2 transition-all ${isSticky ? "is-sticky" : ""
+          }`}
       >
         <div className="container-fluid mx-auto">
           <nav key={pathname} className="flex items-center justify-between h-16">
@@ -547,40 +568,46 @@ export default function Header() {
                   className="d-flex align-items-end"
                   style={{ gap: "5px", width: "max-content" }}
                 >
-                  <Image
-                    src={logo}
-                    width={52}
-                    height={60}
-                    title="Liaisonbank"
-                    alt="Liaisonbank"
-                    priority
-                    className="lg-1"
-                    style={{
-                      width: "auto",
-                      height: "45px",
-                      objectFit: "contain",
-                      display: "block",
-                    }}
-                  />
+                  <div
+                    className="d-flex align-items-end"
+                    style={{ gap: "5px", width: "max-content" }}
+                  >
+                    <Image
+                      src={logo}
+                      width={52}
+                      height={60}
+                      title="Liaisonbank"
+                      alt="Liaisonbank"
+                      priority
+                      className="lg-1"
+                      style={{
+                        width: "auto",
+                        height: "45px",
+                        objectFit: "contain",
+                        display: "block",
+                      }}
+                    />
 
-                  <Image
-                    src={isOpen ? whitename : name}
-                    width={140}
-                    height={35}
-                    title="Liaisonbank"
-                    alt="Liaisonbank"
-                    priority
-                    style={{
-                      width: "auto",
-                      height: "45px",
-                      objectFit: "contain",
-                      display: "block",
-                    }}
-                  />
+                    <Image
+                      src={name}
+                      width={140}
+                      height={35}
+                      title="Liaisonbank"
+                      alt="Liaisonbank"
+                      priority
+                      className="mobile-logo-name"
+                      style={{
+                        width: "auto",
+                        height: "45px",
+                        objectFit: "contain",
+                        display: "block",
+                      }}
+                    />
+                  </div>
                 </div>
 
                 {/* OVAL LINE — full row width */}
-               <svg
+                <svg
                   viewBox="0 0 250 12"
                   preserveAspectRatio="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -662,21 +689,21 @@ export default function Header() {
                         onMouseLeave={hasSubmenu ? closeMegaMenu : undefined}
                       >
                         {link.name === "Our Services" ? (
-  <button
-    type="button"
-    className="nav-link bg-transparent border-0 cursor-pointer flex items-center gap-1"
-    aria-haspopup="true"
-    aria-expanded={isActive}
-    onClick={() => handleNavigation("/our-services")}
-  >
-    {link.name}
-    <ChevronDown
-      size={16}
-      className="nav-arrow"
-      aria-hidden="true"
-    />
-  </button>
-) : link.href ? (
+                          <button
+                            type="button"
+                            className="nav-link bg-transparent border-0 cursor-pointer flex items-center gap-1"
+                            aria-haspopup="true"
+                            aria-expanded={isActive}
+                            onClick={() => handleNavigation("/our-services")}
+                          >
+                            {link.name}
+                            <ChevronDown
+                              size={16}
+                              className="nav-arrow"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        ) : link.href ? (
                           <button
                             type="button"
                             className="nav-link bg-transparent border-0 cursor-pointer"
@@ -752,16 +779,14 @@ export default function Header() {
                                         </h4>
 
                                         <ul
-                                          className={`mega-section ${
-                                            isLargeList ? "has-more" : ""
-                                          }`}
+                                          className={`mega-section ${isLargeList ? "has-more" : ""
+                                            }`}
                                         >
                                           {sub.items.map((item, index) => (
                                             <li
                                               key={item.name || index}
-                                              className={`mega-item ${
-                                                item.children ? "has-child" : ""
-                                              }`}
+                                              className={`mega-item ${item.children ? "has-child" : ""
+                                                }`}
                                             >
                                               <button
                                                 type="button"
@@ -785,11 +810,10 @@ export default function Header() {
                                                             child.name ||
                                                             childIndex
                                                           }
-                                                          className={`mega-item ${
-                                                            child.children
+                                                          className={`mega-item ${child.children
                                                               ? "has-child2"
                                                               : ""
-                                                          }`}
+                                                            }`}
                                                         >
                                                           <button
                                                             type="button"
@@ -797,7 +821,7 @@ export default function Header() {
                                                             onClick={() =>
                                                               handleNavigation(
                                                                 child.href ||
-                                                                  "/",
+                                                                "/",
                                                               )
                                                             }
                                                           >
@@ -827,7 +851,7 @@ export default function Header() {
                                                                         onClick={() =>
                                                                           handleNavigation(
                                                                             subChild.href ||
-                                                                              "/",
+                                                                            "/",
                                                                           )
                                                                         }
                                                                       >
@@ -932,9 +956,8 @@ export default function Header() {
 
         <div
           id="myNav"
-          className={`fixed top-0 right-0 h-screen w-full shadow-xl transition-transform duration-300 ${
-            isOpen ? "menu-open translate-x-0" : "translate-x-full"
-          }`}
+          className={`fixed top-0 right-0 h-screen w-full shadow-xl transition-transform duration-300 ${isOpen ? "menu-open translate-x-0" : "translate-x-full"
+            }`}
           aria-hidden={!isOpen}
         >
           <div className="overflow-y-auto w-full h-full">

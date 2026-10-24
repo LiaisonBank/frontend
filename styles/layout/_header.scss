@@ -962,3 +962,343 @@ header {
     font-size: 13px;
   }
 }
+/* ==========================================================
+   LIAISON BANK — MOBILE NAVIGATION ONLY
+   Desktop layout and React functionality remain unchanged.
+   ========================================================== */
+
+@media (max-width: 767px) {
+  #myNav {
+    background: #fff !important;
+    border-left: 1px solid #eee7df;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #myNav > .overflow-y-auto {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #myNav .overlay-content.container {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 100%;
+    margin: 0 !important;
+    padding: 0 0 20px !important;
+    box-sizing: border-box;
+  }
+
+  #myNav .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    background: #fff;
+    color: #202a32;
+  }
+
+  /* Breadcrumb / menu heading */
+  #myNav .mobile-menu > div:first-child {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 62px;
+    padding: 14px 22px !important;
+    background: #fff !important;
+    border: 0 !important;
+    border-bottom: 1px solid #eee8e1 !important;
+    box-sizing: border-box;
+  }
+
+  // #myNav .mobile-menu > div:first-child::before {
+  //   content: "";
+  //   flex: 0 0 3px;
+  //   width: 3px;
+  //   height: 27px;
+  //   border-radius: 2px;
+  //   background: linear-gradient(
+  //     180deg,
+  //     #ffb52a 0%,
+  //     #fffefe 100%
+  //   );
+  // }
+
+  #myNav .mobile-menu > div:first-child > button {
+    display: inline-flex;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: #f7f4f0 !important;
+    color: #26313a !important;
+    box-shadow: none !important;
+    transition: background-color 180ms ease;
+  }
+
+  #myNav .mobile-menu > div:first-child > button:hover {
+    background: #fff0df !important;
+    color: #c96314 !important;
+  }
+
+  #myNav .mobile-menu > div:first-child > nav {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 7px !important;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  #myNav .mobile-menu > div:first-child > nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  #myNav .mobile-menu > div:first-child > nav > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px !important;
+  }
+
+  #myNav .mobile-menu > div:first-child > nav > span > span {
+    color: #d5c9bd !important;
+  }
+
+  #myNav .mobile-menu > div:first-child > nav button {
+    padding: 4px 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #606970 !important;
+    font-size: 11px !important;
+    font-weight: 650 !important;
+    letter-spacing: 0.13em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  #myNav .mobile-menu > div:first-child
+    > nav > span:last-child > button {
+    color: #bf5b13 !important;
+  }
+
+  /* Display MENU instead of repeating the root heading */
+  #myNav .mobile-menu > div:first-child
+    > nav > span:first-child > button {
+    font-size: 0 !important;
+    letter-spacing: 0 !important;
+  }
+
+  #myNav .mobile-menu > div:first-child
+    > nav > span:first-child > button::after {
+    content: "MENU";
+    font-size: 11px;
+    font-weight: 750;
+    line-height: 1.3;
+    letter-spacing: 0.16em;
+  }
+
+  /* Navigation list */
+  #myNav .mobile-menu > .relative {
+    flex: 1 0 auto;
+    width: 100%;
+    padding: 4px 0 22px;
+    background: #fff;
+  }
+
+  #myNav .mobile-menu ul {
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+
+  #myNav .mobile-menu li {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+
+  /* Flat menu rows — no cards or rounded boxes */
+  #myNav .mobile-menu li > button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    min-height: 62px;
+    margin: 0 !important;
+    padding: 17px 24px !important;
+    border: 0 !important;
+    border-bottom: 1px solid #eee9e3 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #202a32 !important;
+    font-size: 16px !important;
+    font-weight: 520 !important;
+    line-height: 1.4;
+    letter-spacing: 0.005em;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      padding-left 180ms ease,
+      color 180ms ease,
+      background-color 180ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Subtle brand accent */
+  /* Remove hyphens before navigation links */
+#myNav .mobile-menu li > button::before {
+  content: none !important;
+  display: none !important;
+}
+
+  /* Consistent navigation arrow */
+  #myNav .mobile-menu li > button::after {
+    content: "";
+    display: block;
+    flex: 0 0 7px;
+    width: 7px;
+    height: 7px;
+    margin-left: auto;
+    border-top: 1.5px solid #a5a09a;
+    border-right: 1.5px solid #a5a09a;
+    transform: rotate(45deg);
+    transition:
+      border-color 180ms ease,
+      transform 180ms ease;
+  }
+
+  #myNav .mobile-menu li > button > svg {
+    display: none !important;
+  }
+
+  #myNav .mobile-menu li > button > span {
+    min-width: 0;
+  }
+
+  /* Hover, keyboard focus and touch feedback */
+  #myNav .mobile-menu li > button:hover,
+  #myNav .mobile-menu li > button:focus-visible {
+    padding-left: 29px !important;
+    background: #fffaf5 !important;
+    color: #bd5b14 !important;
+  }
+
+  // #myNav .mobile-menu li > button:hover::before,
+  // #myNav .mobile-menu li > button:focus-visible::before {
+  //   opacity: 1;
+  //   transform: scaleX(1);
+  // }
+
+  #myNav .mobile-menu li > button:hover::after,
+  #myNav .mobile-menu li > button:focus-visible::after {
+    border-color: #d56a18;
+    transform: translateX(2px) rotate(45deg);
+  }
+
+  #myNav .mobile-menu li > button:active {
+    background: #fff2e4 !important;
+  }
+
+  #myNav .mobile-menu li > button:focus-visible {
+    outline: 2px solid #ef7f1a;
+    outline-offset: -3px;
+  }
+
+  #myNav .mobile-menu li:last-child > button {
+    border-bottom-color: transparent !important;
+  }
+
+  /* Keep long labels inside narrow screens */
+  #myNav .mobile-menu li > button .truncate,
+  #myNav .mobile-menu li > button .flex-1 {
+    min-width: 0;
+  }
+
+  @media (max-width: 380px) {
+    #myNav .mobile-menu > div:first-child {
+      padding-right: 17px !important;
+      padding-left: 17px !important;
+    }
+
+    #myNav .mobile-menu li > button {
+      min-height: 59px;
+      padding: 16px 18px !important;
+      font-size: 15px !important;
+    }
+
+    #myNav .mobile-menu li > button:hover,
+    #myNav .mobile-menu li > button:focus-visible {
+      padding-left: 22px !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #myNav .mobile-menu li > button,
+    #myNav .mobile-menu li > button::before,
+    #myNav .mobile-menu li > button::after,
+    #myNav .mobile-menu > div:first-child > button {
+      transition: none !important;
+    }
+  }
+}
+/* Reduce mobile hamburger / close (X) icon size */
+/* Make mobile hamburger lines smaller */
+@media (max-width: 767px) {
+  header button.hamburger span {
+    width: 25px !important;
+    height: 1.5px !important;
+  }
+
+  /* Keep the close X small when opened */
+  header button.hamburger.active span {
+    width: 25px !important;
+    height: 1.5px !important;
+  }
+  .lg-1 {
+    height: 34px !important;
+    width: auto !important;
+  }
+
+  .mobile-logo-name {
+    height: 32px !important;
+    width: auto !important;
+  }
+}
+/* Remove the empty root breadcrumb bar on mobile */
+@media (max-width: 767px) {
+  #myNav .mobile-menu > div:first-child:not(
+    :has(button[aria-label="Go back"])
+  ) {
+    display: none !important;
+  }
+
+  /* Keep nested-menu breadcrumbs visible */
+  #myNav .mobile-menu > div:first-child:has(
+    button[aria-label="Go back"]
+  ) {
+    min-height: 48px !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+  }
+
+  /* Remove extra space above the navigation links */
+  #myNav .mobile-menu > .relative {
+    padding-top: 30 !important;
+  }
+}
