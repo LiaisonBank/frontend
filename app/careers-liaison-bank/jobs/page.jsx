@@ -15,6 +15,130 @@ import "./jobs.scss";
 import JobDetailsModal from "./JobDetailsModal";
 import AuthModal from "../AuthModal";
 
+// ─────────────────────────────────────────────────────────────
+// Helpers (module scope so JobCard can use them too)
+// ─────────────────────────────────────────────────────────────
+const getServiceType = (job) => job.custom_service_type || job.serviceType || "";
+
+const getJobSkills = (job) => {
+  const skills = [];
+  if (job.custom_skills) {
+    if (typeof job.custom_skills === "string")
+      skills.push(...job.custom_skills.split("\n").filter((s) => s.trim()));
+    else if (Array.isArray(job.custom_skills))
+      skills.push(...job.custom_skills.filter((s) => s));
+  }
+  if (job.skills_required) {
+    if (typeof job.skills_required === "string")
+      skills.push(...job.skills_required.split("\n").filter((s) => s.trim()));
+    else if (Array.isArray(job.skills_required))
+      skills.push(...job.skills_required.filter((s) => s));
+  }
+  if (job.skills) {
+    if (typeof job.skills === "string")
+      skills.push(...job.skills.split("\n").filter((s) => s.trim()));
+    else if (Array.isArray(job.skills))
+      skills.push(...job.skills.filter((s) => s));
+  }
+  return skills;
+};
+
+const getJobTitle = (job) =>
+  job.job_title ||
+  job.title ||
+  job.job_opening_template ||
+  job.designation ||
+  "";
+
+const getFormattedJobTitle = (job) => {
+  const title = getJobTitle(job) || "Position";
+  return title.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+const getJobDescription = (job) => job.description || job.job_description || "";
+
+const getExperience = (job) => {
+  if (
+    job.custom_min_experience !== undefined &&
+    job.custom_max_experience !== undefined
+  ) {
+    const min = job.custom_min_experience;
+    const max = job.custom_max_experience;
+    if (min && max) return `${min} - ${max} years`;
+    if (min) return `${min}+ years`;
+    if (max) return `Up to ${max} years`;
+  }
+  return job.experience_level || job.experience || "Not specified";
+};
+
+const getOpenings = (job) => job.vacancies || job.openings || 1;
+
+// Stable key for any job object
+const getJobKey = (job, fallback = "") =>
+  job?.__key || job?.id || job?.name || `job-${fallback}`;
+
+// ─────────────────────────────────────────────────────────────
+// JobCard (shared between matching + other grids)
+// ─────────────────────────────────────────────────────────────
+function JobCard({ job, onView, variant = "match" }) {
+  return (
+    <div
+      className={`job-card card variant-interactive-ring ${
+        variant === "other" ? "job-card--other" : ""
+      }`}
+    >
+      <div className="card-header">
+        <h2>{getFormattedJobTitle(job)}</h2>
+      </div>
+      <div className="job-card-body card-body">
+        <div className="job-meta">
+          {getOpenings(job) && (
+            <div className="job-meta-item">
+              <Users size={14} />
+              <span>
+                {getOpenings(job)}{" "}
+                {getOpenings(job) === 1 ? "Opening" : "Openings"}
+              </span>
+            </div>
+          )}
+          {getExperience(job) && (
+            <div className="job-meta-item">
+              <Briefcase size={14} />
+              <span>{getExperience(job)}</span>
+            </div>
+          )}
+        </div>
+
+        <p className="job-description">
+          {getJobDescription(job).length > 120
+            ? `${getJobDescription(job).substring(0, 120)}...`
+            : getJobDescription(job) || "No description available"}
+        </p>
+
+        <div
+          className="job-footer"
+          onClick={onView}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onView();
+            }
+          }}
+        >
+          <button type="button" className="view-job-btn">
+            View Details <ArrowUpRight size={16} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Main Page Content
+// ─────────────────────────────────────────────────────────────
 function JobsPageContent() {
   const searchParams = useSearchParams();
   const serviceParam = searchParams.get("service");
@@ -22,6 +146,7 @@ function JobsPageContent() {
 
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
+  const [otherJobs, setOtherJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -36,7 +161,7 @@ function JobsPageContent() {
   );
   const [sortOrder, setSortOrder] = useState("newest");
 
-  // Search Animation State
+  // Search animation state
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchInputRef = useRef(null);
   const searchWrapperRef = useRef(null);
@@ -47,7 +172,9 @@ function JobsPageContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
-  // Fetch jobs from API
+  // ───────────────────────────────────────────────────────────
+  // Fetch jobs
+  // ───────────────────────────────────────────────────────────
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -77,8 +204,18 @@ function JobsPageContent() {
           jobsData = data.message;
         }
 
-        setJobs(jobsData);
-        setFilteredJobs(jobsData);
+        // Attach a stable unique key to every job
+        const normalized = jobsData.map((job, i) => ({
+          ...job,
+          __key:
+            job.id ||
+            job.name ||
+            `job-${i}-${getJobTitle(job) || "untitled"}`,
+        }));
+
+        setJobs(normalized);
+        setFilteredJobs(normalized);
+        setOtherJobs([]);
         setError(null);
       } catch (err) {
         console.error("Error fetching jobs:", err);
@@ -91,50 +228,13 @@ function JobsPageContent() {
     fetchJobs();
   }, []);
 
-  // Helper functions
-  const getServiceType = useCallback(
-    (job) => job.custom_service_type || job.serviceType || "",
-    []
-  );
-
-  const getJobSkills = useCallback((job) => {
-    const skills = [];
-    if (job.custom_skills) {
-      if (typeof job.custom_skills === "string")
-        skills.push(...job.custom_skills.split("\n").filter((s) => s.trim()));
-      else if (Array.isArray(job.custom_skills))
-        skills.push(...job.custom_skills.filter((s) => s));
-    }
-    if (job.skills_required) {
-      if (typeof job.skills_required === "string")
-        skills.push(...job.skills_required.split("\n").filter((s) => s.trim()));
-      else if (Array.isArray(job.skills_required))
-        skills.push(...job.skills_required.filter((s) => s));
-    }
-    if (job.skills) {
-      if (typeof job.skills === "string")
-        skills.push(...job.skills.split("\n").filter((s) => s.trim()));
-      else if (Array.isArray(job.skills))
-        skills.push(...job.skills.filter((s) => s));
-    }
-    return skills;
-  }, []);
-
-  const getJobTitle = useCallback(
-    (job) =>
-      job.job_title ||
-      job.title ||
-      job.job_opening_template ||
-      job.designation ||
-      "",
-    []
-  );
-
-  // Filter and sort jobs
+  // ───────────────────────────────────────────────────────────
+  // Filter + split into matching / non-matching
+  // ───────────────────────────────────────────────────────────
   useEffect(() => {
     let result = jobs;
 
-    // 1. Department Filter
+    // 1. Department
     if (selectedDepartment) {
       const deptLower = selectedDepartment.toLowerCase().trim();
       result = result.filter((job) => {
@@ -143,7 +243,7 @@ function JobsPageContent() {
       });
     }
 
-    // 2. Service Type Filter
+    // 2. Service Type
     if (selectedServiceType) {
       const serviceLower = selectedServiceType.toLowerCase().trim();
       result = result.filter((job) => {
@@ -152,11 +252,11 @@ function JobsPageContent() {
       });
     }
 
-    // 3. Search Filter
+    // 3. Search
     if (searchTerm) {
       const term = searchTerm.toLowerCase().trim();
       if (term !== "") {
-        const searchWords = term.split(" ").filter((word) => word.length > 0);
+        const searchWords = term.split(" ").filter((w) => w.length > 0);
         result = result.filter((job) => {
           const title = getJobTitle(job).toLowerCase();
           const department = (job.department || "").toLowerCase();
@@ -165,10 +265,10 @@ function JobsPageContent() {
 
           if (searchWords.length > 1) {
             return (
-              searchWords.every((word) => title.includes(word)) ||
-              searchWords.every((word) => department.includes(word)) ||
-              searchWords.every((word) => skillsString.includes(word)) ||
-              searchWords.every((word) => serviceType.includes(word))
+              searchWords.every((w) => title.includes(w)) ||
+              searchWords.every((w) => department.includes(w)) ||
+              searchWords.every((w) => skillsString.includes(w)) ||
+              searchWords.every((w) => serviceType.includes(w))
             );
           }
           return (
@@ -181,7 +281,7 @@ function JobsPageContent() {
       }
     }
 
-    // 4. Location Filter
+    // 4. Location
     if (selectedLocation) {
       result = result.filter((job) => (job.location || "") === selectedLocation);
     }
@@ -200,8 +300,38 @@ function JobsPageContent() {
           new Date(b.posted_on || b.creation)
       );
     }
-    console.log("Filtered Jobs:", result);
-    setFilteredJobs(result);
+
+    const hasActiveFilter =
+      selectedDepartment ||
+      selectedServiceType ||
+      selectedLocation ||
+      searchTerm;
+
+    if (hasActiveFilter) {
+      const matchKeys = new Set(result.map((job) => getJobKey(job)));
+      const nonMatching = jobs.filter((job) => !matchKeys.has(getJobKey(job)));
+
+      // Keep the same sort for "other" list
+      if (sortOrder === "newest") {
+        nonMatching.sort(
+          (a, b) =>
+            new Date(b.posted_on || b.creation) -
+            new Date(a.posted_on || a.creation)
+        );
+      } else if (sortOrder === "oldest") {
+        nonMatching.sort(
+          (a, b) =>
+            new Date(a.posted_on || a.creation) -
+            new Date(b.posted_on || b.creation)
+        );
+      }
+
+      setFilteredJobs(result);
+      setOtherJobs(nonMatching);
+    } else {
+      setFilteredJobs(result);
+      setOtherJobs([]);
+    }
   }, [
     searchTerm,
     selectedLocation,
@@ -209,24 +339,36 @@ function JobsPageContent() {
     selectedServiceType,
     sortOrder,
     jobs,
-    getJobTitle,
-    getJobSkills,
-    getServiceType,
   ]);
 
+  // ───────────────────────────────────────────────────────────
   // Unique filter values
+  // ───────────────────────────────────────────────────────────
   const departments = useMemo(
     () => [...new Set(jobs.map((job) => job.department).filter(Boolean))],
     [jobs]
   );
 
   const serviceTypes = useMemo(
-    () => [...new Set([...jobs.map((job) => getServiceType(job)).filter(Boolean), "AMC"])].sort(),
-    [jobs, getServiceType]
+    () =>
+      [
+        ...new Set(
+          jobs.map((job) => getServiceType(job)).filter(Boolean)
+        ),
+        "AMC",
+      ].sort(),
+    [jobs]
   );
 
-  // --- Handlers ---
+  // Combined list used for modal navigation across BOTH grids
+  const allVisibleJobs = useMemo(
+    () => [...filteredJobs, ...otherJobs],
+    [filteredJobs, otherJobs]
+  );
 
+  // ───────────────────────────────────────────────────────────
+  // Handlers
+  // ───────────────────────────────────────────────────────────
   const handleServiceTypeChange = useCallback(
     (e) => {
       const newService = e.target.value;
@@ -238,13 +380,10 @@ function JobsPageContent() {
           const jobDept = job.department;
           return jobService === newService && jobDept === selectedDepartment;
         });
-
-        if (!isValid) {
-          setSelectedDepartment("");
-        }
+        if (!isValid) setSelectedDepartment("");
       }
     },
-    [jobs, selectedDepartment, getServiceType]
+    [jobs, selectedDepartment]
   );
 
   const handleDepartmentChange = useCallback(
@@ -258,13 +397,10 @@ function JobsPageContent() {
           const jobDept = job.department;
           return jobDept === newDept && jobService === selectedServiceType;
         });
-
-        if (!isValid) {
-          setSelectedServiceType("");
-        }
+        if (!isValid) setSelectedServiceType("");
       }
     },
-    [jobs, selectedServiceType, getServiceType]
+    [jobs, selectedServiceType]
   );
 
   const clearFilters = useCallback(() => {
@@ -291,12 +427,10 @@ function JobsPageContent() {
 
   const handleSearchChange = useCallback((e) => {
     setSearchTerm(e.target.value);
-    // Reset dropdowns when user types in search
     setSelectedServiceType("");
     setSelectedDepartment("");
   }, []);
 
-  // Close search on Escape key
   const handleSearchKeyDown = useCallback(
     (e) => {
       if (e.key === "Escape") {
@@ -310,7 +444,7 @@ function JobsPageContent() {
     [searchTerm]
   );
 
-  // Close search when clicking outside
+  // Close search on outside click
   useEffect(() => {
     if (!isSearchExpanded) return;
 
@@ -320,58 +454,53 @@ function JobsPageContent() {
         !searchWrapperRef.current.contains(event.target)
       ) {
         setIsSearchExpanded(false);
-        if (searchTerm) {
-          setSearchTerm("");
-        }
+        if (searchTerm) setSearchTerm("");
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
+    return () =>
       document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, [isSearchExpanded, searchTerm]);
 
-  const getFormattedJobTitle = useCallback(
-    (job) => {
-      const title = getJobTitle(job) || "Position";
-      return title
-        .toLowerCase()
-        .replace(/\b\w/g, (char) => char.toUpperCase());
+  // Open modal — index is relative to allVisibleJobs
+  const handleViewDetails = useCallback(
+    (job, indexInAll) => {
+      setSelectedJob(job);
+      setSelectedJobIndex(indexInAll);
+      setIsModalOpen(true);
     },
-    [getJobTitle]
-  );
-
-  const getJobDescription = useCallback(
-    (job) => job.description || job.job_description || "",
     []
   );
 
-  const getExperience = useCallback((job) => {
-    if (
-      job.custom_min_experience !== undefined &&
-      job.custom_max_experience !== undefined
-    ) {
-      const min = job.custom_min_experience;
-      const max = job.custom_max_experience;
-      if (min && max) return `${min} - ${max} years`;
-      if (min) return `${min}+ years`;
-      if (max) return `Up to ${max} years`;
+  const goToPrevious = useCallback(() => {
+    if (selectedJobIndex > 0) {
+      const newIndex = selectedJobIndex - 1;
+      setSelectedJobIndex(newIndex);
+      setSelectedJob(allVisibleJobs[newIndex]);
     }
-    return job.experience_level || job.experience || "Not specified";
-  }, []);
+  }, [selectedJobIndex, allVisibleJobs]);
 
-  const getOpenings = useCallback(
-    (job) => job.vacancies || job.openings || 1,
-    []
+  const goToNext = useCallback(() => {
+    if (selectedJobIndex < allVisibleJobs.length - 1) {
+      const newIndex = selectedJobIndex + 1;
+      setSelectedJobIndex(newIndex);
+      setSelectedJob(allVisibleJobs[newIndex]);
+    }
+  }, [selectedJobIndex, allVisibleJobs]);
+
+  const hasActiveFilter = !!(
+    selectedDepartment ||
+    selectedServiceType ||
+    selectedLocation ||
+    searchTerm
   );
 
-  const handleViewDetails = useCallback((job, index) => {
-    setSelectedJob(job);
-    setSelectedJobIndex(index);
-    setIsModalOpen(true);
-  }, []);
+  const isEmpty = filteredJobs.length === 0 && otherJobs.length === 0;
 
+  // ───────────────────────────────────────────────────────────
+  // Render
+  // ───────────────────────────────────────────────────────────
   return (
     <div className="jobs-page">
       {/* Hero Section */}
@@ -385,29 +514,12 @@ function JobsPageContent() {
         </div>
 
         <div className="container">
-          {/* AnimatedSearch pinned to top-right of hero */}
-          {/* <div className="animated-search-corner">
-            <AnimatedSearch
-              value={searchTerm}
-              onChange={(event) => {
-                setSearchTerm(event.target.value);
-              }}
-              onSubmit={(query) => {
-                setSearchTerm(query);
-              }}
-              placeholder="Search jobs..."
-              ariaLabel="Search jobs by title, skills, or department"
-              closeOnSubmit={false}
-              closeOnOutsideClick={false}
-            />
-          </div> */}
-
           <div className="hero-content">
             <h1>Build Your Career with LiaisonBank</h1>
             <p>
               Explore rewarding career opportunities and join a team of
-              professionals driving business, licensing, compliance, and liaison
-              services forward.
+              professionals driving business, licensing, compliance, and
+              liaison services forward.
             </p>
           </div>
 
@@ -446,10 +558,17 @@ function JobsPageContent() {
                 </select>
               </div>
 
-              {/* Job Count & Clear */}
+              {/* Count + Clear */}
               <div className="filter-group action-group">
                 <label className="jobs-count">
-                  {filteredJobs.length} OPEN JOBS
+                  {filteredJobs.length} MATCHING JOB
+                  {filteredJobs.length === 1 ? "" : "S"}
+                  {otherJobs.length > 0 && (
+                    <span className="jobs-count-other">
+                      {" · "}
+                      {otherJobs.length} other
+                    </span>
+                  )}
                 </label>
                 <button
                   type="button"
@@ -463,7 +582,9 @@ function JobsPageContent() {
               {/* Search Bar (Animated) */}
               <div
                 ref={searchWrapperRef}
-                className={`search-wrapper ${isSearchExpanded ? "expanded" : ""}`}
+                className={`search-wrapper ${
+                  isSearchExpanded ? "expanded" : ""
+                }`}
               >
                 <input
                   ref={searchInputRef}
@@ -500,7 +621,11 @@ function JobsPageContent() {
           </div>
         </div>
         <div className="hero-shape">
-          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            viewBox="0 0 1440 120"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
               d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
               fill="white"
@@ -529,87 +654,88 @@ function JobsPageContent() {
                 Try Again
               </button>
             </div>
-          ) : filteredJobs.length === 0 ? (
+          ) : isEmpty ? (
             <div className="empty-state">
               <Briefcase size={56} className="empty-icon" />
-              <h3>No jobs found</h3>
+              <h3>No jobs available</h3>
               <p className="error-of-filter">
-                {selectedDepartment
-                  ? `No openings available for ${selectedDepartment} at the moment. Try exploring other services.`
-                  : "Try adjusting your search or filter criteria"}
+                There are no openings at the moment. Please check back later.
               </p>
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="clear-filters-btn primary"
-              >
-                Clear all filters
-              </button>
             </div>
           ) : (
             <>
-              {selectedDepartment && (
-                <div className="service-type-header">
-                  <h2>Jobs in {selectedDepartment}</h2>
-                  <span>Showing {filteredJobs.length} opportunities</span>
-                </div>
+              {/* ─── Matching jobs ─── */}
+              {filteredJobs.length > 0 ? (
+                <>
+                  {selectedDepartment && (
+                    <div className="service-type-header">
+                      <h2>Jobs in {selectedDepartment}</h2>
+                      <span>
+                        Showing {filteredJobs.length} opportunit
+                        {filteredJobs.length === 1 ? "y" : "ies"}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="jobs-grid">
+                    {filteredJobs.map((job, index) => (
+                      <JobCard
+                        key={getJobKey(job, index)}
+                        job={job}
+                        variant="match"
+                        onView={() => handleViewDetails(job, index)}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                hasActiveFilter && (
+                  <div className="no-match-notice">
+                    <div className="no-match-icon">🔍</div>
+                    <h3>No exact matches for your filters</h3>
+                    <p>
+                      Try adjusting your criteria — or browse the other
+                      opportunities below.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={clearFilters}
+                      className="clear-filters-btn primary"
+                    >
+                      Clear all filters
+                    </button>
+                  </div>
+                )
               )}
 
-              <div className="jobs-grid">
-                {filteredJobs.map((job, index) => (
-                  <div
-                    key={job.name || job.id || index}
-                    className="job-card card variant-interactive-ring"
-                  >
-                    <div className="card-header">
-                      <h2>{getFormattedJobTitle(job)}</h2>
-                    </div>
-                    <div className="job-card-body card-body">
-                      <div className="job-meta">
-                        {getOpenings(job) && (
-                          <div className="job-meta-item">
-                            <Users size={14} />
-                            <span>
-                              {getOpenings(job)}{" "}
-                              {getOpenings(job) === 1 ? "Opening" : "Openings"}
-                            </span>
-                          </div>
-                        )}
-                        {getExperience(job) && (
-                          <div className="job-meta-item">
-                            <Briefcase size={14} />
-                            <span>{getExperience(job)}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <p className="job-description">
-                        {getJobDescription(job).length > 120
-                          ? `${getJobDescription(job).substring(0, 120)}...`
-                          : getJobDescription(job) ||
-                            "No description available"}
-                      </p>
-
-                      <div
-                        className="job-footer"
-                        onClick={() => handleViewDetails(job, index)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            handleViewDetails(job, index);
-                          }
-                        }}
-                      >
-                        <button type="button" className="view-job-btn">
-                          View Details <ArrowUpRight size={16} />
-                        </button>
-                      </div>
-                    </div>
+              {/* ─── Other (non-matching) jobs ─── */}
+              {otherJobs.length > 0 && (
+                <div className="other-jobs-section">
+                  <div className="other-jobs-header">
+                    <h2>Other Opportunities</h2>
+                    <span>
+                      {otherJobs.length} more role
+                      {otherJobs.length === 1 ? "" : "s"} available
+                    </span>
                   </div>
-                ))}
-              </div>
+
+                  <div className="jobs-grid">
+                    {otherJobs.map((job, index) => (
+                      <JobCard
+                        key={getJobKey(job, `other-${index}`)}
+                        job={job}
+                        variant="other"
+                        onView={() =>
+                          handleViewDetails(
+                            job,
+                            filteredJobs.length + index
+                          )
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -625,7 +751,7 @@ function JobsPageContent() {
           window.open(
             "/careers-liaison-bank/candidate-dashboard",
             "_blank",
-            "noopener,noreferrer",
+            "noopener,noreferrer"
           );
         }}
       />
@@ -634,20 +760,10 @@ function JobsPageContent() {
         job={selectedJob}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onPrevious={() => {
-          if (selectedJobIndex > 0) {
-            setSelectedJobIndex(selectedJobIndex - 1);
-            setSelectedJob(filteredJobs[selectedJobIndex - 1]);
-          }
-        }}
-        onNext={() => {
-          if (selectedJobIndex < filteredJobs.length - 1) {
-            setSelectedJobIndex(selectedJobIndex + 1);
-            setSelectedJob(filteredJobs[selectedJobIndex + 1]);
-          }
-        }}
+        onPrevious={goToPrevious}
+        onNext={goToNext}
         hasPrevious={selectedJobIndex > 0}
-        hasNext={selectedJobIndex < filteredJobs.length - 1}
+        hasNext={selectedJobIndex < allVisibleJobs.length - 1}
         onRequireLogin={() => setAuthModalOpen(true)}
       />
     </div>

@@ -554,59 +554,88 @@
     padding: 60px 0 80px;
     background: #faf8f6;
 
-    .services-tabs {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 18px 24px;
+   .services-tabs {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  -webkit-overflow-scrolling: touch;
+  // Keep programmatic scrollLeft updates immediate for auto-scroll and dragging.
+  // Active-tab centering still uses scrollTo({ behavior: "smooth" }) in React.
+  scroll-behavior: auto;
+  scroll-snap-type: none;
+  gap: 18px 24px;
+  width: 100%;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #d8d8d8;
+  padding: 0 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  // IMPORTANT: & keeps the class on the same element as .services-tabs.
+  &.is-dragging {
+    cursor: grabbing;
+    user-select: none;
+    -webkit-user-select: none;
+    scroll-behavior: auto !important;
+    scroll-snap-type: none !important;
+  }
+
+  &.is-dragging * {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .tab-btn {
+    flex: 0 0 auto;
+    position: relative;
+    padding: 12px 20px 17px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #686868;
+    font-size: 24px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0;
       width: 100%;
-      margin-bottom: 40px;
-      border-bottom: 1px solid #d8d8d8;
-      padding: 0 20px 0 20px;
-      // padding-left: 150px;
-
-      .tab-btn {
-        position: relative;
-        padding: 12px 20px 17px;
-        border: none;
-        outline: none;
-        background: transparent;
-        color: #686868;
-        font-size: 24px;
-        font-weight: 700;
-        font-family: inherit;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: color 0.3s ease;
-
-        &::after {
-          content: "";
-          position: absolute;
-          bottom: -1px;
-          left: 0;
-          width: 100%;
-          height: 5px;
-          background: #f97316;
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 0.35s ease;
-        }
-
-        &:hover {
-          color: #f97316;
-        }
-
-        &.active {
-          color: #f97316;
-
-          &::after {
-            transform: scaleX(1);
-          }
-        }
-      }
+      height: 5px;
+      background: #f97316;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s ease;
     }
 
+    &:hover {
+      color: #f97316;
+    }
+
+    &.active {
+      color: #f97316;
+
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+  }
+}
     .featured-service {
       margin-top: 8px;
 
@@ -717,6 +746,8 @@
     }
   }
 
+
+  
   // ---------- CTA SECTION ----------
   .cta-section {
     position: relative;
@@ -1357,11 +1388,14 @@
       .services-tabs {
         padding: 0 12px !important;
         gap: 6px 12px !important;
-        flex-wrap: wrap !important;
-        overflow: visible !important;
-        justify-content: center !important;
+        // Keep all tabs in one row so horizontal scrolling remains possible.
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        justify-content: flex-start !important;
+        scroll-behavior: auto !important;
         border-bottom: 1px solid #d8d8d8;
-        
+
         &::-webkit-scrollbar {
           display: none !important;
         }
@@ -1697,5 +1731,224 @@
         }
       }
     }
+  }
+}
+
+/* =========================================
+   CINEMATIC OVERLAY — DESIGN 3
+   ========================================= */
+
+.career-opening-card--design3 {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  max-width: 1120px;
+  min-height: 370px;
+  margin: 30px auto 14px;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+  background: #28231f;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 22px;
+  box-shadow: 0 16px 42px rgba(35, 26, 20, 0.14);
+  text-decoration: none;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 54px rgba(35, 26, 20, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 3px solid #f47721;
+    outline-offset: 4px;
+  }
+
+  .career-opening-card__visual {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    min-width: 0;
+    min-height: 100%;
+    overflow: hidden;
+    background: #51463b;
+  }
+
+  .career-opening-card__image {
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  &:hover .career-opening-card__image {
+    transform: scale(1.04);
+  }
+
+  .career-opening-card__image-overlay {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(20, 18, 16, 0.12) 0%,
+      rgba(20, 18, 16, 0.34) 35%,
+      rgba(20, 18, 16, 0.88) 100%
+    );
+  }
+
+  .career-opening-card__content {
+    position: relative;
+    z-index: 2;
+    grid-column: 1;
+    justify-self: start;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 53%;
+    min-width: 0;
+    min-height: 370px;
+    padding: 42px 48px;
+    color: #fff;
+    background: transparent;
+  }
+
+  .career-opening-card__accent {
+    width: 42px;
+    height: 3px;
+    flex-shrink: 0;
+    margin-bottom: 28px;
+    background: #ff994f;
+    border-radius: 10px;
+  }
+
+  .career-opening-card__title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(30px, 3.2vw, 46px);
+    font-weight: 750;
+    line-height: 1.18;
+    letter-spacing: -0.045em;
+    overflow-wrap: anywhere;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .career-opening-card__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 50px;
+    margin-top: 30px;
+    padding: 6px 7px 6px 20px;
+    color: #fff;
+    background: #f47721;
+    border: 1px solid #f47721;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  &:hover .career-opening-card__cta {
+    background: #df6415;
+    border-color: #df6415;
+  }
+
+  .career-opening-card__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    color: #e96e1b;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover .career-opening-card__arrow {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* Tablet */
+@media (max-width: 850px) {
+  .career-opening-card--design3 {
+    min-height: 340px;
+
+    .career-opening-card__content {
+      width: 62%;
+      min-height: 340px;
+      padding: 32px;
+    }
+
+    .career-opening-card__title {
+      font-size: 34px;
+    }
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .career-opening-card--design3 {
+    min-height: 330px;
+    border-radius: 18px;
+
+    .career-opening-card__image {
+      object-position: center;
+    }
+
+    .career-opening-card__image-overlay {
+      background: linear-gradient(
+        0deg,
+        rgba(20, 18, 16, 0.94) 0%,
+        rgba(20, 18, 16, 0.76) 43%,
+        rgba(20, 18, 16, 0.12) 100%
+      );
+    }
+
+    .career-opening-card__content {
+      align-self: end;
+      justify-self: stretch;
+      width: 100%;
+      min-height: 0;
+      padding: 30px 23px;
+    }
+
+    .career-opening-card__accent {
+      margin-bottom: 20px;
+    }
+
+    .career-opening-card__title {
+      font-size: 33px;
+    }
+
+    .career-opening-card__cta {
+      margin-top: 23px;
+    }
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .career-opening-card--design3,
+  .career-opening-card--design3 .career-opening-card__image,
+  .career-opening-card--design3 .career-opening-card__cta,
+  .career-opening-card--design3 .career-opening-card__arrow {
+    transition: none !important;
+  }
+
+  .career-opening-card--design3:hover {
+    transform: none;
   }
 }
