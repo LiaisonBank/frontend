@@ -1,6 +1,6 @@
 // app/sitemap.js
 
-const BASE_URL = "https://liaisonbank.com";
+const BASE_URL = "https://www.liaisonbank.com";
 const API_URL = "https://backend.liaisonbank.com";
 
 // IMPORTANT:

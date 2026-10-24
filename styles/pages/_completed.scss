@@ -188,19 +188,13 @@
     // =======================================================
     .stats-grid {
       display: flex;
-
-      justify-content: center;
+       justify-content: center;
       align-items: center;
-
       gap: 2.5rem;
-
       margin: 2rem auto 3rem;
       padding: 0 2rem;
-
       flex-wrap: wrap;
-
       max-width: 1200px;
-
       .stat-item {
         -webkit-backdrop-filter: blur(12px);
         background: #ffffff1f;
@@ -215,7 +209,7 @@
         flex: 0 auto;
         align-items: center;
         min-width: 160px;
-        padding: 1.8rem 2.5rem;
+        padding: 1rem 2.5rem;
         display: flex;
         // box-shadow: 0 8px 32px #0000001a;
         transition: all .25s ease-in;
@@ -233,6 +227,9 @@
           .total-value {
             color: #fff;
             font-weight: 800;
+          }
+          .stat-mini {
+            color: #fff;
           }
         }
       }
@@ -264,6 +261,15 @@
         margin-top: 0.5rem;
 
         font-weight: 500;
+      }
+      .stat-mini {
+        display: block;
+        font-size: 0.8rem;
+        color: #fe6e00;
+        // text-transform: uppercase;
+        // letter-spacing: 1.5px;
+        // margin-top: 0.5rem;
+        // font-weight: 500;
       }
 
       // =====================================================

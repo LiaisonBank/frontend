@@ -55,7 +55,18 @@ font-weight: 400;
   font-weight: 700;
   letter-spacing: .5px;
   display: inline-block;
+  position: relative;
+  overflow: hidden;
   // font-size: 30px;
+   &::before{
+    content: "";
+    position: absolute;
+    transform: translateX(-100%);
+    pointer-events: none;
+    inset: 0px;
+    background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+    animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+  }
 
 }
 

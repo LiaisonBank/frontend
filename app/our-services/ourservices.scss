@@ -462,11 +462,12 @@ body {
 }
 
 /* ===== STATS & CONTACT SECTION ===== */
-.contact-section {
+
+body.ourservices{
+  .contact-section {
   padding: 60px 0;
   background: #ffffff;
 }
-
 .stats-contact-wrapper {
   display: flex;
   flex-direction: column;
@@ -478,9 +479,9 @@ body {
   justify-content: center;
   align-items: center;
   gap: 0;
-  background: #fcfbf8;
+  // background: white;
   border-radius: 16px;
-  border: 1px solid #f6f2ee;
+  // border: 1px solid #f6f2ee;
   gap: 80px;
   padding: 32px 40px;
 }
@@ -506,6 +507,8 @@ body {
   width: 1px;
   height: 40px;
   background: #e2e8f0;
+}
+
 }
 
 .contact-grid-simple {

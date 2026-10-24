@@ -7,6 +7,9 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+//  const baseUrl = 'http://localhost:8000'
+  const baseUrl = 'https://backend.liaisonbank.com'
+
 
 const INITIAL_FORM = {
   company_name: "",
@@ -117,7 +120,7 @@ export default function Form({ onSuccess, formSource = "Unknown" }) {
         enquiry_details: form.enquiry_details.trim(),
       };
 
-      const response = await fetch("/api/v1/enquiry", {
+      const response = await fetch(`${baseUrl}/api/enquiry`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

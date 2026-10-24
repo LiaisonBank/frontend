@@ -961,6 +961,7 @@ export default function ProjectsPage() {
                 />
               </span>
               <span className="stat-label">Completed</span>
+              <span className="stat-mini">From the year of 2023</span>
             </div>
 
             {/* In Progress */}
@@ -990,6 +991,7 @@ export default function ProjectsPage() {
                 />
               </span>
               <span className="stat-label">In Progress</span>
+              <span className="stat-mini">From the month of 2026</span>
             </div>
 
             {/* Upcoming */}
@@ -1009,16 +1011,17 @@ export default function ProjectsPage() {
               tabIndex={0}
               aria-label="View upcoming projects"
             >
-              <span className="stat-number">
+              <span className="stat-number d-flex align-items-center justify-content-center">
                 <CountUp
                   end={
                     projectCounts?.upcoming_projects ??
                     projectsByStatus.upcoming.length
                   }
                   className="total-value"
-                />
+                /> &nbsp;+
               </span>
               <span className="stat-label">Upcoming</span>
+              <span className="stat-mini">From the month of September</span>
             </div>
           </div>
 

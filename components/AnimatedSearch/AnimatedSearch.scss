@@ -1,0 +1,326 @@
+// components/AnimatedSearch/AnimatedSearch.scss
+.animated-search {
+  --search-size: 68px;
+  --search-width: 520px;
+
+  --search-gradient-solid: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+
+  --search-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+  --search-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  width: 100%;
+  min-height: var(--search-size);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  isolation: isolate;
+  z-index: 100;
+
+  // ==============================================
+  // CONTAINER
+  // ==============================================
+  &__container {
+    position: relative;
+    width: var(--search-size);
+    height: var(--search-size);
+    z-index: 2;
+
+    transition:
+      width 450ms var(--search-ease),
+      filter 300ms ease;
+  }
+
+  // ==============================================
+  // FORM
+  // ==============================================
+  &__form {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #ffffff;
+
+    box-shadow:
+      0 8px 25px rgba(0, 0, 0, 0.12),
+      0 2px 8px rgba(0, 0, 0, 0.08);
+
+    transition:
+      box-shadow 300ms ease,
+      border-radius 300ms ease;
+  }
+
+  // ==============================================
+  // INPUT WRAPPER
+  // ==============================================
+  &__input-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: var(--search-size);
+    bottom: 0;
+
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  // ==============================================
+  // ACCESSIBLE LABEL
+  // ==============================================
+  &__label {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    padding: 0;
+    margin: -1px;
+
+    overflow: hidden;
+
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+
+    border: 0;
+  }
+
+  // ==============================================
+  // INPUT
+  // ==============================================
+  &__input {
+    width: 100%;
+    height: 100%;
+
+    padding: 0 26px;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+    color: #1f2937;
+
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1;
+
+    opacity: 0;
+    transform: translate3d(0, 15px, 0);
+
+    transition:
+      opacity 250ms ease,
+      transform 350ms var(--search-ease);
+
+    appearance: none;
+
+    &::placeholder {
+      color: #9ca3af;
+      opacity: 1;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
+      display: none;
+    }
+
+    &::-moz-search-clear {
+      display: none;
+    }
+  }
+
+  // ==============================================
+  // BUTTON
+  // ==============================================
+  &__button {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+
+    width: var(--search-size);
+    height: var(--search-size);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+
+    background: var(--search-gradient-solid);
+    color: #ffffff;
+
+    cursor: pointer;
+    z-index: 3;
+
+    overflow: hidden;
+
+    transition:
+      transform 180ms ease,
+      background 250ms ease,
+      color 250ms ease,
+      box-shadow 250ms ease;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+
+      transform: translateX(-100%);
+      pointer-events: none;
+
+      background: linear-gradient(
+        120deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 70%
+      );
+
+      animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+    }
+
+    svg {
+      display: block;
+      flex-shrink: 0;
+      transition: transform 250ms var(--search-ease);
+    }
+
+    &:hover {
+      transform: scale(1.04);
+      box-shadow: 0 8px 25px rgba(234, 88, 12, 0.35);
+    }
+
+    &:active {
+      transform: scale(0.96);
+    }
+
+    &:focus-visible {
+      outline: 3px solid rgba(249, 115, 22, 0.35);
+      outline-offset: 3px;
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  // ==============================================
+  // OPEN STATE
+  // ==============================================
+  &--open {
+    .animated-search__container {
+      width: min(var(--search-width), calc(100vw - 32px));
+    }
+
+    .animated-search__form {
+      box-shadow: var(--search-shadow);
+    }
+
+    .animated-search__input {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+
+      transition:
+        opacity 300ms ease 120ms,
+        transform 350ms var(--search-ease) 100ms;
+    }
+
+    .animated-search__button {
+      background: #ffffff;
+      color: #ea580c;
+      padding: 0 4px;
+      box-shadow: none;
+      width: 5rem;
+      height: 70px;
+
+      &:hover {
+        background: #ffffff;
+        color: #f97316;
+        transform: none;
+        box-shadow: none;
+      }
+
+      svg {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  // ==============================================
+  // DISABLED
+  // ==============================================
+  &--disabled {
+    opacity: 0.65;
+  }
+
+  // ==============================================
+  // TABLET
+  // ==============================================
+  @media (max-width: 768px) {
+    --search-size: 64px;
+    --search-width: 480px;
+  }
+
+  // ==============================================
+  // MOBILE
+  // ==============================================
+  @media (max-width: 576px) {
+    --search-size: 60px;
+
+    &__container {
+      width: var(--search-size);
+    }
+
+    &--open {
+      .animated-search__container {
+        width: calc(100vw - 24px);
+      }
+    }
+
+    &__input {
+      padding: 0 18px;
+      font-size: 16px;
+    }
+  }
+
+  // ==============================================
+  // REDUCED MOTION
+  // ==============================================
+  @media (prefers-reduced-motion: reduce) {
+    &__container,
+    &__form,
+    &__input,
+    &__button,
+    &__button svg {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}
+
+/* ================================================
+   SHIMMER KEYFRAMES
+================================================ */
+@keyframes ctaShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  60% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
