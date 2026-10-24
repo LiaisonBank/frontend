@@ -878,20 +878,6 @@ section.ceo-message-full {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   section.welcome {
     .smallObject {
       position: relative;
@@ -2449,6 +2435,16 @@ section.ceo-message-full {
 
     @media (max-width: 767px) {
       .certificate-section {
+        .certificate-swiper .certificate-image {
+          width: 100%;
+          height: 350px;
+          object-fit: contain;
+        }
+        .certificate-swiper.swiper .swiper-wrapper > .swiper-slide {
+      border: none !important;
+    }
+        
+    
 
         .certificate-item {
           width: 130px;
@@ -2468,8 +2464,9 @@ section.ceo-message-full {
         }
 
         .certificate-caption {
-          font-size: 13px;
-          padding: 10px 6px 4px;
+          font-size: 12px;
+          line-height: 1.3;
+          padding: 8px 5px;
         }
       }
     }
