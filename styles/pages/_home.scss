@@ -3076,3 +3076,31 @@ section.ceo-message-full {
     }
   }
 }
+/* Reduce gap between title and certificate images on mobile */
+@media (max-width: 767px) {
+  section.awardscertification {
+    .section-title {
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    .section-title h3 {
+      margin-bottom: 4px !important;
+      padding-bottom: 8px !important;
+    }
+
+    .certificate-section {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
+
+    .certificate-section .certificate-swiper {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
+
+    .certificate-section .certificate-swiper .swiper-wrapper {
+      align-items: flex-start;
+    }
+  }
+}
