@@ -2435,11 +2435,18 @@ section.ceo-message-full {
 
     @media (max-width: 767px) {
       .certificate-section {
-        .certificate-swiper .certificate-image {
-          width: 100%;
-          height: 350px;
-          object-fit: contain;
-        }
+  .certificate-swiper .certificate-image {
+    width: 100%;
+    height: 300px; // Remove fixed 400px height
+    object-fit: contain;
+    display: block;
+  }
+
+  .certificate-swiper .certificate-caption {
+    margin-top: 0;
+    padding: 3px 5px !important;
+    line-height: 1.3;
+  }
         .certificate-swiper.swiper .swiper-wrapper > .swiper-slide {
       border: none !important;
     }
@@ -3104,3 +3111,24 @@ section.ceo-message-full {
     }
   }
 }
+/* Reduce gap between certificate image and caption on mobile */
+// @media (max-width: 767px) {
+//   section.awardscertification {
+//     .certificate-section {
+//       .certificate-swiper {
+//         .certificate-image {
+//           width: 100% !important;
+//           height: 300px !important;
+//           object-fit: contain;
+//           display: block;
+//         }
+
+//         .certificate-caption {
+//           margin-top: 0 !important;
+//           padding: 3px 5px !important;
+//           line-height: 1.3;
+//         }
+//       }
+//     }
+//   }
+// }

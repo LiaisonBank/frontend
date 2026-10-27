@@ -59,30 +59,62 @@
     }
 
     .auth-modal-close {
-      position: sticky;
-      top: 16px;
-      right: 16px;
-      float: right;
-      background: #f5f0ea;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #5a6a7e;
-      font-size: 18px;
-      transition: all 0.3s ease;
-      z-index: 10;
+  position: sticky;
+  top: 16px;
+  right: 16px;
+  float: right;
 
-      &:hover {
-        background: #f97316;
-        color: white;
-        transform: rotate(90deg);
-      }
+  background: #f5f0ea;
+  border: none;
+  border-radius: 50%;
+
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  color: #5a6a7e;
+  font-size: 18px;
+
+  z-index: 10;
+
+  /* Keep the button itself stationary */
+  transform: none;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+
+  span {
+    display: inline-block;
+    line-height: 1;
+    pointer-events: none;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover {
+    background: #f97316;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+
+    /* Rotate only the icon, not the hover target */
+    span {
+      transform: rotate(90deg);
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid #f97316;
+    outline-offset: 3px;
+  }
+
+  &:active {
+    background: #e0680e;
+  }
+}
 
     .auth-modal-content {
       padding: 32px 40px 40px;
