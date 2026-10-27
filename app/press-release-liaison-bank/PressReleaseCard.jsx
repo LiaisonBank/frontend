@@ -28,7 +28,7 @@ export default function PressReleaseCard({ item }) {
             <h5>{title}</h5>
             <p className="category">{category}</p>
           </div>
-          <div className="footer">
+          <div className="press-card-footer">
             <Link href={`/press-release-liaison-bank/${slug}`}><span className="read-more">
               Read More →   
             </span></Link>

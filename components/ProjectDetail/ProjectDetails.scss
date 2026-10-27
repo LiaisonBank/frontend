@@ -73,7 +73,8 @@
     color: #334155;
     font-weight: 600;
     cursor: pointer;
-    align-self: flex-end;
+    align-self: start;
+    margin-top: 25px;
     transition: all 0.2s;
 
     &:hover {
@@ -758,4 +759,5 @@
     }
   }
 }
+
 
