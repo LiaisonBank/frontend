@@ -10,7 +10,7 @@ const COLS = 48;
 const ROWS = 48;
 const TILE_COUNT = COLS * ROWS;
 const TRACK_DURATION = 4.2;
-const TILE_DURATION = 0.9;
+const TILE_DURATION = 2;
 const PARTICLE_STAGGER_DURATION = 2.55;
 const PANEL_WIDTH_RATIO = 1;
 const PANEL_SIDE_GAP = 0;
@@ -107,23 +107,29 @@ function createParticles(panelWidth, panelHeight) {
     const row = Math.floor(index / COLS);
     const col = index % COLS;
 
-    return {
-      index,
-      x: col * tileWidth,
-      y: row * tileHeight,
-      width: tileWidth,
-      height: tileHeight,
-      outgoingDelay: getParticleStagger(index, "outgoing"),
-      incomingDelay: getParticleStagger(index, "incoming"),
-      outgoingX: -(72 + particleNoise(index, 21) * 150),
-      outgoingY: (particleNoise(index, 22) - 0.5) * 84,
-      outgoingScale: 0.035 + particleNoise(index, 23) * 0.22,
-      outgoingRotation: (particleNoise(index, 24) - 0.5) * 0.66,
-      incomingX: 72 + particleNoise(index, 31) * 118,
-      incomingY: (particleNoise(index, 32) - 0.5) * 58,
-      incomingScale: 0.12 + particleNoise(index, 33) * 0.38,
-      incomingRotation: (particleNoise(index, 34) - 0.5) * 0.42,
-    };
+    const sharedDelay = getParticleStagger(index, "outgoing");
+
+return {
+  index,
+  x: col * tileWidth,
+  y: row * tileHeight,
+  width: tileWidth,
+  height: tileHeight,
+
+  // Both animations start and finish on the same schedule.
+  outgoingDelay: sharedDelay,
+  incomingDelay: sharedDelay,
+
+  outgoingX: -(72 + particleNoise(index, 21) * 150),
+  outgoingY: (particleNoise(index, 22) - 0.5) * 84,
+  outgoingScale: 0.035 + particleNoise(index, 23) * 0.22,
+  outgoingRotation: (particleNoise(index, 24) - 0.5) * 0.66,
+
+  incomingX: 72 + particleNoise(index, 31) * 118,
+  incomingY: (particleNoise(index, 32) - 0.5) * 58,
+  incomingScale: 0.12 + particleNoise(index, 33) * 0.38,
+  incomingRotation: (particleNoise(index, 34) - 0.5) * 0.42,
+};
   });
 }
 
