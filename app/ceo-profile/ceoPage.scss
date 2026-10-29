@@ -302,6 +302,7 @@ padding-top: 8px;
   }
 
   .ceo-profile-about-image {
+    margin-top:10px;
     height: 350px;
   }
 
@@ -382,5 +383,23 @@ padding-top: 8px;
 
   .ceo-profile-about-stat {
     align-items: center;
+  }
+}
+/* Fix CEO image being hidden behind the mobile header */
+@media (max-width: 767px) {
+  .ceo-profile-about-section {
+    padding-top: 105px !important;
+    scroll-margin-top: 90px;
+  }
+
+  .ceo-profile-about-image {
+    width: 100% !important;
+    height: auto !important;
+    margin-top: 0 !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+  }
+  .ceo-profile-image-border {
+    height: auto !important;
   }
 }

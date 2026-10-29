@@ -395,23 +395,34 @@ export default function ServiceDetail() {
   return (
     <>
       {/* Modern Hero with Split Layout */}
-      <section className="hero-modern">
-        <div
-          className="hero-modern-bg"
-          style={{ backgroundImage: `url(${service.banner})` }}
-        ></div>
-        <div className="container">
-          <div className="hero-modern-content">
-            <div className="hero-modern-left">
-              <Link href="/our-services" className="hero-back-link">
-                ← Back to Services
-              </Link>
-              <h1 className="hero-title">{service.name}</h1>
-              <p className="hero-desc">{service.description}</p>
-            </div>
-          </div>
+<section className="hero-modern">
+  <div
+    className="hero-modern-bg"
+    style={{ backgroundImage: `url(${service.banner})` }}
+  ></div>
+  <div className="container">
+    <div className="hero-modern-content">
+      {/* LEFT: back link + title + description */}
+      <div className="hero-modern-left">
+        <Link href="/our-services" className="hero-back-link">
+          ← Back to Services
+        </Link>
+        <h1 className="hero-title">{service.name}</h1>
+        <p className="hero-desc">{service.description}</p>
+      </div>
+
+      {/* RIGHT: AMC-only CTA button */}
+      {slug === "amc" && (
+        <div className="hero-modern-right">
+          <Link href="https://amc-99kh.onrender.com/" className="hero-amc-btn">
+            Get AMC Quote
+            <span className="hero-amc-btn-arrow">→</span>
+          </Link>
         </div>
-      </section>
+      )}
+    </div>
+  </div>
+</section>
 
       {/* Subcategories as Flip Cards */}
       <section className="services-modern">

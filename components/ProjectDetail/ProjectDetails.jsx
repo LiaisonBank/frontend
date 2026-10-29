@@ -1,1438 +1,561 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Chip from "@mui/material/Chip";
 import Select from "react-select";
-
 import "./ProjectDetails.scss";
 import ApiError from "../ApiError/ApiError";
 
 const ITEMS_PER_LOAD = 20;
-const MIN_LOADING_DISPLAY_MS = 600;
-
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_LOCAL_API_URL ||
   process.env.NEXT_PUBLIC_BACKEND_URL ||
   "http://localhost:8000";
-
 const PROJECTS_ENDPOINT = `${API_BASE_URL}/api/projects/distinct`;
 
-export default function ProjectDetails({
-  projectCounts,
-  loading: parentLoading,
-  error: parentError,
-}) {
-  // =========================================================
-  // REFS
-  // =========================================================
+/* ---------- icons ---------- */
+const IconSearch = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-4-4" />
+  </svg>
+);
+const IconPin = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z" />
+    <circle cx="12" cy="10" r="2.4" />
+  </svg>
+);
 
-  const tableBodyRef = useRef(null);
-  const tableWrapperRef = useRef(null);
-  const observerTargetRef = useRef(null);
+/* ---------- helpers ---------- */
+const NOISE_TOKENS = new Set([
+  "png", "jpg", "jpeg", "gif", "webp", "svg", "pdf", "psd", "ai",
+  "mp4", "mov", "avi", "webm",
+  "null", "n/a", "na", "none", "undefined", "-", "",
+]);
 
+const cleanStr = (v) => {
+  if (v == null) return "";
+  const s = String(v).trim();
+  if (!s || NOISE_TOKENS.has(s.toLowerCase())) return "";
+  return s;
+};
+
+const cleanArr = (arr) =>
+  (Array.isArray(arr) ? arr : arr ? [arr] : []).map(cleanStr).filter(Boolean);
+
+const uniq = (arr) => [...new Set(arr)];
+
+function buildImageUrl(path) {
+  const p = cleanStr(path);
+  if (!p) return null;
+  if (/^https?:\/\//i.test(p)) return p;
+  return `${API_BASE_URL}${p.startsWith("/") ? "" : "/"}${p}`;
+}
+
+/* Case-insensitive, locale-aware sort */
+const sortAlpha = (a, b) =>
+  a.localeCompare(b, undefined, { sensitivity: "base" });
+
+/* Build a react-select option list with an "All" head */
+const buildOptions = (values, allLabel) => {
+  const cleaned = [...new Set(values.map(cleanStr).filter(Boolean))].sort(sortAlpha);
+  return [
+    { value: "All", label: allLabel },
+    ...cleaned.map((v) => ({ value: v, label: v })),
+  ];
+};
+
+/* ---------- component ---------- */
+export default function ProjectDetails({ projectCounts }) {
+  const observerRef = useRef(null);
   const isFetchingRef = useRef(false);
-  const pageRef = useRef(1);
-  const hasMoreRef = useRef(true);
+  const abortRef = useRef(null);
+  const searchTimerRef = useRef(null);
 
-  const abortControllerRef = useRef(null);
-
-  // Used to ignore stale requests after unmount/re-entry.
-  const requestIdRef = useRef(0);
-
-  // =========================================================
-  // STATE
-  // =========================================================
-
-  const [projects, setProjects] = useState([]);
-
+  /* ---- full dataset ---- */
+  const [allProjects, setAllProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-
   const [error, setError] = useState(null);
 
-  const [locationFilter, setLocationFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [categoryFilter, setCategoryFilter] = useState("All");
+  /* ---- filters ---- */
+  const [searchInput, setSearchInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [status, setStatus] = useState("All");
+  const [category, setCategory] = useState("All"); // services
+  const [industry, setIndustry] = useState("All"); // projectsCategory
+  const [location, setLocation] = useState("All");
 
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  /* ---- client pagination ---- */
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_LOAD);
 
-  // =========================================================
-  // KEEP REFS SYNCHRONIZED
-  // =========================================================
-
+  /* ---------- debounce search ---------- */
   useEffect(() => {
-    pageRef.current = page;
-  }, [page]);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => setSearchTerm(searchInput.trim()), 300);
+    return () => searchTimerRef.current && clearTimeout(searchTimerRef.current);
+  }, [searchInput]);
 
-  useEffect(() => {
-    hasMoreRef.current = hasMore;
-  }, [hasMore]);
-
-  // =========================================================
-  // NORMALIZE
-  // =========================================================
-
-  const normalize = useCallback((value) => {
-    return String(value ?? "")
-      .trim()
-      .toLowerCase();
+  /* ---------- extraction ---------- */
+  const extract = useCallback((data) => {
+    if (Array.isArray(data)) return data;
+    return data?.data || data?.projects || data?.items || [];
   }, []);
 
-  // =========================================================
-  // NORMALIZE PROJECTS
-  // =========================================================
+  /* ---------- normalization ---------- */
+  const normalize = useCallback((p, idx) => {
+    const title = cleanStr(p.title) || cleanStr(p.client_name) || "Untitled Project";
+    const clientRaw = cleanStr(p.client_name);
+    const clientName =
+      clientRaw && clientRaw.toLowerCase() !== title.toLowerCase() ? clientRaw : null;
 
-  const normalizeProjects = useCallback(
-    (projectsData, pageNum = 1) => {
-      return projectsData.map((project, index) => ({
-        ...project,
+    const projectTypes = uniq(cleanArr(p.projectsCategory)); // industry
+    const services = uniq(cleanArr(p.category)); // services
+    const statusVal =
+      cleanStr(p.project_status) || cleanStr(p.status) || "Unknown";
+    const locationVal = cleanStr(p.location);
 
-        id:
-          project.id ??
-          project.project_id ??
-          `project-${pageNum}-${index}`,
-
-        client_name:
-          project.client_name ??
-          project.name ??
-          "Unnamed Project",
-
-        project_status:
-          project.project_status ??
-          project.status ??
-          "Unknown",
-
-        projectsCategory:
-          project.projectsCategory ??
-          project.type ??
-          project.category ??
-          "Uncategorized",
-
-        location: project.location ?? "",
-      }));
-    },
-    [],
-  );
-
-  // =========================================================
-  // DETERMINE HAS MORE
-  // =========================================================
-
-  const determineHasMore = useCallback(
-    (data, projectsData) => {
-      if (typeof data?.hasMore === "boolean") {
-        return data.hasMore;
-      }
-
-      if (typeof data?.has_more === "boolean") {
-        return data.has_more;
-      }
-
-      if (data?.next_page !== undefined) {
-        return data.next_page !== null;
-      }
-
-      if (data?.nextPage !== undefined) {
-        return data.nextPage !== null;
-      }
-
-      if (
-        typeof data?.total === "number" &&
-        typeof data?.page === "number" &&
-        typeof data?.limit === "number"
-      ) {
-        return data.page * data.limit < data.total;
-      }
-
-      return projectsData.length === ITEMS_PER_LOAD;
-    },
-    [],
-  );
-
-  // =========================================================
-  // EXTRACT PROJECT DATA
-  // =========================================================
-
-  const extractProjects = useCallback((data) => {
-    if (Array.isArray(data)) {
-      return data;
-    }
-
-    if (Array.isArray(data?.projects)) {
-      return data.projects;
-    }
-
-    if (Array.isArray(data?.data)) {
-      return data.data;
-    }
-
-    if (Array.isArray(data?.items)) {
-      return data.items;
-    }
-
-    return [];
+    return {
+      id: p.id ?? p.project_id ?? `p-${idx}`,
+      slug: cleanStr(p.slug) || null,
+      title,
+      clientName,
+      projectTypes,
+      services,
+      status: statusVal,
+      location: locationVal,
+      imageUrl: buildImageUrl(p.featured_image),
+      initial: title.trim().charAt(0).toUpperCase() || "·",
+      // pre-computed haystack for fast search
+      _searchBlob: [
+        title,
+        clientName,
+        locationVal,
+        statusVal,
+        ...projectTypes,
+        ...services,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase(),
+    };
   }, []);
 
-  // =========================================================
-  // FETCH PROJECTS
-  // =========================================================
-
-  const fetchProjects = useCallback(
-    async (pageNum = 1, isInitialLoad = false) => {
-      // Prevent duplicate requests.
-      if (isFetchingRef.current) {
-        return;
-      }
-
-      // Do not request pages after the API says there is no more data.
-      if (!isInitialLoad && !hasMoreRef.current) {
-        return;
-      }
-
-      isFetchingRef.current = true;
-
-      if (isInitialLoad) {
-        setLoading(true);
-      } else {
-        setLoadingMore(true);
-      }
-
-      setError(null);
-
-      const requestId = ++requestIdRef.current;
-      const startedAt = Date.now();
-
-      // -------------------------------------------------------
-      // Minimum loading duration
-      // -------------------------------------------------------
-
-      const waitMinimumDisplay = async () => {
-        const elapsed = Date.now() - startedAt;
-        const remaining =
-          MIN_LOADING_DISPLAY_MS - elapsed;
-
-        if (remaining > 0) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, remaining),
-          );
-        }
-      };
-
-      // -------------------------------------------------------
-      // Abort previous request
-      // -------------------------------------------------------
-
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-
-      const controller = new AbortController();
-
-      abortControllerRef.current = controller;
-
-      try {
-        // -----------------------------------------------------
-        // IMPORTANT:
-        // Every request MUST use /distinct with pagination.
-        // -----------------------------------------------------
-
-        const url =
-          `${PROJECTS_ENDPOINT}` +
-          `?page=${pageNum}` +
-          `&limit=${ITEMS_PER_LOAD}`;
-
-        if (process.env.NODE_ENV === "development") {
-          console.debug(
-            `[ProjectDetails] Fetching page ${pageNum}:`,
-            url,
-          );
-        }
-
-        const response = await fetch(url, {
-          method: "GET",
-          cache: "no-store",
-          headers: {
-            Accept: "application/json",
-          },
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          const apiError = new Error(
-            `Failed to fetch projects: ${response.status} ${response.statusText}`,
-          );
-
-          apiError.status = response.status;
-
-          throw apiError;
-        }
-
-        const data = await response.json();
-
-        // Ignore stale requests.
-        if (requestId !== requestIdRef.current) {
-          return;
-        }
-
-        const projectsData = extractProjects(data);
-
-        const normalizedProjects =
-          normalizeProjects(
-            projectsData,
-            pageNum,
-          );
-
-        const moreAvailable =
-          determineHasMore(
-            data,
-            projectsData,
-          );
-
-        await waitMinimumDisplay();
-
-        // Check again after the artificial delay.
-        if (requestId !== requestIdRef.current) {
-          return;
-        }
-
-        // =====================================================
-        // INITIAL LOAD
-        // =====================================================
-
-        if (isInitialLoad) {
-          setProjects(normalizedProjects);
-
-          setPage(1);
-          pageRef.current = 1;
-
-          setHasMore(moreAvailable);
-          hasMoreRef.current = moreAvailable;
-
-          return;
-        }
-
-        // =====================================================
-        // LOAD MORE
-        // =====================================================
-
-        setProjects((previousProjects) => {
-          const existingIds = new Set(
-            previousProjects.map(
-              (project) => project.id,
-            ),
-          );
-
-          const uniqueProjects =
-            normalizedProjects.filter(
-              (project) =>
-                !existingIds.has(project.id),
-            );
-
-          return [
-            ...previousProjects,
-            ...uniqueProjects,
-          ];
-        });
-
-        setPage(pageNum);
-        pageRef.current = pageNum;
-
-        setHasMore(moreAvailable);
-        hasMoreRef.current = moreAvailable;
-      } catch (err) {
-        // Abort is expected during navigation/unmount.
-        if (err?.name === "AbortError") {
-          return;
-        }
-
-        if (requestId !== requestIdRef.current) {
-          return;
-        }
-
-        console.error(
-          "[ProjectDetails] Project API error:",
-          err,
-        );
-
-        await waitMinimumDisplay();
-
-        if (requestId !== requestIdRef.current) {
-          return;
-        }
-
-        setError(
-          err instanceof Error
-            ? err
-            : new Error(
-                "Failed to load projects",
-              ),
-        );
-      } finally {
-        if (requestId === requestIdRef.current) {
-          isFetchingRef.current = false;
-
-          if (isInitialLoad) {
-            setLoading(false);
-          } else {
-            setLoadingMore(false);
-          }
-        }
-      }
-    },
-    [
-      determineHasMore,
-      extractProjects,
-      normalizeProjects,
-    ],
-  );
-
-  // =========================================================
-  // INITIAL PROJECT LOAD
-  //
-  // Every time this component mounts/re-mounts:
-  //
-  // /api/projects/distinct?page=1&limit=20
-  //
-  // =========================================================
-
-  useEffect(() => {
-    // Cancel anything left from a previous mount.
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    // Reset pagination.
-    pageRef.current = 1;
-    hasMoreRef.current = true;
-
-    // Reset state.
-    setProjects([]);
-    setPage(1);
-    setHasMore(true);
-    setError(null);
+  /* ---------- fetch all pages once ---------- */
+  const fetchAll = useCallback(async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
     setLoading(true);
+    setError(null);
 
-    // Always start from page 1.
-    fetchProjects(1, true);
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
 
-    return () => {
-      // Invalidate current request.
-      requestIdRef.current += 1;
+    try {
+      const PAGE = 100;
+      let page = 1;
+      let collected = [];
 
-      // Abort request during navigation/unmount.
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-        abortControllerRef.current = null;
+      // Loop until backend says no more pages.
+      // Safety cap prevents infinite loops on malformed responses.
+      while (page <= 200) {
+        const qs = new URLSearchParams({ page: String(page), limit: String(PAGE) });
+        const res = await fetch(`${PROJECTS_ENDPOINT}?${qs}`, {
+          signal: controller.signal,
+          headers: { Accept: "application/json" },
+          cache: "no-store",
+        });
+        if (!res.ok) {
+          const e = new Error(`HTTP ${res.status}`);
+          e.status = res.status;
+          throw e;
+        }
+
+        const data = await res.json();
+        const raw = extract(data);
+        collected.push(...raw.map((p, i) => normalize(p, collected.length + i)));
+
+        const hasNext =
+          data?.pagination?.has_next ??
+          (typeof data?.hasMore === "boolean"
+            ? data.hasMore
+            : raw.length === PAGE);
+
+        if (!hasNext || raw.length === 0) break;
+        page += 1;
       }
 
+      setAllProjects(collected);
+    } catch (err) {
+      if (err?.name === "AbortError") return;
+      setError(err);
+    } finally {
+      isFetchingRef.current = false;
+      setLoading(false);
+    }
+  }, [extract, normalize]);
+
+  useEffect(() => {
+    fetchAll();
+    return () => {
+      abortRef.current?.abort();
+      abortRef.current = null;
       isFetchingRef.current = false;
     };
-  }, [fetchProjects]);
-
-  // =========================================================
-  // INFINITE SCROLL
-  // =========================================================
-
-  useEffect(() => {
-    const target = observerTargetRef.current;
-    const tableBody = tableBodyRef.current;
-
-    if (!target || !tableBody) {
-      return;
-    }
-
-    const observer =
-      new IntersectionObserver(
-        (entries) => {
-          const entry = entries[0];
-
-          if (
-            !entry?.isIntersecting ||
-            isFetchingRef.current ||
-            !hasMoreRef.current
-          ) {
-            return;
-          }
-
-          const nextPage =
-            pageRef.current + 1;
-
-          fetchProjects(
-            nextPage,
-            false,
-          );
-        },
-        {
-          root: tableBody,
-          rootMargin: "150px",
-          threshold: 0.1,
-        },
-      );
-
-    observer.observe(target);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [fetchProjects, projects.length]);
-
-  // =========================================================
-  // SCROLL TABLE TO TOP
-  // =========================================================
-
-  const scrollTableToTop = useCallback(() => {
-    if (!tableBodyRef.current) {
-      return;
-    }
-
-    tableBodyRef.current.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // =========================================================
-  // SCROLL PAGE TO TABLE
-  //
-  // Used ONLY by location search.
-  // React Select does not call this.
-  // =========================================================
+  /* ---------- derived options (from FULL dataset) ---------- */
+  const statusOptions = useMemo(() => {
+    const canonical = ["Completed", "In Progress", "Upcoming"];
+    const present = new Set(
+      allProjects.map((p) => p.status).filter((s) => s && s !== "Unknown"),
+    );
+    const ordered = [
+      ...canonical.filter((s) => present.has(s)),
+      ...[...present].filter((s) => !canonical.includes(s)).sort(sortAlpha),
+    ];
+    return [
+      { value: "All", label: "All Status" },
+      ...ordered.map((s) => ({ value: s, label: s })),
+    ];
+  }, [allProjects]);
 
-  const scrollToTableWrapper =
-    useCallback(() => {
-      if (!tableWrapperRef.current) {
-        return;
-      }
-
-      const wrapperRect =
-        tableWrapperRef.current.getBoundingClientRect();
-
-      const offset = 80;
-
-      const targetPosition =
-        window.scrollY +
-        wrapperRect.top -
-        offset;
-
-      window.scrollTo({
-        top: targetPosition,
-        behavior: "smooth",
-      });
-
-      requestAnimationFrame(() => {
-        scrollTableToTop();
-      });
-    }, [scrollTableToTop]);
-
-  // =========================================================
-  // STATUS OPTIONS
-  // =========================================================
-
-  const statusOptions = useMemo(
-    () => [
-      {
-        value: "All",
-        label: "All Status",
-      },
-      {
-        value: "Completed",
-        label: "Completed",
-      },
-      {
-        value: "In Progress",
-        label: "In Progress",
-      },
-      {
-        value: "Upcoming",
-        label: "Upcoming",
-      },
-    ],
-    [],
+  const categoryOptions = useMemo(
+    () => buildOptions(allProjects.flatMap((p) => p.services), "All Services"),
+    [allProjects],
   );
 
-  // =========================================================
-  // CATEGORY OPTIONS
-  // =========================================================
+  const industryOptions = useMemo(
+    () => buildOptions(allProjects.flatMap((p) => p.projectTypes), "All Industries"),
+    [allProjects],
+  );
 
-  const categoryOptions = useMemo(() => {
-    const categories = projects
-      .flatMap((project) => {
-        const category =
-          project?.projectsCategory;
+  const locationOptions = useMemo(
+    () => buildOptions(allProjects.map((p) => p.location), "All Locations"),
+    [allProjects],
+    
+  );
 
-        if (Array.isArray(category)) {
-          return category;
+  /* ---------- filtering ---------- */
+  const filtered = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    const cat = category.toLowerCase();
+    const ind = industry.toLowerCase();
+    const loc = location.toLowerCase();
+    const st = status.toLowerCase();
+
+    return allProjects.filter((p) => {
+      if (st !== "all" && p.status.toLowerCase() !== st) return false;
+      if (cat !== "all" && !p.services.some((s) => s.toLowerCase() === cat)) return false;
+      if (ind !== "all" && !p.projectTypes.some((t) => t.toLowerCase() === ind)) return false;
+      if (loc !== "all" && p.location.toLowerCase() !== loc) return false;
+      if (term && !p._searchBlob.includes(term)) return false;
+      return true;
+    });
+  }, [allProjects, searchTerm, status, category, industry, location]);
+
+  /* reset pagination when filters change */
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_LOAD);
+  }, [searchTerm, status, category, industry, location]);
+
+  const visibleProjects = useMemo(
+    () => filtered.slice(0, visibleCount),
+    [filtered, visibleCount],
+  );
+  const hasMore = visibleCount < filtered.length;
+
+  /* ---------- infinite scroll (local) ---------- */
+  useEffect(() => {
+    const target = observerRef.current;
+    if (!target) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasMore) {
+          setVisibleCount((c) => c + ITEMS_PER_LOAD);
         }
-
-        return [category];
-      })
-      .filter(Boolean)
-      .map((category) =>
-        String(category).trim(),
-      )
-      .filter(Boolean);
-
-    const excludedCategories = new Set([
-      "Residential/Commercial",
-      "Residential / Commercial",
-      "ResidentialCommercial",
-    ]);
-
-    return [...new Set(categories)]
-      .filter(
-        (category) =>
-          !excludedCategories.has(category),
-      )
-      .sort((a, b) =>
-        a.localeCompare(b),
-      );
-  }, [projects]);
-
-  // =========================================================
-  // CATEGORY SELECT OPTIONS
-  // =========================================================
-
-  const categorySelectOptions = useMemo(
-    () => [
-      {
-        value: "All",
-        label: "All Categories",
       },
-      ...categoryOptions.map(
-        (category) => ({
-          value: category,
-          label: category,
-        }),
-      ),
-    ],
-    [categoryOptions],
-  );
-
-  // =========================================================
-  // SELECTED STATUS
-  // =========================================================
-
-  const selectedStatusOption = useMemo(
-    () =>
-      statusOptions.find(
-        (option) =>
-          option.value === statusFilter,
-      ) ?? statusOptions[0],
-    [statusFilter, statusOptions],
-  );
-
-  // =========================================================
-  // SELECTED CATEGORY
-  // =========================================================
-
-  const selectedCategoryOption = useMemo(
-    () =>
-      categorySelectOptions.find(
-        (option) =>
-          option.value === categoryFilter,
-      ) ?? categorySelectOptions[0],
-    [
-      categoryFilter,
-      categorySelectOptions,
-    ],
-  );
-
-  // =========================================================
-  // FILTER HANDLERS
-  // =========================================================
-
-  const handleLocationChange =
-    useCallback(
-      (event) => {
-        setLocationFilter(
-          event.target.value,
-        );
-
-        requestAnimationFrame(() => {
-          scrollToTableWrapper();
-        });
-      },
-      [scrollToTableWrapper],
+      { rootMargin: "600px" },
     );
+    obs.observe(target);
+    return () => obs.disconnect();
+  }, [hasMore, visibleProjects.length]);
 
-  // IMPORTANT:
-  // Do NOT scroll the page when Select changes.
-  // This prevents Category Type dropdown scroll issues.
-
-  const handleStatusChange =
-    useCallback(
-      (selectedOption) => {
-        setStatusFilter(
-          selectedOption?.value ?? "All",
-        );
-      },
-      [],
-    );
-
-  const handleCategoryChange =
-    useCallback(
-      (selectedOption) => {
-        setCategoryFilter(
-          selectedOption?.value ?? "All",
-        );
-      },
-      [],
-    );
-
-  // =========================================================
-  // FILTERED PROJECTS
-  // =========================================================
-
-  const filteredProjects = useMemo(() => {
-    const location =
-      normalize(locationFilter);
-
-    const status =
-      normalize(statusFilter);
-
-    const category =
-      normalize(categoryFilter);
-
-    return projects.filter(
-      (project) => {
-        const projectLocation =
-          normalize(
-            project.location,
-          );
-
-        const projectStatus =
-          normalize(
-            project.project_status,
-          );
-
-        const projectCategories =
-          Array.isArray(
-            project.projectsCategory,
-          )
-            ? project.projectsCategory.map(
-                (item) =>
-                  normalize(item),
-              )
-            : [
-                normalize(
-                  project.projectsCategory,
-                ),
-              ];
-
-        const matchesLocation =
-          !location ||
-          projectLocation.includes(
-            location,
-          );
-
-        const matchesStatus =
-          statusFilter === "All" ||
-          projectStatus === status;
-
-        const matchesCategory =
-          categoryFilter === "All" ||
-          projectCategories.includes(
-            category,
-          );
-
-        return (
-          matchesLocation &&
-          matchesStatus &&
-          matchesCategory
-        );
-      },
-    );
-  }, [
-    projects,
-    locationFilter,
-    statusFilter,
-    categoryFilter,
-    normalize,
-  ]);
-
-  // =========================================================
-  // ACTIVE FILTERS
-  // =========================================================
+  /* ---------- helpers ---------- */
+  const statusClass = (s) => {
+    const v = String(s).toLowerCase();
+    if (v === "completed") return "is-completed";
+    if (v === "in progress" || v === "ongoing") return "is-progress";
+    if (v === "upcoming") return "is-upcoming";
+    return "is-unknown";
+  };
 
   const hasActiveFilters =
-    locationFilter.trim() !== "" ||
-    statusFilter !== "All" ||
-    categoryFilter !== "All";
+    searchTerm !== "" ||
+    status !== "All" ||
+    category !== "All" ||
+    industry !== "All" ||
+    location !== "All";
 
-  // =========================================================
-  // STATUS CLASS
-  // =========================================================
+  const clearAllFilters = () => {
+    setSearchInput("");
+    setStatus("All");
+    setCategory("All");
+    setIndustry("All");
+    setLocation("All");
+  };
 
-  const getStatusClass = useCallback(
-    (status) => {
-      const normalizedStatus =
-        normalize(status);
-
-      if (
-        normalizedStatus ===
-        "completed"
-      ) {
-        return "status-completed";
-      }
-
-      if (
-        normalizedStatus ===
-        "upcoming"
-      ) {
-        return "status-upcoming";
-      }
-
-      if (
-        normalizedStatus ===
-          "in progress" ||
-        normalizedStatus ===
-          "ongoing"
-      ) {
-        return "status-in-progress";
-      }
-
-      return "status-default";
-    },
-    [normalize],
-  );
-
-  // =========================================================
-  // LOCATION FORMATTER
-  // =========================================================
-
-  const formatLocation = useCallback(
-    (location) => {
-      if (!location) {
-        return "";
-      }
-
-      let formattedLocation =
-        String(location)
-          .replace(/\(/g, " (")
-          .replace(/\s+/g, " ")
-          .replace(/,\s*/g, ", ")
-          .trim();
-
-      const lowerLocation =
-        formattedLocation.toLowerCase();
-
-      const alreadyHasMumbai =
-        lowerLocation.includes(
-          "mumbai",
-        );
-
-      const alreadyHasVasai =
-        lowerLocation.includes(
-          "vasai",
-        );
-
-      const alreadyHasVirar =
-        lowerLocation.includes(
-          "virar",
-        );
-
-      if (
-        !alreadyHasMumbai &&
-        !alreadyHasVasai &&
-        !alreadyHasVirar
-      ) {
-        formattedLocation += ", Mumbai";
-      }
-
-      return formattedLocation;
-    },
-    [],
-  );
-
-  // =========================================================
-  // CLEAR FILTERS
-  // =========================================================
-
-  const handleClearFilters =
-    useCallback(() => {
-      setLocationFilter("");
-      setStatusFilter("All");
-      setCategoryFilter("All");
-
-      requestAnimationFrame(() => {
-        scrollToTableWrapper();
-      });
-    }, [scrollToTableWrapper]);
-
-  // =========================================================
-  // WHEEL BEHAVIOR
-  // =========================================================
-
-  const handleTableWheel =
-    useCallback((event) => {
-      const element =
-        event.currentTarget;
-
-      const {
-        scrollTop,
-        scrollHeight,
-        clientHeight,
-      } = element;
-
-      const atTop =
-        scrollTop <= 0;
-
-      const atBottom =
-        Math.ceil(
-          scrollTop + clientHeight,
-        ) >= scrollHeight;
-
-      if (
-        (event.deltaY < 0 && atTop) ||
-        (event.deltaY > 0 && atBottom)
-      ) {
-        return;
-      }
-
-      event.preventDefault();
-      event.stopPropagation();
-    }, []);
-
-  // =========================================================
-  // TABLE WHEEL LISTENER
-  // =========================================================
-
-  useEffect(() => {
-    const tableBody =
-      tableBodyRef.current;
-
-    if (!tableBody) {
-      return;
-    }
-
-    const wheelHandler = (event) => {
-      const {
-        scrollTop,
-        scrollHeight,
-        clientHeight,
-      } = tableBody;
-
-      const atTop =
-        scrollTop <= 0;
-
-      const atBottom =
-        Math.ceil(
-          scrollTop + clientHeight,
-        ) >= scrollHeight;
-
-      if (
-        (event.deltaY < 0 && atTop) ||
-        (event.deltaY > 0 && atBottom)
-      ) {
-        return;
-      }
-
-      event.preventDefault();
-      event.stopPropagation();
-    };
-
-    tableBody.addEventListener(
-      "wheel",
-      wheelHandler,
-      {
-        passive: false,
-      },
-    );
-
-    return () => {
-      tableBody.removeEventListener(
-        "wheel",
-        wheelHandler,
-      );
-    };
-  }, []);
-
-  // =========================================================
-  // RETRY
-  // =========================================================
-
-  const handleRetry = useCallback(() => {
-    if (isFetchingRef.current) {
-      return;
-    }
-
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
-
-    pageRef.current = 1;
-    hasMoreRef.current = true;
-
-    setProjects([]);
-    setPage(1);
-    setHasMore(true);
-    setError(null);
-
-    fetchProjects(1, true);
-  }, [fetchProjects]);
-
-  // =========================================================
-  // DISPLAY COUNT
-  // =========================================================
-
-  const filteredCount =
-    filteredProjects.length;
-
-  const totalProjectCount =
-    projectCounts?.total_projects ??
-    projects.length;
-
-  // =========================================================
-  // LOADING STATE
-  // =========================================================
-
-  if (loading) {
+  /* ---------- full-table skeleton ---------- */
+  if (loading && allProjects.length === 0) {
     return (
-      <section
-        className="project-details py-4"
-        aria-label="Loading projects"
-      >
-        <div className="client-table-container">
-          <div
-            className="project-loading"
-            role="status"
-            aria-live="polite"
-          >
-            <div
-              className="spinner"
-              aria-hidden="true"
-            />
+      <section className="archive" aria-busy="true" aria-label="Loading project archive">
+        <div className="archive-inner">
+          <div className="sk-toolbar">
+            <div className="sk-line sk-search" />
+            <div className="sk-line sk-select" />
+            <div className="sk-line sk-select" />
+            <div className="sk-line sk-select" />
+            <div className="sk-line sk-select" />
+          </div>
 
-            <p>
-              Loading projects...
-            </p>
+          <div className="sk-list">
+            {Array.from({ length: ITEMS_PER_LOAD }).map((_, i) => (
+              <div key={i} className="sk-row">
+                <span className="sk-cell sk-thumb" />
+                <div className="sk-body">
+                  <span className="sk-line sk-title" />
+                  <span className="sk-line sk-meta" />
+                </div>
+                <span className="sk-cell sk-status" />
+              </div>
+            ))}
           </div>
         </div>
       </section>
     );
   }
 
-  // =========================================================
-  // ERROR STATE
-  // =========================================================
-
-  if (
-    error &&
-    projects.length === 0
-  ) {
+  /* ---------- error ---------- */
+  if (error && allProjects.length === 0) {
     return (
       <ApiError
-        showStatus={true}
+        showStatus
         statusLabel="Error"
-        statusCode={
-          error?.status
-            ? `ERR · ${error.status}`
-            : "ERR · TIMEOUT"
-        }
-        statusTone={
-          error?.status >= 500
-            ? "danger"
-            : "warning"
-        }
+        statusCode={error?.status ? `ERR · ${error.status}` : "ERR · TIMEOUT"}
+        statusTone={error?.status >= 500 ? "danger" : "warning"}
         title="Projects Temporarily Unavailable"
-        message="Our project information is temporarily unavailable. Please try again shortly."
-        onRetry={handleRetry}
-        backToHome={() =>
-          window.open("/", "_self")
-        }
+        message="Our project archive is temporarily unavailable. Please try again shortly."
+        onRetry={fetchAll}
+        backToHome={() => window.open("/", "_self")}
       />
     );
   }
 
-  // =========================================================
-  // RENDER
-  // =========================================================
+  /* ---------- row ---------- */
+  const renderRow = (project) => (
+    <div key={project.id} className="archive-row" role="listitem">
+      <div className="row-thumb" aria-hidden="true">
+        {project.imageUrl && (
+          <img
+            src={project.imageUrl}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+              e.currentTarget.nextElementSibling?.classList.add("is-visible");
+            }}
+          />
+        )}
+        <span className="thumb-letter">{project.initial}</span>
+      </div>
 
+      <div className="row-content">
+        <div className="row-top">
+          <h3 className="row-title">{project.title}</h3>
+          <div className="row-meta">
+            {project.clientName && <span className="meta-client">{project.clientName}</span>}
+            {project.location && (
+              <span className="meta-location">
+                <IconPin /> {project.location}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="row-tags">
+          {project.projectTypes.length > 0 && (
+            <div className="tag-group">
+              <span className="tag-label">Industry</span>
+              <span className="tag-values">{project.projectTypes.join(" · ")}</span>
+            </div>
+          )}
+          {project.services.length > 0 && (
+            <div className="tag-group">
+              <span className="tag-label">Services</span>
+              <span className="tag-values">{project.services.join(" · ")}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="row-status-wrap">
+        <Chip
+          label={project.status}
+          size="small"
+          className={`row-status ${statusClass(project.status)}`}
+        />
+      </div>
+    </div>
+  );
+
+  /* ---------- render ---------- */
   return (
-    <section
-      className="project-details"
-      aria-label="Project details"
-    >
-      <div className="client-table-container">
-
-        {/* =====================================================
-            FILTERS
-        ====================================================== */}
-
-        <div className="project-filters">
-
-          {/* LOCATION */}
-
-          <div className="project-filter location-filter">
-            <label htmlFor="project-location">
-              Location
-            </label>
-
-            <div className="filter-input">
-              <svg
-                className="filter-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
+    <section className="archive" aria-label="Project archive">
+      <div className="archive-inner">
+        {/* ============ TOOLBAR ============ */}
+        <div className="archive-toolbar" role="search">
+          <div className="toolbar-search">
+            <IconSearch />
+            <input
+              type="search"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search projects, services, industry, locations…"
+              aria-label="Search projects"
+              autoComplete="off"
+            />
+            {searchInput && (
+              <button
+                className="search-clear"
+                onClick={() => setSearchInput("")}
+                aria-label="Clear search"
               >
-                <circle
-                  cx="11"
-                  cy="11"
-                  r="7"
-                />
-
-                <path d="m20 20-4-4" />
-              </svg>
-
-              <input
-                id="project-location"
-                type="search"
-                value={locationFilter}
-                onChange={
-                  handleLocationChange
-                }
-                placeholder="Search location..."
-                autoComplete="off"
-                className="form-control"
-                aria-label="Filter by location"
-              />
-            </div>
+                ×
+              </button>
+            )}
           </div>
 
-          {/* STATUS */}
-
-          <div className="project-filter">
-            <label htmlFor="project-status">
-              Status
-            </label>
-
+          <div className="toolbar-selects">
             <Select
-              inputId="project-status"
-              value={selectedStatusOption}
+              inputId="f-category"
+              value={categoryOptions.find((o) => o.value === category) || categoryOptions[0]}
+              options={categoryOptions}
+              onChange={(o) => setCategory(o?.value ?? "All")}
+              className="archive-select"
+              classNamePrefix="archive-select"
+              isSearchable={false}
+              aria-label="Service category"
+            />
+            <Select
+              inputId="f-industry"
+              value={industryOptions.find((o) => o.value === industry) || industryOptions[0]}
+              options={industryOptions}
+              onChange={(o) => setIndustry(o?.value ?? "All")}
+              className="archive-select"
+              classNamePrefix="archive-select"
+              isSearchable={false}
+              aria-label="Industry"
+            />
+            <Select
+              inputId="f-status"
+              value={statusOptions.find((o) => o.value === status) || statusOptions[0]}
               options={statusOptions}
-              onChange={
-                handleStatusChange
-              }
-              className="react-select"
-              classNamePrefix="react-select"
-              aria-label="Filter by status"
+              onChange={(o) => setStatus(o?.value ?? "All")}
+              className="archive-select"
+              classNamePrefix="archive-select"
               isSearchable={false}
-              isClearable={false}
-              menuPlacement="auto"
-              menuPosition="absolute"
+              aria-label="Project status"
             />
-          </div>
-
-          {/* CATEGORY */}
-
-          <div className="project-filter">
-            <label htmlFor="project-category">
-              Category Type
-            </label>
-
             <Select
-              inputId="project-category"
-              value={
-                selectedCategoryOption
-              }
-              options={
-                categorySelectOptions
-              }
-              onChange={
-                handleCategoryChange
-              }
-              className="react-select"
-              classNamePrefix="react-select"
-              aria-label="Filter by category"
-              isSearchable={false}
-              isClearable={false}
-              menuPlacement="auto"
-              menuPosition="absolute"
+              inputId="f-location"
+              value={locationOptions.find((o) => o.value === location) || locationOptions[0]}
+              options={locationOptions}
+              
+              onChange={(o) => setLocation(o?.value ?? "All")}
+              className="archive-select"
+              classNamePrefix="archive-select"
+              isSearchable
+              aria-label="Location"
             />
           </div>
-
-          {/* COUNT + CLEAR */}
-
-          <div className="project-filter project-count-filter">
-            {hasActiveFilters && (
-              <button
-                type="button"
-                className="clear-filters-btn"
-                onClick={
-                  handleClearFilters
-                }
-                aria-label="Clear all filters"
-              >
-                Clear Filters
-              </button>
-            )}
-          </div>
         </div>
 
-        {/* =====================================================
-            RESULTS INFO
-        ====================================================== */}
+        {/* ============ ACTIVE FILTER CHIPS ============ */}
+        {hasActiveFilters && !loading && (
+          <div className="archive-active-filters">
+            <span className="af-count">
+              {filtered.length} result{filtered.length === 1 ? "" : "s"}
+            </span>
 
-        <div
-          className="project-results-info"
-          role="status"
-          aria-live="polite"
-        >
-          <span>
-            Showing{" "}
-            <strong>
-              {filteredCount}
-            </strong>{" "}
-            of{" "}
-            <strong>
-              {totalProjectCount}
-            </strong>{" "}
-            projects
-          </span>
-
-          <span className="total-projects">
-            Total:{" "}
-            <strong>
-              {hasActiveFilters
-                ? filteredCount
-                : totalProjectCount}
-            </strong>
-          </span>
-        </div>
-
-        {/* =====================================================
-            EMPTY STATE
-        ====================================================== */}
-
-        {filteredCount === 0 ? (
-          <div
-            className="project-empty"
-            role="status"
-          >
-            <h3>
-              No projects found
-            </h3>
-
-            <p>
-              Try changing your filters.
-            </p>
-
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={
-                  handleClearFilters
-                }
-                aria-label="Clear all filters"
-              >
-                Clear Filters
+            {category !== "All" && (
+              <button className="af-chip" onClick={() => setCategory("All")}>
+                {category} <span aria-hidden>×</span>
               </button>
             )}
+            {industry !== "All" && (
+              <button className="af-chip" onClick={() => setIndustry("All")}>
+                {industry} <span aria-hidden>×</span>
+              </button>
+            )}
+            {status !== "All" && (
+              <button className="af-chip" onClick={() => setStatus("All")}>
+                {status} <span aria-hidden>×</span>
+              </button>
+            )}
+            {location !== "All" && (
+              <button className="af-chip" onClick={() => setLocation("All")}>
+                {location} <span aria-hidden>×</span>
+              </button>
+            )}
+            {searchTerm && (
+              <button className="af-chip" onClick={() => setSearchInput("")}>
+                “{searchTerm}” <span aria-hidden>×</span>
+              </button>
+            )}
+            <button className="af-clear-all" onClick={clearAllFilters}>
+              Clear all
+            </button>
           </div>
-        ) : (
-          <>
-            {/* =================================================
-                TABLE
-            ================================================== */}
+        )}
 
-            <div
-              className="table-wrapper"
-              ref={tableWrapperRef}
-            >
-              <div className="table-container">
+        {/* ============ EMPTY ============ */}
+        {!loading && filtered.length === 0 && (
+          <div className="archive-empty">
+            <h3>No projects found</h3>
+            <p>Try adjusting your search or filters to find what you're looking for.</p>
+            <button onClick={clearAllFilters}>Clear Filters</button>
+          </div>
+        )}
 
-                {/* FIXED HEADER */}
+        {/* ============ LIST ============ */}
+        {visibleProjects.length > 0 && (
+          <div className="archive-list" role="list">
+            {visibleProjects.map(renderRow)}
 
-                <div
-                  className="table-header"
-                  role="row"
+            {hasMore && <div ref={observerRef} className="scroll-sentinel" aria-hidden="true" />}
+
+            {hasMore && (
+              <div className="archive-more">
+                <button
+                  className="archive-more-btn"
+                  onClick={() => setVisibleCount((c) => c + ITEMS_PER_LOAD)}
                 >
-                  <div role="columnheader">
-                    Brand Name
-                  </div>
-
-                  <div role="columnheader">
-                    Category Type
-                  </div>
-
-                  <div role="columnheader">
-                    Status
-                  </div>
-
-                  <div role="columnheader">
-                    Location
-                  </div>
-                </div>
-
-                {/* TABLE BODY */}
-
-                <div
-                  className="table-body"
-                  ref={tableBodyRef}
-                  onWheel={
-                    handleTableWheel
-                  }
-                  role="rowgroup"
-                >
-                  {filteredProjects.map(
-                    (project) => (
-                      <div
-                        key={project.id}
-                        className="table-row"
-                        role="row"
-                      >
-                        {/* BRAND */}
-
-                        <div
-                          className="item-name"
-                          title={
-                            project.client_name
-                          }
-                          role="cell"
-                        >
-                          {
-                            project.client_name
-                          }
-                        </div>
-
-                        {/* CATEGORY */}
-
-                        <div
-                          className="item-type"
-                          title={
-                            Array.isArray(
-                              project.projectsCategory,
-                            )
-                              ? project.projectsCategory.join(
-                                  ", ",
-                                )
-                              : project.projectsCategory
-                          }
-                          role="cell"
-                        >
-                          {Array.isArray(
-                            project.projectsCategory,
-                          )
-                            ? project.projectsCategory.join(
-                                ", ",
-                              )
-                            : project.projectsCategory}
-                        </div>
-
-                        {/* STATUS */}
-
-                        <div
-                          className="item-status"
-                          role="cell"
-                        >
-                          <Chip
-                            label={
-                              project.project_status
-                            }
-                            size="small"
-                            className={getStatusClass(
-                              project.project_status,
-                            )}
-                            aria-label={`Status: ${project.project_status}`}
-                          />
-                        </div>
-
-                        {/* LOCATION */}
-
-                        <div
-                          className="item-location"
-                          title={
-                            project.location
-                          }
-                          role="cell"
-                        >
-                          {formatLocation(
-                            project.location,
-                          )}
-                        </div>
-                      </div>
-                    ),
-                  )}
-
-                  {/* INFINITE SCROLL SENTINEL */}
-
-                  {hasMore && (
-                    <div
-                      ref={
-                        observerTargetRef
-                      }
-                      className="infinite-scroll-sentinel"
-                      aria-hidden="true"
-                    />
-                  )}
-
-                  {/* LOADING MORE */}
-
-                  {loadingMore && (
-                    <div
-                      className="table-loading-overlay"
-                      role="status"
-                      aria-live="polite"
-                    >
-                      <div
-                        className="spinner"
-                        aria-hidden="true"
-                      />
-
-                      <span>
-                        Loading more
-                        projects...
-                      </span>
-                    </div>
-                  )}
-                </div>
+                  Load more projects
+                </button>
               </div>
-            </div>
+            )}
 
-            {/* PAGINATION ERROR */}
-
-            {error &&
-              projects.length > 0 && (
-                <div
-                  className="project-load-error"
-                  role="alert"
-                >
-                  <span>
-                    {error.message ||
-                      "Failed to load projects"}
-                  </span>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      fetchProjects(
-                        pageRef.current + 1,
-                        false,
-                      )
-                    }
-                    disabled={
-                      loadingMore
-                    }
-                  >
-                    Retry
-                  </button>
-                </div>
-              )}
-          </>
+            {/* {!hasMore && (
+              <div className="archive-end" role="status">
+                <span className="end-rule" /> End of archive <span className="end-rule" />
+              </div>
+            )} */}
+          </div>
         )}
       </div>
     </section>
   );
 }
-

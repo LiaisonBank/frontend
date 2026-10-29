@@ -307,9 +307,14 @@ export default function AuthModal({ isOpen, onClose, mode = 'login', onSuccess }
                   element.scrollTop += e.deltaY;
                 }
               }}>
-        <button className="auth-modal-close" onClick={onClose}>
-          ✕
-        </button>
+        <button
+  type="button"
+  className="auth-modal-close"
+  onClick={onClose}
+  aria-label="Close authentication dialog"
+>
+  <span aria-hidden="true">✕</span>
+</button>
 
         <div className="auth-modal-content">
           {success && currentMode === 'login' && (
