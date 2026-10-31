@@ -57,20 +57,28 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.1);
   }
 }
 
+/* Ensure all wrappers stretch */
+.service-card-wrapper {
+  display: flex;
+  align-items: stretch;
+}
+
+/* Base card style (Applies to all 7 cards) */
 .service-card {
-  background-color: $card-bg;
+  background-color: #ffffff;
   border: 1px solid $border-color;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 32px;
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
   position: relative;
   overflow: hidden;
   box-shadow: $shadow-rest;
-  transition: $transition-smooth;
+  transition: all 0.3s ease;
 
-  // Top Orange Accent Line (Hidden by default, reveals on hover)
+  /* The orange line is hidden by default */
   &::before {
     content: '';
     position: absolute;
@@ -81,34 +89,103 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.1);
     background-color: $brand-orange;
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 10;
+    transition: transform 0.3s ease;
   }
+}
 
-  // Hover State for the entire card
-  &:hover {
+/* Link wrapper - Only the first 6 cards have this */
+.service-card-link {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Hover effects ONLY trigger if inside a .service-card-link */
+.service-card-link:hover {
+  .service-card {
     transform: translateY(-6px);
     box-shadow: $shadow-hover;
     border-color: $border-hover;
-
+    
     &::before {
-      transform: scaleX(1);
+      transform: scaleX(1); /* Show orange line */
     }
 
-    // Icon interaction
     .service-card-icon {
-      transform: scale(1.08) translateY(-2px);
-      background-color: $brand-orange-dark;
+      background-color: $brand-orange;
+      color: #ffffff;
     }
 
-    // CTA interaction
     .service-card-cta {
       color: $brand-orange;
-
       svg {
-        stroke:#D95315;
         transform: translateX(6px);
       }
+    }
+  }
+}
+
+/* Specific styling for the 7th card */
+.property-service-card {
+  cursor: default;
+
+  .property-portfolio-content {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #edf0f3;
+
+    h4 {
+      font-family: "Barlow", sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #192438;
+      margin: 0 0 16px;
+
+      &::before {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 16px;
+        margin-right: 8px;
+        vertical-align: middle;
+        background: $brand-orange;
+        border-radius: 4px;
+      }
+    }
+
+    ul {
+      display: grid;
+      /* Single column since the card is narrow (col-lg-4) */
+      grid-template-columns: 1fr;
+      row-gap: 12px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: $text-muted;
+      line-height: 1.5;
+    }
+
+    .property-check {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      background: #fff1e8;
+      color: $brand-orange;
+      border-radius: 50%;
+      font-size: 11px;
+      margin-top: 2px;
     }
   }
 }
@@ -866,7 +943,7 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.1);
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding: 75px 0;
+  // padding: 75px 0;
   background:
     radial-gradient(
       ellipse at 10% 15%,
@@ -964,32 +1041,50 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.1);
   margin: 0 auto 32px;
   padding: 10px 20px;
 
-  color: #c6530b;
-  background: #fff4eb;
-  border: 1px solid #ffdfc8;
+  color: #f97316;
+  // background: #fff4eb;
+  // border: 1px solid #ffdfc8;
   border-radius: 50px;
 
-  font-family: "Barlow", sans-serif;
+  // font-family: "Barlow", sans-serif;
   font-size: 2rem;
-  font-weight: 750;
+  font-weight: 700;
   letter-spacing: 2px;
   line-height: 1.4;
-  text-transform: uppercase;
+  // text-transform: uppercase;
 }
 
-.welcome-label::after {
-  content: "";
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
 
-  width: 42px;
-  height: 3px;
 
-  background: #f97316;
-  border-radius: 20px;
-  transform: translateX(-50%);
-}
+  /* ORANGE UNDERLINE (CENTERED) */
+         .welcome-label::after {
+              content: "";
+              position: absolute;
+              left: 50%;
+              bottom: 0;
+              width: 90px;
+              height: 3px;
+              background: #ff7a00;
+              border-radius: 4px;
+              transform: translateX(-45%);
+              overflow: hidden;
+            }
+
+            /* SINGLE MOVING DOT (CENTERED FLOW) */
+           .welcome-label::before {
+              content: "";
+              position: absolute;
+              bottom: -6px;
+              left: 50%;
+              width: 14px;
+              height: 14px;
+              background: #ffffff;
+              border: 3px solid #ff7a00;
+              border-radius: 50%;
+              transform: translateX(-45px); // half of underline width
+              animation: dot-flow 3s linear infinite alternate;
+              z-index: 2;
+            }
 /* Description */
 
 .welcome-text {
@@ -1004,7 +1099,7 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.1);
   line-height: 1.9;
   letter-spacing: 0.05px;
 
-  text-align: center;
+  // text-align: center;
   text-wrap: pretty;
 }
 
@@ -1059,6 +1154,8 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.1);
     font-size: 1.5rem;
     letter-spacing: 1.5px;
   }
+
+  
 
   .welcome-label::after {
     top: 60px;

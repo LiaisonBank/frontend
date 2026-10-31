@@ -2,40 +2,69 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowRight,
+  Network,
+  FileCheck,
+  Fuel,
+  Flame,
+  Zap,
+  Wrench,
+  Calculator,
+  ClipboardList,
+  Ruler,
+  Users,
+  Monitor,
+  Briefcase,
+} from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useLayoutEffect } from "react";
 
 import useBodyClass from "@/components/useBodyClass";
 import AuthModal from "./AuthModal";
 import RecruitemtnModal from "./RecruitemtnModal";
 import EmployeeActivityGallery from "@/components/EmployeeActivityGallery/page";
 import "./career.scss";
-import DisintegratingImage from "@/components/DisintegratingImage"; // Adjust path if needed
+import electricIcon from '@/assets/images/Electrical Audit & Certification.png';
+import fireIcon from '@/assets/images/Fire & Safety Compliance.png';
+import licenseIcon from '@/assets/images/License Renewal & Compliance icon.png';
+import pngIcon from '@/assets/images/PNG Infra Maintenance icon.png';
+import accountantIcon from '@/assets/images/Accountant icon.png'
+import administrationIcon from '@/assets/images/Administration icon.png'
+import amcIcon from '@/assets/images/Annual Maintenance icon.png'
+import architectureIcon from '@/assets/images/Architecture icon.png'
+import hrIcon from '@/assets/images/Human Resource icon.png'
+import itIcon from '@/assets/images/information technology icon.png'
+import liaisoningIcon from '@/assets/images/Liaisoning icon.png'
+import salesIcon from '@/assets/images/Sales icon.png'
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ---------- SERVICE DATA ----------
+// ---------- SERVICE DEPARTMENTS ----------
 const services = [
-  { id: 1, name: "Liaisoning", slug: "Linking Needs With The Right Solutions", link: "Liaisoning", image: "/liaisoning-in-real-estate.jpg", description: "____________________________" },
-  { id: 2, name: "Licensing", slug: "We Handle the Process. You Build the Future.", link: "Licensing", image: "/licensing-services.png", description: "_______________________________________________" },
-  { id: 5, name: "Piped Natural Gas", slug: "Reliable Gas, Smarter Living.", link: "PNG", image: "/PNG.png", description: "_____________________________________" },
-  { id: 4, name: "Fire Safety", slug: "Turning Safety into Security.", link: "Fire Safety", image: "/fire4.png", description: "____________________________________________" },
-  { id: 3, name: "Electrical", slug: "Powering Your Needs, Connecting Your Future.", link: "Electrical", image: "/Electrical.png", description: "________________________________________________" },
-  { id: 6, name: "AMC", slug: "Protect Performance. Preserve Value.", link: "AMC", image: "/dummyAMC.png", description: "_______________________________________" },
+  { id: 1, name: "Liaisoning", link: "Liaisoning", icon:liaisoningIcon},
+  { id: 2, name: "Licensing", link: "Licensing", icon: licenseIcon },
+  { id: 5, name: "Piped Natural Gas", link: "PNG", icon: pngIcon },
+  { id: 4, name: "Fire Safety", link: "Fire Safety", icon: fireIcon },
+  { id: 3, name: "Electrical", link: "Electrical", icon: electricIcon },
+  { id: 6, name: "AMC", link: "AMC", icon:amcIcon },
 ];
 
 const OTHER_OPTIONS = [
-  { id: 1, name: "Accountant", link: "/careers-liaison-bank/jobs?department=ACCOUNTS DEPARTMENT - DBRE" },
-  { id: 2, name: "Administration", link: "/careers-liaison-bank/jobs?department=Administration & Facilities - DBRE" },
-  { id: 3, name: "Architecture", link: "/careers-liaison-bank/jobs?department=ARCHITECTURE DEPARTMENT - DBRE" },
-  { id: 4, name: "Human Resource", link: "/careers-liaison-bank/jobs?department=HUMAN RESOURCE - DBRE" },
-  { id: 5, name: "Information Technology", link: "/careers-liaison-bank/jobs?department=IT%20DEPARTMENT%20-%20DBRE" },
-  { id: 6, name: "Sales", link: "/careers-liaison-bank/jobs?department=SALES DEPARTMENT - DBRE" },
+  { id: 1, name: "Accountant", link: "/careers-liaison-bank/jobs?department=ACCOUNTS DEPARTMENT - DBRE", icon :accountantIcon},
+  { id: 2, name: "Administration", link: `/careers-liaison-bank/jobs?department=${encodeURIComponent("Administration & Facilities - DBRE")}`, icon:administrationIcon },
+  { id: 3, name: "Architecture", link: "/careers-liaison-bank/jobs?department=ARCHITECTURE DEPARTMENT - DBRE" , icon:architectureIcon},
+  { id: 4, name: "Human Resource", link: "/careers-liaison-bank/jobs?department=HUMAN RESOURCE - DBRE" , icon :hrIcon},
+  { id: 5, name: "Information Technology", link: "/careers-liaison-bank/jobs?department=IT%20DEPARTMENT%20-%20DBRE", icon:itIcon },
+  { id: 6, name: "Sales", link: "/careers-liaison-bank/jobs?department=SALES DEPARTMENT - DBRE", icon:salesIcon },
 ];
+
+// Icons are presentation-only; cards contain no descriptions or images.
+const SERVICE_CARD_ICONS = [Network, FileCheck, Fuel, Flame, Zap, Wrench];
+const CORPORATE_CARD_ICONS = [Calculator, ClipboardList, Ruler, Users, Monitor, Briefcase];
 
 const BENEFITS = [
   { title: "Career Advancement", tag: "Inclusive Culture", description: "Build a strong foundation for your future with industry exposure, valuable experience, and opportunities for long-term growth.", image: "/meaningfullWork.jpg" },
@@ -48,8 +77,6 @@ export default function CareersLiaisonPage() {
 
   const router = useRouter();
 
-  const [activeService, setActiveService] = useState(services[0]);
-  const hoverTargetServiceRef = useRef(services[0]);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState("login");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -67,31 +94,8 @@ export default function CareersLiaisonPage() {
   const ctaRef = useRef(null);
   const heroScrollTriggerRef = useRef(null);
 
-  // ---------- CURRENT OPENINGS: ENTRANCE ANIMATION ----------
-  useLayoutEffect(() => {
-    const section = servicesRef.current;
-    if (!section) return;
+  // Current Openings entrance animation disabled for the static card layout.
 
-    const choices = section.querySelectorAll(".career-stage__choice");
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (reducedMotion || !choices.length) return;
-
-    const ctx = gsap.context(() => {
-      gsap.from(choices, {
-        autoAlpha: 0,
-        y: 12,
-        duration: 0.5,
-        stagger: 0.035,
-        ease: "power3.out",
-        clearProps: "opacity,visibility,transform",
-      });
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
 
 
   // ---------- 1. HERO LOAD + SCROLL ANIMATION ----------
@@ -385,14 +389,7 @@ export default function CareersLiaisonPage() {
     }
   }, []);
 
-  // Image transition is handled entirely by DisintegratingImage.
-  // Keep the outer frame stationary; only update the selected department.
-  const handleServiceHover = (service) => {
-    if (service.id === hoverTargetServiceRef.current.id) return;
-
-    hoverTargetServiceRef.current = service;
-    setActiveService(service);
-  };
+  // Current Openings particle/hover/auto-scroll logic removed for the card layout.
 
   const handleApplyClick = (_job) => {
     if (isAuthenticated) {
@@ -409,10 +406,7 @@ export default function CareersLiaisonPage() {
     setIsAuthModalOpen(false);
   };
 
-  const activeServiceJobsHref = useMemo(
-    () => `/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.link)}`,
-    [activeService.link]
-  );
+
 
   return (
     <div className="careers-page">
@@ -477,122 +471,106 @@ export default function CareersLiaisonPage() {
         </div>
       </section>
 
-      {/* Current Openings — only this section uses the editorial animation */}
+      {/* Current Openings — static department cards; no image or particle animation */}
       <section
         ref={servicesRef}
-        className="services-section career-stage-section"
+        className="current-openings-cards-section"
         id="openings"
       >
-        <div className="container career-stage-container">
-          <div className="current-openings-heading">
-            <h2>Current Openings</h2>
-            {/* <p>
-      Explore our service departments and corporate functions.
-      Choose a team to discover its opportunities.
-    </p> */}
-          </div>
-          {/* <header className="career-stage-header">
-              <div>
-                <p className="career-stage-eyebrow">CAREERS AT LIAISON BANK</p>
-                <h2 className="career-stage-title">
-                  Current Openings<span>.</span>
-                </h2>
-              </div>
-              <p className="career-stage-intro">
-                Explore our service departments and corporate functions.
-                Choose a team to discover its opportunities.
-              </p>
-            </header> */}
+        <div className="container current-openings-cards-container">
+          {/* <header className="current-openings-cards-header"> */}
+          {/* <p className="current-openings-eyebrow">CAREERS AT LIAISON BANK</p> */}
+          <h2>Current Openings</h2>
+          {/* </header> */}
 
-          <div className="career-stage-layout">
-            {/* Selected service image changes with the existing activeService state. */}
-            <div className="career-stage-visual-column">
-              <div className="career-stage-image-frame">
-                <DisintegratingImage
-                  src={activeService.image}
-                  alt={`${activeService.name} career opportunities`}
-                  className="career-stage-image"
-                />
-                <div className="career-stage-image-overlay" />
-                <div className="career-stage-image-meta">
+          <section className="current-openings-group" aria-labelledby="service-departments-heading">
 
-                  <strong>{activeService.name}</strong>
-                  <p>{activeService.slug}</p>
-                </div>
-              </div>
-              {/* <div className="career-stage-visual-footer">
-                  <span>PEOPLE</span>
-                  <span> PURPOSE </span>
-                  <span> PROGRESS</span>
-                </div> */}
+            <div className="current-openings-card-grid">
+              {services.map((service, index) => {
+                const Icon = SERVICE_CARD_ICONS[index] || Briefcase;
+                const href = `/careers-liaison-bank/jobs?service=${encodeURIComponent(service.link)}`;
+
+                return (
+                  <div key={service.id} className="current-opening-card-wrapper">
+                    <Link
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="current-opening-card-link"
+                      aria-label={`View openings for ${service.name}`}
+                    >
+                      <article className="current-opening-card">
+                        <div className="current-opening-card-header">
+                          <span className="current-opening-card-icon">
+                            {service.icon ? (
+                              <Image
+                                src={service.icon}
+                                alt=""
+                                width={40}
+                                height={40}
+                                className="current-opening-icon-img"
+                              />
+                            ) : (
+                              <Icon size={26} strokeWidth={1.8} aria-hidden="true" />
+                            )}
+                          </span>
+                          <h4 className="current-opening-card-title">{service.name}</h4>
+                        </div>
+                        <div className="current-opening-card-cta">
+                          <span>View Opening</span>
+                          <ArrowRight size={17} aria-hidden="true" />
+                        </div>
+                      </article>
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
+          </section>
 
-            {/* All service and corporate departments are together in this directory. */}
-            <div className="career-stage-directory">
-              <div className="career-stage-group">
-                <div className="career-stage-group-title">
-                  SERVICE DEPARTMENTS
-                </div>
+          <section className="current-openings-group" aria-labelledby="corporate-functions-heading">
 
-                {services.map((service, index) => (
-                  <Link
-                    key={service.id}
-                    href={`/careers-liaison-bank/jobs?service=${encodeURIComponent(service.link)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`View ${service.name} job openings`}
-                    className={`career-stage__choice career-stage__service-choice ${activeService.id === service.id ? "is-active" : ""
-                      }`}
-                    onMouseEnter={() => handleServiceHover(service)}
-                    onFocus={() => handleServiceHover(service)}
-                  >
-                    <span className="career-stage-choice-index">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="career-stage-choice-name">{service.name}</span>
-                    <span className="career-stage-choice-line" aria-hidden="true" />
-                    <ArrowUpRight size={16} aria-hidden="true" />
-                  </Link>
-                ))}
-              </div>
+            <div className="current-openings-card-grid">
+              {OTHER_OPTIONS.map((option, index) => {
+                const Icon = CORPORATE_CARD_ICONS[index] || Briefcase;
 
-              <div className="career-stage-group career-stage-corporate-group">
-                <div className="career-stage-group-title">
-                  ALSO EXPLORE CORPORATE FUNCTIONS
-                </div>
-
-                {OTHER_OPTIONS.map((option, index) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    className="career-stage__choice career-stage__corporate-choice"
-                    onClick={() =>
-                      window.open(option.link, "_blank", "noopener,noreferrer")
-                    }
-                  >
-                    <span className="career-stage-choice-index">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="career-stage-choice-name">{option.name}</span>
-                    <span className="career-stage-choice-line" aria-hidden="true" />
-                    <ArrowUpRight size={16} aria-hidden="true" />
-                  </button>
-                ))}
-              </div>
-
-              <div className="career-stage-directory-footer">
-                {/* <span className="career-stage-current-summary">{activeService.slug}</span>
-                <Link
-                  href={activeServiceJobsHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="career-stage-view-openings"
-                >
-                  View Openings <ArrowUpRight size={18} />
-                </Link> */}
-              </div>
+                return (
+                  <div key={option.id} className="current-opening-card-wrapper">
+                    <Link
+                      href={option.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="current-opening-card-link"
+                      aria-label={`View openings for ${option.name}`}
+                    >
+                      <article className="current-opening-card">
+                        <div className="current-opening-card-header">
+                          <span className="current-opening-card-icon">
+                            {option.icon ? (
+                              <Image
+                                src={option.icon}
+                                alt=""
+                                width={40}
+                                height={40}
+                                className="current-opening-icon-img"
+                              />
+                            ) : (
+                              <Icon size={26} strokeWidth={1.8} aria-hidden="true" />
+                            )}
+                          </span>
+                          <h4 className="current-opening-card-title">{option.name}</h4>
+                        </div>
+                        <div className="current-opening-card-cta">
+                          <span>View Opening</span>
+                          <ArrowRight size={17} aria-hidden="true" />
+                        </div>
+                      </article>
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
-          </div>
+          </section>
         </div>
       </section>
 
