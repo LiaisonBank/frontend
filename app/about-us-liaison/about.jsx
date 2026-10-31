@@ -284,9 +284,9 @@ export default function AboutUsLiaisonPage() {
         </section>
 
         {/* ---property acquisition */}
-        <section className="property-acquisition-section">
+        {/* <section className="property-acquisition-section">
           <PropertyAcquisition />
-        </section>
+        </section> */}
 
         {/* Sectors */}
         <section className="sectors-section">
