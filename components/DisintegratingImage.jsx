@@ -6,8 +6,8 @@ import gsap from "gsap";
 
 // Keep the fine particle density but render with one canvas instead of
 // thousands of DOM elements. This substantially reduces layout/compositing work.
-const COLS = 48;
-const ROWS = 48;
+const COLS = 30;
+const ROWS = 30;
 const TILE_COUNT = COLS * ROWS;
 const TRACK_DURATION = 4.2;
 const TILE_DURATION = 2;
@@ -76,8 +76,9 @@ function createPanelCanvas(image, width, height) {
   return panelCanvas;
 }
 
-// OUTGOING = starts at the LEFT and dissolves toward the RIGHT.
-// INCOMING = starts at the RIGHT and assembles toward the LEFT.
+// Each particle uses an outside endpoint selected from the nearest image edge.
+// Incoming particles travel from that endpoint into the image; outgoing ones
+// return to that same endpoint. The image itself stays in a fixed page position.
 function getParticleStagger(index, direction) {
   const row = Math.floor(index / COLS);
   const col = index % COLS;
@@ -106,30 +107,66 @@ function createParticles(panelWidth, panelHeight) {
   return Array.from({ length: TILE_COUNT }, (_, index) => {
     const row = Math.floor(index / COLS);
     const col = index % COLS;
+    const centerX = (col + 0.5) / COLS;
+    const centerY = (row + 0.5) / ROWS;
+
+    // Pick the nearest image edge. Each tile travels to/from a point outside
+    // that edge, matching the annotated arrows around the image.
+    const edges = [
+      { side: "left", distance: centerX },
+      { side: "right", distance: 1 - centerX },
+      { side: "top", distance: centerY },
+      { side: "bottom", distance: 1 - centerY },
+    ];
+    const side = edges.reduce((nearest, edge) =>
+      edge.distance < nearest.distance ? edge : nearest
+    ).side;
+
+    // Distance to the arrow endpoint, in CSS pixels. Small deterministic
+    // variation keeps fragments organic while staying within the bleed area.
+    const travel = 85 + particleNoise(index, 41) * 75; // 85–160px
+    const diagonal = (particleNoise(index, 42) - 0.5) * travel * 0.52;
+    let sourceX = 0;
+    let sourceY = 0;
+
+    if (side === "left") {
+      sourceX = -travel;
+      sourceY = diagonal * 10;
+    } else if (side === "right") {
+      sourceX = travel;
+      sourceY = diagonal * 0.45;
+    } else if (side === "top") {
+      // The annotated top arrows approach diagonally from above/right.
+      sourceX = travel * (0.25 + particleNoise(index, 43) * 0.6);
+      sourceY = -travel;
+    } else {
+      // The annotated bottom arrows approach diagonally from below/right.
+      sourceX = travel * (0.25 + particleNoise(index, 44) * 0.6);
+      sourceY = travel;
+    }
 
     const sharedDelay = getParticleStagger(index, "outgoing");
 
-return {
-  index,
-  x: col * tileWidth,
-  y: row * tileHeight,
-  width: tileWidth,
-  height: tileHeight,
+    return {
+      index,
+      x: col * tileWidth,
+      y: row * tileHeight,
+      width: tileWidth,
+      height: tileHeight,
 
-  // Both animations start and finish on the same schedule.
-  outgoingDelay: sharedDelay,
-  incomingDelay: sharedDelay,
-
-  outgoingX: -(72 + particleNoise(index, 21) * 150),
-  outgoingY: (particleNoise(index, 22) - 0.5) * 84,
-  outgoingScale: 0.035 + particleNoise(index, 23) * 0.22,
-  outgoingRotation: (particleNoise(index, 24) - 0.5) * 0.66,
-
-  incomingX: 72 + particleNoise(index, 31) * 118,
-  incomingY: (particleNoise(index, 32) - 0.5) * 58,
-  incomingScale: 0.12 + particleNoise(index, 33) * 0.38,
-  incomingRotation: (particleNoise(index, 34) - 0.5) * 0.42,
-};
+      // Both directions use the same outside endpoint: the new image travels
+      // from that endpoint into place, and the old image leaves back to it.
+      outgoingDelay: sharedDelay,
+      incomingDelay: sharedDelay,
+      outgoingX: sourceX,
+      outgoingY: sourceY,
+      outgoingScale: 0.035 + particleNoise(index, 23) * 0.22,
+      outgoingRotation: (particleNoise(index, 24) - 0.5) * 0.66,
+      incomingX: sourceX,
+      incomingY: sourceY,
+      incomingScale: 0.12 + particleNoise(index, 33) * 0.38,
+      incomingRotation: (particleNoise(index, 34) - 0.5) * 0.42,
+    };
   });
 }
 
@@ -218,12 +255,24 @@ export default function DisintegratingImage({ src, alt, className }) {
         const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
         const panelWidth = width * PANEL_WIDTH_RATIO;
         const panelLeft = width * PANEL_SIDE_GAP;
-        const particleTravel = Math.max(72, Math.min(132, width * 0.22));
 
-        canvas.width = Math.round(width * dpr);
-        canvas.height = Math.round(height * dpr);
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
+        // Give the particle canvas transparent bleed on every side. The image
+        // itself remains bounded to the viewport, but detached particles can
+        // visibly travel over the page background instead of being clipped
+        // at an invisible canvas/window edge.
+        const bleedX = Math.max(280, width * 0.85);
+        const bleedY = Math.max(220, height * 0.32);
+        const canvasWidth = width + bleedX * 2;
+        const canvasHeight = height + bleedY * 2;
+
+        canvas.width = Math.round(canvasWidth * dpr);
+        canvas.height = Math.round(canvasHeight * dpr);
+        canvas.style.width = `${canvasWidth}px`;
+        canvas.style.height = `${canvasHeight}px`;
+        canvas.style.left = `${-bleedX}px`;
+        canvas.style.top = `${-bleedY}px`;
+        canvas.style.right = "auto";
+        canvas.style.bottom = "auto";
 
         const context = canvas.getContext("2d", {
           alpha: true,
@@ -244,23 +293,43 @@ export default function DisintegratingImage({ src, alt, className }) {
           if (cancelled) return;
 
           const elapsed = progress * TRACK_DURATION;
+
+          // Preserve the original horizontal side-by-side slide while allowing
+          // each particle to travel along its own edge-specific arrow path.
           const trackOffset = -panelWidth * progress;
           const outgoingX = panelLeft + trackOffset;
           const incomingX = panelLeft + panelWidth + trackOffset;
 
           context.setTransform(1, 0, 0, 1, 0, 0);
           context.clearRect(0, 0, canvas.width, canvas.height);
-          context.setTransform(dpr, 0, 0, dpr, 0, 0);
+          // Translate the image coordinate system into the oversized transparent
+          // canvas. The image stays fixed while its tiles travel to/from the
+          // outside endpoints shown in the annotated direction guide.
+          context.setTransform(
+            dpr,
+            0,
+            0,
+            dpr,
+            bleedX * dpr,
+            bleedY * dpr
+          );
 
-          // Draw each panel once, then punch tile-sized holes only where a
-          // particle has detached / is not assembled. This cuts thousands of
-          // repeated full-image draws and avoids hundreds of DOM layers.
+          // Clip the solid, sliding image panels and their tile masks to the
+          // visible image viewport. The canvas itself has transparent bleed,
+          // so detached particles can travel beyond this viewport.
+          context.save();
+          context.beginPath();
+          context.rect(0, 0, width, height);
+          context.clip();
+
+          // Keep the original side-by-side slider: old image exits left while
+          // the new image enters from the right over the same timeline.
           context.drawImage(oldPanel, outgoingX, 0, panelWidth, height);
           context.drawImage(newPanel, incomingX, 0, panelWidth, height);
 
-          // PASS 1: clear every cell that is currently detached or not yet
-          // assembled. Clear all masks before drawing moving particles so a
-          // later cell can never erase a particle that has already moved over it.
+          // PASS 1: punch holes in each panel as its matching tiles detach or
+          // before incoming tiles assemble. This keeps particles from appearing
+          // over a complete image underneath them.
           for (const particle of particles) {
             const outLocal = clamp(
               (elapsed - particle.outgoingDelay) / TILE_DURATION,
@@ -275,7 +344,7 @@ export default function DisintegratingImage({ src, alt, className }) {
             const outTileX = outgoingX + particle.x;
             const inTileX = incomingX + particle.x;
 
-            if (elapsed > particle.outgoingDelay) {
+            if (elapsed > particle.outgoingDelay && outLocal < 1) {
               context.clearRect(
                 outTileX - 0.25,
                 particle.y - 0.25,
@@ -293,8 +362,11 @@ export default function DisintegratingImage({ src, alt, className }) {
               );
             }
           }
+          context.restore();
 
-          // PASS 2: draw moving particles over the fully masked base panels.
+          // PASS 2: draw detached particles without the image-viewport clip.
+          // Their per-edge paths come from the annotated arrows, while the
+          // whole image transition keeps its original horizontal slide.
           for (const particle of particles) {
             const outLocal = clamp(
               (elapsed - particle.outgoingDelay) / TILE_DURATION,
@@ -309,7 +381,7 @@ export default function DisintegratingImage({ src, alt, className }) {
             const outTileX = outgoingX + particle.x;
             const inTileX = incomingX + particle.x;
 
-            // OLD IMAGE: left edge starts first; particles fly left.
+            // OLD IMAGE: particles disperse outward toward their assigned outside endpoints.
             if (elapsed > particle.outgoingDelay && outLocal < 1) {
               const easedOut = outLocal * outLocal;
               drawTile(
@@ -324,7 +396,7 @@ export default function DisintegratingImage({ src, alt, className }) {
               );
             }
 
-            // NEW IMAGE: right edge starts first; particles attach.
+            // NEW IMAGE: particles arrive from their matching outside endpoints and assemble.
             if (elapsed > particle.incomingDelay && inLocal < 1) {
               const easedIn = 1 - Math.pow(1 - inLocal, 3);
               drawTile(
