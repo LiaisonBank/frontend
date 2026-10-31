@@ -46,14 +46,162 @@ import {
     LayoutDashboard,
     Filter,
     ChevronLeft,
-    ChevronRight as ChevronRightIcon,
     Loader
 } from 'lucide-react';
-import Logo from "@/assets/images/logo_grey2.png";
+import Logo from "@/assets/images/company/logo_tagline.jpg";
 
 import AuthModal from '../AuthModal';
 import CandidateExamForm from '../CandidateExamForm';
 import './dashboard.scss';
+
+
+
+const normalizeJobMatchText = (value) =>
+    String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+
+const getProfileMatchedJobs = (jobs, profile) => {
+    const skills = (
+        Array.isArray(profile?.skills)
+            ? profile.skills
+            : String(profile?.skills || '').split(/[,;\n]+/)
+    )
+        .map(normalizeJobMatchText)
+        .filter(skill => skill.length >= 2);
+
+    const designation = normalizeJobMatchText(profile?.current_designation);
+    const specialization = normalizeJobMatchText(profile?.specialization);
+    const city = normalizeJobMatchText(profile?.city);
+    const candidateExperience = Number.parseFloat(profile?.total_experience) || 0;
+
+
+
+    const genericRoleWords = new Set([
+        'developer', 'engineer', 'senior', 'junior',
+        'manager', 'executive', 'associate', 'lead'
+    ]);
+
+    const designationTerms = designation
+        .split(' ')
+        .filter(word => word.length > 2 && !genericRoleWords.has(word));
+
+    const rankedJobs = jobs.map(job => {
+        const requirements = Array.isArray(job.requirements)
+            ? job.requirements.map(item =>
+                typeof item === 'string'
+                    ? item
+                    : item?.name || item?.title || ''
+            )
+            : typeof job.requirements === 'string'
+                ? [job.requirements]
+                : [];
+
+        const requirementsText = requirements.join(' ');
+
+        const jobText = normalizeJobMatchText([
+            job.title,
+            job.department,
+            job.description,
+            requirementsText
+        ].join(' '));
+
+        const jobLocation = normalizeJobMatchText(job.location);
+
+        let score = 0;
+
+        // Skills match
+        const matchedSkills = skills.filter(skill =>
+            jobText.includes(skill)
+        );
+
+        score += Math.min(matchedSkills.length * 12, 48);
+
+        // Current designation match
+        if (designation && jobText.includes(designation)) {
+            score += 18;
+        } else {
+            const matchedRoleTerms = designationTerms.filter(term =>
+                jobText.includes(term)
+            );
+
+            score += Math.min(matchedRoleTerms.length * 5, 10);
+        }
+
+        // Specialization match
+        if (specialization && jobText.includes(specialization)) {
+            score += 10;
+        }
+
+        // City/location match
+        if (
+            city &&
+            jobLocation &&
+            (jobLocation.includes(city) || city.includes(jobLocation))
+        ) {
+            score += 15;
+        }
+
+        // Experience match, only when the vacancy explicitly states it
+        const experienceRequirement = requirementsText.match(
+            /(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)/i
+        );
+
+        if (
+            experienceRequirement &&
+            candidateExperience >= Number(experienceRequirement[1]) &&
+            candidateExperience > 0
+        ) {
+            score += 8;
+        }
+
+        return {
+            ...job,
+            profileMatchScore: score
+        };
+    });
+
+    // Keep all vacancies and rank them by profile relevance.
+    // Jobs without matching keywords receive a score of 0.
+    return rankedJobs.sort(
+        (a, b) => b.profileMatchScore - a.profileMatchScore
+    );
+};
+
+const getManualFilteredJobs = (jobs, term, department, location) => {
+    const query = normalizeJobMatchText(term);
+
+    return jobs.filter(job => {
+        const requirements = Array.isArray(job.requirements)
+            ? job.requirements.join(' ')
+            : job.requirements || '';
+
+        const searchableText = normalizeJobMatchText([
+            job.title,
+            job.department,
+            job.location,
+            job.description,
+            requirements
+        ].join(' '));
+
+        const matchesSearch =
+            !query || searchableText.includes(query);
+
+        const matchesDepartment =
+            department === 'all' ||
+            job.department?.toLowerCase() === department.toLowerCase();
+
+        const matchesLocation =
+            location === 'all' ||
+            job.location?.toLowerCase() === location.toLowerCase();
+
+        return matchesSearch && matchesDepartment && matchesLocation;
+    });
+};
+
+
+
 
 export default function CandidateDashboard() {
     const router = useRouter();
@@ -77,9 +225,9 @@ export default function CandidateDashboard() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedDepartment, setSelectedDepartment] = useState('all');
     const [selectedLocation, setSelectedLocation] = useState('all');
-    const [currentPage, setCurrentPage] = useState(1);
-    const jobsPerPage = 6;
     const [expandedDescriptions, setExpandedDescriptions] = useState({});
+    // UI-only selection for the Indeed-style job detail preview.
+    const [activePreviewJobId, setActivePreviewJobId] = useState(null);
     const [candidateExamResults, setCandidateExamResults] = useState([]);
     const [candidateDetails, setCandidateDetails] = useState(null);
     const [examResultsMap, setExamResultsMap] = useState({});
@@ -97,6 +245,7 @@ export default function CandidateDashboard() {
     const [resume, setResume] = useState(null);
     const [resumeFile, setResumeFile] = useState(null);
     const [resumeUploading, setResumeUploading] = useState(false);
+    const [jobViewMode, setJobViewMode] = useState('recommended');
 
     // Show notification
     const showNotification = (message, type = 'warning', duration = 5000) => {
@@ -133,12 +282,12 @@ export default function CandidateDashboard() {
             console.log('📥 Introductory videos response:', data);
 
             let videos = [];
-            
+
             if (data.success && data.data) {
                 if (data.data && typeof data.data === 'object' && !Array.isArray(data.data)) {
                     videos = [data.data];
                     console.log('📹 Single video found:', data.data);
-                } 
+                }
                 else if (Array.isArray(data.data)) {
                     videos = data.data;
                     console.log('📹 Multiple videos found:', videos.length);
@@ -164,7 +313,7 @@ export default function CandidateDashboard() {
 
             console.log('🗺️ Final introductory videos map:', videosMap);
             console.log('📋 Keys in map:', Object.keys(videosMap));
-            
+
             setIntroductoryVideosMap(videosMap);
             introductoryVideosMapRef.current = videosMap;
 
@@ -245,6 +394,7 @@ export default function CandidateDashboard() {
         }
     }, []);
 
+
     // Update refs whenever maps change
     useEffect(() => {
         examResultsMapRef.current = examResultsMap;
@@ -289,7 +439,7 @@ export default function CandidateDashboard() {
             const vacancyId = result.vacancy_id || result.vacancyId || result.vacancy || result.job_id || result.jobId;
             const vacancyIdStr = vacancyId ? String(vacancyId).trim() : null;
             const job = vacancyIdStr ? jobMap[vacancyIdStr] : null;
-            
+
             const hasIntroVideo = vacancyIdStr ? !!videoMap[vacancyIdStr] : false;
             const introVideo = vacancyIdStr ? videoMap[vacancyIdStr] : null;
 
@@ -337,10 +487,10 @@ export default function CandidateDashboard() {
         console.log('✅ Transformed applications:', sortedApps.map(app => ({
             job_title: app.job_title,
             vacancy_id: app.vacancy_id,
-        
+
             has_introductory_video: app.has_introductory_video
         })));
-        
+
         setApplications(sortedApps);
     }, [candidateExamResults, allJobs]);
 
@@ -413,7 +563,7 @@ export default function CandidateDashboard() {
             }
 
             const data = await response.json();
-                        // console.log('📥 Exam results response:', data);
+            // console.log('📥 Exam results response:', data);
 
             let results = [];
 
@@ -695,13 +845,13 @@ export default function CandidateDashboard() {
     // ============================================================
     // HANDLE LOGOUT
     // ============================================================
-const handleLogout = () => {
-    localStorage.removeItem('career_token');
-    localStorage.removeItem('career_user');
-    setIsAuthenticated(false);
+    const handleLogout = () => {
+        localStorage.removeItem('career_token');
+        localStorage.removeItem('career_user');
+        setIsAuthenticated(false);
 
-    window.location.href = '/careers-liaison-bank';
-};
+        window.location.href = '/careers-liaison-bank';
+    };
 
     // ============================================================
     // HANDLE AUTH SUCCESS
@@ -717,100 +867,100 @@ const handleLogout = () => {
     // ============================================================
     // HANDLE APPLY
     // ============================================================
-const handleApply = (job) => {
-    // console.log('🔄 handleApply called for job:', job);
+    const handleApply = (job) => {
+        // console.log('🔄 handleApply called for job:', job);
 
-    // Check if user has already taken the exam
-    if (job.has_taken_exam) {
-        const examResult = job.exam_result;
-        let message = '❌ You have already taken the exam for this position.';
+        // Check if user has already taken the exam
+        if (job.has_taken_exam) {
+            const examResult = job.exam_result;
+            let message = '❌ You have already taken the exam for this position.';
 
-        if (examResult) {
-            const status = examResult.status || examResult.status_display || examResult.result;
-            const score = examResult.score || examResult.percentage || examResult.marks_obtained || 'N/A';
+            if (examResult) {
+                const status = examResult.status || examResult.status_display || examResult.result;
+                const score = examResult.score || examResult.percentage || examResult.marks_obtained || 'N/A';
 
-            if (status === 'Pass' || status === 'pass' || status === 'passed' || status === 'PASS') {
-                message = `✅ You have already passed the exam for this position with a score of ${score}%. You are not eligible to take it again.`;
-            } else {
-                message = `❌ You have already taken the exam for this position with a score of ${score}%. You are not eligible to take it again.`;
+                if (status === 'Pass' || status === 'pass' || status === 'passed' || status === 'PASS') {
+                    message = `✅ You have already passed the exam for this position with a score of ${score}%. You are not eligible to take it again.`;
+                } else {
+                    message = `❌ You have already taken the exam for this position with a score of ${score}%. You are not eligible to take it again.`;
+                }
             }
+
+            showNotification(message, 'warning');
+            return;
         }
 
-        showNotification(message, 'warning');
-        return;
-    }
+        // Check if job is eligible
+        if (job.is_eligible === false) {
+            showNotification('⚠️ This position is not available for application at this time.', 'error');
+            return;
+        }
 
-    // Check if job is eligible
-    if (job.is_eligible === false) {
-        showNotification('⚠️ This position is not available for application at this time.', 'error');
-        return;
-    }
+        // Check if user is logged in
+        if (!user || !user.id) {
+            showNotification('⚠️ Please log in to apply for this position.', 'error');
+            return;
+        }
 
-    // Check if user is logged in
-    if (!user || !user.id) {
-        showNotification('⚠️ Please log in to apply for this position.', 'error');
-        return;
-    }
+        // ============================================================
+        // PROFILE COMPLETENESS CHECK - ADD THIS SECTION
+        // ============================================================
+        const requiredProfileFields = [
+            { key: 'full_name', label: 'Full Name' },
+            { key: 'email', label: 'Email' },
+            { key: 'phone', label: 'Phone Number' },
+            { key: 'current_designation', label: 'Current Designation' },
+            { key: 'total_experience', label: 'Total Experience' },
+            { key: 'highest_qualification', label: 'Highest Qualification' },
+            { key: 'skills', label: 'Skills' }
+        ];
 
-    // ============================================================
-    // PROFILE COMPLETENESS CHECK - ADD THIS SECTION
-    // ============================================================
-    const requiredProfileFields = [
-        { key: 'full_name', label: 'Full Name' },
-        { key: 'email', label: 'Email' },
-        { key: 'phone', label: 'Phone Number' },
-        { key: 'current_designation', label: 'Current Designation' },
-        { key: 'total_experience', label: 'Total Experience' },
-        { key: 'highest_qualification', label: 'Highest Qualification' },
-        { key: 'skills', label: 'Skills' }
-    ];
+        const missingFields = requiredProfileFields.filter(field => {
+            const value = user[field.key];
+            return !value || value === '' || value === null || value === undefined;
+        });
 
-    const missingFields = requiredProfileFields.filter(field => {
-        const value = user[field.key];
-        return !value || value === '' || value === null || value === undefined;
-    });
+        if (missingFields.length > 0) {
+            const fieldNames = missingFields.map(f => f.label).join(', ');
+            const message = `⚠️ Please complete your profile before applying. Missing: ${fieldNames}`;
+            showNotification(message, 'error', 8000);
 
-    if (missingFields.length > 0) {
-        const fieldNames = missingFields.map(f => f.label).join(', ');
-        const message = `⚠️ Please complete your profile before applying. Missing: ${fieldNames}`;
-        showNotification(message, 'error', 8000);
-        
-        // Optionally, switch to profile tab to help user complete it
-        setActiveTab('profile');
-        return;
-    }
+            // Optionally, switch to profile tab to help user complete it
+            setActiveTab('profile');
+            return;
+        }
 
-    // Optional: Check if resume is uploaded
-    if (!user.resume) {
-        showNotification('⚠️ Please upload your resume before applying.', 'error', 5000);
-        setActiveTab('profile');
-        setIsEditing(true); // Open edit mode so user can upload resume
-        return;
-    }
+        // Optional: Check if resume is uploaded
+        if (!user.resume) {
+            showNotification('⚠️ Please upload your resume before applying.', 'error', 5000);
+            setActiveTab('profile');
+            setIsEditing(true); // Open edit mode so user can upload resume
+            return;
+        }
 
-    // Optional: Check for minimum experience requirements for the specific job
-    // This would require parsing the job requirements
-    // Example: if job has experience requirement, check if candidate meets it
-    // This is a more advanced check you can add later
+        // Optional: Check for minimum experience requirements for the specific job
+        // This would require parsing the job requirements
+        // Example: if job has experience requirement, check if candidate meets it
+        // This is a more advanced check you can add later
 
-    // console.log('✅ All validations passed. Opening exam form for job:', job.title);
+        // console.log('✅ All validations passed. Opening exam form for job:', job.title);
 
-    const jobData = {
-        ...job,
-        job_title: job.title,
-        title: job.title,
-        department: job.department,
-        designation: job.title,
-        custom_department: job.department,
-        original_data: job.original_data || job,
-        vacancy_id: job.id || job.name,
-        has_taken_exam: job.has_taken_exam || false,
-        exam_result: job.exam_result || null
+        const jobData = {
+            ...job,
+            job_title: job.title,
+            title: job.title,
+            department: job.department,
+            designation: job.title,
+            custom_department: job.department,
+            original_data: job.original_data || job,
+            vacancy_id: job.id || job.name,
+            has_taken_exam: job.has_taken_exam || false,
+            exam_result: job.exam_result || null
+        };
+
+        setSelectedJob(jobData);
+        setShowExamForm(true);
     };
-
-    setSelectedJob(jobData);
-    setShowExamForm(true);
-};
     // ============================================================
     // HANDLE EXAM FORM CLOSE
     // ============================================================
@@ -864,49 +1014,50 @@ const handleApply = (job) => {
     // ============================================================
     // HANDLE SEARCH & FILTERS
     // ============================================================
+
     const handleSearch = (term) => {
         setSearchTerm(term);
-        filterJobs(term, selectedDepartment, selectedLocation);
+        setJobViewMode('filters');
     };
 
     const handleDepartmentFilter = (department) => {
         setSelectedDepartment(department);
-        filterJobs(searchTerm, department, selectedLocation);
-        setCurrentPage(1);
+        setJobViewMode('filters');
     };
 
     const handleLocationFilter = (location) => {
         setSelectedLocation(location);
-        filterJobs(searchTerm, selectedDepartment, location);
-        setCurrentPage(1);
+        setJobViewMode('filters');
     };
 
-    const filterJobs = (term, department, location) => {
-        let filtered = allJobs;
 
-        if (term) {
-            filtered = filtered.filter(job =>
-                job.title?.toLowerCase().includes(term.toLowerCase()) ||
-                job.department?.toLowerCase().includes(term.toLowerCase()) ||
-                job.location?.toLowerCase().includes(term.toLowerCase()) ||
-                job.description?.toLowerCase().includes(term.toLowerCase())
+
+    useEffect(() => {
+        if (jobViewMode === 'recommended') {
+            setFilteredJobs(
+                getProfileMatchedJobs(allJobs, user)
             );
+            return;
         }
 
-        if (department !== 'all') {
-            filtered = filtered.filter(job =>
-                job.department?.toLowerCase() === department.toLowerCase()
-            );
-        }
+        // Strict manual filters
+        setFilteredJobs(
+            getManualFilteredJobs(
+                allJobs,
+                searchTerm,
+                selectedDepartment,
+                selectedLocation
+            )
+        );
+    }, [
+        allJobs,
+        user,
+        jobViewMode,
+        searchTerm,
+        selectedDepartment,
+        selectedLocation
+    ]);
 
-        if (location !== 'all') {
-            filtered = filtered.filter(job =>
-                job.location?.toLowerCase() === location.toLowerCase()
-            );
-        }
-
-        setFilteredJobs(filtered);
-    };
 
     // ============================================================
     // TOGGLE DESCRIPTION
@@ -1087,12 +1238,74 @@ const handleApply = (job) => {
     const departments = ['all', ...new Set(allJobs.map(job => job.department).filter(Boolean))];
     const locations = ['all', ...new Set(allJobs.map(job => job.location).filter(Boolean))];
 
-    const indexOfLastJob = currentPage * jobsPerPage;
-    const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-    const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
-    const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+    // Browse Jobs uses a continuous scroll list instead of pagination.
+    const currentJobs = filteredJobs;
+    const previewJob = currentJobs.find(job => String(job.id) === String(activePreviewJobId)) || currentJobs[0] || null;
 
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    // Fix mouse-wheel scrolling for Indeed-style job panels
+    useEffect(() => {
+        if (activeTab !== 'jobs' || isLoadingJobs || apiError) return;
+
+        const jobsSection = document.querySelector(
+            '.candidate-dashboard .jobs-section'
+        );
+
+        if (!jobsSection) return;
+
+        const scrollPanels = jobsSection.querySelectorAll(
+            '.jobs-list, .job-detail-content'
+        );
+
+        const handleWheel = (event) => {
+            if (event.ctrlKey) return;
+
+            const panel = event.currentTarget;
+            const maxScroll = panel.scrollHeight - panel.clientHeight;
+
+            if (maxScroll <= 1 || event.deltaY === 0) return;
+
+            // Convert wheel delta into pixels
+            const multiplier =
+                event.deltaMode === 1 ? 40 :
+                    event.deltaMode === 2 ? panel.clientHeight : 1;
+
+            const delta = event.deltaY * multiplier;
+
+            const atTop = panel.scrollTop <= 0;
+            const atBottom =
+                panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 1;
+
+            // Allow normal page scrolling when a panel reaches its boundary
+            if (
+                (delta < 0 && atTop) ||
+                (delta > 0 && atBottom)
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+
+            panel.scrollTop = Math.max(
+                0,
+                Math.min(maxScroll, panel.scrollTop + delta)
+            );
+        };
+
+        const cleanup = [];
+
+        scrollPanels.forEach((panel) => {
+            panel.addEventListener('wheel', handleWheel, {
+                passive: false
+            });
+
+            cleanup.push(() => {
+                panel.removeEventListener('wheel', handleWheel);
+            });
+        });
+
+        return () => cleanup.forEach((remove) => remove());
+
+    }, [activeTab, isLoadingJobs, apiError, currentJobs.length]);
 
     // ============================================================
     // LOADING STATE
@@ -1150,6 +1363,10 @@ const handleApply = (job) => {
 
             <div className="dashboard-layout">
                 <aside className={`dashboard-sidebar ${showMobileMenu ? 'mobile-open' : ''}`}>
+                    <div className="dashboard-brand" aria-label="Liaison Bank Career Portal">
+                        <Image src={Logo} alt="Liaison Bank" width={168} height={54} priority />
+                        {/* <span>CAREER PORTAL</span> */}
+                    </div>
                     <nav className="sidebar-nav">
                         <button
                             className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
@@ -1184,7 +1401,7 @@ const handleApply = (job) => {
                             {isRefreshing && <Loader size={16} className="spinning" />}
                         </button>
 
-                                                <button className="nav-item logout" onClick={handleLogout}>
+                        <button className="nav-item logout" onClick={handleLogout}>
                             <LogOut size={20} />
                             <span>Logout</span>
                         </button>
@@ -1199,6 +1416,13 @@ const handleApply = (job) => {
                     <div className="container">
                         {activeTab === 'overview' && (
                             <div className="overview-section">
+                                <div className="dashboard-intro">
+                                    <div>
+                                        <span className="dashboard-eyebrow">LIAISON BANK · CAREER PORTAL</span>
+                                        <h1>Welcome back, {user?.full_name?.split(' ')[0] || 'Candidate'}</h1>
+                                        <p>Manage your profile, explore opportunities and keep track of your career journey.</p>
+                                    </div>
+                                </div>
                                 <div className="stats-grid">
                                     <div className="stat-card">
                                         <div className="stat-icon total">
@@ -1321,7 +1545,7 @@ const handleApply = (job) => {
                             PROFILE TAB - COMPLETE FIXED VERSION
                         ============================================================ */}
                         {activeTab === 'profile' && (
-                            <div className="profile-section">
+                            <div className={`profile-section ${isEditing ? 'profile-edit-mode' : 'profile-view-mode'}`}>
                                 {/* Profile Header */}
                                 <div className="profile-header-card">
                                     <div className="profile-avatar-large">
@@ -1686,7 +1910,7 @@ const handleApply = (job) => {
                                         // View Mode - Display Profile
                                         <div className="profile-display">
                                             {/* Personal Details */}
-                                            <div className="info-section">
+                                            <div className="info-section personal-details">
                                                 <h4>Personal Details</h4>
                                                 <div className="info-grid">
                                                     <div className="info-item">
@@ -1729,7 +1953,7 @@ const handleApply = (job) => {
                                             </div>
 
                                             {/* Professional Details */}
-                                            <div className="info-section">
+                                            <div className="info-section professional-details">
                                                 <h4>Professional Details</h4>
                                                 <div className="info-grid">
                                                     <div className="info-item">
@@ -1760,7 +1984,7 @@ const handleApply = (job) => {
                                             </div>
 
                                             {/* Education */}
-                                            <div className="info-section">
+                                            <div className="info-section education-details">
                                                 <h4>Education</h4>
                                                 <div className="info-grid">
                                                     <div className="info-item">
@@ -1783,7 +2007,7 @@ const handleApply = (job) => {
                                             </div>
 
                                             {/* Skills & Links */}
-                                            <div className="info-section">
+                                            <div className="info-section skills-links">
                                                 <h4>Skills & Links</h4>
                                                 <div className="info-grid">
                                                     <div className="info-item full-width">
@@ -1894,13 +2118,13 @@ const handleApply = (job) => {
                                                             <span className="exam-result-label">Exam Result</span>
                                                         </div>
                                                         <div className="exam-result-details">
-                                                           
+
                                                             <div className="exam-score">
                                                                 Score: <strong>{app.exam_score || 0}%</strong>
                                                             </div>
                                                             <div className="exam-detail-item">
                                                             </div>
-                                
+
                                                         </div>
                                                     </div>
 
@@ -1948,205 +2172,326 @@ const handleApply = (job) => {
                         )}
 
 
-{activeTab === 'jobs' && (
-    <div className="jobs-section">
-        <div className="section-header">
-           <div>
-                <h2>Available Positions</h2>
-                <p>{filteredJobs.length} jobs found</p>
-            </div>
-            <button
-                className="btn-primary"
-                onClick={() => {
-                    setSearchTerm('');
-                    setSelectedDepartment('all');
-                    setSelectedLocation('all');
-                    setFilteredJobs(allJobs);
-                }}
-            >
-                Clear Filters
-            </button>
-        </div>
+                        {activeTab === 'jobs' && (
+                            <div className="jobs-section">
+                                <div className="section-header jobs-section-header">
+                                    <div>
+                                        <h2>
+                                            {jobViewMode === 'recommended'
+                                                ? 'Recommended for You'
+                                                : 'Filter Jobs'}
+                                        </h2>
 
-        <div className="filters-bar">
-            <div className="filter-group">
-                <label>Department</label>
-                <select
-                    value={selectedDepartment}
-                    onChange={(e) => handleDepartmentFilter(e.target.value)}
-                >
-                    {departments.map(dept => (
-                        <option key={dept} value={dept}>
-                            {dept === 'all' ? 'All Departments' : dept}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div className="filter-group">
-                <label>Location</label>
-                <select
-                    value={selectedLocation}
-                    onChange={(e) => handleLocationFilter(e.target.value)}
-                >
-                    {locations.map(loc => (
-                        <option key={loc} value={loc}>
-                            {loc === 'all' ? 'All Locations' : loc}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div className="filter-group search-filter">
-                <Search size={18} />
-                <input
-                    type="text"
-                    placeholder="Search jobs..."
-                    value={searchTerm}
-                    onChange={(e) => handleSearch(e.target.value)}
-                />
-            </div>
-        </div>
-
-        {isLoadingJobs && (
-            <div className="loading-jobs">
-                <div className="loader"></div>
-                <p>Loading job vacancies...</p>
-            </div>
-        )}
-
-        {apiError && (
-            <div className="error-state">
-                <AlertCircle size={48} />
-                <h3>Failed to Load Jobs</h3>
-                <p>{apiError}</p>
-                <button
-                    className="btn-retry"
-                    onClick={fetchVacancies}
-                >
-                    Retry
-                </button>
-            </div>
-        )}
-
-        {!isLoadingJobs && !apiError && (
-            <>
-                <div className="jobs-grid">
-                    {currentJobs.length > 0 ? (
-                        currentJobs.map((job) => {
-                            const isExpanded = expandedDescriptions[job.id] || false;
-                            const description = job.description || 'No description available';
-                            const shouldTruncate = description.length > 120;
-                            const displayDescription = shouldTruncate && !isExpanded
-                                ? truncateDescription(description)
-                                : description;
-
-                            return (
-                                <div key={job.id} className="job-card">
-                                    <div className="job-card-header">
-                                        <div className="job-title-wrapper">
-                                            <h4>{job.title}</h4>
-                                     
-                                        </div>
-                                        <span className="job-department">{job.department}</span>
-                                        {job.has_taken_exam && (
-                                            <span className="exam-status-badge already-taken">
-                                                <CheckCircle size={12} />
-                                                Exam Taken
-                                            </span>
-                                        )}
+                                        <p>
+                                            {filteredJobs.length} {filteredJobs.length === 1 ? 'job' : 'jobs'}
+                                            {jobViewMode === 'recommended'
+                                                ? ' ranked based on your profile'
+                                                : ' found'}
+                                        </p>
                                     </div>
-                                    <div className="job-card-body">
-                                        <div className="job-description-wrapper">
-                                            <p className="job-description">
-                                                {displayDescription}
-                                            </p>
-                                            {shouldTruncate && (
-                                                <button
-                                                    className="read-more-btn"
-                                                    onClick={() => toggleDescription(job.id)}
-                                                >
-                                                    {isExpanded ? 'Read Less' : 'Read More'}
-                                                </button>
-                                            )}
-                                        </div>
-                                        <div className="job-meta">
-                                            <span><MapPin size={14} /> {job.location}</span>
-                                            <span><Briefcase size={14} /> {job.type}</span>
-                                            <span><Clock size={14} /> Posted: {new Date(job.posted_date).toLocaleDateString()}</span>
-                                            <span className="salary"><Award size={14} /> {job.salary}</span>
-                                        </div>
-                                        {job.requirements && job.requirements.length > 0 && (
-                                            <div className="job-requirements">
-                                                <span className="req-label">Requirements:</span>
-                                                {job.requirements.slice(0, 3).map((req, idx) => (
-                                                    <span key={idx} className="req-tag">{req}</span>
-                                                ))}
-                                                {job.requirements.length > 3 && (
-                                                    <span className="req-tag more">+{job.requirements.length - 3} more</span>
-                                                )}
-                                            </div>
-                                        )}
-                                        {/* {job.has_taken_exam && job.exam_result && (
-                                            <div className="exam-result-info">
-                                                <span className={`exam-status ${job.exam_result.status === 'Pass' || job.exam_result.status === 'pass' || job.exam_result.status === 'PASS' ? 'passed' : 'failed'}`}>
-                                                    {job.exam_result.status === 'Pass' || job.exam_result.status === 'pass' || job.exam_result.status === 'PASS' ? '✅ Passed' : '❌ Failed'}
-                                                    Score: {job.exam_result.score || job.exam_result.percentage || job.exam_result.marks_obtained || 'N/A'}%
-                                                </span>
-                                            </div>
-                                        )} */}
-                                    </div>
-                                    <div className="job-card-footer">
+
+                                    <div className="job-view-toggle">
                                         <button
-                                            className={`btn-apply ${!job.is_eligible ? 'disabled' : ''}`}
-                                            onClick={() => handleApply(job)}
-                                            disabled={!job.is_eligible}
+                                            type="button"
+                                            className={`job-view-tab ${jobViewMode === 'recommended' ? 'active' : ''
+                                                }`}
+                                            aria-pressed={jobViewMode === 'recommended'}
+                                            onClick={() => setJobViewMode('recommended')}
                                         >
-                                            {job.has_taken_exam ? 'Exam Already Taken' : 'Apply Now'}
-                                            {!job.has_taken_exam && <ExternalLink size={14} />}
+                                            <Star size={16} />
+                                            Recommended for You
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className={`job-view-tab ${jobViewMode === 'filters' ? 'active' : ''
+                                                }`}
+                                            aria-pressed={jobViewMode === 'filters'}
+                                            onClick={() => setJobViewMode('filters')}
+                                        >
+                                            <Filter size={16} />
+                                            Filter Jobs
                                         </button>
                                     </div>
                                 </div>
-                            );
-                        })
-                    ) : (
-                        <div className="empty-state">
-                            <BriefcaseIcon size={64} />
-                            <h3>No Jobs Found</h3>
-                            <p>Try adjusting your filters or search terms</p>
-                        </div>
-                    )}
-                </div>
 
-                {totalPages > 1 && (
-                    <div className="pagination">
-                        <button
-                            onClick={() => paginate(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="page-btn"
-                        >
-                            <ChevronLeft size={18} />
-                        </button>
-                        {[...Array(totalPages)].map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => paginate(index + 1)}
-                                className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                        <button
-                            onClick={() => paginate(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="page-btn"
-                        >
-                            <ChevronRightIcon size={18} />
-                        </button>
-                    </div>
-                )}
-            </>
-        )}
-    </div>
-)}
+                                {jobViewMode === 'filters' && (
+                                    <div className="filters-bar">
+                                        <div className="filter-group">
+                                            <label>Department</label>
+                                            <select
+                                                value={selectedDepartment}
+                                                onChange={(e) => handleDepartmentFilter(e.target.value)}
+                                            >
+                                                {departments.map(dept => (
+                                                    <option key={dept} value={dept}>
+                                                        {dept === 'all' ? 'All Departments' : dept}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="filter-group">
+                                            <label>Location</label>
+                                            <select
+                                                value={selectedLocation}
+                                                onChange={(e) => handleLocationFilter(e.target.value)}
+                                            >
+                                                {locations.map(loc => (
+                                                    <option key={loc} value={loc}>
+                                                        {loc === 'all' ? 'All Locations' : loc}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="filter-group search-filter">
+                                            <Search size={18} />
+                                            <input
+                                                type="text"
+                                                placeholder="Search jobs..."
+                                                value={searchTerm}
+                                                onChange={(e) => handleSearch(e.target.value)}
+                                            />
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="btn-clear-filters"
+                                            onClick={() => {
+                                                setSearchTerm('');
+                                                setSelectedDepartment('all');
+                                                setSelectedLocation('all');
+                                                setJobViewMode('filters');
+                                            }}
+                                        >
+                                            Clear Filters
+                                        </button>
+                                    </div>
+                                )}
+                                <p className="profile-filter-status">
+                                    {jobViewMode === 'recommended'
+                                        ? 'Jobs are ranked by your skills, designation, specialization, location and experience.'
+                                        : 'Apply Department, Location and Search filters to find specific vacancies.'}
+                                </p>
+
+                                {isLoadingJobs && (
+                                    <div className="loading-jobs">
+                                        <div className="loader"></div>
+                                        <p>Loading job vacancies...</p>
+                                    </div>
+                                )}
+
+                                {apiError && (
+                                    <div className="error-state">
+                                        <AlertCircle size={48} />
+                                        <h3>Failed to Load Jobs</h3>
+                                        <p>{apiError}</p>
+                                        <button
+                                            className="btn-retry"
+                                            onClick={fetchVacancies}
+                                        >
+                                            Retry
+                                        </button>
+                                    </div>
+                                )}
+
+                                {!isLoadingJobs && !apiError && (
+                                    <>
+                                        <div className="jobs-grid jobs-split-view">
+                                            <div className="jobs-list" aria-label="Job results">
+                                                {currentJobs.length > 0 ? (
+                                                    currentJobs.map((job) => {
+                                                        const isExpanded = expandedDescriptions[job.id] || false;
+                                                        const description = job.description || 'No description available';
+                                                        const shouldTruncate = description.length > 120;
+                                                        const displayDescription = shouldTruncate && !isExpanded
+                                                            ? truncateDescription(description)
+                                                            : description;
+                                                        const isSelected = String(previewJob?.id) === String(job.id);
+
+                                                        return (
+                                                            <article
+                                                                key={job.id}
+                                                                className={`job-card ${isSelected ? 'is-selected' : ''}`}
+                                                                tabIndex={0}
+                                                                aria-label={`View details for ${job.title}`}
+                                                                onClick={() => setActivePreviewJobId(job.id)}
+                                                                onKeyDown={(event) => {
+                                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                                        event.preventDefault();
+                                                                        setActivePreviewJobId(job.id);
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <div className="job-card-header">
+                                                                    <div className="job-title-wrapper">
+                                                                        <h4>{job.title}</h4>
+                                                                    </div>
+                                                                    <span className="job-department">{job.department}</span>
+                                                                    {jobViewMode === 'recommended' &&
+                                                                        job.profileMatchScore > 0 && (
+                                                                            <span className="job-match-badge">
+                                                                                <Star size={12} />
+                                                                                {Math.round((job.profileMatchScore / 99) * 100)}% Match
+                                                                            </span>
+                                                                        )}
+                                                                    {job.has_taken_exam && (
+                                                                        <span className="exam-status-badge already-taken">
+                                                                            <CheckCircle size={12} />
+                                                                            Exam Taken
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="job-card-body">
+                                                                    <div className="job-description-wrapper">
+                                                                        <p className={`job-description ${isExpanded ? 'expanded' : ''}`}>
+                                                                            {displayDescription}
+                                                                        </p>
+                                                                        {shouldTruncate && (
+                                                                            <button
+                                                                                type="button"
+                                                                                className="read-more-btn"
+                                                                                onClick={(event) => {
+                                                                                    event.stopPropagation();
+                                                                                    toggleDescription(job.id);
+                                                                                }}
+                                                                            >
+                                                                                {isExpanded ? 'Read Less' : 'Read More'}
+                                                                            </button>
+                                                                        )}
+                                                                    </div>
+
+                                                                    <div className="job-meta">
+                                                                        <span><MapPin size={14} /> {job.location}</span>
+                                                                        <span><Briefcase size={14} /> {job.type}</span>
+                                                                        <span><Clock size={14} /> Posted: {new Date(job.posted_date).toLocaleDateString()}</span>
+                                                                        <span className="salary"><Award size={14} /> {job.salary}</span>
+                                                                    </div>
+
+                                                                    {job.requirements && job.requirements.length > 0 && (
+                                                                        <div className="job-requirements">
+                                                                            <span className="req-label">Requirements:</span>
+                                                                            {job.requirements.slice(0, 3).map((req, idx) => (
+                                                                                <span key={idx} className="req-tag">{req}</span>
+                                                                            ))}
+                                                                            {job.requirements.length > 3 && (
+                                                                                <span className="req-tag more">+{job.requirements.length - 3} more</span>
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </article>
+                                                        );
+                                                    })
+                                                ) : (
+                                                    <div className="empty-state jobs-empty-state">
+                                                        <BriefcaseIcon size={64} />
+                                                        <h3>No Jobs Found</h3>
+                                                        <p>Try adjusting your filters or search terms</p>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {previewJob && (
+                                                <section
+                                                    className={`job-detail-panel ${activePreviewJobId && String(activePreviewJobId) === String(previewJob.id) ? 'mobile-detail-open' : ''}`}
+                                                    aria-label={`Details for ${previewJob.title}`}
+                                                    aria-live="polite"
+                                                >
+                                                    <div className="job-detail-header">
+                                                        <button
+                                                            type="button"
+                                                            className="mobile-jobs-back"
+                                                            onClick={() => setActivePreviewJobId(null)}
+                                                            aria-label="Back to job results"
+                                                        >
+                                                            <ChevronLeft size={18} />
+                                                            <span>Back to jobs</span>
+                                                        </button>
+                                                        <div className="job-detail-heading">
+                                                            <h3>{previewJob.title}</h3>
+                                                            <div className="job-detail-badges">
+                                                                <span className="job-department">{previewJob.department}</span>
+                                                                {previewJob.has_taken_exam && (
+                                                                    <span className="exam-status-badge already-taken">
+                                                                        <CheckCircle size={12} />
+                                                                        Exam Taken
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="job-detail-content">
+                                                        <section className="job-detail-description">
+                                                            <h4>Full job description</h4>
+                                                            <p>{previewJob.description || 'No description available'}</p>
+                                                        </section>
+
+                                                        <section className="job-detail-facts">
+                                                            <h4>Job details</h4>
+                                                            <div className="job-detail-facts-grid">
+                                                                <div className="job-detail-fact">
+                                                                    <MapPin size={17} />
+                                                                    <div>
+                                                                        <span>Location</span>
+                                                                        <strong>{previewJob.location}</strong>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="job-detail-fact">
+                                                                    <Briefcase size={17} />
+                                                                    <div>
+                                                                        <span>Job type</span>
+                                                                        <strong>{previewJob.type}</strong>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="job-detail-fact">
+                                                                    <Clock size={17} />
+                                                                    <div>
+                                                                        <span>Posted</span>
+                                                                        <strong>{new Date(previewJob.posted_date).toLocaleDateString()}</strong>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="job-detail-fact">
+                                                                    <Award size={17} />
+                                                                    <div>
+                                                                        <span>Salary</span>
+                                                                        <strong>{previewJob.salary}</strong>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </section>
+
+                                                        {previewJob.requirements && previewJob.requirements.length > 0 && (
+                                                            <section className="job-detail-requirements">
+                                                                <h4>Requirements</h4>
+                                                                <div className="job-requirements">
+                                                                    {previewJob.requirements.map((req, idx) => (
+                                                                        <span key={idx} className="req-tag">{req}</span>
+                                                                    ))}
+                                                                </div>
+                                                            </section>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="job-detail-footer">
+                                                        <button
+                                                            type="button"
+                                                            className={`btn-apply ${!previewJob.is_eligible ? 'disabled' : ''}`}
+                                                            onClick={() => handleApply(previewJob)}
+                                                            disabled={!previewJob.is_eligible}
+                                                        >
+                                                            {previewJob.has_taken_exam ? 'Exam Already Taken' : 'Apply Now'}
+                                                            {!previewJob.has_taken_exam && <ExternalLink size={14} />}
+                                                        </button>
+                                                    </div>
+                                                </section>
+                                            )}
+                                        </div>
+
+                                    </>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </main>
             </div>
