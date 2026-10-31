@@ -231,14 +231,14 @@ function TypingSlogan({
         </span>
       ))}
 
-      {!isTypingComplete && (
+      {/* {!isTypingComplete && (
         <span
           className={`${styles.cursor} ${
             showCursor ? styles.cursorVisible : ""
           }`}
           aria-hidden="true"
         />
-      )}
+      )} */}
     </span>
   );
 }

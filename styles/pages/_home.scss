@@ -827,17 +827,50 @@ section.ceo-message-full {
 }
 
 
+/* =========================================
+   MOBILE FIX — CEO VIEW PROFILE VISIBILITY
+   ========================================= */
 
+@media (max-width: 480px) {
+  section.ceo-message-full {
+    .ceo-full-quote-container {
+      /* Reserve enough space for quote + profile link */
+      min-height: 300px;
+      overflow: visible;
+    }
 
+    .ceo-full-quote-item.active {
+      overflow: visible;
+    }
 
+    .ceo-full-view-profile {
+      position: relative;
+      z-index: 5;
+      display: block;
+      width: 100%;
+      margin-top: 8px;
+      padding-bottom: 16px;
+      text-align: right;
 
+      .ceo-full-profile-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-top: 18px;
+        padding-bottom: 8px;
+        font-size: 16px;
+        line-height: 1.5;
+        white-space: nowrap;
+      }
 
-
-
-
-
-
-
+      .ceo-full-profile-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
 
 
 
@@ -2402,9 +2435,26 @@ section.ceo-message-full {
 
     @media (max-width: 767px) {
       .certificate-section {
+  .certificate-swiper .certificate-image {
+    width: 100%;
+    height: 300px; // Remove fixed 400px height
+    object-fit: contain;
+    display: block;
+  }
+
+  .certificate-swiper .certificate-caption {
+    margin-top: 0;
+    padding: 3px 5px !important;
+    line-height: 1.3;
+  }
+        .certificate-swiper.swiper .swiper-wrapper > .swiper-slide {
+      border: none !important;
+    }
+        
+    
 
         .certificate-item {
-          width: 170px;
+          width: 130px;
         }
 
         .certificate-track {
@@ -2421,8 +2471,9 @@ section.ceo-message-full {
         }
 
         .certificate-caption {
-          font-size: 13px;
-          padding: 10px 6px 4px;
+          font-size: 12px;
+          line-height: 1.3;
+          padding: 8px 5px;
         }
       }
     }
@@ -2445,6 +2496,7 @@ section.ceo-message-full {
 
         .certificate-caption {
           font-size: 12px;
+          
         }
       }
     }
@@ -3031,3 +3083,52 @@ section.ceo-message-full {
     }
   }
 }
+/* Reduce gap between title and certificate images on mobile */
+@media (max-width: 767px) {
+  section.awardscertification {
+    .section-title {
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    .section-title h3 {
+      margin-bottom: 4px !important;
+      padding-bottom: 8px !important;
+    }
+
+    .certificate-section {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
+
+    .certificate-section .certificate-swiper {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
+
+    .certificate-section .certificate-swiper .swiper-wrapper {
+      align-items: flex-start;
+    }
+  }
+}
+/* Reduce gap between certificate image and caption on mobile */
+// @media (max-width: 767px) {
+//   section.awardscertification {
+//     .certificate-section {
+//       .certificate-swiper {
+//         .certificate-image {
+//           width: 100% !important;
+//           height: 300px !important;
+//           object-fit: contain;
+//           display: block;
+//         }
+
+//         .certificate-caption {
+//           margin-top: 0 !important;
+//           padding: 3px 5px !important;
+//           line-height: 1.3;
+//         }
+//       }
+//     }
+//   }
+// }

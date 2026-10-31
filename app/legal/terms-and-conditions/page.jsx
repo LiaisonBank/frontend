@@ -46,7 +46,7 @@ export default function Page() {
           {/* <PageTitleWaveLeft /> */}
         </div>
       </div>
-      <section className="container py-5">
+      <section className="container py-5 px-4">
         <div className="row justify-content-center text-center">
           <ol className="tclist">
             <li><strong>Introduction:</strong> Welcome to Liaison Bank. These terms and conditions outline the rules and regulations for the use of our website.</li>

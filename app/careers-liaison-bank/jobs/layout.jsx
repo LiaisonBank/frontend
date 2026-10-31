@@ -1,7 +1,8 @@
-export default function JobsLayout({ children }) {
+// app/layout.jsx
+export default function RootLayout({ children }) {
   return (
-    <div className="jobs-layout">
-      {children}
-    </div>
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning>{children}</body>
+    </html>
   );
 }

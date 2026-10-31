@@ -104,6 +104,7 @@ $font-5xl: 58px;
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -183,7 +184,8 @@ $font-5xl: 58px;
     inset: 0;
     background-size: cover;
     background-position: center;
-    opacity: 0.5;
+    background-color:#000000ba;
+    // opacity: 0.5;
 
     &::after {
       content: '';
@@ -298,6 +300,75 @@ $font-5xl: 58px;
   }
 }
 
+.hero-modern-content {
+  display: flex;
+  align-items: center; // vertically center left/right
+  justify-content: space-between; // push right column to the far right
+  gap: 40px;
+  flex-wrap: wrap; // stack on smaller screens
+}
+
+.hero-modern-left {
+  flex: 1 1 480px;
+  min-width: 0;
+}
+
+.hero-modern-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 260px;
+}
+
+.hero-amc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 40px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 600;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+  .hero-amc-btn-arrow {
+    transition: transform 0.25s ease;
+  }
+
+  &:hover {
+    background: #ff6004;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+    font-size: 22px;
+    color: #fff;
+
+    .hero-amc-btn-arrow {
+      transform: translateX(4px);
+    }
+  }
+}
+
+/* On mobile, let the button sit under the description, aligned left */
+@media (max-width: 768px) {
+  .hero-modern-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-modern-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+
+
 // ============================================
 // SERVICES MODERN - Subcategory Cards
 // ============================================
@@ -403,7 +474,8 @@ $font-5xl: 58px;
     border-radius: $radius-lg;
     box-shadow: $shadow-sm;
     overflow: visible;
-    border:1px solid #ea580c;
+    border: 1px solid #ea580c;
+
     &:hover {
       box-shadow: $shadow-lg;
     }
@@ -676,10 +748,10 @@ $font-5xl: 58px;
       flex-direction: column;
       gap: 10px;
       padding: 16px 16px 12px;
-      
+
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
-      
+
       scrollbar-width: thin;
       scrollbar-color: $primary $gray-100;
 
@@ -709,6 +781,7 @@ $font-5xl: 58px;
         border-left: 3px solid $primary-light;
         transition: $transition;
         min-height: max-content;
+
         // Animated background
         &::before {
           content: "";
@@ -721,37 +794,40 @@ $font-5xl: 58px;
           z-index: 0;
         }
 
-  // Keep content above the animated background
-  > * {
-    position: relative;
-    z-index: 1;
-  }
+        // Keep content above the animated background
+        >* {
+          position: relative;
+          z-index: 1;
+        }
 
-  &:hover {
-    color: white;
+        &:hover {
+          color: white;
 
-    &::before {
-      transform: scaleX(1);
-    }
+          &::before {
+            transform: scaleX(1);
+          }
 
-    span {
-      background: white;
-      color: #ea580c;
-    }
+          span {
+            background: white;
+            color: #ea580c;
+          }
 
-    p.back-item-name {
-      color: white;
-    }
-    li{
-      span{
-        background: none !important;
-        color: white  !important;
-      }
-    }
-  }
+          p.back-item-name {
+            color: white;
+          }
+
+          li {
+            span {
+              background: none !important;
+              color: white !important;
+            }
+          }
+        }
+
         @media (max-width: 768px) {
           padding: 10px 12px;
         }
+
         // &:hover {
         //   background: $primary-subtle;
         //   border-left-color: $primary;
@@ -1307,9 +1383,12 @@ $font-5xl: 58px;
 // ANIMATIONS
 // ============================================
 @keyframes faqPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
   }
+
   50% {
     box-shadow: 0 0 0 6px rgba(249, 115, 22, 0.05);
   }
@@ -1320,6 +1399,7 @@ $font-5xl: 58px;
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

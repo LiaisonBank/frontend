@@ -59,30 +59,62 @@
     }
 
     .auth-modal-close {
-      position: sticky;
-      top: 16px;
-      right: 16px;
-      float: right;
-      background: #f5f0ea;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #5a6a7e;
-      font-size: 18px;
-      transition: all 0.3s ease;
-      z-index: 10;
+  position: sticky;
+  top: 16px;
+  right: 16px;
+  float: right;
 
-      &:hover {
-        background: #f97316;
-        color: white;
-        transform: rotate(90deg);
-      }
+  background: #f5f0ea;
+  border: none;
+  border-radius: 50%;
+
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  color: #5a6a7e;
+  font-size: 18px;
+
+  z-index: 10;
+
+  /* Keep the button itself stationary */
+  transform: none;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+
+  span {
+    display: inline-block;
+    line-height: 1;
+    pointer-events: none;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover {
+    background: #f97316;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+
+    /* Rotate only the icon, not the hover target */
+    span {
+      transform: rotate(90deg);
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid #f97316;
+    outline-offset: 3px;
+  }
+
+  &:active {
+    background: #e0680e;
+  }
+}
 
     .auth-modal-content {
       padding: 32px 40px 40px;
@@ -375,4 +407,1238 @@
       }
     }
   }
+}
+
+/* ============================================================
+   Create Account only: horizontal three-step registration flow.
+   Existing Sign In styles above are intentionally untouched.
+   ============================================================ */
+.auth-modal-overlay .auth-modal.auth-modal--register {
+  width: min(980px, calc(100vw - 32px));
+  max-width: 980px;
+  max-height: min(94vh, 900px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid rgba(242, 101, 34, 0.16);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(26, 32, 44, 0.18);
+}
+
+.auth-modal-overlay .auth-modal--register > .auth-modal-content {
+  padding: 0 !important;
+}
+
+.auth-modal-overlay .auth-modal--register > .auth-modal-content > .auth-header {
+  display: none;
+}
+
+.auth-modal-overlay .auth-modal--register > .auth-modal-content > .auth-error {
+  margin: 20px 32px 0;
+}
+
+.auth-modal-overlay .auth-modal--register .register-wizard-form {
+  display: block;
+  width: 100%;
+  margin: 0;
+}
+
+.auth-modal-overlay .auth-modal--register .register-wizard {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 0;
+}
+
+.auth-modal-overlay .auth-modal--register .register-wizard-sidebar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 8px;
+  margin: 0;
+  padding: 8px;
+  overflow: visible;
+  border: 0;
+  border-bottom: 1px solid rgba(242, 101, 34, 0.16);
+  background: #fff4ed;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav {
+  display: flex;
+  min-width: 0;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #64748b;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-number {
+  display: inline-flex;
+  flex: 0 0 25px;
+  width: 25px;
+  height: 25px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fce0d0;
+  color: #d95315;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav:hover:not(.is-active) {
+  background: rgba(242, 101, 34, 0.08);
+  color: #d95315;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav.is-active {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(249, 115, 22, 0.2);
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav.is-active .register-step-number,
+.auth-modal-overlay .auth-modal--register .register-step-nav.is-complete .register-step-number {
+  background: rgba(255, 255, 255, 0.95);
+  color: #e66b16;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-wizard-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 30px clamp(20px, 4.5vw, 48px) 32px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-heading {
+  max-width: 620px;
+  margin: 0 auto 28px;
+  padding: 0;
+  text-align: center;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-count {
+  display: block;
+  margin-bottom: 5px;
+  color: #d95315;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-heading h3 {
+  margin: 0;
+  color: #1a202c;
+  font-family: 'Barlow', sans-serif;
+  font-size: clamp(24px, 3vw, 30px);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-heading p {
+  max-width: 520px;
+  margin: 8px auto 0;
+  color: #64748b;
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-grid {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 18px 22px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-grid-full {
+  grid-column: 1 / -1;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group {
+  min-width: 0;
+  margin: 0;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group label {
+  display: block;
+  margin: 0 0 6px;
+  color: #364152;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper input,
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper select,
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper textarea {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 10px 13px;
+  border: 1px solid #d5cbc0;
+  border-radius: 7px;
+  outline: none;
+  background: #ffffff;
+  color: #1a202c;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper input::placeholder,
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper textarea::placeholder {
+  color: #aab5c8;
+  opacity: 1;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper input:focus,
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper select:focus,
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper textarea:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper .toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  color: #8a99ae;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .helper-text {
+  margin-top: 5px;
+  color: #64748b;
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-sections {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-form-section {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-section-heading {
+  width: fit-content;
+  margin: 0;
+  padding: 0 0 7px;
+  border-bottom: 2px solid #f97316;
+  color: #1a202c;
+  font-family: 'Barlow', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.auth-modal-overlay .auth-modal--register .register-documents-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-upload-group {
+  min-width: 0;
+  margin: 0;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-upload-zone {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px dashed #f97316;
+  border-radius: 7px;
+  background: #fff7f0;
+  color: #1a202c;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-upload-zone:hover,
+.auth-modal-overlay .auth-modal--register .resume-upload-zone.is-dragging,
+.auth-modal-overlay .auth-modal--register .resume-upload-zone.has-file {
+  border-color: #d95315;
+  background: #fff0e4;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-upload-zone:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 3px;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-upload-icon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  color: #d95315;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-upload-copy {
+  max-width: 55%;
+  overflow: hidden;
+  color: #1a202c;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-or {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-browse-button,
+.auth-modal-overlay .auth-modal--register .resume-remove-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #d95315;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-browse-button:hover,
+.auth-modal-overlay .auth-modal--register .resume-remove-button:hover {
+  color: #f97316;
+  text-decoration: underline;
+}
+
+.auth-modal-overlay .auth-modal--register .resume-helper-text {
+  margin: 7px 0 0;
+  color: #64748b;
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.auth-modal-overlay .auth-modal--register .register-career-summary {
+  margin-top: 0;
+}
+
+.auth-modal-overlay .auth-modal--register .register-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 0;
+  padding-top: 28px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-back-btn,
+.auth-modal-overlay .auth-modal--register .register-next-btn,
+.auth-modal-overlay .auth-modal--register .auth-create-btn {
+  display: inline-flex;
+  box-sizing: border-box;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.auth-modal-overlay .auth-modal--register .register-back-btn {
+  border-color: #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+}
+
+.auth-modal-overlay .auth-modal--register .register-next-btn,
+.auth-modal-overlay .auth-modal--register .auth-create-btn {
+  margin-left: auto;
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.22);
+}
+
+.auth-modal-overlay .auth-modal--register .register-back-btn:hover,
+.auth-modal-overlay .auth-modal--register .register-next-btn:hover,
+.auth-modal-overlay .auth-modal--register .auth-create-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.auth-modal-overlay .auth-modal--register .register-next-btn:hover,
+.auth-modal-overlay .auth-modal--register .auth-create-btn:hover:not(:disabled) {
+  box-shadow: 0 12px 30px rgba(249, 115, 22, 0.3);
+}
+
+.auth-modal-overlay .auth-modal--register .auth-create-btn {
+  display: block;
+  width: 40%;
+  max-width: 280px;
+  min-width: 180px;
+  margin-left: auto;
+}
+
+.auth-modal-overlay .auth-modal--register .auth-create-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.auth-modal-overlay .auth-modal--register .auth-footer {
+  margin: 0;
+  padding: 0 20px 24px;
+  text-align: center;
+}
+
+.auth-modal-overlay .auth-modal--register .auth-footer p {
+  margin: 0;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .auth-modal-overlay .auth-modal.auth-modal--register {
+    width: min(100%, calc(100vw - 20px));
+    max-height: calc(100vh - 20px);
+    border-radius: 13px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-wizard-sidebar {
+    gap: 5px;
+    padding: 6px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-nav {
+    min-height: 48px;
+    gap: 7px;
+    padding: 9px 6px;
+    border-radius: 9px;
+    font-size: 12px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-number {
+    flex-basis: 22px;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-wizard-panel {
+    padding: 26px 22px 24px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-grid {
+    gap: 16px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .auth-create-btn {
+    width: 50%;
+  }
+}
+
+@media (max-width: 520px) {
+  .auth-modal-overlay .auth-modal--register > .auth-modal-content > .auth-error {
+    margin: 16px 16px 0;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-wizard-sidebar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-nav {
+    flex-direction: column;
+    min-height: 58px;
+    gap: 4px;
+    padding: 7px 4px;
+    text-align: center;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-label {
+    font-size: 11px;
+    line-height: 1.15;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-wizard-panel {
+    padding: 23px 16px 22px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-heading {
+    margin-bottom: 22px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-heading p {
+    font-size: 13px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-grid-full {
+    grid-column: auto;
+  }
+
+  .auth-modal-overlay .auth-modal--register .resume-upload-zone {
+    gap: 8px 10px;
+    padding: 13px 10px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .resume-upload-copy {
+    max-width: calc(100% - 40px);
+    font-size: 13px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .resume-or {
+    display: none;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-actions {
+    padding-top: 24px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-back-btn,
+  .auth-modal-overlay .auth-modal--register .register-next-btn,
+  .auth-modal-overlay .auth-modal--register .auth-create-btn {
+    min-height: 40px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .auth-create-btn {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-modal-overlay .auth-modal--register .register-step-nav,
+  .auth-modal-overlay .auth-modal--register .register-back-btn,
+  .auth-modal-overlay .auth-modal--register .register-next-btn,
+  .auth-modal-overlay .auth-modal--register .auth-create-btn,
+  .auth-modal-overlay .auth-modal--register .resume-upload-zone {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Create Account: compact horizontal stepper form.
+   All overrides are scoped to .auth-modal--register so the
+   existing Sign In UI is not affected.
+   Liaison Bank theme: Barlow + orange accents.
+   ============================================================ */
+.auth-modal-overlay .auth-modal.auth-modal--register {
+  width: min(960px, calc(100vw - 32px));
+  max-width: 960px;
+  max-height: min(92vh, 900px);
+  border: 1px solid rgba(242, 101, 34, 0.16);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #fffaf6 0%, #ffffff 48%, #fff5eb 100%);
+  box-shadow: 0 24px 70px rgba(26, 32, 44, 0.17);
+  scrollbar-color: #f26522 #fff4ed;
+}
+
+.auth-modal-overlay .auth-modal--register .register-wizard-sidebar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 22px clamp(18px, 4vw, 44px);
+  overflow: visible;
+  border: 0;
+  border-bottom: 1px solid rgba(242, 101, 34, 0.13);
+  border-radius: 18px 18px 0 0;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-item {
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  min-width: 0;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-item:last-child {
+  flex: 1 1 0;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: auto;
+  min-width: 0;
+  min-height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #7a8493;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: none;
+  transition: color 0.2s ease;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav:hover:not(.is-active) {
+  background: transparent;
+  color: #d95315;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-number {
+  display: inline-flex;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #aeb6c1;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #6b7280;
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-label {
+  display: inline-block;
+  min-width: 0;
+  color: inherit;
+  overflow: visible;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
+/* Current step: orange outlined circle; completed step: solid orange. */
+.auth-modal-overlay .auth-modal--register .register-step-nav.is-active {
+  color: #1a202c;
+  background: transparent;
+  box-shadow: none;
+  font-weight: 600;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav.is-active .register-step-number {
+  border-color: #f26522;
+  background: #ffffff;
+  color: #d95315;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav.is-complete {
+  color: #d95315;
+  font-weight: 600;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav.is-complete .register-step-number {
+  border-color: #f26522;
+  background: linear-gradient(135deg, #f26522, #d95315);
+  color: #ffffff;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-connector {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 18px;
+  height: 1px;
+  margin: 0 clamp(8px, 1.7vw, 20px);
+  background: #d9dde3;
+  transition: background 0.2s ease;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-connector.is-complete {
+  background: #f26522;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-nav:focus-visible {
+  outline: 2px solid #f26522;
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+/* Match the compact reference: the stepper itself identifies the step. */
+.auth-modal-overlay .auth-modal--register .register-step-heading {
+  display: none;
+}
+
+.auth-modal-overlay .auth-modal--register .register-wizard-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 28px clamp(18px, 4vw, 42px) 26px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  gap: 22px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 28px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group label {
+  margin-bottom: 5px;
+  color: #343e4d;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper input,
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper select,
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper textarea {
+  min-height: 39px;
+  padding: 9px 12px;
+  border-color: #d6dbe2;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #1a202c;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper input:focus,
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper select:focus,
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper textarea:focus {
+  border-color: #f26522;
+  box-shadow: 0 0 0 3px rgba(242, 101, 34, 0.11);
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper input::placeholder,
+.auth-modal-overlay .auth-modal--register .register-step-content .form-group .input-wrapper textarea::placeholder {
+  color: #aab3bf;
+}
+
+.auth-modal-overlay .auth-modal--register .register-section-heading {
+  padding-bottom: 6px;
+  border-bottom-color: #f26522;
+  color: #1a202c;
+  font-size: 15px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-step-sections {
+  gap: 24px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-form-section {
+  gap: 13px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-actions {
+  width: 100%;
+  max-width: 680px;
+  box-sizing: border-box;
+  justify-content: space-between;
+  margin: 0 auto;
+  padding-top: 24px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-back-btn,
+.auth-modal-overlay .auth-modal--register .register-next-btn,
+.auth-modal-overlay .auth-modal--register .auth-create-btn {
+  min-height: 38px;
+  padding: 9px 18px;
+  border-radius: 6px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.auth-modal-overlay .auth-modal--register .register-next-btn,
+.auth-modal-overlay .auth-modal--register .auth-create-btn {
+  background: linear-gradient(135deg, #f26522, #d95315);
+  box-shadow: 0 5px 14px rgba(242, 101, 34, 0.2);
+}
+
+.auth-modal-overlay .auth-modal--register .register-back-btn {
+  border-color: #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+}
+
+.auth-modal-overlay .auth-modal--register .register-actions.is-first-step {
+  justify-content: center;
+}
+
+.auth-modal-overlay .auth-modal--register .register-back-btn.is-first-step {
+  display: none;
+}
+
+.auth-modal-overlay .auth-modal--register .register-actions.is-first-step .register-next-btn {
+  margin: 0;
+}
+
+.auth-modal-overlay .auth-modal--register .auth-create-btn {
+  width: auto;
+  max-width: none;
+  min-width: 160px;
+  margin-left: auto;
+}
+
+.auth-modal-overlay .auth-modal--register .auth-footer {
+  padding: 0 20px 22px;
+  color: #64748b;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  text-align: center;
+}
+
+.auth-modal-overlay .auth-modal--register .auth-footer .auth-switch-btn {
+  color: #d95315;
+  font: inherit;
+  font-weight: 600;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.auth-modal-overlay .auth-modal--register .auth-footer .auth-switch-btn:hover {
+  color: #f26522;
+  text-decoration: underline;
+}
+
+.auth-modal-overlay .auth-modal--register > .auth-modal-content > .auth-error {
+  margin: 18px auto 0;
+  width: min(680px, calc(100% - 40px));
+  box-sizing: border-box;
+}
+
+@media (max-width: 760px) {
+  .auth-modal-overlay .auth-modal.auth-modal--register {
+    width: min(100%, calc(100vw - 20px));
+    max-height: calc(100vh - 20px);
+    border-radius: 14px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-wizard-sidebar {
+    justify-content: space-between;
+    padding: 17px 15px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-nav {
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-number {
+    flex-basis: 21px;
+    width: 21px;
+    height: 21px;
+    font-size: 11px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-connector {
+    min-width: 8px;
+    margin: 0 7px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-wizard-panel {
+    padding: 22px 20px 22px ; 
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-grid {
+    gap: 15px 16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .auth-modal-overlay .auth-modal--register .register-wizard-sidebar {
+    padding: 14px 10px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-item {
+    flex: 1 1 0;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-nav {
+    flex: 0 1 auto;
+    gap: 5px;
+    font-size: 10px;
+    white-space: normal;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-label {
+    max-width: 76px;
+    white-space: normal;
+    line-height: 1.15;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-step-connector {
+    min-width: 5px;
+    margin: 0 5px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-wizard-panel {
+    padding: 20px 16px 18px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-grid {
+  width: 90%;
+  max-width: 360px;
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+  .auth-modal-overlay .auth-modal--register .register-grid-full {
+    grid-column: auto;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-actions {
+    padding-top: 20px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-back-btn,
+  .auth-modal-overlay .auth-modal--register .register-next-btn,
+  .auth-modal-overlay .auth-modal--register .auth-create-btn {
+    min-height: 38px;
+    padding: 9px 14px;
+    font-size: 13px;
+  }
+
+  .auth-modal-overlay .auth-modal--register .auth-create-btn {
+  width: 125px;
+  min-width: 0;
+  min-height: 34px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-modal-overlay .auth-modal--register .register-step-nav,
+  .auth-modal-overlay .auth-modal--register .register-step-number,
+  .auth-modal-overlay .auth-modal--register .register-step-connector {
+    transition: none;
+  }
+}
+
+
+
+/* Mobile progress header: keep the compact progress navigation visible. */
+.auth-modal-overlay .auth-modal--register .register-mobile-progress-header {
+  display: none;
+}
+
+.auth-modal-overlay .auth-modal--register .register-mobile-progress-header-bars {
+  display: flex;
+  width: 100%;
+  gap: 4px;
+  margin: 0 0 8px;
+}
+
+.auth-modal-overlay .auth-modal--register .register-mobile-progress-header-segment {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 4px;
+  border-radius: 1px;
+  background: #d6d3d1;
+  transition: background-color 0.2s ease;
+}
+
+.auth-modal-overlay .auth-modal--register .register-mobile-progress-header-segment.is-complete,
+.auth-modal-overlay .auth-modal--register .register-mobile-progress-header-segment.is-active {
+  background: #f26522;
+}
+
+.auth-modal-overlay .auth-modal--register .register-mobile-progress-header-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #64748b;
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.auth-modal-overlay .auth-modal--register .register-mobile-progress-header-meta span:last-child {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.auth-modal-overlay .auth-modal--register .register-field-error {
+  display: block;
+  margin-top: 5px;
+  color: #b42318;
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.auth-modal-overlay .auth-modal--register input[aria-invalid="true"] {
+  border-color: #d92d20;
+}
+
+@media (max-width: 520px) {
+  .auth-modal-overlay .auth-modal--register .register-wizard-sidebar {
+    display: none !important;
+  }
+
+  .auth-modal-overlay .auth-modal--register .register-mobile-progress-header {
+    display: block !important;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 0 12px;
+    margin: 0 0 18px;
+    border-bottom: 1px solid rgba(242, 101, 34, 0.16);
+  }
+}
+
+@media (min-width: 521px) {
+  .auth-modal-overlay .auth-modal--register .register-mobile-progress-header {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-modal-overlay .auth-modal--register .register-mobile-progress-header-segment {
+    transition: none;
+  }
+}
+
+
+/* FINAL FIX: mobile Create Account progress header.
+   Keep this at the very end so it wins over earlier wizard rules. */
+@media screen and (max-width: 760px) {
+  .auth-modal-overlay .auth-modal.auth-modal--register .register-wizard .register-mobile-progress-header {
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important;
+    inset: auto !important;
+    float: none !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    box-sizing: border-box !important;
+    order: -1;
+    margin: 0 0 18px !important;
+    padding: 10px 16px 12px !important;
+    overflow: visible !important;
+    background: #fffaf6 !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(242, 101, 34, 0.18) !important;
+    opacity: 1 !important;
+    clip: auto !important;
+  }
+
+  .auth-modal-overlay .auth-modal.auth-modal--register .register-wizard .register-wizard-sidebar {
+    display: none !important;
+  }
+
+  .auth-modal-overlay .auth-modal.auth-modal--register .register-mobile-progress-header-bars {
+    display: flex !important;
+    width: 100% !important;
+    gap: 4px !important;
+    margin: 0 0 8px !important;
+  }
+
+  .auth-modal-overlay .auth-modal.auth-modal--register .register-mobile-progress-header-segment {
+    display: block !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    height: 4px !important;
+    border-radius: 1px !important;
+    background: #d6d3d1 !important;
+  }
+
+  .auth-modal-overlay .auth-modal.auth-modal--register .register-mobile-progress-header-segment.is-complete,
+  .auth-modal-overlay .auth-modal.auth-modal--register .register-mobile-progress-header-segment.is-active {
+    background: #f26522 !important;
+  }
+
+  .auth-modal-overlay .auth-modal.auth-modal--register .register-mobile-progress-header-meta {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    color: #64748b !important;
+    font-family: 'Barlow', sans-serif !important;
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+  }
+}
+
+@media screen and (min-width: 761px) {
+  .auth-modal-overlay .auth-modal.auth-modal--register .register-mobile-progress-header {
+    display: none !important;
+  }
+
+  .auth-modal-overlay .auth-modal.auth-modal--register .register-wizard .register-wizard-sidebar {
+    display: flex !important;
+  }
+}
+/* Compact registration success modal */
+.auth-modal-overlay .auth-modal.auth-modal--register-success {
+  width: min(520px, calc(100vw - 32px));
+  max-width: 520px;
+  max-height: none;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.auth-modal-overlay .auth-modal--register-success > .auth-modal-content {
+  padding: 0 !important;
+}
+
+.auth-modal-overlay .auth-modal--register-success .auth-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  float: none;
+  z-index: 10;
+}
+
+.auth-modal-overlay
+  .auth-modal--register-success
+  .auth-success--register {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 260px;
+  margin: 0;
+  padding: 58px 28px 38px;
+  text-align: center;
+  background: linear-gradient(
+    145deg,
+    #fffaf6 0%,
+    #ffffff 55%,
+    #fff2e8 100%
+  );
+}
+
+.auth-modal-overlay
+  .auth-modal--register-success
+  .auth-success--register .success-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #e8f7ed;
+  color: #16834a;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 8px 20px rgba(22, 131, 74, 0.12);
+}
+
+.auth-modal-overlay
+  .auth-modal--register-success
+  .auth-success--register h3 {
+  margin: 0;
+  color: #1a202c;
+  font-family: 'Barlow', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.auth-modal-overlay
+  .auth-modal--register-success
+  .auth-success--register p {
+  max-width: 340px;
+  margin: 10px 0 0;
+  color: #64748b;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
 }

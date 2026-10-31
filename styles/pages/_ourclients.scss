@@ -249,6 +249,15 @@
         min-width: 130%;
         min-height: 130%;
       }
+      .hero-content {
+    h1 {
+      font-size: 1.50rem !important;
+      line-height: 1.4;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+    }
+  }
     }
   }
 
@@ -303,6 +312,43 @@
           transform: scale(1.1);
           filter: grayscale(0%);
           opacity: 1;
+        }
+      }
+    }
+  }
+}
+
+
+/* =========================================
+   MOBILE: 3 CLIENTS IN ONE ROW
+   ========================================= */
+
+@media (max-width: 600px) {
+  .client {
+    .client-section {
+      padding: 24px 8px;
+
+      .client-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        width: 100%;
+        max-width: 100%;
+        gap: 8px;
+        justify-content: stretch;
+        align-items: stretch;
+      }
+
+      .client-item {
+        width: 100% !important;
+        min-width: 0;
+        height: 90px;
+        padding: 8px;
+        border-radius: 8px;
+
+        img {
+          max-width: 100%;
+          max-height: 65%;
+          object-fit: contain;
         }
       }
     }

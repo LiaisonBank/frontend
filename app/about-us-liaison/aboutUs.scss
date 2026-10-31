@@ -25,7 +25,7 @@ $transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 // Shadows
 $shadow-rest: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 $shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-$shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
+$shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.1);
 
 // ==========================================
 // MAIN STYLES
@@ -57,20 +57,28 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
   }
 }
 
+/* Ensure all wrappers stretch */
+.service-card-wrapper {
+  display: flex;
+  align-items: stretch;
+}
+
+/* Base card style (Applies to all 7 cards) */
 .service-card {
-  background-color: $card-bg;
+  background-color: #ffffff;
   border: 1px solid $border-color;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 32px;
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
   position: relative;
   overflow: hidden;
   box-shadow: $shadow-rest;
-  transition: $transition-smooth;
+  transition: all 0.3s ease;
 
-  // Top Orange Accent Line (Hidden by default, reveals on hover)
+  /* The orange line is hidden by default */
   &::before {
     content: '';
     position: absolute;
@@ -81,34 +89,103 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
     background-color: $brand-orange;
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 10;
+    transition: transform 0.3s ease;
   }
+}
 
-  // Hover State for the entire card
-  &:hover {
+/* Link wrapper - Only the first 6 cards have this */
+.service-card-link {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Hover effects ONLY trigger if inside a .service-card-link */
+.service-card-link:hover {
+  .service-card {
     transform: translateY(-6px);
     box-shadow: $shadow-hover;
     border-color: $border-hover;
-
+    
     &::before {
-      transform: scaleX(1);
+      transform: scaleX(1); /* Show orange line */
     }
 
-    // Icon interaction
     .service-card-icon {
-      transform: scale(1.08) translateY(-2px);
-      background-color: $brand-orange-dark;
+      background-color: $brand-orange;
+      color: #ffffff;
     }
 
-    // CTA interaction
     .service-card-cta {
       color: $brand-orange;
-
       svg {
-        stroke:#D95315;
         transform: translateX(6px);
       }
+    }
+  }
+}
+
+/* Specific styling for the 7th card */
+.property-service-card {
+  cursor: default;
+
+  .property-portfolio-content {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #edf0f3;
+
+    h4 {
+      font-family: "Barlow", sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #192438;
+      margin: 0 0 16px;
+
+      &::before {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 16px;
+        margin-right: 8px;
+        vertical-align: middle;
+        background: $brand-orange;
+        border-radius: 4px;
+      }
+    }
+
+    ul {
+      display: grid;
+      /* Single column since the card is narrow (col-lg-4) */
+      grid-template-columns: 1fr;
+      row-gap: 12px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: $text-muted;
+      line-height: 1.5;
+    }
+
+    .property-check {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      background: #fff1e8;
+      color: $brand-orange;
+      border-radius: 50%;
+      font-size: 11px;
+      margin-top: 2px;
     }
   }
 }
@@ -117,14 +194,15 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
 .service-card-icon {
   width: 56px;
   height: 56px;
-  background-color: $brand-orange;
+  border:none;
+  // background-color: $brand-orange;
   color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 12px; // Soft squircle look
   margin-bottom: 20px;
-  box-shadow: $shadow-icon;
+  // box-shadow: $shadow-icon;
   transition: $transition-bounce;
       border: 1px solid;
   
@@ -132,7 +210,7 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
   svg {
     width: 28px;
     height: 28px;
-    stroke: #f97316;
+    // stroke: #cf7230;
     fill: none;
   }
   // &:hover {
@@ -356,14 +434,14 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
   color: #6b7280;
   font-weight: 400;
 }
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&display=swap');
 .about-us{
   .section-title {
     color: #f97316;
     letter-spacing: -.5px;
     margin-bottom: 1rem;
           padding-bottom: 1rem;
-    font-family: Inter, sans-serif;
+    font-family: Barlow, sans-serif;
     font-size: 2rem;
     font-weight: 700;
      @media (max-width: 768px) {
@@ -390,7 +468,7 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
         color: var(--themeht-primary-color);
       }
       .service-card-icon {
-        background: var(--themeht-primary-color);;
+        background: var(--themeht-primary-color);
         color: #ffffff;
         transform: scale(1.05);
       }
@@ -444,7 +522,8 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
   width: 60px;
   height: 60px;
   border-radius: 14px;
-  background: #eef1fb;
+  border:none;
+  // background: #a4a7b3;
   color: #0d1b4c;
   margin-bottom: 24px;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -693,7 +772,7 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
           font-weight: 700;
           color: #ffffff;
           letter-spacing: 2px;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Barlow', sans-serif;
         }
 
         .brand-highlight-full {
@@ -767,7 +846,7 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
           color: #ffffff;
           line-height: 1.1;
           margin: 0 0 16px;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Barlow', sans-serif;
           letter-spacing: -1px;
           animation: glowPulse 4s ease-in-out infinite;
         }
@@ -836,7 +915,7 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
           font-size: 1rem;
           transition: all 0.3s ease;
           text-decoration: none;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Barlow', sans-serif;
         }
 
         .hero-cta-full:hover {
@@ -848,65 +927,268 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
 
         /* Rest of the styles remain same */
         .about-page-wrapper {
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-family: 'Barlow', -apple-system, BlinkMacSystemFont, 'Barlow', Roboto, sans-serif;
           color: #1a202c;
           padding: 0 0 40px;
         }
 
-        .welcome-section {
-          padding: 60px 0;
-          background: #ffffff;
-        }
+        
+/* =====================================
+   LIAISON BANK — ABOUT US SECTION
+===================================== */
 
-        .welcome-box {
-          background: #faf9f8;
-          border-radius: 12px;
-          padding: 40px 45px;
-          text-align: center;
-          border: 1px solid #f0ede8;
-          transition: all 0.3s ease;
-        }
+/* Section background */
 
-        .welcome-box:hover {
-          border-color: #f97316;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-        }
+.welcome-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  // padding: 75px 0;
+  background:
+    radial-gradient(
+      ellipse at 10% 15%,
+      rgba(249, 115, 22, 0.055),
+      transparent 35%
+    ),
+    linear-gradient(180deg, #ffffff 0%, #fffaf6 100%);
+}
+.welcome-section .col-lg-10 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+/* Subtle decorative background elements */
 
-        .welcome-label {
-          display: inline-block;
-          font-size: 2rem;
-          font-weight: 600;
-          color: #f97316;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          background: rgba(201, 168, 76, 0.1);
-          padding: 4px 16px;
-          border-radius: 4px;
-          margin-bottom: 12px;
-        }
+.welcome-section::before {
+  content: "";
+  position: absolute;
+  top: 35px;
+  right: -100px;
+  width: 280px;
+  height: 280px;
+  border: 1px solid rgba(249, 115, 22, 0.09);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 35px rgba(249, 115, 22, 0.025),
+    0 0 0 70px rgba(249, 115, 22, 0.018);
+  pointer-events: none;
+  z-index: -1;
+}
 
-        .welcome-title {
-          font-size: 1.6rem;
-          font-weight: 700;
-          color: #1a202c;
-          margin: 0 0 16px;
-          font-family: 'Inter', sans-serif;
-        }
+.welcome-section::after {
+  content: "";
+  position: absolute;
+  bottom: 20px;
+  left: -90px;
+  width: 200px;
+  height: 200px;
+  border: 1px solid rgba(249, 115, 22, 0.07);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
 
-        .welcome-text {
-          font-size: 1.05rem;
-          line-height: 1.9;
-          color: #4b5563;
-          margin: 0;
-          font-weight: 400;
-          max-width: 800px;
-          margin: 0 auto;
-        }
+/* Main content card */
 
-        .welcome-brand {
-          color: #f97316;
-          font-weight: 700;
-        }
+.welcome-box {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  min-width: 0;
+  box-sizing: border-box;
+
+  margin: 0 auto;
+  padding: 58px 30px;
+
+  text-align: center;
+  overflow: visible;
+}
+
+/* Thin orange top accent */
+
+// .welcome-box::before {
+//   content: "";
+//   position: absolute;
+//   top: 0;
+//   left: 12%;
+//   width: 76%;
+//   height: 3px;
+//   background: linear-gradient(
+//     90deg,
+//     transparent,
+//     #f97316,
+//     #fdba74,
+//     transparent
+//   );
+//   border-radius: 0 0 10px 10px;
+// }
+
+// .welcome-box:hover {
+//   border-color: #f5d0b5;
+//   box-shadow:
+//     0 20px 48px rgba(50, 35, 22, 0.075),
+//     0 4px 12px rgba(249, 115, 22, 0.035);
+//   transform: translateY(-3px);
+// }
+
+/* About Us label */
+
+.welcome-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 32px;
+  padding: 10px 20px;
+
+  color: #f97316;
+  // background: #fff4eb;
+  // border: 1px solid #ffdfc8;
+  border-radius: 50px;
+
+  // font-family: "Barlow", sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1.4;
+  // text-transform: uppercase;
+}
+
+
+
+  /* ORANGE UNDERLINE (CENTERED) */
+         .welcome-label::after {
+              content: "";
+              position: absolute;
+              left: 50%;
+              bottom: 0;
+              width: 90px;
+              height: 3px;
+              background: #ff7a00;
+              border-radius: 4px;
+              transform: translateX(-45%);
+              overflow: hidden;
+            }
+
+            /* SINGLE MOVING DOT (CENTERED FLOW) */
+           .welcome-label::before {
+              content: "";
+              position: absolute;
+              bottom: -6px;
+              left: 50%;
+              width: 14px;
+              height: 14px;
+              background: #ffffff;
+              border: 3px solid #ff7a00;
+              border-radius: 50%;
+              transform: translateX(-45px); // half of underline width
+              animation: dot-flow 3s linear infinite alternate;
+              z-index: 2;
+            }
+/* Description */
+
+.welcome-text {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+
+  color: #5b6472;
+  font-family: "Barlow", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.9;
+  letter-spacing: 0.05px;
+
+  // text-align: center;
+  text-wrap: pretty;
+}
+
+/* Brand name highlight */
+
+.welcome-brand {
+  color: #ea650c;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+/* =====================================
+   TABLET RESPONSIVENESS
+===================================== */
+
+@media (max-width: 991px) {
+  .welcome-section {
+    padding: 65px 0;
+  }
+
+  .welcome-box {
+    padding: 48px 38px;
+    border-radius: 20px;
+  }
+
+  .welcome-label::after {
+    top: 109px;
+  }
+
+  .welcome-text {
+    font-size: 0.98rem;
+    line-height: 1.9;
+  }
+}
+
+/* =====================================
+   MOBILE RESPONSIVENESS
+===================================== */
+
+@media (max-width: 575px) {
+  .welcome-section {
+    padding: 42px 0;
+  }
+
+  .welcome-box {
+    padding: 36px 22px;
+  }
+
+  .welcome-label {
+    margin-bottom: 28px;
+    padding: 8px 15px;
+    font-size: 1.5rem;
+    letter-spacing: 1.5px;
+  }
+
+  
+
+  .welcome-label::after {
+    top: 60px;
+    width: 34px;
+  }
+
+  .welcome-text {
+    // font-size: 1rem;
+    line-height: 1.85;
+    text-align: left;
+  }
+
+  .welcome-section::before {
+    right: -190px;
+  }
+
+  .welcome-section::after {
+    left: -145px;
+  }
+}
+
+/* Accessibility: respect reduced-motion preferences */
+
+// @media (prefers-reduced-motion: reduce) {
+//   .welcome-box {
+//     transition: none;
+//   }
+
+//   .welcome-box:hover {
+//     transform: none;
+//   }
+// }
+
 
         .section-header {
           text-align: center;
@@ -1010,7 +1292,7 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
         .service-card-icon {
           width: 52px;
           height: 52px;
-          background: rgba(201, 168, 76, 0.08);
+          // background: rgba(116, 194, 53, 0.08);
           border-radius: 12px;
           display: flex;
           align-items: center;
@@ -1030,7 +1312,7 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
           font-weight: 600;
           color: #1a202c;
           margin: 0 0 10px;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Barlow', sans-serif;
         }
 
         .service-card-description {
@@ -1039,6 +1321,7 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
           color: #6b7280;
           margin: 0 0 16px;
           font-weight: 400;
+          font-family: 'Barlow', sans-serif;
         }
 
         .service-card-features {
@@ -1204,10 +1487,10 @@ $shadow-icon: 0 8px 16px rgba(242, 101, 34, 0.3);
     .service-card-header {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
   margin-bottom: 1rem;
   border-bottom: 1px solid $border-color;
-  padding-bottom: 1rem;
+  padding-bottom: 0.1rem;
 }
 
 .service-card-title-group {

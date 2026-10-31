@@ -151,7 +151,7 @@ export default function AwardP() {
             dir="rtl"
             loop={true}
             speed={5000}          // ⬅️ high speed = smooth continuous motion
-            spaceBetween={24}
+            spaceBetween={15}
             grabCursor={true}
             slidesPerView={4}
             freeMode={{
@@ -160,20 +160,24 @@ export default function AwardP() {
             }}
             breakpoints={{
               0: {
-                slidesPerView: 1,
-                spaceBetween: 16,
+                slidesPerView: 2,
+                spaceBetween: 6,
               },
               576: {
-                slidesPerView: 1,
-                spaceBetween: 20,
+                slidesPerView: 2.5,
+                spaceBetween: 8,
+              },
+              768: {
+                slidesPerView: 3,
+                spaceBetween: 10,
               },
               992: {
                 slidesPerView: 3,
-                spaceBetween: 24,
+                spaceBetween: 12,
               },
               1200: {
                 slidesPerView: 5,
-                spaceBetween: 24,
+                spaceBetween: 16,
               },
             }}
             autoplay={{

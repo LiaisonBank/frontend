@@ -2,9 +2,24 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowRight,
+  Network,
+  FileCheck,
+  Fuel,
+  Flame,
+  Zap,
+  Wrench,
+  Calculator,
+  ClipboardList,
+  Ruler,
+  Users,
+  Monitor,
+  Briefcase,
+} from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -13,27 +28,43 @@ import AuthModal from "./AuthModal";
 import RecruitemtnModal from "./RecruitemtnModal";
 import EmployeeActivityGallery from "@/components/EmployeeActivityGallery/page";
 import "./career.scss";
+import electricIcon from '@/assets/images/Electrical Audit & Certification.png';
+import fireIcon from '@/assets/images/Fire & Safety Compliance.png';
+import licenseIcon from '@/assets/images/License Renewal & Compliance icon.png';
+import pngIcon from '@/assets/images/PNG Infra Maintenance icon.png';
+import accountantIcon from '@/assets/images/Accountant icon.png'
+import administrationIcon from '@/assets/images/Administration icon.png'
+import amcIcon from '@/assets/images/Annual Maintenance icon.png'
+import architectureIcon from '@/assets/images/Architecture icon.png'
+import hrIcon from '@/assets/images/Human Resource icon.png'
+import itIcon from '@/assets/images/information technology icon.png'
+import liaisoningIcon from '@/assets/images/Liaisoning icon.png'
+import salesIcon from '@/assets/images/Sales icon.png'
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ---------- SERVICE DATA ----------
+// ---------- SERVICE DEPARTMENTS ----------
 const services = [
-  { id: 1, name: "Liaisoning", slug: "Linking Needs With The Right Solutions", link:"Liaisoning", image: "/liaisoning-in-real-estate.jpg", description: "____________________________" },
-  { id: 2, name: "Licensing", slug: "We Handle the Process. You Build the Future.", link:"Licensing", image: "/licensing-services.png", description: "_______________________________________________" },
-  { id: 5, name: "Piped Natural Gas", slug: "Reliable Gas, Smarter Living.", link:"PNG", image: "/PNG.png", description: "_____________________________________" },
-  { id: 4, name: "Fire Safety", slug: "Turning Safety into Security.", link:"Fire Safety", image: "/fire4.png", description: "____________________________________________" },
-  { id: 3, name: "Electrical", slug: "Powering Your Needs, Connecting Your Future.", link:"Electrical", image: "/Electrical.png", description: "________________________________________________" },
-  { id: 6, name: "AMC", slug: "Protect Performance. Preserve Value.", link:"AMC", image: "/dummyAMC.png", description: "_______________________________________" },
+  { id: 1, name: "Liaisoning", link: "Liaisoning", icon:liaisoningIcon},
+  { id: 2, name: "Licensing", link: "Licensing", icon: licenseIcon },
+  { id: 5, name: "Piped Natural Gas", link: "PNG", icon: pngIcon },
+  { id: 4, name: "Fire Safety", link: "Fire Safety", icon: fireIcon },
+  { id: 3, name: "Electrical", link: "Electrical", icon: electricIcon },
+  { id: 6, name: "AMC", link: "AMC", icon:amcIcon },
 ];
 
 const OTHER_OPTIONS = [
-  { id: 1, name: "Accountant", link: "/careers-liaison-bank/jobs?department=ACCOUNTS DEPARTMENT - DBRE" },
-  { id: 2, name: "Administration", link: "/careers-liaison-bank/jobs?department=ADMINISTRATOR - DBRE" },
-  { id: 3, name: "Architecture", link: "/careers-liaison-bank/jobs?department=ARCHITECTURE DEPARTMENT - DBRE" },
-  { id: 4, name: "Human Resource", link: "/careers-liaison-bank/jobs?department=HUMAN RESOURCE - DBRE" },
-  { id: 5, name: "Information Technology", link: "/careers-liaison-bank/jobs?department=IT%20DEPARTMENT%20-%20DBRE" },
-  { id: 6, name: "Sales", link: "/careers-liaison-bank/jobs?department=SALES - DBRE" },
+  { id: 1, name: "Accountant", link: "/careers-liaison-bank/jobs?department=ACCOUNTS DEPARTMENT - DBRE", icon :accountantIcon},
+  { id: 2, name: "Administration", link: `/careers-liaison-bank/jobs?department=${encodeURIComponent("Administration & Facilities - DBRE")}`, icon:administrationIcon },
+  { id: 3, name: "Architecture", link: "/careers-liaison-bank/jobs?department=ARCHITECTURE DEPARTMENT - DBRE" , icon:architectureIcon},
+  { id: 4, name: "Human Resource", link: "/careers-liaison-bank/jobs?department=HUMAN RESOURCE - DBRE" , icon :hrIcon},
+  { id: 5, name: "Information Technology", link: "/careers-liaison-bank/jobs?department=IT%20DEPARTMENT%20-%20DBRE", icon:itIcon },
+  { id: 6, name: "Sales", link: "/careers-liaison-bank/jobs?department=SALES DEPARTMENT - DBRE", icon:salesIcon },
 ];
+
+// Icons are presentation-only; cards contain no descriptions or images.
+const SERVICE_CARD_ICONS = [Network, FileCheck, Fuel, Flame, Zap, Wrench];
+const CORPORATE_CARD_ICONS = [Calculator, ClipboardList, Ruler, Users, Monitor, Briefcase];
 
 const BENEFITS = [
   { title: "Career Advancement", tag: "Inclusive Culture", description: "Build a strong foundation for your future with industry exposure, valuable experience, and opportunities for long-term growth.", image: "/meaningfullWork.jpg" },
@@ -46,13 +77,11 @@ export default function CareersLiaisonPage() {
 
   const router = useRouter();
 
-  const [activeService, setActiveService] = useState(services[0]);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState("login");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [showOthersDropdown, setShowOthersDropdown] = useState(false);
 
   // Refs
   const heroRef = useRef(null);
@@ -63,8 +92,11 @@ export default function CareersLiaisonPage() {
   const benefitsRef = useRef(null);
   const servicesRef = useRef(null);
   const ctaRef = useRef(null);
-
   const heroScrollTriggerRef = useRef(null);
+
+  // Current Openings entrance animation disabled for the static card layout.
+
+
 
   // ---------- 1. HERO LOAD + SCROLL ANIMATION ----------
   useEffect(() => {
@@ -129,7 +161,6 @@ export default function CareersLiaisonPage() {
           },
         });
 
-        // 🔑 Refresh everything below the hero after the hero settled
         ScrollTrigger.refresh();
       });
     }, heroRef);
@@ -143,7 +174,7 @@ export default function CareersLiaisonPage() {
     };
   }, []);
 
-  // ---------- 2. SECTION SCROLL ANIMATIONS (robust) ----------
+  // ---------- 2. SECTION SCROLL ANIMATIONS ----------
   useEffect(() => {
     let refreshTimeout = null;
     let rafId = null;
@@ -153,7 +184,6 @@ export default function CareersLiaisonPage() {
         rafId = requestAnimationFrame(() => ScrollTrigger.refresh());
       };
 
-      // Common config — plays ONCE, never reverses to blank
       const onceConfig = (trigger) => ({
         trigger,
         start: "top 85%",
@@ -162,7 +192,6 @@ export default function CareersLiaisonPage() {
         invalidateOnRefresh: true,
       });
 
-      // ---- Section fade-slide ----
       const animate = (target, fromVars, toVars, trigger) => {
         if (!target || !trigger) return;
         gsap.fromTo(target, fromVars, {
@@ -171,7 +200,6 @@ export default function CareersLiaisonPage() {
         });
       };
 
-      // ---- Saturday Fun section (Employee Activity Gallery) ----
       animate(
         saturdayFunRef.current,
         { opacity: 0, y: 100 },
@@ -179,7 +207,6 @@ export default function CareersLiaisonPage() {
         saturdayFunRef.current
       );
 
-      // Saturday Fun heading (if present inside the section)
       const saturdayHeader =
         saturdayFunHeaderRef.current ||
         saturdayFunRef.current?.querySelector("h2, .section-header");
@@ -204,7 +231,6 @@ export default function CareersLiaisonPage() {
         );
       }
 
-      // Stagger any gallery items inside saturdayfun (auto-detect common classes)
       const galleryItems = saturdayFunRef.current?.querySelectorAll(
         ".gallery-item, .activity-card, .employee-activity-card, .gallery-card"
       );
@@ -226,7 +252,6 @@ export default function CareersLiaisonPage() {
         });
       }
 
-      // Benefits section wrapper
       animate(
         benefitsRef.current,
         { opacity: 0, y: 80 },
@@ -234,23 +259,6 @@ export default function CareersLiaisonPage() {
         benefitsRef.current
       );
 
-      // Services section wrapper
-      animate(
-        servicesRef.current,
-        { opacity: 0, x: -50 },
-        { opacity: 1, x: 0, duration: 1.2, ease: "power3.out" },
-        servicesRef.current
-      );
-
-      // CTA section wrapper
-      animate(
-        ctaRef.current,
-        { opacity: 0, y: 60 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
-        ctaRef.current
-      );
-
-      // ---- Batched benefit cards ----
       const benefitCards = benefitsRef.current?.querySelectorAll(".benefit-card-wrapper");
       if (benefitCards?.length) {
         gsap.set(benefitCards, { opacity: 0, y: 60, scale: 0.9 });
@@ -270,70 +278,6 @@ export default function CareersLiaisonPage() {
         });
       }
 
-      // ---- Batched service tab buttons ----
-      const tabButtons = servicesRef.current?.querySelectorAll(".tab-btn");
-      if (tabButtons?.length) {
-        gsap.set(tabButtons, { opacity: 0, y: 30 });
-        ScrollTrigger.batch(tabButtons, {
-          start: "top 85%",
-          once: true,
-          onEnter: (batch) =>
-            gsap.to(batch, {
-              opacity: 1,
-              y: 0,
-              duration: 0.7,
-              stagger: 0.08,
-              ease: "power2.out",
-              overwrite: true,
-            }),
-        });
-      }
-
-      // Featured image
-      const featuredImage = servicesRef.current?.querySelector(".featured-image");
-      if (featuredImage) {
-        gsap.fromTo(
-          featuredImage,
-          { opacity: 0, scale: 0.95 },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.9,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: featuredImage,
-              start: "top 90%",
-              toggleActions: "play none none none",
-              once: true,
-              invalidateOnRefresh: true,
-            },
-          }
-        );
-      }
-
-      // CTA box
-      const ctaBox = ctaRef.current?.querySelector(".cta-box");
-      if (ctaBox) {
-        gsap.fromTo(
-          ctaBox,
-          { opacity: 0, scale: 0.9 },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.9,
-            ease: "back.out(1.7)",
-            scrollTrigger: {
-              trigger: ctaBox,
-              start: "top 90%",
-              toggleActions: "play none none none",
-              once: true,
-              invalidateOnRefresh: true,
-            },
-          }
-        );
-      }
-
-      // Benefits header
       const benefitsHeader = benefitsRef.current?.querySelector(".benefits-header h2");
       if (benefitsHeader) {
         gsap.fromTo(
@@ -356,8 +300,14 @@ export default function CareersLiaisonPage() {
         );
       }
 
-      // Generic section headers
       document.querySelectorAll(".section-header").forEach((header) => {
+        if (
+          servicesRef.current?.contains(header) ||
+          ctaRef.current?.contains(header)
+        ) {
+          return;
+        }
+
         gsap.fromTo(
           header,
           { opacity: 0, y: 40 },
@@ -377,7 +327,6 @@ export default function CareersLiaisonPage() {
         );
       });
 
-      // ---- Refresh once page is fully ready ----
       const doRefresh = () => refresh();
 
       if (document.readyState === "complete") {
@@ -390,7 +339,6 @@ export default function CareersLiaisonPage() {
         document.fonts.ready.then(doRefresh);
       }
 
-      // Safety net for late-loading gallery images
       refreshTimeout = window.setTimeout(() => ScrollTrigger.refresh(), 1500);
     });
 
@@ -441,7 +389,8 @@ export default function CareersLiaisonPage() {
     }
   }, []);
 
-  // ---------- HANDLERS ----------
+  // Current Openings particle/hover/auto-scroll logic removed for the card layout.
+
   const handleApplyClick = (_job) => {
     if (isAuthenticated) {
       router.push("/careers-liaison-bank/candidate-dashboard");
@@ -457,10 +406,7 @@ export default function CareersLiaisonPage() {
     setIsAuthModalOpen(false);
   };
 
-  const activeServiceJobsHref = useMemo(
-    () => `/careers-liaison-bank/jobs?service=${encodeURIComponent(activeService.link)}`,
-    [activeService.link]
-  );
+
 
   return (
     <div className="careers-page">
@@ -525,87 +471,110 @@ export default function CareersLiaisonPage() {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section ref={servicesRef} className="services-section" id="openings">
-        <div className="container">
-          <div className="section-header">
-            <h2 className="job-header">Current Openings</h2>
-          </div>
+      {/* Current Openings — static department cards; no image or particle animation */}
+      <section
+        ref={servicesRef}
+        className="current-openings-cards-section"
+        id="openings"
+      >
+        <div className="container current-openings-cards-container">
+          {/* <header className="current-openings-cards-header"> */}
+          {/* <p className="current-openings-eyebrow">CAREERS AT LIAISON BANK</p> */}
+          <h2>Current Openings</h2>
+          {/* </header> */}
 
-          <div className="services-tabs">
-            {services.map((service) => (
-              <button
-                key={service.id}
-                type="button"
-                className={`tab-btn ${activeService.id === service.id ? "active" : ""}`}
-                onClick={() => setActiveService(service)}
-                onMouseEnter={() => setActiveService(service)}
-                onFocus={() => setActiveService(service)}
-              >
-                {service.name}
-              </button>
-            ))}
+          <section className="current-openings-group" aria-labelledby="service-departments-heading">
 
-            <div
-              className="others-wrapper"
-              onMouseEnter={() => setShowOthersDropdown(true)}
-              onMouseLeave={() => setShowOthersDropdown(false)}
-            >
-              <button
-                type="button"
-                className="tab-btn"
-                onClick={() => setShowOthersDropdown((prev) => !prev)}
-                onFocus={() => setShowOthersDropdown(true)}
-              >
-                More +
-              </button>
+            <div className="current-openings-card-grid">
+              {services.map((service, index) => {
+                const Icon = SERVICE_CARD_ICONS[index] || Briefcase;
+                const href = `/careers-liaison-bank/jobs?service=${encodeURIComponent(service.link)}`;
 
-              {showOthersDropdown && (
-                <div className="others-dropdown">
-                  {OTHER_OPTIONS.map((option) => (
-                    <a
-                      key={option.id}
-                      href={option.link}
-                      className="dropdown-item"
+                return (
+                  <div key={service.id} className="current-opening-card-wrapper">
+                    <Link
+                      href={href}
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="current-opening-card-link"
+                      aria-label={`View openings for ${service.name}`}
                     >
-                      {option.name}
-                    </a>
-                  ))}
-                </div>
-              )}
+                      <article className="current-opening-card">
+                        <div className="current-opening-card-header">
+                          <span className="current-opening-card-icon">
+                            {service.icon ? (
+                              <Image
+                                src={service.icon}
+                                alt=""
+                                width={40}
+                                height={40}
+                                className="current-opening-icon-img"
+                              />
+                            ) : (
+                              <Icon size={26} strokeWidth={1.8} aria-hidden="true" />
+                            )}
+                          </span>
+                          <h4 className="current-opening-card-title">{service.name}</h4>
+                        </div>
+                        <div className="current-opening-card-cta">
+                          <span>View Opening</span>
+                          <ArrowRight size={17} aria-hidden="true" />
+                        </div>
+                      </article>
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
-          </div>
+          </section>
 
-          <Link
-            href={activeServiceJobsHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="view-link featured-view"
-          >
-            <div className="featured-service">
-              <div className="featured-image">
-                <Image
-                  src={activeService.image}
-                  alt={activeService.name}
-                  className="featured-image-img"
-                  fill
-                  unoptimized
-                />
-                <div className="featured-overlay">
-                  <h3>{activeService.slug}</h3>
-                  <span className="featured-view">
-                    View Openings <ArrowUpRight size={18} />
-                  </span>
-                </div>
-              </div>
+          <section className="current-openings-group" aria-labelledby="corporate-functions-heading">
+
+            <div className="current-openings-card-grid">
+              {OTHER_OPTIONS.map((option, index) => {
+                const Icon = CORPORATE_CARD_ICONS[index] || Briefcase;
+
+                return (
+                  <div key={option.id} className="current-opening-card-wrapper">
+                    <Link
+                      href={option.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="current-opening-card-link"
+                      aria-label={`View openings for ${option.name}`}
+                    >
+                      <article className="current-opening-card">
+                        <div className="current-opening-card-header">
+                          <span className="current-opening-card-icon">
+                            {option.icon ? (
+                              <Image
+                                src={option.icon}
+                                alt=""
+                                width={40}
+                                height={40}
+                                className="current-opening-icon-img"
+                              />
+                            ) : (
+                              <Icon size={26} strokeWidth={1.8} aria-hidden="true" />
+                            )}
+                          </span>
+                          <h4 className="current-opening-card-title">{option.name}</h4>
+                        </div>
+                        <div className="current-opening-card-cta">
+                          <span>View Opening</span>
+                          <ArrowRight size={17} aria-hidden="true" />
+                        </div>
+                      </article>
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
-          </Link>
+          </section>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section — NO GSAP ANIMATION */}
       <section ref={ctaRef} className="cta-section">
         <div className="container">
           <div className="cta-box">
