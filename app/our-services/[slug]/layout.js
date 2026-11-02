@@ -40,76 +40,103 @@ export async function generateMetadata({ params }) {
       }
     }
 
-    // ─── Title (parent layout appends "| Our Services – Liaison Bank") ───
-    const title = `${categoryData.name} Services`;
+    const canonicalUrl = `${SITE_URL}/our-services/${slug}`;
 
-    // ─── Description ───
+    // ═══════════════════════════════════════════════════════════════
+    // 1. TITLE — backend first, else auto-generated
+    // ═══════════════════════════════════════════════════════════════
+    const backendTitle =
+      typeof categoryData.meta_title === 'string'
+        ? categoryData.meta_title.trim()
+        : '';
+    const title = backendTitle || `${categoryData.name} Services`;
+
+    // ═══════════════════════════════════════════════════════════════
+    // 2. DESCRIPTION — backend first, else auto-generated
+    // ═══════════════════════════════════════════════════════════════
+    const backendDescription =
+      typeof categoryData.meta_description === 'string'
+        ? categoryData.meta_description.trim()
+        : '';
     const description =
+      backendDescription ||
       categoryData.description ||
       categoryData.full_description ||
       `End-to-end ${categoryData.name} support for government approvals, permissions, documentation, renewals, and regulatory compliance.`;
 
-    const canonicalUrl = `${SITE_URL}/our-services/${slug}`;
+    // ═══════════════════════════════════════════════════════════════
+    // 3. KEYWORDS — backend first, else auto-generated
+    // ═══════════════════════════════════════════════════════════════
+    const backendKeywordsRaw =
+      typeof categoryData.meta_keywords === 'string'
+        ? categoryData.meta_keywords.trim()
+        : '';
 
-    // ─── Build keywords from category + subcategories + items + services ───
-    const keywordsSet = new Set();
+    let keywords;
+    if (backendKeywordsRaw) {
+      // Backend sends a comma-separated string — split, trim, dedupe
+      const seen = new Set();
+      keywords = backendKeywordsRaw
+        .split(/[,\n\r]+/)               // comma or newline separated
+        .map((k) => k.trim())
+        .filter((k) => k.length > 0 && !seen.has(k.toLowerCase()) && seen.add(k.toLowerCase()))
+        .filter((k) => k.length > 0);    // (kept for clarity)
+    } else {
+      // ─── Fallback: build keywords from category + subcategories + items + services ───
+      const keywordsSet = new Set();
 
-    // 1. Category-level keywords
-    keywordsSet.add(categoryData.name);
-    keywordsSet.add(`${categoryData.name} services`);
-    keywordsSet.add(`${categoryData.name} in Mumbai`);
-    keywordsSet.add(`${categoryData.name} in India`);
+      keywordsSet.add(categoryData.name);
+      keywordsSet.add(`${categoryData.name} services`);
+      keywordsSet.add(`${categoryData.name} in Mumbai`);
+      keywordsSet.add(`${categoryData.name} in India`);
 
-    // 2. Subcategories + nested items + nested services
-    const subcategories = Array.isArray(categoryData.subcategories)
-      ? categoryData.subcategories
-      : [];
+      const subcategories = Array.isArray(categoryData.subcategories)
+        ? categoryData.subcategories
+        : [];
 
-    subcategories.forEach((sub) => {
-      if (sub?.name) {
-        keywordsSet.add(sub.name);
-        keywordsSet.add(`${sub.name} services`);
-        keywordsSet.add(`${sub.name} ${categoryData.name}`);
-      }
-
-      const items = Array.isArray(sub?.items) ? sub.items : [];
-      items.forEach((item) => {
-        if (item?.name) {
-          keywordsSet.add(item.name);
+      subcategories.forEach((sub) => {
+        if (sub?.name) {
+          keywordsSet.add(sub.name);
+          keywordsSet.add(`${sub.name} services`);
+          keywordsSet.add(`${sub.name} ${categoryData.name}`);
         }
 
-        // Parse itemServices (array | JSON string | comma-separated string)
-        let servicesList = [];
-        if (item?.itemServices) {
-          if (Array.isArray(item.itemServices)) {
-            servicesList = item.itemServices;
-          } else if (typeof item.itemServices === 'string') {
-            try {
-              const parsed = JSON.parse(item.itemServices);
-              servicesList = Array.isArray(parsed) ? parsed : [item.itemServices];
-            } catch {
-              servicesList = item.itemServices
-                .split(',')
-                .map((s) => s.trim())
-                .filter(Boolean);
+        const items = Array.isArray(sub?.items) ? sub.items : [];
+        items.forEach((item) => {
+          if (item?.name) {
+            keywordsSet.add(item.name);
+          }
+
+          let servicesList = [];
+          if (item?.itemServices) {
+            if (Array.isArray(item.itemServices)) {
+              servicesList = item.itemServices;
+            } else if (typeof item.itemServices === 'string') {
+              try {
+                const parsed = JSON.parse(item.itemServices);
+                servicesList = Array.isArray(parsed) ? parsed : [item.itemServices];
+              } catch {
+                servicesList = item.itemServices
+                  .split(',')
+                  .map((s) => s.trim())
+                  .filter(Boolean);
+              }
             }
           }
-        }
 
-        servicesList.forEach((svcName) => {
-          if (svcName) keywordsSet.add(svcName);
+          servicesList.forEach((svcName) => {
+            if (svcName) keywordsSet.add(svcName);
+          });
         });
       });
-    });
 
-    // 3. Generic site-wide keywords
-    keywordsSet.add('professional services');
-    keywordsSet.add('our services');
-    keywordsSet.add('regulatory compliance');
-    keywordsSet.add('liaisoning services');
+      keywordsSet.add('professional services');
+      keywordsSet.add('our services');
+      keywordsSet.add('regulatory compliance');
+      keywordsSet.add('liaisoning services');
 
-    // Cap to keep the meta tag reasonable (Google ignores overly long keyword lists)
-    const keywords = Array.from(keywordsSet).slice(0, 40);
+      keywords = Array.from(keywordsSet).slice(0, 40);
+    }
 
     return {
       title,
@@ -127,7 +154,8 @@ export async function generateMetadata({ params }) {
         email: false,
       },
       openGraph: {
-        title: `${categoryData.name} Services | ${SITE_NAME}`,
+        // Use the same chosen title/description so backend values win here too
+        title,
         description,
         url: canonicalUrl,
         siteName: SITE_NAME,
@@ -144,7 +172,7 @@ export async function generateMetadata({ params }) {
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${categoryData.name} Services | ${SITE_NAME}`,
+        title,
         description,
         images: [imageUrl],
       },
