@@ -28,18 +28,18 @@ import AuthModal from "./AuthModal";
 import RecruitemtnModal from "./RecruitemtnModal";
 import EmployeeActivityGallery from "@/components/EmployeeActivityGallery/page";
 import "./career.scss";
-import electricIcon from '@/assets/images/Electrical Audit & Certification.png';
-import fireIcon from '@/assets/images/Fire & Safety Compliance.png';
-import licenseIcon from '@/assets/images/License Renewal & Compliance icon.png';
-import pngIcon from '@/assets/images/PNG Infra Maintenance icon.png';
-import accountantIcon from '@/assets/images/Accountant icon.png'
-import administrationIcon from '@/assets/images/Administration icon.png'
-import amcIcon from '@/assets/images/Annual Maintenance icon.png'
-import architectureIcon from '@/assets/images/Architecture icon.png'
-import hrIcon from '@/assets/images/Human Resource icon.png'
-import itIcon from '@/assets/images/information technology icon.png'
-import liaisoningIcon from '@/assets/images/Liaisoning icon.png'
-import salesIcon from '@/assets/images/Sales icon.png'
+import electricIcon from '@/assets/images/ElectricalAuditCertification.png';
+import fireIcon from '@/assets/images/FireSafetyCompliance.png';
+import licenseIcon from '@/assets/images/LicenseRenewalComplianceicon.png';
+import pngIcon from '@/assets/images/PNGInfraMaintenanceicon.png';
+import accountantIcon from '@/assets/images/Accountanticon.png'
+import administrationIcon from '@/assets/images/Administrationicon.png'
+import amcIcon from '@/assets/images/AnnualMaintenanceicon.png'
+import architectureIcon from '@/assets/images/Architectureicon.png'
+import hrIcon from '@/assets/images/HumanResourceicon.png'
+import itIcon from '@/assets/images/informationtechnologyicon.png'
+import liaisoningIcon from '@/assets/images/Liaisoningicon.png'
+import salesIcon from '@/assets/images/Salesicon.png'
 
 gsap.registerPlugin(ScrollTrigger);
 
