@@ -60,7 +60,7 @@ export default function Downloads() {
   const [flipbookReady, setFlipbookReady] = useState(false);
   const [error, setError] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
-  
+
   // ✅ New: Track if "All" was clicked and fullscreen was auto-opened
   const [autoFullscreenTriggered, setAutoFullscreenTriggered] = useState(false);
 
@@ -132,7 +132,7 @@ export default function Downloads() {
         description: "Comprehensive annual maintenance contracts for compliance",
         size: "1.5 MB",
         color: "#f97316",
-        maxPages: 8,
+        maxPages: 15,
       },
     ],
     []
@@ -199,11 +199,11 @@ export default function Downloads() {
 
       for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
         const imgPath = `${basePath}/${pageNum}.jpg`;
-        
+
         const exists = await new Promise((resolve) => {
           const img = new Image();
           img.crossOrigin = 'anonymous';
-          
+
           const timeoutId = setTimeout(() => {
             resolve(false);
           }, 3000);
@@ -245,7 +245,7 @@ export default function Downloads() {
       const blankImage = '/placeholder-page.jpg';
       if (foundPages % 2 !== 0) {
         console.log(`Adding blank page to make even number (${foundPages} -> ${foundPages + 1})`);
-        images.push(blankImage);
+        images.push(null); // ← null = render a blank page, no <img>
         foundPages++;
       }
 
@@ -544,12 +544,16 @@ export default function Downloads() {
                             key={`${currentDoc.file}-page-${index}`}
                             className="flipbook-page"
                           >
-                            <img
-                              src={image}
-                              alt={`Page ${index + 1}`}
-                              className="flipbook-image"
-                              loading="lazy"
-                            />
+                            {image ? (
+                              <img
+                                src={image}
+                                alt={`Page ${index + 1}`}
+                                className="flipbook-image"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div className="flipbook-blank-page" aria-hidden="true" />
+                            )}
                           </div>
                         ))}
                       </HTMLFlipBook>
