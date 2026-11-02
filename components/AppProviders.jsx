@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation"; // Add this import
+import { usePathname } from "next/navigation";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { ModalProvider } from "@/context/ModalContext";
 import ReduxProvider from "@/store/ReduxProvider";
@@ -11,40 +11,48 @@ import DisableZoom from "@/components/DisableZoom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ServicesModal from "@/components/ServicesModal/page";
-// import ExperiencePopup from "@/components/ExperiencePopup/page";
 
 export default function AppProviders({ children }) {
-    const pathname = usePathname(); // Get current path
-  const isHomePage = pathname === "/"; // Check if on home page
-  return (
-    <ReduxProvider>
-      <LoadingProvider>
-        <ModalProvider>
-          {/* Global Intro Loader - Only on Home Page */}
-          {isHomePage && <IntroLoader />}
+    const pathname = usePathname();
 
-          <LenisProvider>
-            <DisableZoom />
+    const isHomePage = pathname === "/";
 
-            <Header />
+    // Hide navbar only on the introductory video page
+    const hideHeader =
+        pathname === "/careers-liaison-bank/introductory-video";
 
-            <div className="menu-overlay" />
+    return (
+        <ReduxProvider>
+            <LoadingProvider>
+                <ModalProvider>
 
-            <main className="page-wrapper flex-grow">
-              {children}
-            </main>
+                    {/* Global Intro Loader - Only on Home Page */}
+                    {isHomePage && <IntroLoader />}
 
-            <Footer />
+                    <LenisProvider>
+                        <DisableZoom />
 
-            {/* Global Modals */}
-            <ServicesModal />
+                        {/* Global Navbar */}
+                        {!hideHeader && (
+                            <>
+                                <Header />
+                                <div className="menu-overlay" />
+                            </>
+                        )}
 
-            {/* Show once per browser session */}
-            {/* <ExperiencePopup /> */}
-          </LenisProvider>
+                        <main className="page-wrapper flex-grow">
+                            {children}
+                        </main>
 
-        </ModalProvider>
-      </LoadingProvider>
-    </ReduxProvider>
-  );
+                        <Footer />
+
+                        {/* Global Modals */}
+                        <ServicesModal />
+
+                    </LenisProvider>
+
+                </ModalProvider>
+            </LoadingProvider>
+        </ReduxProvider>
+    );
 }

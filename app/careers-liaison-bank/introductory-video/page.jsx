@@ -867,15 +867,11 @@ function IntroductoryVideoContent() {
             {/* Terms and Conditions Modal */}
             {showTermsModal && (
                 <div className="modal-overlay" onClick={() => setShowTermsModal(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}onWheel={(e) => {
-                e.stopPropagation();
- 
-                const element = e.currentTarget;
- 
-                if (e.deltaY !== 0) {
-                  element.scrollTop += e.deltaY;
-                }
-              }}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()} onWheel={(e) => {
+                        e.stopPropagation();
+                        const element = e.currentTarget;
+                        if (e.deltaY !== 0) element.scrollTop += e.deltaY;
+                    }}>
                         <div className="modal-header">
                             <h2>Terms and Conditions</h2>
                             <button className="modal-close" onClick={() => setShowTermsModal(false)}>
@@ -943,11 +939,12 @@ function IntroductoryVideoContent() {
             )}
 
             <main className="page-content">
-                <button className="back-btn" onClick={goBack}>
-                    <ArrowLeft size={20} />
-                    Back to Dashboard
-                </button>
-                <div className="container">
+                <div className="introductory-video-container">
+                    <button className="back-btn" onClick={goBack}>
+                        <ArrowLeft size={20} />
+                        Back to Dashboard
+                    </button>
+
                     <div className="page-header-section">
                         <h1>Professional Introduction Video</h1>
                         <p className="subtitle">Record or upload a professional introduction video for your application</p>
@@ -969,6 +966,8 @@ function IntroductoryVideoContent() {
                     </div>
 
                     <div className="video-section">
+                        <aside className="video-sidebar">
+
                         {/* Candidate Info */}
                         <div className="candidate-info-card">
                             <div className="candidate-avatar">
@@ -1013,9 +1012,52 @@ function IntroductoryVideoContent() {
                                 )}
                             </div>
                         )}
+                            {/* Instructions */}
+                            <div className="instructions-card">
+                                <h4>Video Instructions</h4>
+                                <div className="instructions-content">
+                                    <div className="instruction-section">
+                                        <h3> Professional Appearance:</h3>
+                                        <ul>
+                                            <li>Wear formal/professional attire</li>
+                                            <li>Ensure face is clearly visible</li>
+                                            <li>Maintain proper posture</li>
+                                            <li>Look professional and confident</li>
+                                        </ul>
+                                    </div>
+                                    <div className="instruction-section">
+                                        <h3> What to Include:</h3>
+                                        <ul>
+                                            <li>Professional introduction of yourself</li>
+                                            <li>Current role and key responsibilities</li>
+                                            <li>Relevant skills and achievements</li>
+                                            <li>Why you're interested in this position</li>
+                                            <li>How you can contribute to the team</li>
+                                        </ul>
+                                    </div>
+                                    <div className="instruction-section">
+                                        <h3>Video Quality Tips:</h3>
+                                        <ul>
+                                            <li>Good lighting (face well-lit)</li>
+                                            <li>Clear audio (minimize background noise)</li>
+                                            <li>Professional background (neutral/clean)</li>
+                                            <li>Look directly at the camera</li>
+                                            <li>Speak clearly and confidently</li>
+                                        </ul>
+                                    </div>
+                                    <div className="instruction-section">
+                                        <h3>Duration:</h3>
+                                        <ul>
+                                            <li>Recommended: 1-2 minutes</li>
+                                            <li>Maximum: 3 minutes</li>
+                                            <li>Be concise and impactful</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
 
-                        <div className="video-container">
-                            {/* Video Upload Area */}
+                        <div className="video-workspace-column">
                             <div className="video-upload-area">
                                 {!videoUrl && !cameraOpen ? (
                                     <div className="upload-options">
@@ -1289,50 +1331,6 @@ function IntroductoryVideoContent() {
                                         )}
                                     </div>
                                 )}
-                            </div>
-
-                            {/* Instructions */}
-                            <div className="instructions-card">
-                                <h4>Video Instructions</h4>
-                                <div className="instructions-content">
-                                    <div className="instruction-section">
-                                        <h5> Professional Appearance:</h5>
-                                        <ul>
-                                            <li>Wear formal/professional attire</li>
-                                            <li>Ensure face is clearly visible</li>
-                                            <li>Maintain proper posture</li>
-                                            <li>Look professional and confident</li>
-                                        </ul>
-                                    </div>
-                                    <div className="instruction-section">
-                                        <h5> What to Include:</h5>
-                                        <ul>
-                                            <li>Professional introduction of yourself</li>
-                                            <li>Current role and key responsibilities</li>
-                                            <li>Relevant skills and achievements</li>
-                                            <li>Why you're interested in this position</li>
-                                            <li>How you can contribute to the team</li>
-                                        </ul>
-                                    </div>
-                                    <div className="instruction-section">
-                                        <h5>Video Quality Tips:</h5>
-                                        <ul>
-                                            <li>Good lighting (face well-lit)</li>
-                                            <li>Clear audio (minimize background noise)</li>
-                                            <li>Professional background (neutral/clean)</li>
-                                            <li>Look directly at the camera</li>
-                                            <li>Speak clearly and confidently</li>
-                                        </ul>
-                                    </div>
-                                    <div className="instruction-section">
-                                        <h5>⏱️ Duration:</h5>
-                                        <ul>
-                                            <li>Recommended: 1-2 minutes</li>
-                                            <li>Maximum: 3 minutes</li>
-                                            <li>Be concise and impactful</li>
-                                        </ul>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
