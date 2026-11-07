@@ -132,7 +132,7 @@ export default function Downloads() {
         description: "Comprehensive annual maintenance contracts for compliance",
         size: "1.5 MB",
         color: "#f97316",
-        maxPages: 15,
+        maxPages: 16,
       },
     ],
     []
