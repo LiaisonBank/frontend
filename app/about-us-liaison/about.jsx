@@ -142,7 +142,8 @@ export default function AboutUsLiaisonPage() {
         "Industrial Properties",
         "Residential Properties",
         "Property Leasing & Rentals",
-        "Investor-Led Transactions"
+        "Investor-Led Transactions",
+        "Our Licensee (Amazon (Mahape), Lagoona London Spa)"
       ],
       href: "/our-services/property-acquisition"
     }

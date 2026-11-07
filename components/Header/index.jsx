@@ -182,18 +182,18 @@ function FeaturedProjectsPanel({ node, animClass, onNavigate }) {
           {/* Group header */}
           <div
             className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wide ${group.key === "completed"
-                ? "bg-green-50 text-green-700"
-                : group.key === "inprogress"
-                  ? "bg-amber-50 text-amber-700"
-                  : "bg-blue-50 text-blue-700"
+              ? "bg-green-50 text-green-700"
+              : group.key === "inprogress"
+                ? "bg-amber-50 text-amber-700"
+                : "bg-blue-50 text-blue-700"
               }`}
           >
             <span
               className={`inline-block w-2 h-2 rounded-full ${group.key === "completed"
-                  ? "bg-green-500"
-                  : group.key === "inprogress"
-                    ? "bg-amber-500"
-                    : "bg-blue-500"
+                ? "bg-green-500"
+                : group.key === "inprogress"
+                  ? "bg-amber-500"
+                  : "bg-blue-500"
                 }`}
             />
             {group.label}
@@ -441,28 +441,28 @@ export default function Header() {
 
 
   // Close the mobile menu when switching to desktop view
-useEffect(() => {
-  const desktopMedia = window.matchMedia("(min-width: 1280px)");
+  useEffect(() => {
+    const desktopMedia = window.matchMedia("(min-width: 1280px)");
 
-  const handleViewportChange = (event) => {
-    if (event.matches) {
+    const handleViewportChange = (event) => {
+      if (event.matches) {
+        setIsOpen(false);
+        closeAllMenus();
+      }
+    };
+
+    desktopMedia.addEventListener("change", handleViewportChange);
+
+    // Ensure the mobile menu is closed on desktop initially
+    if (desktopMedia.matches) {
       setIsOpen(false);
       closeAllMenus();
     }
-  };
 
-  desktopMedia.addEventListener("change", handleViewportChange);
-
-  // Ensure the mobile menu is closed on desktop initially
-  if (desktopMedia.matches) {
-    setIsOpen(false);
-    closeAllMenus();
-  }
-
-  return () => {
-    desktopMedia.removeEventListener("change", handleViewportChange);
-  };
-}, [closeAllMenus]);
+    return () => {
+      desktopMedia.removeEventListener("change", handleViewportChange);
+    };
+  }, [closeAllMenus]);
   /* --------------------------------------------------------------------------
      Navigation
      -------------------------------------------------------------------------- */
@@ -493,24 +493,32 @@ useEffect(() => {
      -------------------------------------------------------------------------- */
 
   const handleMobileNavigation = useCallback(
-    (item) => {
-      if (!item) return;
+  (item) => {
+    if (!item) return;
 
-      if (item.name === "Our Services") {
-        setIsOpen(false);
-        closeAllMenus();
-        router.push("/our-services");
-        return;
-      }
-
-      if (!item.href) return;
-
+    if (item.name === "Our Services") {
       setIsOpen(false);
       closeAllMenus();
-      router.push(item.href);
-    },
-    [closeAllMenus, router],
-  );
+      router.push("/our-services");
+      return;
+    }
+
+    if (!item.href) return;
+
+    setIsOpen(false);
+    closeAllMenus();
+
+    // Open external URLs in a new tab
+    if (/^https?:\/\//i.test(item.href)) {
+      window.open(item.href, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    // Internal navigation
+    router.push(item.href);
+  },
+  [closeAllMenus, router],
+);
 
   /* --------------------------------------------------------------------------
      Mega Menu Scroll
@@ -680,6 +688,7 @@ useEffect(() => {
                       Array.isArray(link.submenu) && link.submenu.length > 2;
 
                     const isActive = activeMegaMenu === link.name;
+                    const isExternalLink = /^https?:\/\//i.test(link.href || "");
 
                     return (
                       <li
@@ -704,13 +713,26 @@ useEffect(() => {
                             />
                           </button>
                         ) : link.href ? (
-                          <button
-                            type="button"
-                            className="nav-link bg-transparent border-0 cursor-pointer"
-                            onClick={() => handleNavigation(link.href)}
-                          >
-                            {link.name}
-                          </button>
+                          isExternalLink ? (
+                            <a
+                              href={link.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="nav-link"
+                              title={link.title}
+                              aria-label={link.alt || link.name}
+                            >
+                              {link.name}
+                            </a>
+                          ) : (
+                            <button
+                              type="button"
+                              className="nav-link bg-transparent border-0 cursor-pointer"
+                              onClick={() => handleNavigation(link.href)}
+                            >
+                              {link.name}
+                            </button>
+                          )
                         ) : (
                           <span className="nav-link cursor-pointer flex items-center gap-1">
                             {link.name}
@@ -811,8 +833,8 @@ useEffect(() => {
                                                             childIndex
                                                           }
                                                           className={`mega-item ${child.children
-                                                              ? "has-child2"
-                                                              : ""
+                                                            ? "has-child2"
+                                                            : ""
                                                             }`}
                                                         >
                                                           <button

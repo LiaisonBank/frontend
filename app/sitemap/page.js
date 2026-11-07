@@ -1,179 +1,29 @@
-// app/sitemap/page.jsx - Professional Sitemap
 "use client";
-
-import React, { useState, useMemo, useCallback } from "react";
+import React from "react";
 import Link from "next/link";
 import "./SitemapDiagram.css";
 
-// ===== SVG Icons =====
-const Icons = {
-  Home: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-    </svg>
-  ),
-  About: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
-    </svg>
-  ),
-  Clients: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-      <circle cx="9" cy="7" r="4"/>
-      <path d="M23 21v-2a4 4 0 00-3-3.87"/>
-      <path d="M16 3.13a4 4 0 010 7.75"/>
-    </svg>
-  ),
-  Projects: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-      <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
-    </svg>
-  ),
-  Services: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-      <path d="M2 17l10 5 10-5"/>
-      <path d="M2 12l10 5 10-5"/>
-    </svg>
-  ),
-  Careers: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-      <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
-    </svg>
-  ),
-  Press: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M4 4h16v16H4z"/>
-      <path d="M8 8h8v2H8z"/>
-      <path d="M8 12h6v2H8z"/>
-      <path d="M8 16h4v2H8z"/>
-    </svg>
-  ),
-  Contact: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
-    </svg>
-  ),
-  AMC: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-      <path d="M2 17l10 5 10-5"/>
-      <path d="M2 12l10 5 10-5"/>
-    </svg>
-  ),
-  Licensing: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-      <path d="M2 17l10 5 10-5"/>
-      <path d="M2 12l10 5 10-5"/>
-    </svg>
-  ),
-  Liaisoning: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"/>
-    </svg>
-  ),
-  Electrical: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-    </svg>
-  ),
-  Fire: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 2c-3 4-7 8-7 12a7 7 0 0014 0c0-4-4-8-7-12z"/>
-      <path d="M12 9c-1.5 2-2.5 4-2.5 6a2.5 2.5 0 005 0c0-2-1-4-2.5-6z"/>
-    </svg>
-  ),
-  PNG: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="10"/>
-      <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-      <line x1="9" y1="9" x2="9.01" y2="9"/>
-      <line x1="15" y1="9" x2="15.01" y2="9"/>
-    </svg>
-  ),
-  ESD: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
-    </svg>
-  ),
-  Group: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
-    </svg>
-  ),
-  Default: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M4 4h16v16H4z"/>
-      <path d="M8 8h8v8H8z"/>
-    </svg>
-  ),
-  Stats: {
-    Sections: () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="3" width="7" height="7"/>
-        <rect x="14" y="3" width="7" height="7"/>
-        <rect x="3" y="14" width="7" height="7"/>
-        <rect x="14" y="14" width="7" height="7"/>
-      </svg>
-    ),
-    Pages: () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="16" y1="13" x2="8" y2="13"/>
-        <line x1="16" y1="17" x2="8" y2="17"/>
-      </svg>
-    ),
-    Links: () => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
-        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
-      </svg>
-    ),
-  }
-};
-
-// ===== Constants =====
-const ICON_MAP = {
-  "Home": "Home",
-  "About Us": "About",
-  "Our Clients": "Clients",
-  "Projects": "Projects",
-  "Our Services": "Services",
-  "Careers": "Careers",
-  "Press Release": "Press",
-  "Contact Us": "Contact",
-  "AMC": "AMC",
-  "Licensing": "Licensing",
-  "Liaisoning": "Liaisoning",
-  "Electrical (SITC)": "Electrical",
-  "Fire & FAPA (SITC)": "Fire",
-  "PNG (SITC)": "PNG",
-  "Equipment Solution Department (ESD)": "ESD",
-  "Group Profile": "Group",
-};
-
-const GRADIENT_MAP = {
-  "Home": "linear-gradient(135deg, #FF6B6B, #ee5a24)",
-  "About Us": "linear-gradient(135deg, #FF9F43, #e17055)",
-  "Our Clients": "linear-gradient(135deg, #00B894, #00cec9)",
-  "Projects": "linear-gradient(135deg, #6C5CE7, #a29bfe)",
-  "Our Services": "linear-gradient(135deg, #FD79A8, #e84393)",
-  "Careers": "linear-gradient(135deg, #00CEC9, #00b894)",
-  "Press Release": "linear-gradient(135deg, #FDCB6E, #f39c12)",
-  "Contact Us": "linear-gradient(135deg, #0984E3, #74b9ff)",
-};
-
-// ===== Navigation Data =====
 const NAV_LINKS = [
-  { name: "Home", href: "/" },
-  { name: "About Us", href: "/about-us-liaison" },
+  { name: "Home", href: "/",
+    submenu: [
+      {
+        name: "Ceo Profile",
+        href: "/ceo-profile",
+      }
+    ]
+
+   },
+   
+  { name: "About Us", href: "/about-us-liaison",
+    submenu:[
+      {name : "liaisoning", href: "our-services/liaisoning"},
+          {name : "licensing", href: "our-services/licensing"},
+          {name: "png", href: "our-services/piped-natural-gas"},
+          {name: "fire", href: "our-services/fire"},
+          {name: "electrical", href: "our-services/electrical"},
+          {name: "amc", href: "our-services/amc"}
+    ]
+   },
   { name: "Our Clients", href: "/client-liaison" },
   { name: "Projects", href: "/projects" },
   // { 
@@ -185,639 +35,683 @@ const NAV_LINKS = [
   // },
   { 
     name: "Our Services",
+    href: "/our-services",
     submenu: [
       {
-        name: "AMC",
-        items: [
-          { name: "Licenses Renewal", href: "/contact-us-liaison-bank" },
-          { name: "PNG Audit and Certification", href: "/contact-us-liaison-bank" },
-          { name: "Fire Audit and Certification", href: "/contact-us-liaison-bank" },
-          { name: "Electric Audit and Certification", href: "/contact-us-liaison-bank" },
-          { name: "Pest Control Service and Certification", href: "/contact-us-liaison-bank" },
-          { name: "Water Tank Cleaning and Certification", href: "/contact-us-liaison-bank" },
-        ]
-      },
-      {
-        name: "Licensing",
+        name: "Liaisoning Services",
+        href : "/our-services/liaisoning",
         items: [
           { 
-            name: "F&B",
+            name: "Brihanmumbai Municipal Corporation (BMC)",
             children: [
               { 
-                name: "Resort, Banquet, Hotel",
-                children: [
-                  { name: "Lougging and boarding", href: "/contact-us-liaison-bank" },
-                  { name: "Traffic police permission", href: "/contact-us-liaison-bank" },
-                  { name: "Law and order approval", href: "/contact-us-liaison-bank" },
-                ]
+                name: "Shop to Clinic Conversion", href:"/our-services/liaisoning/bmc-shop-to-clinic-conversion"
               },
               { 
-                name: "Restaurant, Dhaba, Sweet mart, Dry Fruit",
-                children: [
-                  { name: "Shop & Establishment", href: "/contact-us-liaison-bank" },
-                  { name: "FSSAI", href: "/contact-us-liaison-bank" },
-                  { name: "Building & Factory NOC", href: "/contact-us-liaison-bank" },
-                  { name: "Fire Compliance certificate", href: "/contact-us-liaison-bank" },
-                  { name: "MOH License", href: "/contact-us-liaison-bank" },
-                  { name: "Sign Board License", href: "/contact-us-liaison-bank" },
-                  { name: "Open space Serving License", href: "/contact-us-liaison-bank" },
-                  { name: "FL III License", href: "/contact-us-liaison-bank" },
-                  { name: "Premises License", href: "/contact-us-liaison-bank" },
-                  { name: "PPL License", href: "/contact-us-liaison-bank" },
-                  { name: "Novex License", href: "/contact-us-liaison-bank" },
-                ]
+                name: "Building Proposal – Miscellaneous", href:"/our-services/liaisoning/bmc-building-proposal-miscellaneous"
               },
+              {name:"Retail Unit Approval", href:"/our-services/liaisoning/bmc-retail-unit-approval"},
+              {
+                name: "Building Proposal (342)", href:"/our-services/liaisoning/building-proposal-342"
+              },
+              {
+                name : "Building Proposal (337)", href:"/our-services/liaisoning/building-proposal-337"
+              },
+              {name : "Shop to Restaurant Conversion", href:"/our-services/liaisoning/bmc-shop-to-restaurant-conversion"},
+              {name : "Floor Mill to Restaurant Conversion", href:"/our-services/liaisoning/bmc-floor-mill-to-restaurant-conversion"},
             ]
           },
           {
-            name: "Healthcare",
+            name: "Vasai-Virar Municipal Corporation (VVMC)",
             children: [
               {
-                name: "Hospital, Clinic, Nursing Home",
-                children: [
-                  { name: "SMS - Bio medical waste", href: "/contact-us-liaison-bank" },
-                  { name: "Clinic MPCB/BMW", href: "/contact-us-liaison-bank" },
-                  { name: "MPCB Registration", href: "/contact-us-liaison-bank" },
-                  { name: "Fire NOC", href: "/contact-us-liaison-bank" },
-                  { name: "PCPNDT", href: "/contact-us-liaison-bank" },
-                  { name: "MTP registration", href: "/contact-us-liaison-bank" },
-                  { name: "Electrical audit certificate", href: "/contact-us-liaison-bank" },
-                  { name: "Structural audit", href: "/contact-us-liaison-bank" },
-                  { name: "Board sign", href: "/contact-us-liaison-bank" },
-                  { name: "Weather shed permission", href: "/contact-us-liaison-bank" },
-                  { name: "Change of user for clinics", href: "/contact-us-liaison-bank" },
-                  { name: "Change of user for nursing home", href: "/contact-us-liaison-bank" },
-                  { name: "NABH Certification", href: "/contact-us-liaison-bank" },
-                ]
-              }
+                name: "Building Proposal – Miscellaneous",
+                href: "/our-services/liaisoning/building-proposal-miscellaneous-vvmc"
+              },
+              {name : "Shop to Clinic Conversion", href:"/our-services/liaisoning/shop-to-clinic-conversion-vvmc"},
+              {name : "Building Proposal (342)", href:"/our-services/liaisoning/building-proposal-342-vvmc"},
+              {name: "Retail Unit Approval", href:"/our-services/liaisoning/retail-unit-approval-vvmc"},
+              {name: "Building Proposal (337)", href:"/our-services/liaisoning/building-proposal-337-vvmc"},
+              {namr: "Shop to Restaurant Conversion", href:"/our-services/liaisoning/shop-to-restaurant-conversion-vvmc"},
+              {name: "Floor Mill to Restaurant Conversion", href:"/our-services/liaisoning/floor-mill-to-restaurant-conversion-vvmc"},
+            ]
+          },
+          {
+            name: "Kalyan-Dombivli Municipal Corporation (KDMC)",
+            children: [
+              {name:"Building Proposal (337)", href:"/our-services/liaisoning/building-proposal-337-kdmc"},
+              {name:"Building Proposal (342)", href:"/our-services/liaisoning/building-proposal-342-kdmc"},
+              {name:"Building Proposal – Miscellaneous", href:"/our-services/liaisoning/building-proposal-miscellaneous-kdmc"},
+              {name:"retail Unit Approval", href:"/our-services/liaisoning/retail-unit-approval-kdmc"},
+              {name:"Shop to restaurant Conversion", href:"/our-services/liaisoning/shop-to-restaurant-conversion-kdmc"},
+              {name:"Floor mill to restaurant Conversion", href:"/our-services/liaisoning/floor-mill-to-restaurant-conversion-kdmc"},
+              {name:"Shop to clinic Conversion", href:"/our-services/liaisoning/shop-to-clinic-conversion-kdmc"},
+            ]
+          },
+          {
+            name: "Thane Municipal Corporation (TMC)",
+            children: [
+              {name:"Floor mill to restaurant Conversion", href:"/our-services/liaisoning/floor-mill-to-restaurant-conversion-tmc"},
+              {name:"Building Proposal (342)", href:"/our-services/liaisoning/building-proposal-342-tmc"},
+              {name:"Building Proposal – Miscellaneous", href:"/our-services/liaisoning/building-proposal-miscellaneous-tmc"},
+              {name:"retail Unit Approval", href:"/our-services/liaisoning/retail-unit-approval-tmc"},
+              {name:"Building Proposal (337)", href:"/our-services/liaisoning/building-proposal-337-tmc"},
+              {name:"Shop to restaurant Conversion", href:"/our-services/liaisoning/shop-to-restaurant-conversion-tmc"},
+              {name:"Shop to clinic Conversion", href:"/our-services/liaisoning/shop-to-clinic-conversion-tmc"},
+            ]
+          },
+          {
+            name: "Maharashtra Housing and Area Development Authority (MHADA)",
+            children: [
+              {name:"Building Proposal (342)", href:"/our-services/liaisoning/building-proposal-342-mhada"},
+              {name:"Building Proposal – Miscellaneous", href:"/our-services/liaisoning/building-proposal-miscellaneous-mhada"},
+              {name:"retail Unit Approval", href:"/our-services/liaisoning/retail-unit-approval-mhada"},
+              {name:"Building Proposal (337)", href:"/our-services/liaisoning/building-proposal-337-mhada"},
+              {name:"Shop to restaurant Conversion", href:"/our-services/liaisoning/shop-to-restaurant-conversion-mhada"},
+              {name:"Floor mill to restaurant Conversion", href:"/our-services/liaisoning/floor-mill-to-restaurant-conversion-mhada"},
+              {name:"Shop to clinic Conversion", href:"/our-services/liaisoning/shop-to-clinic-conversion-mhada"},
+            ]
+          },
+          {
+            name: "Slum Rehabilitation Authority (SRA)",
+            children: [
+              {name:"Floor mill to restaurant Conversion", href:"/our-services/liaisoning/floor-mill-to-restaurant-conversion-sra"},
+              {name:"Shop to clinic Conversion", href:"/our-services/liaisoning/shop-to-clinic-conversion-sra"},
+              {name:"Building Proposal (342)", href:"/our-services/liaisoning/building-proposal-342-sra"},
+              {name:"Shop to restaurant Conversion", href:"/our-services/liaisoning/shop-to-restaurant-conversion-sra"},
+              {name:"Building Proposal (337)", href:"/our-services/liaisoning/building-proposal-337-sra"},
+              {name:"retail Unit Approval", href:"/our-services/liaisoning/retail-unit-approval-sra"},
+              {name:"Building Proposal – Miscellaneous", href:"/our-services/liaisoning/building-proposal-miscellaneous-sra"},
+            ]
+          },
+          {
+            name: "Mumbai Metropolitan Region Development Authority (MMRDA)",
+            children: [
+              {name:"Building Proposal (342)", href:"/our-services/liaisoning/building-proposal-342-mmda"},
+              {name:"Building Proposal – Miscellaneous", href:"/our-services/liaisoning/building-proposal-miscellaneous-mmda"},
+              {name:"retail Unit Approval", href:"/our-services/liaisoning/retail-unit-approval-mmda"},
+              {name:"Building Proposal (337)", href:"/our-services/liaisoning/building-proposal-337-mmda"},
+              {name:"Shop to restaurant Conversion", href:"/our-services/liaisoning/shop-to-restaurant-conversion-mmda"},
+              {name:"Floor mill to restaurant Conversion", href:"/our-services/liaisoning/floor-mill-to-restaurant-conversion-mmda"},
+              {name:"Shop to clinic Conversion", href:"/our-services/liaisoning/shop-to-clinic-conversion-mmda"},
+            ]
+          },
+          {
+            name: "Maharashtra Industrial Development Corporation (MIDC)",
+            children: [
+              {name:"Building Proposal (342)", href:"/our-services/liaisoning/building-proposal-342-midc"},
+              {name:"Building Proposal – Miscellaneous", href:"/our-services/liaisoning/building-proposal-miscellaneous-midc"},
+              {name:"retail Unit Approval", href:"/our-services/liaisoning/retail-unit-approval-midc"},
+              {name:"Building Proposal (337)", href:"/our-services/liaisoning/building-proposal-337-midc"},
+              {name:"Shop to restaurant Conversion", href:"/our-services/liaisoning/shop-to-restaurant-conversion-midc"},
+              {name:"Floor mill to restaurant Conversion", href:"/our-services/liaisoning/floor-mill-to-restaurant-conversion-midc"},
+              {name:"Shop to clinic Conversion", href:"/our-services/liaisoning/shop-to-clinic-conversion-midc"},
+            ]
+          },
+          {
+            name: "Maharashtra Pollution Control Board (MPCB)",
+            children: [
+              {name:"Maharashtra Pollution Control Board (NOC) for Consent", href:"/our-services/liaisoning/maharashtra-pollution-control-board-noc-for-consent"},
+            ]
+          },
+          {
+            name:"Revenue & Forest(Collector)",
+            children:[
+              {name :"Superintendent of Land Records (SLR)", href:"/our-services/liaisoning/superintendent-of-land-records-slr"},
+              {name : "Collector NOC for Approval and Completion (Commercial to Nursing Home)", href:"/our-services/liaisoning/collector-noc-for-approval-and-completion-commercial-to-nursing-home"},
+              {name:"Collector Office Mumbai City Land Lease Renewal Approval", href : "/our-services/liaisoning/collector-office-mumbai-city-land-lease-renewal-approval"},
+              {name:"Collector Office Mumbai City Adjudication" , href:"/our-services/liaisoning/collector-office-mumbai-city-adjudication"},
+              {name:"Collector NOC for Approval and Completion (Residential to Commercial)", href:"/our-services/liaisoning/collector-noc-for-approval-and-completion-residential-to-commercial"},
+              {name:"Directorate of District Land Records (D.D.L.R)", href:"/our-services/liaisoning/directorate-of-district-land-records-d-d-l-r"},
+              {name: "District Magistrate (DM)", href :"/our-services/liaisoning/district-magistrate-dm"}
+
+            ]
+          },
+          {
+            name:"Adanin Power",
+            children:[
+              {name:"KW Load Increase", href:"/our-services/liaisoning/kw-load-increase-adani"},
+              {name:"New Meter Connection (Construction / Industry / Temporary Meter)", href:"/our-services/liaisoning/new-meter-connection-construction-industry-temporary-meter-adani"},  
+              {name:"Name Change", href:"/our-services/liaisoning/name-change-adani"},
+              {name:"Residential to Commercial", href:"/our-services/liaisoning/residential-to-commercial-adani"},
+              {NAME:"Changeover Adani to Tata", href:"/our-services/liaisoning/changeover-adani-to-tata-adani"},
+            ]
+          },
+          {
+            name:"Mumbai Fire Department",
+            children:[
+              {name:"Fire NOC Approval and Completion Amalgamation (342)", href:"/our-services/liaisoning/fire-noc-approval-and-completion-amalgamation-342"},
+              {name:"Fire NOC Approval and Completion for Regularization (342) for Lodging (Hotel Rooms)", href:"/our-services/liaisoning/fire-noc-approval-and-completion-for-regularization-342-for-lodging-hotel-rooms"},
+              {name:"Fire NOC Approval and Completion for Additional Alteration and Regularization (Commercial to Nursing Home)", href:"/our-services/liaisoning/fire-noc-approval-and-completion-for-additional-alteration-and-regularization-commercial-to-nursing-home"},
+            ]
+          },
+          {
+            name:"TATA Power",
+            children:[
+              {name:"Changeover Adani to Tata", href:"/our-services/liaisoning/changeover-adani-to-tata-power"},
+              {name:"Name Change", href:"/our-services/liaisoning/name-change-tata-power"},
+              {name:"Residential to Commercial", href:"/our-services/liaisoning/residential-to-commercial-tata-power"},
+              {name:"New Meter Connection (Construction / Industry / Temporary Meter)", href:"/our-services/liaisoning/new-meter-connection-construction-industry-temporary-meter-tata-power"},
+              {name:"KW Load Increase", href:"/our-services/liaisoning/kw-load-increase-tata-power"},
+            ]
+          },
+          {
+            name:"Maharashtra State Electricity Distribution Co. Ltd (MSEDCL)",
+            children:[
+              {name:"KW Load Increase", href:"/our-services/liaisoning/kw-load-increase"},
+              {name:"Name Change", href:"/our-services/liaisoning/name-change-msedcl"},
+              {name:"Residential to Commercial", href:"/our-services/liaisoning/residential-to-commercial"},
+              {name:"New Meter Connection (Construction / Industry / Temporary Meter)", href:"/our-services/liaisoning/new-meter-connection-construction-industry-temporary-meter"},
+              {name:"Changeover Adani to Tata", href:"/our-services/liaisoning/changeover-adani-to-tata"},
+            ]
+          },
+          {
+            name:"Mumbai Port Trust (MBPT)",
+            href:"/contact-us-liaison-bank"
+          },
+          {
+            name:"Navi Mumbai Municipal Corporation (NMMC)",
+            href:"/contact-us-liaison-bank"
+          },
+          {
+            name:"Pune Mahanagar Co",
+            href:"/contact-us-liaison-bank"
+          },
+          {
+            name:"Coastal Regulation Zone (CRZ)",
+            href:"/contact-us-liaison-bank"
+          },
+          {
+            name:"Public Works Department (PWD)",
+            href:"/contact-us-liaison-bank"
+          },
+          {
+            name:"Mumbai Airport Authority of India (MAAI)",
+            href:"/contact-us-liaison-bank"
+          }
+        ]
+      },
+      {
+        name: "Licensing Services",
+        href : "/our-services/licensing",
+        items: [
+          { 
+            name: "Entertainment",
+            children: [
+              { name: "Gym, Club House,Events", href: "/our-services/licensing/gym-club-house-events" }
             ]
           },
           {
             name: "Industrial and Manufacturer",
             children: [
-              {
-                name: "Textile, Colour Coating, Laundry, Factory",
-                children: [
-                  { name: "Factory license", href: "/contact-us-liaison-bank" },
-                  { name: "Shop & establishment", href: "/contact-us-liaison-bank" },
-                  { name: "Building & factory NOC", href: "/contact-us-liaison-bank" },
-                  { name: "Fire compliance certificate", href: "/contact-us-liaison-bank" },
-                  { name: "MOH license eating house", href: "/contact-us-liaison-bank" },
-                  { name: "Sign board license", href: "/contact-us-liaison-bank" },
-                ]
-              }
+              { name: "Textile, Colour Coating, Laundry, Factory", href: "/our-services/licensing/textile-colour-coating-laundry-factory" }
             ]
           },
           {
             name: "Real Estate",
             children: [
-              {
-                name: "Building and construction",
-                children: [
-                  { name: "Labour permit", href: "/contact-us-liaison-bank" },
-                  { name: "Contractor license", href: "/contact-us-liaison-bank" },
-                  { name: "Mathadi registration", href: "/contact-us-liaison-bank" },
-                ]
-              }
+              { name: "Building and Construction", href: "/our-services/licensing/building-and-construction" }
             ]
           },
           {
-            name: "Entertainment",
+            name : "Food and Beverage",
             children: [
-              {
-                name: "Gym, Club House, Events",
-                children: [
-                  { name: "Shop & establishment", href: "/contact-us-liaison-bank" },
-                  { name: "Building & factory NOC", href: "/contact-us-liaison-bank" },
-                  { name: "MOH license / Trade license", href: "/contact-us-liaison-bank" },
-                  { name: "Police NOC", href: "/contact-us-liaison-bank" },
-                  { name: "Staff fitness certificate", href: "/contact-us-liaison-bank" },
-                ]
-              }
+              { name: "Resort, Banquet, Hotel", href: "/our-services/licensing/resort-banquet-hotel" },
+              {name: "Restaurant, Dhaba, Sweet mart, Dry Fruit", href: "/our-services/licensing/restaurant-dhaba-sweet-mart-dry-fruit" },
+            ]
+          },
+          {
+            name: "Healthcare",
+            children: [
+              { name: "Hospital, Clinic, Nursing Home", href: "/our-services/licensing/hospital-clinic-nursing-home" },
+            ]
+          },
+          // { name: "Vasai-Virar Municipal Corporation (V.V.M.C)", href: "/contact-us-liaison-bank" },
+          // { name: "Kalyan-Dombivli Municipal Corporation (K.D.M.C)", href: "/contact-us-liaison-bank" },
+          // { name: "Thane Municipal Corporation (T.M.C)", href: "/contact-us-liaison-bank" },
+          // { name: "Maharashtra Housing and Area Development Authority (MHADA)", href: "/contact-us-liaison-bank" },
+          // { name: "Slum Rehabilitation Authority (S.R.A)", href: "/contact-us-liaison-bank" },
+          // { name: "Mumbai Metropolitan Region Development Authority (M.M.R.D.A)", href: "/contact-us-liaison-bank" },
+          // { 
+          //   name: "Maharashtra Industrial Development Corporation (M.I.D.C)",
+          //   children: [
+          //     { name: "Building Proposal (342)", href: "/contact-us-liaison-bank" },
+          //     { name: "Building Proposal - Miscellaneous", href: "/contact-us-liaison-bank" },
+          //   ]
+          // },
+          // {
+          //   name: "Maharashtra Pollution Control Board (M.P.C.B)",
+          //   children: [
+          //     { name: "Consent for Establishment", href: "/contact-us-liaison-bank" },
+          //     { name: "Consent for Operate", href: "/contact-us-liaison-bank" },
+          //     { name: "Consent for Renewal", href: "/contact-us-liaison-bank" },
+          //   ]
+          // },
+          // { name: "Mumbai Port Trust (M.B.P.T)", href: "/contact-us-liaison-bank" },
+          // { name: "Navi Mumbai Municipal Corporation (N.M.M.C)", href: "/contact-us-liaison-bank" },
+          // { name: "Pune Mahanagar Co", href: "/contact-us-liaison-bank" },
+          // {
+          //   name: "Collector",
+          //   children: [
+          //     { name: "Land Lease Renewal Approval", href: "/contact-us-liaison-bank" },
+          //     { name: "Adjudication", href: "/contact-us-liaison-bank" },
+          //     { name: "NOC for Approval and Completion", href: "/contact-us-liaison-bank" },
+          //   ]
+          // },
+          // {
+          //   name: "S.L.R",
+          //   children: [
+          //     { name: "Property Card Area Name Change", href: "/contact-us-liaison-bank" },
+          //     { name: "Property Card Area Correction", href: "/contact-us-liaison-bank" },
+          //   ]
+          // },
+          // { name: "D.D.L.R", href: "/contact-us-liaison-bank" },
+          // {
+          //   name: "Mumbai Fire Department",
+          //   children: [
+          //     { name: "Fire NOC Approval and Completion", href: "/contact-us-liaison-bank" },
+          //     { name: "Fire NOC for Regularization", href: "/contact-us-liaison-bank" },
+          //     { name: "Fire NOC for Additional Alteration", href: "/contact-us-liaison-bank" },
+          //   ]
+          // },
+          // { name: "Coastal Regulation Zone (CRZ)", href: "/contact-us-liaison-bank" },
+          // { name: "Mumbai Airport Authority of India (MAAI)", href: "/contact-us-liaison-bank" },
+          // { name: "R.&.F.M", href: "/contact-us-liaison-bank" },
+          // { name: "C.O.M", href: "/contact-us-liaison-bank" },
+          // { name: "N.V.M", href: "/contact-us-liaison-bank" },
+          // { name: "A.P.M", href: "/contact-us-liaison-bank" },
+          // { name: "M.I.D.C.M", href: "/contact-us-liaison-bank" },
+          // { name: "I.D.C", href: "/contact-us-liaison-bank" },
+          // { name: "P.W.D", href: "/contact-us-liaison-bank" },
+          // { name: "D.M", href: "/contact-us-liaison-bank" },
+          // {
+          //   name: "Adani Power",
+          //   children: [
+          //     { name: "Name Change", href: "/contact-us-liaison-bank" },
+          //     { name: "Residential to Commercial", href: "/contact-us-liaison-bank" },
+          //     { name: "KW Load Increase", href: "/contact-us-liaison-bank" },
+          //     { name: "Changeover TATA to Adani", href: "/contact-us-liaison-bank" },
+          //     { name: "New Meter Connection", href: "/contact-us-liaison-bank" },
+          //   ]
+          // },
+          // {
+          //   name: "TATA Power",
+          //   children: [
+          //     { name: "Name Change", href: "/contact-us-liaison-bank" },
+          //     { name: "Residential to Commercial", href: "/contact-us-liaison-bank" },
+          //     { name: "KW Load Increase", href: "/contact-us-liaison-bank" },
+          //     { name: "Changeover Adani to TATA", href: "/contact-us-liaison-bank" },
+          //     { name: "New Meter Connection", href: "/contact-us-liaison-bank" },
+          //   ]
+          // },
+          // {
+          //   name: "M.S.E.D.C.L",
+          //   children: [
+          //     { name: "Name Change", href: "/contact-us-liaison-bank" },
+          //     { name: "Residential to Commercial", href: "/contact-us-liaison-bank" },
+          //     { name: "KW Load Increase", href: "/contact-us-liaison-bank" },
+          //     { name: "Changeover Adani to Tata", href: "/contact-us-liaison-bank" },
+          //     { name: "New Meter Connection", href: "/contact-us-liaison-bank" },
+          //   ]
+          // }
+        ]
+      },
+      {
+        name: "Piped Natural Gas (PNG) Services",
+        href : "/our-services/piped-natural-gas",
+        items: [
+          { name: "Residential Connection",
+            children: [
+              { name: "Gas Charge & Completion", href: "/our-services/piped-natural-gas/gas-charge-completion-residential" },
+              { name: "MGL Liaisoning & Agreement", href: "/our-services/piped-natural-gas/mgl-liaisoning-agreement-residential" },
+              {name: "Fabrication & Pipeline Service", href: "/our-services/piped-natural-gas/fabrication-pipeline-service-residential" },
+            ]
+
+          },
+          {
+            name: "Industrial Connection",
+            children: [
+              { name: "MGL Liaisoning & Agreement", href: "/our-services/piped-natural-gas/mgl-liaisoning-agreement-industrial-mumbai" },
+              {name: "Gas Charge & Completion", href: "/our-services/piped-natural-gas/gas-charge-completion-industrial-connection" },
+              {name:"Pipeline Service", href: "/our-services/piped-natural-gas/pipeline-service" },
+              { name: "Fit to use Certificate", href: "/our-services/piped-natural-gas/fit-to-use-certificate-industrial-connection" },
+            ]
+          },
+          {
+            name: "Commercial Connection",
+            children: [
+              { name: "MGL Liaisoning & Agreement", href: "/our-services/piped-natural-gas/mgl-liaisoning-agreement-commercial" },
+              { name: "Fit to use Certificate", href: "/our-services/piped-natural-gas/fit-to-use-certificate-commercial-connection" },
+              {name: "Gas Charge & Completion", href: "/our-services/piped-natural-gas/gas-charge-completion-commercial" },
+              {name:"Pipeline Service", href: "/our-services/piped-natural-gas/pipeline-service-png-commercial" },
             ]
           },
         ]
       },
       {
-        name: "Liaisoning",
+        name: "Fire Services",
+        href : "/our-services/fire",
         items: [
-          { 
-            name: "Brihanmumbai Municipal Corporation (B.M.C)",
-            children: [
-              { name: "Building Proposal (342)", href: "/contact-us-liaison-bank" },
-              { name: "Building Proposal - Miscellaneous", href: "/contact-us-liaison-bank" },
-              { name: "Retail Unit Approval", href: "/contact-us-liaison-bank" },
-              { name: "Building Proposal (337)", href: "/contact-us-liaison-bank" },
-              { name: "Shop to Restaurant Conversion", href: "/contact-us-liaison-bank" },
-              { name: "Floor Mill to Restaurant Conversion", href: "/contact-us-liaison-bank" },
-              { name: "Shop to Clinic Conversion", href: "/contact-us-liaison-bank" },
-            ]
-          },
-          { name: "Vasai-Virar Municipal Corporation (V.V.M.C)", href: "/contact-us-liaison-bank" },
-          { name: "Kalyan-Dombivli Municipal Corporation (K.D.M.C)", href: "/contact-us-liaison-bank" },
-          { name: "Thane Municipal Corporation (T.M.C)", href: "/contact-us-liaison-bank" },
-          { name: "Maharashtra Housing and Area Development Authority (MHADA)", href: "/contact-us-liaison-bank" },
-          { name: "Slum Rehabilitation Authority (S.R.A)", href: "/contact-us-liaison-bank" },
-          { name: "Mumbai Metropolitan Region Development Authority (M.M.R.D.A)", href: "/contact-us-liaison-bank" },
-          { 
-            name: "Maharashtra Industrial Development Corporation (M.I.D.C)",
-            children: [
-              { name: "Building Proposal (342)", href: "/contact-us-liaison-bank" },
-              { name: "Building Proposal - Miscellaneous", href: "/contact-us-liaison-bank" },
-            ]
-          },
-          {
-            name: "Maharashtra Pollution Control Board (M.P.C.B)",
-            children: [
-              { name: "Consent for Establishment", href: "/contact-us-liaison-bank" },
-              { name: "Consent for Operate", href: "/contact-us-liaison-bank" },
-              { name: "Consent for Renewal", href: "/contact-us-liaison-bank" },
-            ]
-          },
-          { name: "Mumbai Port Trust (M.B.P.T)", href: "/contact-us-liaison-bank" },
-          { name: "Navi Mumbai Municipal Corporation (N.M.M.C)", href: "/contact-us-liaison-bank" },
-          { name: "Pune Mahanagar Co", href: "/contact-us-liaison-bank" },
-          {
-            name: "Collector",
-            children: [
-              { name: "Land Lease Renewal Approval", href: "/contact-us-liaison-bank" },
-              { name: "Adjudication", href: "/contact-us-liaison-bank" },
-              { name: "NOC for Approval and Completion", href: "/contact-us-liaison-bank" },
-            ]
-          },
-          {
-            name: "S.L.R",
-            children: [
-              { name: "Property Card Area Name Change", href: "/contact-us-liaison-bank" },
-              { name: "Property Card Area Correction", href: "/contact-us-liaison-bank" },
-            ]
-          },
-          { name: "D.D.L.R", href: "/contact-us-liaison-bank" },
-          {
-            name: "Mumbai Fire Department",
-            children: [
-              { name: "Fire NOC Approval and Completion", href: "/contact-us-liaison-bank" },
-              { name: "Fire NOC for Regularization", href: "/contact-us-liaison-bank" },
-              { name: "Fire NOC for Additional Alteration", href: "/contact-us-liaison-bank" },
-            ]
-          },
-          { name: "Coastal Regulation Zone (CRZ)", href: "/contact-us-liaison-bank" },
-          { name: "Mumbai Airport Authority of India (MAAI)", href: "/contact-us-liaison-bank" },
-          { name: "R.&.F.M", href: "/contact-us-liaison-bank" },
-          { name: "C.O.M", href: "/contact-us-liaison-bank" },
-          { name: "N.V.M", href: "/contact-us-liaison-bank" },
-          { name: "A.P.M", href: "/contact-us-liaison-bank" },
-          { name: "M.I.D.C.M", href: "/contact-us-liaison-bank" },
-          { name: "I.D.C", href: "/contact-us-liaison-bank" },
-          { name: "P.W.D", href: "/contact-us-liaison-bank" },
-          { name: "D.M", href: "/contact-us-liaison-bank" },
-          {
-            name: "Adani Power",
-            children: [
-              { name: "Name Change", href: "/contact-us-liaison-bank" },
-              { name: "Residential to Commercial", href: "/contact-us-liaison-bank" },
-              { name: "KW Load Increase", href: "/contact-us-liaison-bank" },
-              { name: "Changeover TATA to Adani", href: "/contact-us-liaison-bank" },
-              { name: "New Meter Connection", href: "/contact-us-liaison-bank" },
-            ]
-          },
-          {
-            name: "TATA Power",
-            children: [
-              { name: "Name Change", href: "/contact-us-liaison-bank" },
-              { name: "Residential to Commercial", href: "/contact-us-liaison-bank" },
-              { name: "KW Load Increase", href: "/contact-us-liaison-bank" },
-              { name: "Changeover Adani to TATA", href: "/contact-us-liaison-bank" },
-              { name: "New Meter Connection", href: "/contact-us-liaison-bank" },
-            ]
-          },
-          {
-            name: "M.S.E.D.C.L",
-            children: [
-              { name: "Name Change", href: "/contact-us-liaison-bank" },
-              { name: "Residential to Commercial", href: "/contact-us-liaison-bank" },
-              { name: "KW Load Increase", href: "/contact-us-liaison-bank" },
-              { name: "Changeover Adani to Tata", href: "/contact-us-liaison-bank" },
-              { name: "New Meter Connection", href: "/contact-us-liaison-bank" },
-            ]
-          }
+          {name : "Hydrant Supply, Installation, Testing & Certification", href:"/contact-us-liaison-bank"},
+          {name:"Approval For Cheif Fire Officer Noc", href: "/contact-us-liaison-bank"},
+          {name: "Detection Supply, Installation, Testing & Certification" , href:"/contact-us-liaison-bank"},
+          {name:"Suppresion Supply, Installation, Testing & Certification" ,href:"/contact-us-liaison-bank"},
         ]
       },
-      { name: "Electrical (SITC)", href: "/contact-us-liaison-bank" },
-      { name: "Fire & FAPA (SITC)", href: "/contact-us-liaison-bank" },
-      { name: "PNG (SITC)", href: "/contact-us-liaison-bank" },
-      { name: "Equipment Solution Department (ESD)", href: "/contact-us-liaison-bank" },
-      { name: "Group Profile", href: "/group-profile" },
-      { name: "Integrated Licensing & Compliance Solutions (ILCS)", href: "/contact-us-liaison-bank" },
-      { name: "Integrated Liaisoning, Approvals & Compliance Solutions (ILACS)", href: "/contact-us-liaison-bank" },
+      {
+        name : "Electrical Services",
+        href : "/our-services/electrical",
+        items:[
+          {name : "Electrical System Supply, Installation, Testing & Certification", href:"/contact-us-liaison-bank"},
+          {name:"Electric audit Certification", href:"/contact-us-liaison-bank"},
+          {name:"Load Increase",  href:"/contact-us-liaison-bank"},
+          {name : "Electricty Bill Name Change (Adani & Tata)", href:"/contact-us-liaison-bank"},
+        ]
+      },
+      {
+        name: "AMC Services",
+        href : "/our-services/amc",
+        items: [
+          { name: "PNG Audit and Certification", href: "/contact-us-liaison-bank" },
+          { name: "Fire Audit and Certification", href: "/contact-us-liaison-bank" },
+          { name: "Water Tank Cleaning and Certification", href: "/contact-us-liaison-bank" },
+          { name: "Licenses Renewal",
+            children:[
+              {name:"F&B", href:"/our-services/amc/f-b"},
+              {name:"Healthcare", href:"/our-services/amc/healthcare"},
+              {name:"Industrial & Manufacturer", href:"/our-services/amc/industrial-manufacturer"},
+              {name:"Real Estate", href:"/our-services/amc/real-estate"},
+              {name:"Entertainment", href:"/our-services/amc/entertainment"}
+            ]
+           },
+          { name: "Electric Audit and Certification", href: "/contact-us-liaison-bank" },
+          { name: "Pest Control Service and Certification", href: "/contact-us-liaison-bank" },
+        ]
+      },
+      {name : "Liaisoning Services",href : "/our-services/liaisoning"},
+      {name : "Licensing Services", href:"/our-services/licensing"},
+      {name:"Piped Natural gas Services", href:"/our-services/piped-natural-gas"},
+      {name:"Fire Services", href:"/our-services/fire"},
+      {name:"Electrical Services", href:"/our-services/electrical"},
+      {name:"AMC Services", href:"/our-services/amc"},
+      {name: "Real Estate Services", href: "/our-services/real-estate"},
+      { name: "Equipment Solution Department Services", href: "/our-services/equipment-solution-department" },
+          // {
+          //   name: "Industrial and Manufacturer",
+          //   children: [
+          //     {
+          //       name: "Textile, Colour Coating, Laundry, Factory",
+          //       children: [
+          //         { name: "Factory license", href: "/contact-us-liaison-bank" },
+          //         { name: "Shop & establishment", href: "/contact-us-liaison-bank" },
+          //         { name: "Building & factory NOC", href: "/contact-us-liaison-bank" },
+          //         { name: "Fire compliance certificate", href: "/contact-us-liaison-bank" },
+          //         { name: "MOH license eating house", href: "/contact-us-liaison-bank" },
+          //         { name: "Sign board license", href: "/contact-us-liaison-bank" },
+          //       ]
+          //     }
+          //   ]
+          // },
+          // {
+          //   name: "Real Estate",
+          //   children: [
+          //     {
+          //       name: "Building and construction",
+          //       children: [
+          //         { name: "Labour permit", href: "/contact-us-liaison-bank" },
+          //         { name: "Contractor license", href: "/contact-us-liaison-bank" },
+          //         { name: "Mathadi registration", href: "/contact-us-liaison-bank" },
+          //       ]
+          //     }
+          //   ]
+          // },
+          // {
+          //   name: "Entertainment",
+          //   children: [
+          //     {
+          //       name: "Gym, Club House, Events",
+          //       children: [
+          //         { name: "Shop & establishment", href: "/contact-us-liaison-bank" },
+          //         { name: "Building & factory NOC", href: "/contact-us-liaison-bank" },
+          //         { name: "MOH license / Trade license", href: "/contact-us-liaison-bank" },
+          //         { name: "Police NOC", href: "/contact-us-liaison-bank" },
+          //         { name: "Staff fitness certificate", href: "/contact-us-liaison-bank" },
+          //       ]
+          //     }
+          //   ]
+          // },
+        ]
+      },
+      {
+    name : "AMC", href:"https://amc-99kh.onrender.com/"
+   },
+
+      { name: "Careers", href: "/careers-liaison-bank/" ,
+    submenu: [
+      {name: "Liasoning Careers", href: "/careers-liaison-bank/jobs?service=Liaisoning"},
+      {name: "Licensing Careers", href: "/careers-liaison-bank/jobs?service=Licensing"},
+      {name:"PNG Careers", href: "/careers-liaison-bank/jobs?service=PNG"},
+      {name: "Fire Careers", href: "/careers-liaison-bank/jobs?service=Fire%20Safety"},
+      {name: "Electrical Careers", href: "/careers-liaison-bank/jobs?service=Electrical"},
+      {name: "AMC Careers", href: "/careers-liaison-bank/jobs?service=AMC"},
+      {name:"Accounts Careers", href: "/careers-liaison-bank/jobs?department=ACCOUNTS%20DEPARTMENT%20-%20DBRE"},
+      {name : "Administration Careers", href: "/careers-liaison-bank/jobs?department=Administration%20%26%20Facilities%20-%20DBRE"},
+      {name : "Architecture Careers", href: "/careers-liaison-bank/jobs?department=ARCHITECTURE%20DEPARTMENT%20-%20DBRE"},
+      {name: "Human Resources Careers", href: "/careers-liaison-bank/jobs?department=HUMAN%20RESOURCE%20-%20DBRE"},
+      {name: "Information Technology Careers", href: "/careers-liaison-bank/jobs?department=IT%20DEPARTMENT%20-%20DBRE"},
+      {name : "Sales Careers", href: "/careers-liaison-bank/jobs?department=SALES%20DEPARTMENT%20-%20DBRE"},
+      { name: "Job Openings", href: "/careers-liaison-bank/jobs" },
+      // { name: "Internship Opportunities", href: "/careers-liaison-bank/internship-opportunities" },
+      // { name: "Employee Testimonials", href: "/careers-liaison-bank/employee-testimonials" },
     ]
   },
-  { name: "Careers", href: "/careers-liaison-bank/" },
   { name: "Press Release", href: "/press-release-liaison-bank" },
   { name: "Contact Us", href: "/contact-us-liaison-bank" },
-];
+      
+      
+      
+      // {name: "Licensing Services", href: "/our-services/licensing"},
+      // { name: "Liaisoning Services", href: "/our-services/liaisoning" },
+      // { name: "PNG Services", href: "/our-services/piped-natural-gas" },
+      // { name: "Fire Services", href: "/our-services/fire" },
+      // { name: "Electrical Services", href: "/our-services/electrical" },
+      // { name: "AMC Services", href: "/our-services/amc" },
+      // { name: "Group Profile", href: "/group-profile" },
+      // { name: "Integrated Licensing & Compliance Solutions (ILCS)", href: "/our-services/integrated-licensing" },
+      // { name: "Integrated Liaisoning, Approvals & Compliance Solutions (ILACS)", href: "/our-services/integrated-liaisoning" },
+    ]
 
-// ===== Helper Functions =====
-const getChildren = (node) => {
-  return node?.children || node?.submenu || node?.items || node?.projects || [];
+// ===== Helpers =====
+const getChildren = (node) =>
+  node?.children || node?.submenu || node?.items || node?.projects || [];
+
+// some hrefs in the data have no leading slash — normalise so links never resolve relatively
+const fixHref = (href) => (href && !href.startsWith("/") ? `/${href}` : href);
+
+const countLeaves = (nodes) =>
+  nodes.reduce((n, node) => {
+    const kids = getChildren(node);
+    return n + (kids.length ? countLeaves(kids) : 1);
+  }, 0);
+
+// Groups of a section: direct leaf children form one untitled group,
+// children that have their own children each become a titled group.
+const buildGroups = (section) => {
+  const children = getChildren(section);
+  const groups = [];
+  const leaves = children.filter((c) => getChildren(c).length === 0);
+  if (leaves.length) groups.push({ title: null, items: leaves });
+  children
+    .filter((c) => getChildren(c).length > 0)
+    .forEach((c) => groups.push({ title: c, items: getChildren(c) }));
+  return groups;
 };
 
-const getIcon = (name) => {
-  const iconKey = ICON_MAP[name] || "Default";
-  return Icons[iconKey] || Icons.Default;
+// First block (no big heading, like Apple's opening block): every main page as a quick overview.
+// (flattened to name + href only, so nested children are not repeated here)
+const OVERVIEW_GROUP = {
+  title: { name: "Main Pages" },
+  items: NAV_LINKS.map(({ name, href }) => ({ name, href })),
 };
 
-const getGradient = (name) => GRADIENT_MAP[name] || "linear-gradient(135deg, #636E72, #b2bec3)";
+// Sections that have sub-pages get their own heading + groups.
+// (Childless pages like Our Clients / Projects are already in the overview.)
+const SECTIONS = NAV_LINKS.filter((s) => getChildren(s).length > 0);
 
-const countPages = (nodes) => {
-  let count = 0;
-  nodes.forEach(node => {
-    if (node.href) count++;
-    const children = getChildren(node);
-    if (children.length > 0) {
-      count += countPages(children);
-    }
-  });
-  return count;
-};
-
-// ===== Main Component =====
-export default function SitemapPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [viewMode, setViewMode] = useState("list");
-  const [expandedItems, setExpandedItems] = useState({});
-
-  // Memoized calculations
-  const totalPages = useMemo(() => countPages(NAV_LINKS), []);
-  const totalSections = NAV_LINKS.length;
-  const directLinks = NAV_LINKS.filter(n => n.href).length;
-  const servicesCount = NAV_LINKS.find(n => n.name === 'Our Services')?.submenu?.length || 0;
-
-  // Memoized filter function
-  const filterItems = useCallback((items, term) => {
-    if (!term) return items;
-    
-    return items.filter(item => {
-      const children = getChildren(item);
-      const matchesName = item.name.toLowerCase().includes(term.toLowerCase());
-      const matchesChildren = children.some(child => 
-        child.name.toLowerCase().includes(term.toLowerCase()) ||
-        getChildren(child).some(grandchild => 
-          grandchild.name.toLowerCase().includes(term.toLowerCase())
-        )
-      );
-      return matchesName || matchesChildren;
-    });
-  }, []);
-
-  const filteredNavLinks = useMemo(() => 
-    filterItems(NAV_LINKS, searchTerm), 
-    [searchTerm, filterItems]
+const NavText = ({ item, className }) =>
+  item.href ? (
+    <Link href={fixHref(item.href)} className={className}>
+      {item.name}
+    </Link>
+  ) : (
+    <span className={className}>{item.name}</span>
   );
 
-  // Toggle expand
-  const toggleExpand = (key) => {
-    setExpandedItems(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
-
-  // Stats data
-  const stats = [
-    { label: 'Main Sections', value: totalSections, icon: Icons.Stats.Sections },
-    { label: 'Total Pages', value: totalPages, icon: Icons.Stats.Pages },
-    { label: 'Direct Links', value: directLinks, icon: Icons.Stats.Links },
-    { label: 'Services', value: servicesCount, icon: Icons.Services },
-  ];
-
-  // ===== Render Functions =====
-  const renderIcon = (IconComponent, className = "") => {
-    return (
-      <span className={className}>
-        <IconComponent />
-      </span>
-    );
-  };
-
-  const renderTreeItems = (items, level = 0, parentKey = '') => {
-    return items.map((item, index) => {
-      const children = getChildren(item);
-      const key = `${parentKey}-${index}`;
-      const hasChildren = children.length > 0;
-      const IconComponent = getIcon(item.name);
-      const isExpanded = expandedItems[key];
-
-      if (!item.href && !hasChildren) return null;
-
+// Links; deeper groups get a small label with indented links beneath
+const renderLinks = (items, depth = 0) =>
+  items.map((item, i) => {
+    const children = getChildren(item);
+    if (children.length === 0) {
       return (
-        <div key={key} className={`tree-item level-${level}`}>
-          <div className="tree-item-content">
-            <div className="tree-item-left">
-              {hasChildren && (
-                <button 
-                  className="tree-toggle"
-                  onClick={() => toggleExpand(key)}
-                  aria-label={isExpanded ? 'Collapse' : 'Expand'}
-                >
-                  {isExpanded ? '−' : '+'}
-                </button>
-              )}
-              {renderIcon(IconComponent, "tree-icon")}
-              {item.href ? (
-                <Link href={item.href} className="tree-link">
-                  {item.name}
-                </Link>
-              ) : (
-                <span className="tree-label">{item.name}</span>
-              )}
-              {hasChildren && (
-                <span className="tree-count">{children.length}</span>
-              )}
-            </div>
-          </div>
-          {hasChildren && isExpanded && (
-            <div className="tree-children">
-              {renderTreeItems(children, level + 1, key)}
-            </div>
-          )}
-        </div>
+        <li key={`${depth}-${i}`} className="sitemap-link-item">
+          <NavText item={item} className="sitemap-link" />
+        </li>
       );
-    });
-  };
+    }
+    return (
+      <li key={`${depth}-${i}`} className="sitemap-link-item sitemap-subgroup">
+        <NavText item={item} className="sitemap-sublabel" />
+        <ul className="sitemap-links nested">{renderLinks(children, depth + 1)}</ul>
+      </li>
+    );
+  });
 
-  const renderGridView = () => (
-    <div className="sitemap-grid">
-      {filteredNavLinks.map((section, index) => {
-        const children = getChildren(section);
-        const gradient = getGradient(section.name);
-        const IconComponent = getIcon(section.name);
-        
-        return (
-          <div key={`grid-${index}`} className="sitemap-card">
-            <div className="sitemap-card-header" style={{ background: gradient }}>
-              <div className="sitemap-card-header-content">
-                {renderIcon(IconComponent, "sitemap-card-icon")}
-                <div>
-                  <h3 className="sitemap-card-title">
-                    {section.href ? (
-                      <Link href={section.href}>{section.name}</Link>
-                    ) : section.name}
-                  </h3>
-                  {children.length > 0 && (
-                    <span className="sitemap-card-badge">
-                      {children.length} items
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
+// Long groups (e.g. Liaisoning) and untitled link lists (e.g. About Us, Careers)
+// run across the full width in 3 columns of their own, so sections don't look empty.
+const isBig = (group) =>
+  countLeaves(group.items) > 16 || (!group.title && group.items.length > 4);
 
-            <div className="sitemap-card-body">
-              {children.length > 0 ? (
-                <div>
-                  {children.slice(0, 5).map((child, idx) => {
-                    const childChildren = getChildren(child);
-                    return (
-                      <div key={`grid-child-${idx}`} className="sitemap-card-item">
-                        {child.href ? (
-                          <Link href={child.href} className="sitemap-card-link">
-                            <span className="sitemap-card-link-icon">▸</span>
-                            {child.name}
-                            {childChildren.length > 0 && (
-                              <span className="sitemap-card-item-count">
-                                +{childChildren.length}
-                              </span>
-                            )}
-                          </Link>
-                        ) : (
-                          <div className="sitemap-card-item-label">
-                            <span className="sitemap-card-link-icon">▸</span>
-                            {child.name}
-                            {childChildren.length > 0 && (
-                              <span className="sitemap-card-item-count">
-                                +{childChildren.length}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                  {children.length > 5 && (
-                    <div className="sitemap-card-more">
-                      +{children.length - 5} more items
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="sitemap-card-empty">
-                  No sub-pages
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
+const Group = ({ group }) => (
+  <div className={`sitemap-group${isBig(group) ? " is-big" : ""}`}>
+    {group.title && (
+      <h3 className="sitemap-group-title">
+        <NavText item={group.title} className="sitemap-group-link" />
+      </h3>
+    )}
+    <ul className="sitemap-links">{renderLinks(group.items)}</ul>
+  </div>
+);
+const filterSitemapNodes = (nodes, query) => {
+  if (!query.trim()) return nodes;
 
-  const renderListView = () => (
-    <div className="sitemap-list">
-      {filteredNavLinks.map((section, index) => {
-        const children = getChildren(section);
-        const IconComponent = getIcon(section.name);
-        
-        return (
-          <div key={`list-${index}`} className="sitemap-list-item">
-            <div className="sitemap-list-content">
-              {renderIcon(IconComponent, "sitemap-list-icon")}
-              <div className="sitemap-list-info">
-                <div className="sitemap-list-name">
-                  {section.href ? (
-                    <Link href={section.href}>{section.name}</Link>
-                  ) : section.name}
-                </div>
-                {children.length > 0 && (
-                  <div className="sitemap-list-tags">
-                    {children.slice(0, 8).map((child, idx) => (
-                      <span key={`tag-${idx}`} className="sitemap-list-tag">
-                        {child.name}
-                      </span>
-                    ))}
-                    {children.length > 8 && (
-                      <span className="sitemap-list-tag">
-                        +{children.length - 8}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-              <span className="sitemap-list-count">
-                {children.length}
-              </span>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
+  return nodes.reduce((results, node) => {
+    const children = getChildren(node);
+    const filteredChildren = filterSitemapNodes(children, query);
 
-  const renderCompactView = () => (
-    <div className="sitemap-compact">
-      {filteredNavLinks.map((section, index) => {
-        const children = getChildren(section);
-        const IconComponent = getIcon(section.name);
-        
-        return (
-          <div key={`compact-${index}`} className="sitemap-compact-item">
-            {renderIcon(IconComponent, "sitemap-compact-icon")}
-            {section.href ? (
-              <Link href={section.href} className="sitemap-compact-name">
-                {section.name}
-              </Link>
-            ) : (
-              <span className="sitemap-compact-name">{section.name}</span>
-            )}
-            {children.length > 0 && (
-              <div className="sitemap-compact-count">
-                {children.length} items
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
+    if (node.name?.toLowerCase().includes(query.toLowerCase())) {
+      results.push(node);
+    } else if (filteredChildren.length > 0) {
+      const childKey = ["children", "submenu", "items", "projects"].find(
+        (key) => Array.isArray(node[key])
+      );
 
-  const renderTreeView = () => (
-    <div className="sitemap-tree">
-      <div className="tree-container">
-        {filteredNavLinks.map((section, index) => {
-          const children = getChildren(section);
-          const IconComponent = getIcon(section.name);
-          const key = `root-${index}`;
-          const isExpanded = expandedItems[key];
-          const hasChildren = children.length > 0;
+      results.push(
+        childKey
+          ? { ...node, [childKey]: filteredChildren }
+          : node
+      );
+    }
 
-          return (
-            <div key={key} className="tree-root">
-              <div className="tree-root-content">
-                <div className="tree-root-left">
-                  {hasChildren && (
-                    <button 
-                      className="tree-toggle root-toggle"
-                      onClick={() => toggleExpand(key)}
-                      aria-label={isExpanded ? 'Collapse' : 'Expand'}
-                    >
-                      {isExpanded ? '−' : '+'}
-                    </button>
-                  )}
-                  {renderIcon(IconComponent, "tree-icon root-icon")}
-                  {section.href ? (
-                    <Link href={section.href} className="tree-link root-link">
-                      {section.name}
-                    </Link>
-                  ) : (
-                    <span className="tree-label root-label">{section.name}</span>
-                  )}
-                  {hasChildren && (
-                    <span className="tree-count root-count">{children.length}</span>
-                  )}
-                </div>
-              </div>
-              {hasChildren && isExpanded && (
-                <div className="tree-children root-children">
-                  {renderTreeItems(children, 1, key)}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+    return results;
+  }, []);
+};
 
-  // ===== Main Render =====
+// ===== Page =====
+export default function SitemapPage() {
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const filteredLinks = filterSitemapNodes(NAV_LINKS, searchQuery);
+
+const filteredOverview = filteredLinks.map(({ name, href }) => ({
+  name,
+  href,
+}));
+
+const filteredSections = filteredLinks.filter(
+  (section) => getChildren(section).length > 0
+);
   return (
     <div className="sitemap-container">
-      {/* Header Hero */}
-      <div className="sitemap-hero">
-        <div className="sitemap-hero-content">
-          <div className="sitemap-hero-left">
-            <span className="sitemap-hero-icon">🗺️</span>
-            <div>
-              <h1 className="sitemap-hero-title">Site Map</h1>
-              <p className="sitemap-hero-subtitle">
-                {totalSections} sections • {totalPages} pages
-              </p>
-            </div>
-          </div>
+      <header className="sitemap-header">
+  <h1 className="sitemap-title">Site Map</h1>
 
-          <div className="sitemap-hero-controls">
-            {/* View Toggle */}
-            <div className="sitemap-view-toggle">
-              {[ 'list', 'compact', 'tree'].map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  className={`sitemap-view-btn ${viewMode === mode ? 'active' : ''}`}
-                  aria-label={`Switch to ${mode} view`}
-                >
-                  {mode === 'grid' ? '📊' : mode === 'list' ? '📋' : mode === 'compact' ? '📌' : '🌳'} {mode}
-                </button>
-              ))}
-            </div>
+  <div className="sitemap-search">
+    <svg
+      className="sitemap-search-icon"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-4-4" />
+    </svg>
 
-            {/* Search */}
-            <div className="sitemap-search">
-              <span className="sitemap-search-icon" aria-hidden="true">🔍</span>
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="sitemap-search-input"
-                aria-label="Search sitemap"
-              />
-            </div>
-          </div>
-        </div>
+    <input
+      type="search"
+      className="sitemap-search-input"
+      placeholder="Search pages and services..."
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
 
-        {/* Stats row */}
-        <div className="sitemap-stats">
-          {stats.map((stat, idx) => (
-            <div key={`stat-${idx}`} className="sitemap-stat-item">
-              <span className="sitemap-stat-icon">
-                <stat.icon />
-              </span>
-              <div>
-                <div className="sitemap-stat-value">{stat.value}</div>
-                <div className="sitemap-stat-label">{stat.label}</div>
-              </div>
-            </div>
-          ))}
-          {searchTerm && (
-            <div className="sitemap-stat-item">
-              <span className="sitemap-stat-icon" aria-hidden="true">🔍</span>
-              <div>
-                <div className="sitemap-stat-value sitemap-stat-match">
-                  {filteredNavLinks.length}
-                </div>
-                <div className="sitemap-stat-label">Matches</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+    {/* {searchQuery && (
+      <button
+        type="button"
+        className="sitemap-search-clear"
+        onClick={() => setSearchQuery("")}
+      >
+        ×
+      </button>
+    )} */}
+  </div>
+</header>
 
-      {/* Content */}
-      {viewMode === 'grid' && renderGridView()}
-      {viewMode === 'list' && renderListView()}
-      {viewMode === 'compact' && renderCompactView()}
-      {viewMode === 'tree' && renderTreeView()}
+      {/* Opening block */}
+      {filteredOverview.length > 0 && (
+  <section className="sitemap-section">
+    <div className="sitemap-columns">
+      <Group
+        group={{
+          title: { name: "Main Pages" },
+          items: filteredOverview,
+        }}
+      />
+    </div>
+  </section>
+)}
 
-    
+{filteredSections.map((section, si) => (
+  <section key={`section-${si}`} className="sitemap-section">
+    <h2 className="sitemap-section-title">
+      <NavText item={section} className="sitemap-section-link" />
+    </h2>
+
+    <div className="sitemap-columns">
+      {buildGroups(section).map((group, gi) => (
+        <Group key={`group-${si}-${gi}`} group={group} />
+      ))}
+    </div>
+  </section>
+))}
+
+{searchQuery && filteredLinks.length === 0 && (
+  <div className="sitemap-empty-state">
+    <h3>No results found</h3>
+    <p>Try another page or service name.</p>
+  </div>
+)}
     </div>
   );
 }
