@@ -546,8 +546,13 @@ const FloatingChatbot = () => {
           <span className="close-icon">✕</span>
         ) : (
           <>
-            <span className="chat-icon">💬</span>
-            {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
+   <Image
+                    src="/chat-girl.png"
+                    alt="Liaison Bank logo"
+                    width={192}
+                    height={192}
+                    priority
+                  />             {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
           </>
         )}
       </button>
