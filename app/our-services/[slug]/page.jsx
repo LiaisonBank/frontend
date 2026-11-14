@@ -80,47 +80,120 @@ export default function ServiceDetail() {
   }, [activeSubcategoryId]);
 
   // Set the first item as active when data loads
+  // 1. Create a dictionary to map Homepage names to Database names
+  const SUB_ALIASES = {
+    mumbaiporttrust: "mumbaiportauthority",
+    punemunicipalcorporation: "punemahanagarcorporation",
+    mumbaiairportauthorityindia: "mumbaiairportathorityindia",
+    maharashtrastateelectricitydistributioncolimited:
+      "maharashtrastateelectricitydistributioncompanylimited",
+    costalregionalzone: "costalreasonzone",
+    mumbaifirebrigade: "mumbaifiredepartment",
+    mumbaimetropolitanregiondevelopmentauthority: "mmrda",
+    mahanagargaslimited: "mahanagargas",
+  };
+
   useEffect(() => {
-    // Only run if we have data and haven't scrolled yet
-    if (service?.subcategories?.length > 0 && !hasScrolledToTarget.current) {
-      const createSlug = (text) => {
-        if (!text) return "";
-        return text
-          .toLowerCase()
-          .replace(/\([^)]*\)/g, "")
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)+/g, "");
-      };
+    if (!service?.subcategories || service.subcategories.length === 0) return;
 
-      let targetId = null;
+    const createRobustSlug = (text) => {
+      if (!text) return "";
+      return text
+        .toLowerCase()
+        .replace(/&/g, "and")
+        .replace(/\([^)]*\)/g, "")
+        .replace(/\b(and|the|of)\b/g, "")
+        .replace(/[^a-z0-9]+/g, "");
+    };
 
-      if (subQuery) {
-        const matchedSub = service.subcategories.find(
-          (sub) => createSlug(sub.name) === subQuery || sub.slug === subQuery,
+    let targetId = null;
+
+    console.log(
+      `🔵 [ACCORDION] Page loaded. URL Query (?sub=): "${subQuery || "NONE"}"`,
+    );
+
+    if (subQuery) {
+      const strictQuery = createRobustSlug(subQuery);
+      const aliasedQuery = SUB_ALIASES[strictQuery] || strictQuery;
+
+      const rawQuery = subQuery.toLowerCase().trim();
+      const rawAliasedQuery = aliasedQuery.toLowerCase().trim();
+
+      const matchedSub = service.subcategories.find((sub) => {
+        const dbName = sub.name || "";
+        const dbSlug = sub.slug || "";
+
+        const rawDbName = dbName.toLowerCase().trim();
+        const rawDbSlug = dbSlug.toLowerCase().trim();
+
+        const strictDbName = createRobustSlug(dbName);
+        const strictDbSlug = createRobustSlug(dbSlug);
+
+        // 1. Exact strict match (e.g., "revenueforest" === "revenueforest")
+        if (
+          strictDbName === rawAliasedQuery ||
+          strictDbSlug === rawAliasedQuery
+        ) {
+          console.log(`   ✅ Exact strict match: "${dbName}"`);
+          return true;
+        }
+
+        // 2. Raw inclusion match (e.g., "revenue & forest(collector)" includes "collector")
+        if (rawDbName.includes(rawQuery) || rawDbSlug.includes(rawQuery)) {
+          console.log(
+            `   ✅ Raw inclusion match: "${dbName}" includes "${rawQuery}"`,
+          );
+          return true;
+        }
+
+        // 3. Strict inclusion match (e.g., "revenueforestcollector" includes "collector")
+        if (
+          strictDbName.includes(rawAliasedQuery) ||
+          strictDbSlug.includes(rawAliasedQuery)
+        ) {
+          console.log(
+            `   ✅ Strict inclusion match: "${dbName}" includes "${rawAliasedQuery}"`,
+          );
+          return true;
+        }
+
+        return false;
+      });
+
+      if (matchedSub) {
+        targetId = matchedSub.id;
+        console.log(`✅ [ACCORDION] MATCH FOUND! Opening ID: ${targetId}`);
+      } else {
+        console.warn(
+          `❌ [ACCORDION] NO MATCH FOUND for query: "${subQuery}". Defaulting to NO accordion open.`,
         );
-        if (matchedSub) targetId = matchedSub.id;
       }
+    }
 
-      if (!targetId) {
-        targetId = service.subcategories[0].id;
-      }
+    // Fallback: ONLY open the first item if there was NO query provided at all
+    if (!targetId && !subQuery) {
+      targetId = service.subcategories[0].id;
+      console.log(
+        `⚠️ [ACCORDION] No query provided. Opening first item ID: ${targetId}`,
+      );
+    }
 
-      setActiveSubcategoryId(targetId);
+    setActiveSubcategoryId(targetId);
 
-      // We will wait for the layout to settle before scrolling
-      if (targetId) {
-        setTimeout(() => {
-          const element = accordionRefs.current[targetId];
-          if (element) {
-            // Calculate exact position minus 150px for the fixed header
-            const yOffset = -150;
-            const y =
-              element.getBoundingClientRect().top + window.scrollY + yOffset;
-            window.scrollTo({ top: y, behavior: "smooth" });
-            hasScrolledToTarget.current = true; // Mark as done so it doesn't scroll again
-          }
-        }, 800); // 800ms gives Framer Motion plenty of time to expand the accordion
-      }
+    // Scroll ONLY if we actually found a match
+    if (targetId) {
+      const scrollTimer = setTimeout(() => {
+        const element = accordionRefs.current[targetId];
+        if (element) {
+          console.log(`📜 [ACCORDION] Scrolling to element ID: ${targetId}`);
+          const yOffset = -120;
+          const y =
+            element.getBoundingClientRect().top + window.scrollY + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 600);
+
+      return () => clearTimeout(scrollTimer);
     }
   }, [service, subQuery]);
 

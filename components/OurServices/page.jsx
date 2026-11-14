@@ -8,14 +8,15 @@ import Link from "next/link";
 import "@splidejs/react-splide/css";
 import { getImageUrl } from "@/lib/utils/getImagehelper";
 
-// Helper to create a URL-friendly slug from text (e.g., "B.M.C" -> "bmc")
-const createSlug = (text) => {
+// Helper to create a URL-friendly slug from text
+const createRobustSlug = (text) => {
   if (!text) return "";
   return text
     .toLowerCase()
-    .replace(/\([^)]*\)/g, "") // Remove parentheses like (B.M.C)
-    .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric with hyphen
-    .replace(/(^-|-$)+/g, ""); // Remove leading/trailing hyphens
+    .replace(/&/g, "and")
+    .replace(/\([^)]*\)/g, "")
+    .replace(/\b(and|the|of)\b/g, "")
+    .replace(/[^a-z0-9]+/g, "");
 };
 
 export default function ServicesSlider() {
@@ -67,20 +68,22 @@ export default function ServicesSlider() {
       }}
     >
       {services.map((service) => {
-        const subcategorySlug = createSlug(service.name);
+        // 🔥 DEBUG LOG
+        const subcategorySlug = createRobustSlug(service.name);
         const targetUrl = `/our-services/liaisoning?sub=${subcategorySlug}`;
+
+        console.log(
+          `🟢 [SLIDER] Original Name: "${service.name}" | Generated Slug: "${subcategorySlug}" | URL: ${targetUrl}`,
+        );
 
         return (
           <SplideSlide key={service.id}>
-            {/* The card itself is now a relative container */}
             <div className="flip-service-card" style={{ position: "relative" }}>
-              {/* The Link is now an invisible overlay covering the whole card */}
               <Link
                 href={targetUrl}
                 style={{ position: "absolute", inset: 0, zIndex: 10 }}
                 aria-label={`View ${service.name}`}
               />
-
               <div className="flip-service-wrapper">
                 {/* Front */}
                 <div className="flip-service-front">

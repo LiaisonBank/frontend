@@ -13,33 +13,37 @@ async function getItemData(itemSlug, categorySlug) {
     // 1. Try fetching as a standard Item first
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/${itemSlug}`,
-      { next: { revalidate: 0 } } // Change to 0 temporarily to bypass cache while testing
+      { next: { revalidate: 0 } }, // Change to 0 temporarily to bypass cache while testing
     );
     // console.log("res.json",await res.json());
 
     if (res.ok) {
       return await res.json();
     }
+    console.log("res.ok", res.status);
 
     // 2. Fallback to Subcategory if Item is 404
     if (res.status === 404) {
       const catRes = await fetch(
         `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/category/${categorySlug}`,
-        { next: { revalidate: 0 } }
+        { next: { revalidate: 0 } },
       );
+      console.log("catres", catRes);
 
       if (catRes.ok) {
         const categoryData = await catRes.json();
-        
+
         const subcategory = categoryData.subcategories?.find(
-          (sub) => sub.slug === itemSlug || String(sub.id) === String(itemSlug)
+          (sub) => sub.slug === itemSlug || String(sub.id) === String(itemSlug),
         );
 
         if (subcategory) {
           // Parse contentSection in case it's a stringified JSON
           let parsedSections = [];
-          if (typeof subcategory.contentSection === 'string') {
-            try { parsedSections = JSON.parse(subcategory.contentSection); } catch(e) {}
+          if (typeof subcategory.contentSection === "string") {
+            try {
+              parsedSections = JSON.parse(subcategory.contentSection);
+            } catch (e) {}
           } else if (Array.isArray(subcategory.contentSection)) {
             parsedSections = subcategory.contentSection;
           }
@@ -52,14 +56,14 @@ async function getItemData(itemSlug, categorySlug) {
             name: subcategory.name,
             slug: subcategory.slug || String(subcategory.id),
             description: subcategory.description,
-            full_description: subcategory.description, 
+            full_description: subcategory.description,
             subCategoryId: categoryData.id,
             subCategoryName: categoryData.name,
-            seo_keywords:subcategory.seoKeyword,
+            seo_keywords: subcategory.seoKeyword,
             image: subcategory.image,
-            itemServices: subcategory.itemServices || [], 
+            itemServices: subcategory.itemServices || [],
             // Pass the parsed sections here
-            contentSection: parsedSections, 
+            contentSection: parsedSections,
           };
         }
       }
@@ -125,7 +129,7 @@ export async function generateMetadata({ params }) {
   const name = cleanText(itemData.name) || "Service";
   const shortDescription = truncate(
     cleanText(itemData.description) ||
-      `Get professional ${name} services in ${CITY}.`
+      `Get professional ${name} services in ${CITY}.`,
   );
 
   // Primary keyword = "{name} in Mumbai"
@@ -135,7 +139,7 @@ export async function generateMetadata({ params }) {
   const apiKeywords = Array.isArray(itemData.seo_keywords)
     ? itemData.seo_keywords
     : [];
-    console.log("apikeywords", apiKeywords);
+  console.log("apikeywords", apiKeywords);
 
   const keywords = dedupeKeywords([
     primaryKeyword,
@@ -154,8 +158,8 @@ export async function generateMetadata({ params }) {
   const ogImage = itemData.image
     ? `${BACKEND_URL}${itemData.image}`
     : itemData.banner
-    ? `${BACKEND_URL}${itemData.banner}`
-    : `${SITE_URL}/og-default.jpg`;
+      ? `${BACKEND_URL}${itemData.banner}`
+      : `${SITE_URL}/og-default.jpg`;
 
   return {
     title: seoTitle,
