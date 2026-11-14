@@ -149,13 +149,34 @@ function getChildren(node) {
    Groups children by status: Completed / In Progress / Upcoming
    ---------------------------------------------------------------------------- */
 const FEATURED_GROUPS = [
-  { key: "completed", label: "Completed", statuses: ["completed", "complete", "done"] },
-  { key: "inprogress", label: "In Progress", statuses: ["inprogress", "in_progress", "in-progress", "ongoing", "running"] },
-  { key: "upcoming", label: "Upcoming", statuses: ["upcoming", "pending", "future"] },
+  {
+    key: "completed",
+    label: "Completed",
+    statuses: ["completed", "complete", "done"],
+  },
+  {
+    key: "inprogress",
+    label: "In Progress",
+    statuses: [
+      "inprogress",
+      "in_progress",
+      "in-progress",
+      "ongoing",
+      "running",
+    ],
+  },
+  {
+    key: "upcoming",
+    label: "Upcoming",
+    statuses: ["upcoming", "pending", "future"],
+  },
 ];
 
 function normalizeStatus(value) {
-  return String(value || "").trim().toLowerCase().replace(/\s+/g, "");
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "");
 }
 
 function FeaturedProjectsPanel({ node, animClass, onNavigate }) {
@@ -170,10 +191,10 @@ function FeaturedProjectsPanel({ node, animClass, onNavigate }) {
     }),
   }));
 
-  const grouped = new Set(buckets.flatMap((b) => b.projects.map((p) => p?.id ?? p?.name)));
-  const ungrouped = projects.filter(
-    (p) => !grouped.has(p?.id ?? p?.name)
+  const grouped = new Set(
+    buckets.flatMap((b) => b.projects.map((p) => p?.id ?? p?.name)),
   );
+  const ungrouped = projects.filter((p) => !grouped.has(p?.id ?? p?.name));
 
   return (
     <div className={`w-full ${animClass}`}>
@@ -181,20 +202,22 @@ function FeaturedProjectsPanel({ node, animClass, onNavigate }) {
         <section key={group.key} className="mb-2">
           {/* Group header */}
           <div
-            className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wide ${group.key === "completed"
-              ? "bg-green-50 text-green-700"
-              : group.key === "inprogress"
-                ? "bg-amber-50 text-amber-700"
-                : "bg-blue-50 text-blue-700"
-              }`}
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wide ${
+              group.key === "completed"
+                ? "bg-green-50 text-green-700"
+                : group.key === "inprogress"
+                  ? "bg-amber-50 text-amber-700"
+                  : "bg-blue-50 text-blue-700"
+            }`}
           >
             <span
-              className={`inline-block w-2 h-2 rounded-full ${group.key === "completed"
-                ? "bg-green-500"
-                : group.key === "inprogress"
-                  ? "bg-amber-500"
-                  : "bg-blue-500"
-                }`}
+              className={`inline-block w-2 h-2 rounded-full ${
+                group.key === "completed"
+                  ? "bg-green-500"
+                  : group.key === "inprogress"
+                    ? "bg-amber-500"
+                    : "bg-blue-500"
+              }`}
             />
             {group.label}
             <span className="ml-auto text-[10px] font-normal opacity-70">
@@ -359,7 +382,6 @@ function Panel({ node, direction, onForward, onNavigate }) {
   );
 }
 
-
 /* ============================================================================
    HEADER
    ============================================================================ */
@@ -439,7 +461,6 @@ export default function Header() {
     setServiceModalOpen(false);
   }, [clearMegaCloseTimer, setServiceModalOpen]);
 
-
   // Close the mobile menu when switching to desktop view
   useEffect(() => {
     const desktopMedia = window.matchMedia("(min-width: 1280px)");
@@ -493,32 +514,32 @@ export default function Header() {
      -------------------------------------------------------------------------- */
 
   const handleMobileNavigation = useCallback(
-  (item) => {
-    if (!item) return;
+    (item) => {
+      if (!item) return;
 
-    if (item.name === "Our Services") {
+      if (item.name === "Our Services") {
+        setIsOpen(false);
+        closeAllMenus();
+        router.push("/our-services");
+        return;
+      }
+
+      if (!item.href) return;
+
       setIsOpen(false);
       closeAllMenus();
-      router.push("/our-services");
-      return;
-    }
 
-    if (!item.href) return;
+      // Open external URLs in a new tab
+      if (/^https?:\/\//i.test(item.href)) {
+        window.open(item.href, "_blank", "noopener,noreferrer");
+        return;
+      }
 
-    setIsOpen(false);
-    closeAllMenus();
-
-    // Open external URLs in a new tab
-    if (/^https?:\/\//i.test(item.href)) {
-      window.open(item.href, "_blank", "noopener,noreferrer");
-      return;
-    }
-
-    // Internal navigation
-    router.push(item.href);
-  },
-  [closeAllMenus, router],
-);
+      // Internal navigation
+      router.push(item.href);
+    },
+    [closeAllMenus, router],
+  );
 
   /* --------------------------------------------------------------------------
      Mega Menu Scroll
@@ -547,11 +568,15 @@ export default function Header() {
           ====================================================================== */}
 
       <header
-        className={`fixed w-full z-50 py-2 transition-all ${isSticky ? "is-sticky" : ""
-          }`}
+        className={`fixed w-full z-50 py-2 transition-all ${
+          isSticky ? "is-sticky" : ""
+        }`}
       >
         <div className="container-fluid mx-auto">
-          <nav key={pathname} className="flex items-center justify-between h-16">
+          <nav
+            key={pathname}
+            className="flex items-center justify-between h-22"
+          >
             {/* ================================================================
                 LOGO STACK — logo + name → oval line → tagline
                 ================================================================ */}
@@ -688,7 +713,9 @@ export default function Header() {
                       Array.isArray(link.submenu) && link.submenu.length > 2;
 
                     const isActive = activeMegaMenu === link.name;
-                    const isExternalLink = /^https?:\/\//i.test(link.href || "");
+                    const isExternalLink = /^https?:\/\//i.test(
+                      link.href || "",
+                    );
 
                     return (
                       <li
@@ -801,14 +828,16 @@ export default function Header() {
                                         </h4>
 
                                         <ul
-                                          className={`mega-section ${isLargeList ? "has-more" : ""
-                                            }`}
+                                          className={`mega-section ${
+                                            isLargeList ? "has-more" : ""
+                                          }`}
                                         >
                                           {sub.items.map((item, index) => (
                                             <li
                                               key={item.name || index}
-                                              className={`mega-item ${item.children ? "has-child" : ""
-                                                }`}
+                                              className={`mega-item ${
+                                                item.children ? "has-child" : ""
+                                              }`}
                                             >
                                               <button
                                                 type="button"
@@ -832,10 +861,11 @@ export default function Header() {
                                                             child.name ||
                                                             childIndex
                                                           }
-                                                          className={`mega-item ${child.children
-                                                            ? "has-child2"
-                                                            : ""
-                                                            }`}
+                                                          className={`mega-item ${
+                                                            child.children
+                                                              ? "has-child2"
+                                                              : ""
+                                                          }`}
                                                         >
                                                           <button
                                                             type="button"
@@ -843,7 +873,7 @@ export default function Header() {
                                                             onClick={() =>
                                                               handleNavigation(
                                                                 child.href ||
-                                                                "/",
+                                                                  "/",
                                                               )
                                                             }
                                                           >
@@ -873,7 +903,7 @@ export default function Header() {
                                                                         onClick={() =>
                                                                           handleNavigation(
                                                                             subChild.href ||
-                                                                            "/",
+                                                                              "/",
                                                                           )
                                                                         }
                                                                       >
@@ -978,8 +1008,9 @@ export default function Header() {
 
         <div
           id="myNav"
-          className={`fixed top-0 right-0 h-screen w-full shadow-xl transition-transform duration-300 ${isOpen ? "menu-open translate-x-0" : "translate-x-full"
-            }`}
+          className={`fixed top-0 right-0 h-screen w-full shadow-xl transition-transform duration-300 ${
+            isOpen ? "menu-open translate-x-0" : "translate-x-full"
+          }`}
           aria-hidden={!isOpen}
         >
           <div className="overflow-y-auto w-full h-full">

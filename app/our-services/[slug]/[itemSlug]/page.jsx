@@ -7,15 +7,71 @@ const BRAND = "Liaison Bank";
 const CITY = "Mumbai";
 
 /* ---------------- server-side fetch ---------------- */
-async function getItemData(itemSlug) {
+/* ---------------- server-side fetch ---------------- */
+async function getItemData(itemSlug, categorySlug) {
   try {
+    // 1. Try fetching as a standard Item first
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/${itemSlug}`,
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: 0 } }, // Change to 0 temporarily to bypass cache while testing
     );
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
+    // console.log("res.json",await res.json());
+
+    if (res.ok) {
+      return await res.json();
+    }
+    console.log("res.ok", res.status);
+
+    // 2. Fallback to Subcategory if Item is 404
+    if (res.status === 404) {
+      const catRes = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/category/${categorySlug}`,
+        { next: { revalidate: 0 } },
+      );
+      console.log("catres", catRes);
+
+      if (catRes.ok) {
+        const categoryData = await catRes.json();
+
+        const subcategory = categoryData.subcategories?.find(
+          (sub) => sub.slug === itemSlug || String(sub.id) === String(itemSlug),
+        );
+
+        if (subcategory) {
+          // Parse contentSection in case it's a stringified JSON
+          let parsedSections = [];
+          if (typeof subcategory.contentSection === "string") {
+            try {
+              parsedSections = JSON.parse(subcategory.contentSection);
+            } catch (e) {}
+          } else if (Array.isArray(subcategory.contentSection)) {
+            parsedSections = subcategory.contentSection;
+          }
+
+          console.log("sub category", subcategory);
+          console.log("categorydata", categoryData);
+
+          return {
+            id: subcategory.id,
+            name: subcategory.name,
+            slug: subcategory.slug || String(subcategory.id),
+            description: subcategory.description,
+            full_description: subcategory.description,
+            subCategoryId: categoryData.id,
+            subCategoryName: categoryData.name,
+            seo_keywords: subcategory.seoKeyword,
+            image: subcategory.image,
+            itemServices: subcategory.itemServices || [],
+            // Pass the parsed sections here
+            contentSection: parsedSections,
+          };
+        }
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error in getItemData:", error);
     return null;
   }
 }
@@ -59,7 +115,8 @@ function dedupeKeywords(list) {
 /* ---------------- ✅ SEO metadata ---------------- */
 export async function generateMetadata({ params }) {
   const { slug, itemSlug } = await params;
-  const itemData = await getItemData(itemSlug);
+  const itemData = await getItemData(itemSlug, slug);
+  console.log("generatemetdart", itemData);
 
   if (!itemData) {
     return {
@@ -72,15 +129,17 @@ export async function generateMetadata({ params }) {
   const name = cleanText(itemData.name) || "Service";
   const shortDescription = truncate(
     cleanText(itemData.description) ||
-      `Get professional ${name} services in ${CITY}.`
+      `Get professional ${name} services in ${CITY}.`,
   );
 
   // Primary keyword = "{name} in Mumbai"
   const primaryKeyword = `${name} in ${CITY}`;
+  console.log("itemDatadsa", itemData);
 
   const apiKeywords = Array.isArray(itemData.seo_keywords)
     ? itemData.seo_keywords
     : [];
+  console.log("apikeywords", apiKeywords);
 
   const keywords = dedupeKeywords([
     primaryKeyword,
@@ -90,6 +149,8 @@ export async function generateMetadata({ params }) {
     ...apiKeywords,
   ]);
 
+  console.log("keywordss", keywords);
+
   const seoTitle = `${name} | Service in ${CITY} | ${BRAND}`;
   const canonical = `${SITE_URL}/our-services/${slug}/${itemSlug}`;
 
@@ -97,8 +158,8 @@ export async function generateMetadata({ params }) {
   const ogImage = itemData.image
     ? `${BACKEND_URL}${itemData.image}`
     : itemData.banner
-    ? `${BACKEND_URL}${itemData.banner}`
-    : `${SITE_URL}/og-default.jpg`;
+      ? `${BACKEND_URL}${itemData.banner}`
+      : `${SITE_URL}/og-default.jpg`;
 
   return {
     title: seoTitle,
@@ -144,7 +205,8 @@ export async function generateMetadata({ params }) {
 /* ---------------- Page ---------------- */
 export default async function Page({ params }) {
   const { slug, itemSlug } = await params;
-  const itemData = await getItemData(itemSlug);
+  const itemData = await getItemData(itemSlug, slug);
+  console.log("itemData", itemData);
 
   const itemName = itemData ? cleanText(itemData.name) : "";
 

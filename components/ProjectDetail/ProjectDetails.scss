@@ -135,7 +135,30 @@ $bg:           #FFFFFF;
     &__indicator-separator { display: none; }
     &__dropdown-indicator  { color: $brand; padding-right: 0; }
   }
+.archive-select__menu-list {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: $brand #fbf9f6;
 
+    /* Chrome, Safari, Edge */
+    &::-webkit-scrollbar {
+      width: 0.4px; // <-- Change this value to make it thicker/thinner (e.g. 3px, 5px)
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #fbf9f6;
+      // border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $brand;
+      // border-radius: 4px;
+
+      &:hover {
+        background: $brand-dark;
+      }
+    }
+  }
   // ==========================================================
   // ACTIVE FILTER CHIPS
   // ==========================================================
@@ -204,7 +227,7 @@ $bg:           #FFFFFF;
     grid-template-columns: 120px 1fr 140px;
     align-items: start;
     gap: 40px;
-    padding: 48px 0;
+    padding: 25px 0;
     border-bottom: 1px solid $grey-light;
     transition: background-color 0.2s ease;
 
@@ -443,7 +466,7 @@ $bg:           #FFFFFF;
     border: 1px solid $grey-light;
 
     h3 { font-size: 2rem; font-weight: 600; color: $ink; margin: 0 0 16px; }
-    p  { color: $grey-mid; font-size: 1.1rem; margin: 0 0 32px; }
+    p  { color: $grey-mid; font-size: 1.1rem; margin: 0 0 32px; text-align: center; }
 
     button {
       padding: 16px 32px;

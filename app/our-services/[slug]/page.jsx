@@ -2,20 +2,45 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import "./service-detail.scss";
 import Image from "next/image";
 import { getImageUrl } from "../../../lib/utils/getImagehelper";
 import ApiError from "@/components/ApiError/ApiError";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Fallback image
 const FALLBACK_IMAGE =
   "/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png";
 
+const contentVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08, // Time between each child animating
+      delayChildren: 0.15, // Delay before starting the children animations
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
 export default function ServiceDetail() {
   const params = useParams();
+  const router = useRouter();
   const slug = params?.slug;
+  const searchParams = useSearchParams();
+
+  const subQuery = searchParams.get("sub");
 
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,11 +50,152 @@ export default function ServiceDetail() {
   // Track flip state for each card
   const [flippedCards, setFlippedCards] = useState({});
 
+  // Track which subservice link is currently opening
+  const [loadingItemId, setLoadingItemId] = useState(null);
+
   // Refs for timeout handling
   const timeoutRefs = useRef({});
   const containerRefs = useRef({});
   const scrollTimeoutRefs = useRef({});
   const listRefs = useRef({});
+  const [activeSubcategoryId, setActiveSubcategoryId] = useState(null);
+  const [expandingId, setExpandingId] = useState(null);
+  const accordionRefs = useRef({});
+  const hasScrolledToTarget = useRef(false);
+
+  // ADD THIS ENTIRE BLOCK
+  useEffect(() => {
+    if (activeSubcategoryId && accordionRefs.current[activeSubcategoryId]) {
+      // A tiny timeout ensures Framer Motion has started expanding
+      // the accordion before we calculate the scroll position.
+      const timer = setTimeout(() => {
+        accordionRefs.current[activeSubcategoryId].scrollIntoView({
+          behavior: "smooth",
+          block: "nearest", // Scrolls so the top of the accordion is at the top of the screen
+        });
+      }, 150); // 150ms delay
+
+      return () => clearTimeout(timer);
+    }
+  }, [activeSubcategoryId]);
+
+  // Set the first item as active when data loads
+  // 1. Create a dictionary to map Homepage names to Database names
+  const SUB_ALIASES = {
+    mumbaiporttrust: "mumbaiportauthority",
+    punemunicipalcorporation: "punemahanagarcorporation",
+    mumbaiairportauthorityindia: "mumbaiairportathorityindia",
+    maharashtrastateelectricitydistributioncolimited:
+      "maharashtrastateelectricitydistributioncompanylimited",
+    costalregionalzone: "costalreasonzone",
+    mumbaifirebrigade: "mumbaifiredepartment",
+    mumbaimetropolitanregiondevelopmentauthority: "mmrda",
+    mahanagargaslimited: "mahanagargas",
+  };
+
+  useEffect(() => {
+    if (!service?.subcategories || service.subcategories.length === 0) return;
+
+    const createRobustSlug = (text) => {
+      if (!text) return "";
+      return text
+        .toLowerCase()
+        .replace(/&/g, "and")
+        .replace(/\([^)]*\)/g, "")
+        .replace(/\b(and|the|of)\b/g, "")
+        .replace(/[^a-z0-9]+/g, "");
+    };
+
+    let targetId = null;
+
+    console.log(
+      `🔵 [ACCORDION] Page loaded. URL Query (?sub=): "${subQuery || "NONE"}"`,
+    );
+
+    if (subQuery) {
+      const strictQuery = createRobustSlug(subQuery);
+      const aliasedQuery = SUB_ALIASES[strictQuery] || strictQuery;
+
+      const rawQuery = subQuery.toLowerCase().trim();
+      const rawAliasedQuery = aliasedQuery.toLowerCase().trim();
+
+      const matchedSub = service.subcategories.find((sub) => {
+        const dbName = sub.name || "";
+        const dbSlug = sub.slug || "";
+
+        const rawDbName = dbName.toLowerCase().trim();
+        const rawDbSlug = dbSlug.toLowerCase().trim();
+
+        const strictDbName = createRobustSlug(dbName);
+        const strictDbSlug = createRobustSlug(dbSlug);
+
+        // 1. Exact strict match (e.g., "revenueforest" === "revenueforest")
+        if (
+          strictDbName === rawAliasedQuery ||
+          strictDbSlug === rawAliasedQuery
+        ) {
+          console.log(`   ✅ Exact strict match: "${dbName}"`);
+          return true;
+        }
+
+        // 2. Raw inclusion match (e.g., "revenue & forest(collector)" includes "collector")
+        if (rawDbName.includes(rawQuery) || rawDbSlug.includes(rawQuery)) {
+          console.log(
+            `   ✅ Raw inclusion match: "${dbName}" includes "${rawQuery}"`,
+          );
+          return true;
+        }
+
+        // 3. Strict inclusion match (e.g., "revenueforestcollector" includes "collector")
+        if (
+          strictDbName.includes(rawAliasedQuery) ||
+          strictDbSlug.includes(rawAliasedQuery)
+        ) {
+          console.log(
+            `   ✅ Strict inclusion match: "${dbName}" includes "${rawAliasedQuery}"`,
+          );
+          return true;
+        }
+
+        return false;
+      });
+
+      if (matchedSub) {
+        targetId = matchedSub.id;
+        console.log(`✅ [ACCORDION] MATCH FOUND! Opening ID: ${targetId}`);
+      } else {
+        console.warn(
+          `❌ [ACCORDION] NO MATCH FOUND for query: "${subQuery}". Defaulting to NO accordion open.`,
+        );
+      }
+    }
+
+    // Fallback: ONLY open the first item if there was NO query provided at all
+    if (!targetId && !subQuery) {
+      targetId = service.subcategories[0].id;
+      console.log(
+        `⚠️ [ACCORDION] No query provided. Opening first item ID: ${targetId}`,
+      );
+    }
+
+    setActiveSubcategoryId(targetId);
+
+    // Scroll ONLY if we actually found a match
+    if (targetId) {
+      const scrollTimer = setTimeout(() => {
+        const element = accordionRefs.current[targetId];
+        if (element) {
+          console.log(`📜 [ACCORDION] Scrolling to element ID: ${targetId}`);
+          const yOffset = -120;
+          const y =
+            element.getBoundingClientRect().top + window.scrollY + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 600);
+
+      return () => clearTimeout(scrollTimer);
+    }
+  }, [service, subQuery]);
 
   useEffect(() => {
     if (!slug) return;
@@ -220,6 +386,23 @@ export default function ServiceDetail() {
     fetchServiceDetail();
   }, [slug]);
 
+  const handleAccordionToggle = (id) => {
+    if (activeSubcategoryId === id) {
+      // If it's already open, close it immediately
+      setActiveSubcategoryId(null);
+      setExpandingId(null);
+    } else {
+      // 1. Start the "grow" phase
+      setExpandingId(id);
+
+      // 2. Wait for it to grow (250ms), then open the accordion
+      setTimeout(() => {
+        setActiveSubcategoryId(id);
+        setExpandingId(null); // Reset the grow phase
+      }, 250);
+    }
+  };
+
   // Toggle flip state for a card
   const toggleFlip = (cardId, isFlipped) => {
     setFlippedCards((prev) => ({
@@ -395,179 +578,186 @@ export default function ServiceDetail() {
   return (
     <>
       {/* Modern Hero with Split Layout */}
-<section className="hero-modern">
-  <div
-    className="hero-modern-bg"
-    style={{ backgroundImage: `url(${service.banner})` }}
-  ></div>
-  <div className="container">
-    <div className="hero-modern-content">
-      {/* LEFT: back link + title + description */}
-      <div className="hero-modern-left">
-        <Link href="/our-services" className="hero-back-link">
-          ← Back to Services
-        </Link>
-        <h1 className="hero-title">{service.name}</h1>
-        <p className="hero-desc">{service.description}</p>
-      </div>
+      <section className="hero-modern">
+        <div
+          className="hero-modern-bg"
+          style={{ backgroundImage: `url(${service.banner})` }}
+        ></div>
+        <div className="container">
+          <div className="hero-modern-content">
+            {/* LEFT: back link + title + description */}
+            <div className="hero-modern-left">
+              <Link href="/our-services" className="hero-back-link">
+                ← Back to Services
+              </Link>
+              <h1 className="hero-title">{service.name}</h1>
+              <p className="hero-desc">{service.description}</p>
+            </div>
 
-      {/* RIGHT: AMC-only CTA button */}
-      {slug === "amc" && (
-        <div className="hero-modern-right">
-          <Link href="https://amc-99kh.onrender.com/" className="hero-amc-btn">
-            Get AMC Quote
-            <span className="hero-amc-btn-arrow">→</span>
-          </Link>
+            {/* RIGHT: AMC-only CTA button */}
+            {slug === "amc" && (
+              <div className="hero-modern-right">
+                <Link
+                  href="https://amc-99kh.onrender.com/"
+                  className="hero-amc-btn"
+                >
+                  Get AMC Quote
+                  <span className="hero-amc-btn-arrow">→</span>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
-      )}
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* Subcategories as Flip Cards */}
-      <section className="services-modern">
+      {/* Subcategories as Dark Accordion */}
+      <section className="services-accordion-section">
         <div className="container">
           <div className="services-header">
             <span className="services-badge">Services</span>
             <h2 className="services-title">Explore {service.name} Services</h2>
           </div>
 
-          <div className="subcategory-flip-grid">
-            {service.subcategories.map((subcategory) => {
-              const cardId = `card-${subcategory.id}`;
-              const isFlipped = flippedCards[cardId] || false;
+          <div className="accordion-list">
+            {service.subcategories.map((subcategory, index) => {
+              const isActive = activeSubcategoryId === subcategory.id;
 
               return (
-                <div
+                <motion.div
                   key={subcategory.id}
-                  className="subcategory-flip-container"
+                  layout // Animates the overall height of the accordion
+                  initial={false}
+                  ref={(el) => (accordionRefs.current[subcategory.id] = el)}
+                  className={`accordion-item ${isActive ? "is-active" : ""}`}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  {/* The flip card */}
+                  {/* The Flex Container */}
                   <div
-                    className={`subcategory-flip-card-wrapper ${isFlipped ? "flipped" : ""}`}
-                    ref={(el) => {
-                      if (el) {
-                        containerRefs.current[cardId] = el;
-                      }
-                    }}
-                    onMouseEnter={() => handleCardMouseEnter(cardId)}
-                    onMouseLeave={() => handleCardMouseLeave(cardId)}
+                    className="accordion-header"
+                    onClick={() =>
+                      setActiveSubcategoryId(isActive ? null : subcategory.id)
+                    }
                   >
-                    <div className="subcategory-flip-card">
-                      {/* FRONT - Header with name + Image */}
-                      <div className="subcategory-flip-front">
-                        {/* Header with name */}
-                        <div className="subcategory-front-header">
-                          <h3 className="subcategory-front-name">
-                            {subcategory.name}
-                          </h3>
-                          {/* <span className="subcategory-front-count">
-                            {subcategory.itemCount}
-                          </span> */}
-                        </div>
+                    {/* 1. Image (Stays on the left, grows in place) */}
+                    <motion.div
+                      layout
+                      className="acc-image-wrap"
+                      animate={{
+                        width: isActive ? 380 : 64,
+                        height: isActive ? 380 : 64,
+                        // borderRadius: isActive ? 12 : 8
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 25,
+                      }}
+                    >
+                      {subcategory.hasImage ? (
+                        <Image
+                          src={subcategory.imageUrl}
+                          alt={subcategory.name}
+                          fill
+                          style={{ objectFit: "cover" }}
+                        />
+                      ) : (
+                        <div className="acc-thumb-placeholder" />
+                      )}
+                    </motion.div>
 
-                        {/* Image section */}
-                        <div className="subcategory-front-image-wrapper">
-                          {subcategory.hasImage && subcategory.imageUrl ? (
-                            <Image
-                              src={subcategory.imageUrl}
-                              alt={subcategory.name}
-                              fill
-                              unoptimized
-                            />
+                    {/* 2. Text Content (Pushed to the right) */}
+                    <motion.div layout className="acc-text-wrap">
+                      {/* Title Row */}
+                      <motion.div layout="position" className="acc-title-row">
+                        <h3 className="acc-title">{subcategory.name}</h3>
+                        <button
+                          className="acc-toggle"
+                          aria-label="Toggle section"
+                        >
+                          {isActive ? "−" : "+"}
+                        </button>
+                      </motion.div>
+
+                      {/* Text that fades in after the image grows */}
+                      {isActive && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.15, duration: 0.4 }}
+                          className="acc-body"
+                        >
+                          <p className="acc-desc">
+                            {subcategory.description ||
+                              `Comprehensive ${subcategory.name} services designed for your business needs.`}
+                          </p>
+
+                          {/* CONDITION: Check if items exist */}
+                          {subcategory.items && subcategory.items.length > 0 ? (
+                            <div className="acc-features">
+                              <h4>Features:</h4>
+                              <ul>
+                                {subcategory.items.map((item) => (
+                                  <li key={item.id}>
+                                    <Link
+                                      href={`/our-services/${slug}/${item.slug}`}
+                                      className={`feature-link ${loadingItemId === item.id ? "is-loading" : ""}`}
+                                      onClick={(e) => {
+                                        if (
+                                          e.defaultPrevented ||
+                                          e.button !== 0 ||
+                                          e.metaKey ||
+                                          e.ctrlKey ||
+                                          e.shiftKey ||
+                                          e.altKey ||
+                                          e.stopPropagation()
+                                        )
+                                          return;
+                                        e.preventDefault();
+                                        if (loadingItemId !== null) return;
+
+                                        setLoadingItemId(item.id);
+                                        const destination = `/our-services/${slug}/${item.slug}`;
+
+                                        window.setTimeout(() => {
+                                          router.push(destination);
+                                        }, 120);
+                                      }}
+                                    >
+                                      <span className="feature-text">
+                                        {item.name}
+                                      </span>
+                                      {loadingItemId === item.id && (
+                                        <span className="acc-spinner" />
+                                      )}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
                           ) : (
-                            <div className="subcategory-no-image">
-                              <h3 className="subcategory-name-only">
-                                {subcategory.name}
-                              </h3>
+                            // FALLBACK UI WHEN NO ITEMS EXIST
+                            <div className="acc-no-items">
+                              {/* <p>
+                                Detailed service items are currently being
+                                updated for this category.
+                              </p> */}
+                              <Link
+                                // Using subcategory.slug if it exists, otherwise fallback to id
+                                href={`/our-services/${slug}/${subcategory.slug}`}
+                                className="explore-more-btn"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                Discover More
+                                <span>→</span>
+                              </Link>
                             </div>
                           )}
-                        </div>
-                      </div>
-
-                      {/* BACK - Header with name + Items list */}
-                      <div className="subcategory-flip-back">
-                        {/* Header with name */}
-                        <div className="flip-back-header">
-                          <div className="flip-back-title-wrapper">
-                            <h4 className="flip-back-title">
-                              {subcategory.name}
-                            </h4>
-                          </div>
-                          {/* <span className="flip-back-count">
-                            {subcategory.itemCount}
-                          </span> */}
-                        </div>
-
-                        {/* Items list */}
-                        <div
-                          className="flip-back-items-list"
-                          ref={(el) => {
-                            if (el) {
-                              listRefs.current[cardId] = el;
-                            }
-                          }}
-                          onWheel={(e) => handleWheelScroll(e, cardId)}
-                          onMouseDown={() => handleScrollStart(cardId)}
-                          onMouseUp={() => handleScrollEnd(cardId)}
-                          onMouseLeave={() => handleScrollEnd(cardId)}
-                          onTouchStart={() => handleScrollStart(cardId)}
-                          onTouchEnd={() => handleScrollEnd(cardId)}
-                          onTouchCancel={() => handleScrollEnd(cardId)}
-                        >
-                          {subcategory.items && subcategory.items.length > 0 ? (
-                            subcategory.items.map((item, idx) => (
-                              <Link
-                                key={item.id}
-                                href={`/our-services/${slug}/${item.slug}`}
-                                className="back-item-wrapper"
-                              >
-                                <div className="back-item-header">
-                                  <span className="back-item-number">
-                                    {String(idx + 1).padStart(2, "0")}
-                                  </span>
-
-                                  <p className="back-item-name">{item.name}</p>
-                                </div>
-
-                                {item.servicesList &&
-                                  item.servicesList.length > 0 && (
-                                    <ul className="back-item-services-list">
-                                      {item.servicesList.map(
-                                        (serviceName, serviceIdx) => (
-                                          <li
-                                            key={serviceIdx}
-                                            className="back-service-item"
-                                          >
-                                            <span className="back-service-dot">
-                                              •
-                                            </span>
-
-                                            <span className="back-service-name">
-                                              {serviceName}
-                                            </span>
-                                          </li>
-                                        ),
-                                      )}
-                                    </ul>
-                                  )}
-                              </Link>
-                            ))
-                          ) : (
-                            <div
-                              style={{
-                                color: "#999",
-                                textAlign: "center",
-                                padding: "30px 0",
-                                fontSize: "14px",
-                              }}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
+                        </motion.div>
+                      )}
+                    </motion.div>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>

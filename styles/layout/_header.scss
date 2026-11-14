@@ -10,6 +10,24 @@ header {
 
   background: #fff;
 
+  .logo-animation-wrapper {
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                filter 0.4s ease;
+                
+    /* Anchor to the left so it doesn't fly off the screen when scaling */
+    transform-origin: left center; 
+
+    &:hover {
+      transform: scale(1.04);
+      filter: brightness(1.05);
+    }
+
+    @media (max-width: 767px) {
+      width: 167px !important;
+      height: 60px !important;
+    }
+  }
+
   .lg-1 {
     margin: 0;
     padding: 0;

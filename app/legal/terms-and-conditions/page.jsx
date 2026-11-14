@@ -46,29 +46,81 @@ export default function Page() {
           {/* <PageTitleWaveLeft /> */}
         </div>
       </div>
-      <section className="container py-5 px-4">
-        <div className="row justify-content-center text-center">
-          <ol className="tclist">
-            <li><strong>Introduction:</strong> Welcome to Liaison Bank. These terms and conditions outline the rules and regulations for the use of our website.</li>
+      
+<section className="terms-content-section">
+  <div className="container">
+    <div className="tc-content">
 
-            <li><strong>Acceptance of Terms:</strong> By accessing this website, you accept these terms and conditions in full. If you disagree with these terms or any part of them, you must not use this website.</li>
+      <div className="tc-section">
+        <h2>Introduction</h2>
+        <p>
+          Welcome to Liaison Bank. These terms and conditions outline the rules and regulations for the use of our website.
+        </p>
+      </div>
 
-            <li><strong>Intellectual Property Rights:</strong> Unless otherwise stated, Liaison Bank and/or its licensors own the intellectual property rights for all material on the website. All intellectual property rights are reserved.</li>
+      <div className="tc-section">
+        <h2>Acceptance of Terms</h2>
+        <p>
+          By accessing this website, you accept these terms and conditions in full. If you disagree with these terms or any part of them, you must not use this website.
+        </p>
+      </div>
 
-            <li><strong>Restrictions:</strong> You are specifically restricted from all the following: publishing any website material in any other media, selling, sublicensing and/or otherwise commercializing any website material, publicly performing and/or showing any website material, using this website in any way that is or may be damaging to this website, or using this website in any way that impacts user access to this website.</li>
+      <div className="tc-section">
+        <h2>Intellectual Property Rights</h2>
+        <p>
+          Unless otherwise stated, Liaison Bank and/or its licensors own the intellectual property rights for all material on the website. All intellectual property rights are reserved.
+        </p>
+      </div>
 
-            <li><strong>Your Content:</strong> In these terms and conditions, “Your Content” shall mean any audio, video, text, images, or other material you choose to display on this website. Your Content must be your own and must not be invading any third-party’s rights.</li>
+      <div className="tc-section">
+        <h2>Restrictions</h2>
+        <p>
+          You are specifically restricted from all the following: publishing any website material in any other media, selling, sublicensing and/or otherwise commercializing any website material, publicly performing and/or showing any website material, using this website in any way that is or may be damaging to this website, or using this website in any way that impacts user access to this website.
+        </p>
+      </div>
 
-            <li><strong>No Warranties:</strong> This website is provided “as is,” with all faults, and Liaison Bank expresses no representations or warranties of any kind related to this website or the materials contained on this website.</li>
+      <div className="tc-section">
+        <h2>Your Content</h2>
+        <p>
+          In these terms and conditions, “Your Content” shall mean any audio, video, text, images, or other material you choose to display on this website. Your Content must be your own and must not be invading any third-party’s rights.
+        </p>
+      </div>
 
-            <li><strong>Limitation of Liability:</strong> In no event shall Liaison Bank, nor any of its officers, directors, or employees, be held liable for anything arising out of or in any way connected with your use of this website.</li>
+      <div className="tc-section">
+        <h2>No Warranties</h2>
+        <p>
+          This website is provided “as is,” with all faults, and Liaison Bank expresses no representations or warranties of any kind related to this website or the materials contained on this website.
+        </p>
+      </div>
 
-            <li><strong>Changes to These Terms:</strong> We may update our terms and conditions from time to time. We will notify you of any changes by posting the new terms and conditions on this page.</li>
+      <div className="tc-section">
+        <h2>Limitation of Liability</h2>
+        <p>
+          In no event shall Liaison Bank, nor any of its officers, directors, or employees, be held liable for anything arising out of or in any way connected with your use of this website.
+        </p>
+      </div>
 
-            <li><strong>Contact Us:</strong> If you have any questions about these terms and conditions, please contact us at <a href="mailto:contact@liaisonbank.com">contact@liaisonbank.com</a>.</li>
-          </ol>
-        </div>
-      </section>
+      <div className="tc-section">
+        <h2>Changes to These Terms</h2>
+        <p>
+          We may update our terms and conditions from time to time. We will notify you of any changes by posting the new terms and conditions on this page.
+        </p>
+      </div>
+
+      <div className="tc-section">
+        <h2>Contact Us</h2>
+        <p>
+          If you have any questions about these terms and conditions, please contact us at{" "}
+          <a href="mailto:contact@liaisonbank.com">
+            contact@liaisonbank.com
+          </a>.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
     </>
   );
 }

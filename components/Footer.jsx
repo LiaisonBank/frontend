@@ -6,7 +6,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { importantLinks } from "../lib/data/menus";
-import logoScrolled from "@/assets/images/logo_grey.png";
+// import logoScrolled from "@/assets/images/logo_grey.png";
+import logoScrolled from "@/assets/images/company/Liaison Bank logo_high_resolution.png";
+
 
 import Modal from "@/components/ModalDialog/Modal";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
@@ -56,24 +58,23 @@ export default function Footer() {
             {/* Brand */}
             <div className="footer-brand">
               <Link href="/" onClick={scrollToTop}>
-                <Image
-                  src={logoScrolled}
-                  alt="Liaison Bank"
-                  title="Liaison Bank"
-                  width={200}
-                  height={56}
-                  priority
-                  className="footer-logo"
-                />
+               <Image
+  src={logoScrolled}
+  alt="Liaison Bank"
+  title="Liaison Bank"
+  width={300} // Set a realistic base width
+  height={100} // Let the aspect ratio dictate the height
+  className="footer-logo"
+/>
               </Link>
 
               <p className="footer-text">
-                Established in 2017–2019 as DBRE India Proprietary, the firm became
-                DBRE India Private Limited in 2019 and rebranded as Liaison Bank in
-                2023. Headquartered in Mumbai, Liaison Bank provides end-to-end
-                licensing, regulatory compliance and project liaisoning
-                services, helping businesses navigate regulatory requirements
-                efficiently.
+                Established in 2017–2019 as DBRE India Proprietary, the firm
+                became DBRE India Private Limited in 2019 and rebranded as
+                Liaison Bank in 2023. Headquartered in Mumbai, Liaison Bank
+                provides end-to-end licensing, regulatory compliance and project
+                liaisoning services, helping businesses navigate regulatory
+                requirements efficiently.
               </p>
             </div>
 
@@ -97,7 +98,9 @@ export default function Footer() {
 
             {/* Contact */}
             <div>
-              <h4 className="footer-title-for-contact"><Link href="/contact-us-liaison-bank">Contact</Link></h4>
+              <h4 className="footer-title-for-contact">
+                <Link href="/contact-us-liaison-bank">Contact</Link>
+              </h4>
 
               <div className="footer-contact">
                 <div className="contact-item">
@@ -155,7 +158,6 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
       </footer>
 
       <ScrollToTopButton />
@@ -167,8 +169,12 @@ export default function Footer() {
           <i className="fi fi-sr-phone-flip"></i>
         </a>
 
-        <a className="hiring open-form text-right" onClick={() => setHiringOpen(true)}>
-          We are Hiring &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <a
+          className="hiring open-form d-flex align-items-center justify-content-around"
+          onClick={() => setHiringOpen(true)}
+        >
+          <span>We are Hiring</span>
+
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 16 16"
@@ -183,10 +189,12 @@ export default function Footer() {
               d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5"
             ></path>
           </svg>
-          &nbsp;&nbsp;
         </a>
 
-        <a className="enquire open-form" onClick={() => setOpen(true)}>
+        <a
+          className="enquire open-form d-flex align-items-center justify-content-around"
+          onClick={() => setOpen(true)}
+        >
           Enquire Now <i className="fi fi-sr-attribution-pencil"></i>
         </a>
       </div>
@@ -216,9 +224,7 @@ export default function Footer() {
               </button>
             </div>
 
-            <div className="col-3 chatbot p-2">
-              {/* <ChatBot /> */}
-            </div>
+            <div className="col-3 chatbot p-2">{/* <ChatBot /> */}</div>
           </div>
         </div>
       </div>

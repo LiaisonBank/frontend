@@ -404,13 +404,6 @@ const ProjectSlidePanel = React.memo(({ project, isOpen, onClose }) => {
 
       <div
         className={`project-slide-panel ${isOpen ? "open" : ""} ${isAnimatingOut ? "closing" : ""}`}
-        onWheel={(e) => {
-          e.stopPropagation();
-          const element = e.currentTarget;
-          if (e.deltaY !== 0) {
-            element.scrollTop += e.deltaY;
-          }
-        }}
         role="dialog"
         aria-label="Project details"
       >
@@ -426,142 +419,128 @@ const ProjectSlidePanel = React.memo(({ project, isOpen, onClose }) => {
         </div>
 
         <div className="panel-content" ref={panelRef}>
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              height: "300px",
-              backgroundColor: "#f3f4f6",
-            }}
-          >
-            {hasValidImage ? (
-              <Image
-                src={imageUrl}
-                alt={project.client_name || "Project"}
-                fill
-                unoptimized
-                sizes="(max-width: 768px) 100vw, 50vw"
-                style={{
-                  objectFit: "cover",
-                  backgroundPosition: "top center",
-                }}
-                onError={() => setImageError(true)}
-                priority={isOpen}
-              />
-            ) : (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#e5e7eb",
-                  color: "#6b7280",
-                  fontSize: "1rem",
-                  fontWeight: "500",
-                  gap: "8px",
-                }}
-              >
-                <span style={{ fontSize: "3rem" }}>🏗️</span>
-                <span>{project.client_name || "Project"}</span>
-                <span style={{ fontSize: "0.875rem", color: "#9ca3af" }}>
-                  No image available
-                </span>
-              </div>
-            )}
-          </div>
+          {/* NEW GRID LAYOUT */}
+          <div className="panel-grid">
+            {/* LEFT: Image */}
+            <div className="panel-image-col">
+              {hasValidImage ? (
+                <Image
+                  src={imageUrl}
+                  alt={project.client_name || "Project"}
+                  fill
+                  unoptimized
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  style={{ objectFit: "cover" }}
+                  onError={() => setImageError(true)}
+                  priority={isOpen}
+                />
+              ) : (
+                <div className="panel-image-placeholder">
+                  <span style={{ fontSize: "3rem" }}>🏗️</span>
+                  <span>{project.client_name || "Project"}</span>
+                  <span style={{ fontSize: "0.875rem", color: "#9ca3af" }}>
+                    No image available
+                  </span>
+                </div>
+              )}
+            </div>
 
-          <div className="panel-body">
-            <div className="title">
-              <div>
-                {project.client_name && (
-                  <h2 className="panel-project-name">{project.client_name}</h2>
-                )}
+            {/* RIGHT: Content */}
+            <div className="panel-text-col">
+              <div className="title">
+                <div>
+                  {project.client_name && (
+                    <h2 className="panel-project-name">
+                      {project.client_name}
+                    </h2>
+                  )}
+                </div>
+                <div>
+                  {project.project_status && (
+                    <p className="panel-status">
+                      <span
+                        className="status-badge"
+                        style={{ backgroundColor: statusColor }}
+                      />
+                      <span className="status-text">
+                        {project.project_status}
+                      </span>
+                    </p>
+                  )}
+                </div>
               </div>
-              <div>
-                {project.project_status && (
-                  <p className="panel-status">
-                    <span
-                      className="status-badge"
-                      style={{ backgroundColor: statusColor }}
-                    />
-                    <span className="status-text">{project.project_status}</span>
+
+              {project.projectsCategory && (
+                <div className="panel-category">
+                  <span className="category-label">Category :</span>
+                  <span className="category-value">
+                    {formatCategory(project.projectsCategory)}
+                  </span>
+                </div>
+              )}
+
+              {project.category && (
+                <div className="panel-category">
+                  <span className="category-label">Services :</span>
+                  <span className="category-value">
+                    {formatCategory(project.category)}
+                  </span>
+                </div>
+              )}
+
+              {project.completion_date && (
+                <div className="panel-completion">
+                  <span className="completion-label">Completion Date:</span>
+                  <span className="completion-value">
+                    {new Date(project.completion_date).toLocaleDateString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      },
+                    )}
+                  </span>
+                </div>
+              )}
+
+              {project.description && (
+                <div className="panel-description">
+                  <p>{project.description}</p>
+                </div>
+              )}
+
+              {project.quick_links && project.quick_links.length > 0 && (
+                <div className="panel-links">
+                  <h4>Quick Links</h4>
+                  <ul>
+                    {project.quick_links.map((link, index) => (
+                      <li key={index}>
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="panel-location-wrap">
+                {project.location && (
+                  <p className="panel-location">
+                    📍{" "}
+                    {project.location.replace(/\(/g, " (").replace(/,/g, ", ")}
+                    {!project.location.includes("Vasai") &&
+                      !project.location.includes("Virar") &&
+                      !project.location.includes("Mumbai") &&
+                      ", Mumbai"}
                   </p>
                 )}
               </div>
-            </div>
-
-            {project.projectsCategory && (
-              <div className="panel-category">
-                <span className="category-label">Category :</span>
-                <span className="category-value">
-                  {formatCategory(project.projectsCategory)}
-                </span>
-              </div>
-            )}
-
-            {project.category && (
-              <div className="panel-category">
-                <span className="category-label">Services :</span>
-                <span className="category-value">
-                  {formatCategory(project.category)}
-                </span>
-              </div>
-            )}
-
-            {project.completion_date && (
-              <div className="panel-completion">
-                <span className="completion-label">Completion Date:</span>
-                <span className="completion-value">
-                  {new Date(project.completion_date).toLocaleDateString(
-                    "en-GB",
-                    {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    }
-                  )}
-                </span>
-              </div>
-            )}
-
-            {project.description && (
-              <div className="panel-description">
-                <p>{project.description}</p>
-              </div>
-            )}
-
-            {project.quick_links && project.quick_links.length > 0 && (
-              <div className="panel-links">
-                <h4>Quick Links</h4>
-                <ul>
-                  {project.quick_links.map((link, index) => (
-                    <li key={index}>
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {link.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <div className=" d-flex align-itemem-center justify-end">
-             {project.location && (
-                <p className="panel-location">
-                  📍 {project.location.replace(/\(/g, " (").replace(/,/g, ", ")}
-                  {!project.location.includes("Vasai") &&
-                    !project.location.includes("Virar") &&
-                    !project.location.includes("Mumbai") &&
-                    ", Mumbai"}
-                </p>
-              )}
             </div>
           </div>
         </div>
@@ -656,6 +635,9 @@ function useAudio() {
   return playAudio;
 }
 
+// Add this helper function outside the hook
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 function useProjects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -663,82 +645,28 @@ function useProjects() {
   const [retryCount, setRetryCount] = useState(0);
 
   const geocodeWithNominatim = useCallback(async (location) => {
-      if (!location?.trim()) return null;
-
-      try {
-        const response = await fetch(
-          `/api/v1/geocode?location=${encodeURIComponent(location)}`,
-          {
-            method: 'GET',
-            cache: 'no-store',
-          }
-        );
-
-        if (!response.ok) {
-          // 400 = missing param, 404 = not found, 5xx = server error
-          return null;
-        }
-
-        const data = await response.json();
-
-        // API returns { lat, long, display_name }
-        const lat = Number(data?.lat);
-        const lng = Number(data?.long);
-
-        if (!isValidCoordinate(lat, lng)) return null;
-        if (!isWithinMumbaiBounds(lat, lng)) return null;
-
-        return {
-          lat,
-          lng,
-          display_name: data?.display_name ?? null,
-          source: 'nominatim',
-        };
-      } catch (error) {
-        console.warn('Nominatim failed:', location, error);
+    if (!location?.trim()) return null;
+    try {
+      const response = await fetch(
+        `/api/v1/geocode?location=${encodeURIComponent(location)}`,
+        { method: "GET", cache: "no-store" },
+      );
+      if (!response.ok) return null;
+      const data = await response.json();
+      const lat = Number(data?.lat);
+      const lng = Number(data?.long);
+      if (!isValidCoordinate(lat, lng) || !isWithinMumbaiBounds(lat, lng))
         return null;
-      }
-    }, []);
-
-  const resolveApiProjectCoordinates = useCallback(
-    async (project) => {
-      const apiCoordinates = getApiCoordinates(project);
-      if (apiCoordinates) return apiCoordinates;
-
-      if (project.location) {
-        const loc = normalizeLocation(project.location);
-        const excludedAreas = [
-          "navi mumbai",
-          "thane",
-          "panvel",
-          "uran",
-          "alibag",
-          "khopoli",
-          "karjat",
-          "badlapur",
-          "ambarnath",
-          "ulhasnagar",
-          "dombivli",
-          "kalyan",
-          "bhiwandi",
-        ];
-        for (const excluded of excludedAreas) {
-          if (loc.includes(excluded)) {
-            return null;
-          }
-        }
-      }
-
-      const nominatimCoordinates = await geocodeWithNominatim(project.location);
-      if (nominatimCoordinates) return nominatimCoordinates;
-
-      const fallbackCoordinates = getFallbackCoordinates(project.location);
-      if (fallbackCoordinates) return fallbackCoordinates;
-
+      return {
+        lat,
+        lng,
+        display_name: data?.display_name ?? null,
+        source: "nominatim",
+      };
+    } catch {
       return null;
-    },
-    [geocodeWithNominatim]
-  );
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -751,14 +679,10 @@ function useProjects() {
         const response = await fetch(`${API_BASE_URL}/api/projects/`, {
           method: "GET",
           cache: "no-store",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         });
 
-        if (!response.ok) {
-          throw new Error(`API error ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`API error ${response.status}`);
 
         const result = await response.json();
         const apiProjects = Array.isArray(result)
@@ -770,21 +694,20 @@ function useProjects() {
               : [];
 
         const featuredProjects = apiProjects.filter(
-          (project) => project.is_featured === true
+          (p) => p.is_featured === true,
         );
 
         const projectsWithCoords = [];
+        const projectsToGeocode = []; // Queue for background processing
 
+        // 1. FAST PASS: Separate projects that have coordinates or fallbacks
         for (const project of featuredProjects) {
-          if (cancelled) return;
-
           const baseProject = {
             ...project,
             lat: project.latitude ?? project.lat ?? null,
             lng: project.longitude ?? project.long ?? project.lng ?? null,
             long: project.longitude ?? project.long ?? project.lng ?? null,
             coordinate_source: null,
-            is_manual: false,
             is_geocoded: false,
             is_fallback: false,
             quick_links: project.quick_links || [],
@@ -799,33 +722,48 @@ function useProjects() {
             baseProject.coordinate_source = "api";
             projectsWithCoords.push(baseProject);
           } else {
-            const resolvedCoords = await resolveApiProjectCoordinates(project);
-            if (resolvedCoords) {
-              baseProject.lat = resolvedCoords.lat;
-              baseProject.lng = resolvedCoords.lng;
-              baseProject.long = resolvedCoords.lng;
-              baseProject.coordinate_source = resolvedCoords.source;
-              baseProject.is_geocoded = resolvedCoords.source === "nominatim";
-              baseProject.is_fallback = resolvedCoords.source === "fallback";
+            // Check hardcoded fallbacks BEFORE calling the API
+            const fallback = getFallbackCoordinates(project.location);
+            if (fallback) {
+              baseProject.lat = fallback.lat;
+              baseProject.lng = fallback.lng;
+              baseProject.long = fallback.lng;
+              baseProject.coordinate_source = "fallback";
+              baseProject.is_fallback = true;
               projectsWithCoords.push(baseProject);
             } else {
-              console.warn("Featured project has no coordinates:", {
-                id: project.id,
-                location: project.location,
-                client: project.client_name,
-              });
+              // If we can't find a fallback, add to background queue
+              projectsToGeocode.push(baseProject);
             }
           }
         }
 
         if (cancelled) return;
 
+        // 2. SHOW THE MAP IMMEDIATELY
         setProjects(projectsWithCoords);
+        setLoading(false); // <--- UNBLOCK THE UI
 
-        if (projectsWithCoords.length === 0) {
-          setError("No featured projects found in Mumbai area.");
-        } else {
-          setError(null);
+        // 3. BACKGROUND GEOCODING (Throttled)
+        if (projectsToGeocode.length > 0) {
+          for (const project of projectsToGeocode) {
+            if (cancelled) return;
+
+            // Wait 1 second to respect Nominatim rate limits
+            await delay(1000);
+
+            const resolved = await geocodeWithNominatim(project.location);
+            if (resolved && !cancelled) {
+              project.lat = resolved.lat;
+              project.lng = resolved.lng;
+              project.long = resolved.lng;
+              project.coordinate_source = resolved.source;
+              project.is_geocoded = true;
+
+              // Add newly geocoded project to the map dynamically
+              setProjects((prev) => [...prev, project]);
+            }
+          }
         }
       } catch (error) {
         console.error("Failed loading API projects:", error);
@@ -834,9 +772,7 @@ function useProjects() {
           setError(`Failed to load featured projects: ${error.message}`);
         }
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     };
 
@@ -845,11 +781,9 @@ function useProjects() {
     return () => {
       cancelled = true;
     };
-  }, [resolveApiProjectCoordinates, retryCount]);
+  }, [geocodeWithNominatim, retryCount]);
 
-  const retry = useCallback(() => {
-    setRetryCount(prev => prev + 1);
-  }, []);
+  const retry = useCallback(() => setRetryCount((prev) => prev + 1), []);
 
   return { projects, loading, error, setError, retry };
 }
@@ -874,7 +808,7 @@ const GoogleProjectMarker = React.memo(({ project, isSelected, onSelect }) => {
 
       onSelect(project, e);
     },
-    [project, onSelect]
+    [project, onSelect],
   );
 
   if (!project || !isValidCoordinate(project.lat, project.lng)) return null;
@@ -1012,10 +946,10 @@ export default function MumbaiMapClient() {
           setIsAnimating(false);
           animationTimeoutRef.current = null;
         },
-        MAP_CONFIG.projectAnimationDuration * 1000 + 100
+        MAP_CONFIG.projectAnimationDuration * 1000 + 100,
       );
     },
-    [mapInstance]
+    [mapInstance],
   );
 
   // Reset map view
@@ -1041,7 +975,7 @@ export default function MumbaiMapClient() {
         setIsPanelOpen(false);
         animationTimeoutRef.current = null;
       },
-      MAP_CONFIG.resetAnimationDuration * 1000 + 100
+      MAP_CONFIG.resetAnimationDuration * 1000 + 100,
     );
   }, [mapInstance]);
 
@@ -1067,7 +1001,7 @@ export default function MumbaiMapClient() {
 
       centerOnProject(project);
     },
-    [playAudio, centerOnProject]
+    [playAudio, centerOnProject],
   );
 
   // Handle project selection from search
@@ -1077,7 +1011,7 @@ export default function MumbaiMapClient() {
         selectProject(project, null);
       }
     },
-    [selectProject]
+    [selectProject],
   );
 
   // Close project panel
@@ -1105,146 +1039,149 @@ export default function MumbaiMapClient() {
         closeProject();
       }
     },
-    [selectedProject, isAnimating, isClosing, closeProject]
+    [selectedProject, isAnimating, isClosing, closeProject],
   );
 
   // Memoize map options to prevent unnecessary re-renders
-  const mapOptions = useMemo(() => ({
-    disableDefaultUI: false,
-    zoomControl: true,
-    mapTypeControl: true,
-    streetViewControl: false,
-    fullscreenControl: false,
-    fullscreenControlOptions: {
-      position: 12,
-    },
-    minZoom: MAP_CONFIG.minZoom,
-    maxZoom: MAP_CONFIG.maxZoom,
-    gestureHandling: "greedy",
-    restriction: {
-      latLngBounds: {
-        north: MAP_CONFIG.bounds.north,
-        south: MAP_CONFIG.bounds.south,
-        east: MAP_CONFIG.bounds.east,
-        west: MAP_CONFIG.bounds.west,
+  const mapOptions = useMemo(
+    () => ({
+      disableDefaultUI: false,
+      zoomControl: true,
+      mapTypeControl: true,
+      streetViewControl: false,
+      fullscreenControl: false,
+      fullscreenControlOptions: {
+        position: 12,
       },
-      strictBounds: true,
-    },
-    styles: [
-      {
-        featureType: "road",
-        elementType: "geometry",
-        stylers: [{ color: "#ffcba9" }, { visibility: "on" }],
+      minZoom: MAP_CONFIG.minZoom,
+      maxZoom: MAP_CONFIG.maxZoom,
+      gestureHandling: "greedy",
+      restriction: {
+        latLngBounds: {
+          north: MAP_CONFIG.bounds.north,
+          south: MAP_CONFIG.bounds.south,
+          east: MAP_CONFIG.bounds.east,
+          west: MAP_CONFIG.bounds.west,
+        },
+        strictBounds: true,
       },
-      {
-        featureType: "road",
-        elementType: "geometry.stroke",
-        stylers: [{ color: "#FF9A5C" }, { visibility: "on" }],
-      },
-      {
-        featureType: "road",
-        elementType: "labels.text",
-        stylers: [
-          { color: "#c5c5c5" },
-          { weight: 2 },
-          { visibility: "simplified" },
-        ],
-      },
-      {
-        featureType: "road",
-        elementType: "labels.text.fill",
-        stylers: [{ color: "#333" }, { weight: 2 }],
-      },
-      {
-        featureType: "road",
-        elementType: "labels.text.stroke",
-        stylers: [{ color: "#000000" }, { weight: 2.5 }],
-      },
-      {
-        featureType: "transit.station",
-        elementType: "labels.text",
-        stylers: [
-          { color: "#FFFFFF" },
-          { weight: 1.2 },
-          { visibility: "simplified" },
-        ],
-      },
-      {
-        featureType: "transit.station",
-        elementType: "labels.text.fill",
-        stylers: [{ color: "#FFFFFF" }, { weight: 1.2 }],
-      },
-      {
-        featureType: "transit.station",
-        elementType: "labels.text.stroke",
-        stylers: [{ color: "#000000" }, { weight: 2.5 }],
-      },
-      {
-        featureType: "transit",
-        elementType: "labels",
-        stylers: [{ visibility: "off" }],
-      },
-      {
-        featureType: "transit.line",
-        elementType: "all",
-        stylers: [{ visibility: "off" }],
-      },
-      {
-        featureType: "administrative.neighborhood",
-        elementType: "labels.text",
-        stylers: [
-          { color: "#FFFFFF" },
-          { weight: 1.2 },
-          { visibility: "simplified" },
-        ],
-      },
-      {
-        featureType: "administrative.neighborhood",
-        elementType: "labels.text.fill",
-        stylers: [{ color: "#FFFFFF" }, { weight: 1.2 }],
-      },
-      {
-        featureType: "administrative.neighborhood",
-        elementType: "labels.text.stroke",
-        stylers: [{ color: "#000000" }, { weight: 2.5 }],
-      },
-      {
-        featureType: "administrative.locality",
-        elementType: "labels",
-        stylers: [{ visibility: "off" }],
-      },
-      {
-        featureType: "administrative",
-        elementType: "geometry",
-        stylers: [{ visibility: "on" }],
-      },
-      {
-        featureType: "poi",
-        elementType: "labels",
-        stylers: [{ visibility: "off" }],
-      },
-      {
-        featureType: "poi",
-        elementType: "all",
-        stylers: [{ visibility: "off" }],
-      },
-      {
-        featureType: "landscape",
-        elementType: "labels",
-        stylers: [{ visibility: "off" }],
-      },
-      {
-        featureType: "water",
-        elementType: "geometry",
-        stylers: [{ color: "#D4E8F0" }],
-      },
-      {
-        featureType: "water",
-        elementType: "labels",
-        stylers: [{ visibility: "off" }],
-      },
-    ],
-  }), []);
+      styles: [
+        {
+          featureType: "road",
+          elementType: "geometry",
+          stylers: [{ color: "#ffcba9" }, { visibility: "on" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#FF9A5C" }, { visibility: "on" }],
+        },
+        {
+          featureType: "road",
+          elementType: "labels.text",
+          stylers: [
+            { color: "#c5c5c5" },
+            { weight: 2 },
+            { visibility: "simplified" },
+          ],
+        },
+        {
+          featureType: "road",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#333" }, { weight: 2 }],
+        },
+        {
+          featureType: "road",
+          elementType: "labels.text.stroke",
+          stylers: [{ color: "#000000" }, { weight: 2.5 }],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "labels.text",
+          stylers: [
+            { color: "#FFFFFF" },
+            { weight: 1.2 },
+            { visibility: "simplified" },
+          ],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#FFFFFF" }, { weight: 1.2 }],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "labels.text.stroke",
+          stylers: [{ color: "#000000" }, { weight: 2.5 }],
+        },
+        {
+          featureType: "transit",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }],
+        },
+        {
+          featureType: "transit.line",
+          elementType: "all",
+          stylers: [{ visibility: "off" }],
+        },
+        {
+          featureType: "administrative.neighborhood",
+          elementType: "labels.text",
+          stylers: [
+            { color: "#FFFFFF" },
+            { weight: 1.2 },
+            { visibility: "simplified" },
+          ],
+        },
+        {
+          featureType: "administrative.neighborhood",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#FFFFFF" }, { weight: 1.2 }],
+        },
+        {
+          featureType: "administrative.neighborhood",
+          elementType: "labels.text.stroke",
+          stylers: [{ color: "#000000" }, { weight: 2.5 }],
+        },
+        {
+          featureType: "administrative.locality",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }],
+        },
+        {
+          featureType: "administrative",
+          elementType: "geometry",
+          stylers: [{ visibility: "on" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "all",
+          stylers: [{ visibility: "off" }],
+        },
+        {
+          featureType: "landscape",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry",
+          stylers: [{ color: "#D4E8F0" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }],
+        },
+      ],
+    }),
+    [],
+  );
 
   // Loading and error states
   if (loadError) {
@@ -1269,8 +1206,11 @@ export default function MumbaiMapClient() {
   }
 
   return (
-    <section className="mumbai-map-fullscreen" aria-label="Mumbai project locations">
-      <SearchFilter 
+    <section
+      className="mumbai-map-fullscreen"
+      aria-label="Mumbai project locations"
+    >
+      <SearchFilter
         projects={projects}
         onFilterChange={handleFilterChange}
         selectedProject={selectedProject}
@@ -1322,13 +1262,12 @@ export default function MumbaiMapClient() {
             Reset Map
           </button>
         </div>
-
-        <ProjectSlidePanel 
-          project={selectedProject}
-          isOpen={isPanelOpen}
-          onClose={closeProject}
-        />
       </div>
+      <ProjectSlidePanel
+        project={selectedProject}
+        isOpen={isPanelOpen}
+        onClose={closeProject}
+      />
     </section>
   );
 }
