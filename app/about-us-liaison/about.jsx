@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import useBodyClass from '@/components/useBodyClass';
+import useBodyClass from "@/components/useBodyClass";
 import TeamSwiper from "@/components/TeamSwiper";
 import {
   Building2,
@@ -28,11 +28,11 @@ import {
   Zap,
   Wrench,
 } from "lucide-react";
-import "./aboutUs.scss"
+import "./aboutUs.scss";
 import PropertyAcquisition from "./PropertyAcquisition";
 
 export default function AboutUsLiaisonPage() {
-  useBodyClass('about-us');
+  useBodyClass("about-us");
 
   const imageRef = useRef(null);
 
@@ -45,8 +45,8 @@ export default function AboutUsLiaisonPage() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const services = [
@@ -55,87 +55,94 @@ export default function AboutUsLiaisonPage() {
       title: "Liaisoning Services",
       icon: Landmark,
       tag: "Government Relations",
-      description: "End-to-end liaisoning services helping businesses navigate complex government regulations and statutory requirements with ease.",
-      href: "/our-services/liaisoning"
+      description:
+        "End-to-end liaisoning services helping businesses navigate complex government regulations and statutory requirements with ease.",
+      href: "/our-services/liaisoning",
     },
     {
       id: 2,
       title: "Licensing Services",
       tag: "Compliance",
       icon: FileCheck,
-      description: "Comprehensive licensing solutions across various sectors, ensuring your business remains compliant and fully operational.",
+      description:
+        "Comprehensive licensing solutions across various sectors, ensuring your business remains compliant and fully operational.",
       features: [
         "Business Licenses & Registrations",
         "NOC & Certificate Procurements",
         "Industry-Specific Permits",
         "License Renewal & Management",
       ],
-      href: "our-services/licensing"
+      href: "our-services/licensing",
     },
     {
       id: 3,
       title: "PNG Services",
       tag: "Infrastructure",
       icon: Fuel,
-      description: "Complete Piped Natural Gas solutions from site survey to commissioning for commercial, residential, and industrial establishments.",
+      description:
+        "Complete Piped Natural Gas solutions from site survey to commissioning for commercial, residential, and industrial establishments.",
       features: [
         "Site Survey & Assessment",
         "MGL Documentation & Approvals",
         "Pipeline Installation",
-        "Commissioning & Gas Charging"
+        "Commissioning & Gas Charging",
       ],
-      href: "/our-services/piped-natural-gas"
+      href: "/our-services/piped-natural-gas",
     },
     {
       id: 4,
       title: "Fire Safety Services",
       tag: "Risk Audit",
       icon: ShieldCheck,
-      description: "Comprehensive fire safety audits, risk assessments, and certification services ensuring your establishment meets all safety regulations.",
+      description:
+        "Comprehensive fire safety audits, risk assessments, and certification services ensuring your establishment meets all safety regulations.",
       features: [
         "Fire Safety Audits",
         "Fire NOC & Approvals",
         "Fire Certification",
-        "Risk Assessment & Training"
+        "Risk Assessment & Training",
       ],
-      href: "/our-services/fire"
+      href: "/our-services/fire",
     },
     {
       id: 5,
       title: "Electrical Services",
       tag: "Engeneering",
       icon: Zap,
-      description: "Professional electrical audit and certification services ensuring your electrical systems are safe, compliant, and efficient.",
+      description:
+        "Professional electrical audit and certification services ensuring your electrical systems are safe, compliant, and efficient.",
       features: [
         "Electrical Safety Audits",
         "Compliance Verification",
         "Electrical NOC & Approvals",
         "System Upgradation Support",
       ],
-      href: "/our-services/electrical"
+      href: "/our-services/electrical",
     },
     {
       id: 6,
       title: "AMC Services",
       tag: "Maintanence",
       icon: Wrench,
-      description: "Comprehensive annual maintenance contracts ensuring your business remains compliant throughout the year with dedicated support.",
+      description:
+        "Comprehensive annual maintenance contracts ensuring your business remains compliant throughout the year with dedicated support.",
       features: [
         "Compliance Monitoring",
         "License Renewal Management",
         "Documentation & Record Keeping",
-        "24/7 Support & Assistance"
+        "24/7 Support & Assistance",
       ],
-      href: "/our-services/amc"
+      href: "/our-services/amc",
     },
     {
       id: 7,
       title: "Property Acquisition Services",
       tag: "Real Estate",
       icon: Building2,
-      description: "End-to-end property acquisition services for commercial, residential, and industrial establishments ensuring smooth transactions and compliance.",
+      description:
+        "End-to-end property acquisition services for commercial, residential, and industrial establishments ensuring smooth transactions and compliance.",
       propertyPortfolio: [
-         "Bank Auction Properties",
+        "Bank Auction Properties",
         "ARC & NPA Assets",
         "Distressed Properties",
         "Commercial Real Estate",
@@ -143,10 +150,10 @@ export default function AboutUsLiaisonPage() {
         "Residential Properties",
         "Property Leasing & Rentals",
         "Investor-Led Transactions",
-        "Our Licensee - Amazon (Mahape) , Lagoona London Spa (Juhu)"
+        "Our Licensee - Amazon (Mahape) , Lagoona London Spa (Juhu)",
       ],
-      href: "/our-services/property-acquisition"
-    }
+      href: "/our-services/property-acquisition",
+    },
   ];
 
   const sectors = [
@@ -169,7 +176,7 @@ export default function AboutUsLiaisonPage() {
             fill
             className="hero-fullscreen-image"
             priority
-            style={{ objectFit: 'cover' }}
+            style={{ objectFit: "cover" }}
           />
           <div className="hero-overlay"></div>
         </div>
@@ -200,11 +207,80 @@ export default function AboutUsLiaisonPage() {
                 <div className="welcome-box">
                   <span className="welcome-label">About Us</span>
                   <p className="welcome-text">
-                    <span className="welcome-brand">Liaison Bank </span> provides end-to-end liaisoning, licensing, and regulatory compliance services to help businesses and individuals navigate complex government procedures and statutory requirements with greater clarity and efficiency. We serve as a professional interface between our clients and government departments, regulatory authorities, and statutory bodies, helping coordinate the processes involved in obtaining necessary approvals, permissions, No Objection Certificates (NOCs), licenses, and other regulatory clearances.
-
-                    Our approach focuses on simplifying administrative procedures, facilitating coordination, and supporting clients throughout the regulatory process, from initial consultation and documentation to application coordination and approval follow-ups. We understand that navigating regulatory requirements can involve multiple stages, documentation requirements, and interactions with various authorities. Our objective is to make these processes more organized, transparent, and manageable for our clients.
+                    <span className="welcome-brand">Liaison Bank </span>{" "}
+                    provides end-to-end liaisoning, licensing, and regulatory
+                    compliance services to help businesses and individuals
+                    navigate complex government procedures and statutory
+                    requirements with greater clarity and efficiency. We serve
+                    as a professional interface between our clients and
+                    government departments, regulatory authorities, and
+                    statutory bodies, helping coordinate the processes involved
+                    in obtaining necessary approvals, permissions, No Objection
+                    Certificates (NOCs), licenses, and other regulatory
+                    clearances. Our approach focuses on simplifying
+                    administrative procedures, facilitating coordination, and
+                    supporting clients throughout the regulatory process, from
+                    initial consultation and documentation to application
+                    coordination and approval follow-ups. We understand that
+                    navigating regulatory requirements can involve multiple
+                    stages, documentation requirements, and interactions with
+                    various authorities. Our objective is to make these
+                    processes more organized, transparent, and manageable for
+                    our clients.
                   </p>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Vision & Mission Section */}
+        <section className="vision-mission-section">
+          <div className="container">
+            <div className="vm-container">
+              {/* Left Column: Vision */}
+              <div className="vm-column">
+                <h3 className="vm-heading">OUR VISION</h3>
+                <p className="vm-text">
+                  To become a trusted global leader in comprehensive business
+                  support solutions, with an ambitious vision of establishing a
+                  presence across every PIN code in India and expanding our
+                  reach internationally. We aspire to empower businesses,
+                  entrepreneurs, developers, professionals, and individuals
+                  through accessible, integrated, and reliable services. By
+                  simplifying complexities and bringing diverse solutions under
+                  one roof, we aim to make professional support convenient and
+                  accessible to everyone, everywhere, while building a strong
+                  network of branches that brings Liaison Bank closer to every
+                  customer.
+                </p>
+              </div>
+
+              {/* Center Divider */}
+              <div className="vm-divider"></div>
+
+              {/* Right Column: Mission */}
+              <div className="vm-column">
+                <h3 className="vm-heading">OUR MISSION</h3>
+                <p className="vm-text">
+                  Our mission is to transform complex business challenges into
+                  seamless experiences. From documentation and government
+                  approvals to licensing, permissions, certifications, and
+                  essential business requirements, we simplify every step
+                  through expert guidance, strategic coordination, and
+                  end-to-end support.
+                </p>
+                <p className="vm-text">
+                  At Liaison Bank, we believe every business deserves a smoother
+                  path to success. We are committed to breaking procedural
+                  barriers, bridging the gap between requirements and approvals,
+                  and empowering business owners to focus on what matters most —
+                  building, growing, and leading their businesses.
+                </p>
+                {/* <p className="vm-tagline">
+                  Simplifying Processes. Breaking Barriers. Empowering
+                  Businesses.
+                </p> */}
               </div>
             </div>
           </div>
@@ -221,65 +297,77 @@ export default function AboutUsLiaisonPage() {
               </div>
             </div>
             <div className="row">
+              {services.map((service) => {
+                const Icon = service.icon;
+                const isPropertyAcquisition = service.id === 7;
 
-           {services.map((service) => {
-  const Icon = service.icon;
-  const isPropertyAcquisition = service.id === 7;
+                // Render the 7th card (No Link, just a div)
+                if (isPropertyAcquisition) {
+                  return (
+                    <div
+                      key={service.id}
+                      className="col-lg-4 col-md-6 p-3 service-card-wrapper"
+                    >
+                      <div className="service-card property-service-card w-100">
+                        <div className="service-card-header">
+                          <div className="service-card-icon">
+                            <Icon size={27} strokeWidth={1.8} />
+                          </div>
+                          <div className="service-card-title-group">
+                            <h3 className="service-card-title">
+                              {service.title}
+                            </h3>
+                          </div>
+                        </div>
+                        <p className="service-card-description">
+                          {service.description}
+                        </p>
+                        <div className="property-portfolio-content">
+                          <h4>Property Opportunities We Handle</h4>
+                          <ul>
+                            {service.propertyPortfolio.map((item, index) => (
+                              <li key={index}>
+                                <span className="property-check">✓</span>
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
 
-  // Render the 7th card (No Link, just a div)
-  if (isPropertyAcquisition) {
-    return (
-      <div key={service.id} className="col-lg-4 col-md-6 p-3 service-card-wrapper">
-        <div className="service-card property-service-card w-100">
-          <div className="service-card-header">
-            <div className="service-card-icon">
-              <Icon size={27} strokeWidth={1.8} />
-            </div>
-            <div className="service-card-title-group">
-              <h3 className="service-card-title">{service.title}</h3>
-            </div>
-          </div>
-          <p className="service-card-description">{service.description}</p>
-          <div className="property-portfolio-content">
-            <h4>Property Opportunities We Handle</h4>
-            <ul>
-              {service.propertyPortfolio.map((item, index) => (
-                <li key={index}>
-                  <span className="property-check">✓</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Render the first 6 cards (With Link)
-  return (
-    <div key={service.id} className="col-lg-4 col-md-6 p-3 service-card-wrapper">
-      <Link href={service.href} className="service-card-link">
-        <div className="service-card">
-          <div className="service-card-header">
-            <div className="service-card-icon">
-              <Icon size={27} strokeWidth={1.8} />
-            </div>
-            <div className="service-card-title-group">
-              <h3 className="service-card-title">{service.title}</h3>
-            </div>
-          </div>
-          <p className="service-card-description">{service.description}</p>
-          <div className="service-card-cta">
-            <span>View Details</span>
-            <ArrowRight size={17} />
-          </div>
-        </div>
-      </Link>
-    </div>
-  );
-})}
-
+                // Render the first 6 cards (With Link)
+                return (
+                  <div
+                    key={service.id}
+                    className="col-lg-4 col-md-6 p-3 service-card-wrapper"
+                  >
+                    <Link href={service.href} className="service-card-link">
+                      <div className="service-card">
+                        <div className="service-card-header">
+                          <div className="service-card-icon">
+                            <Icon size={27} strokeWidth={1.8} />
+                          </div>
+                          <div className="service-card-title-group">
+                            <h3 className="service-card-title">
+                              {service.title}
+                            </h3>
+                          </div>
+                        </div>
+                        <p className="service-card-description">
+                          {service.description}
+                        </p>
+                        <div className="service-card-cta">
+                          <span>View Details</span>
+                          <ArrowRight size={17} />
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
