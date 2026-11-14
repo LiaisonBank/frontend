@@ -2,10 +2,10 @@
 // GOOGLE MAPS CUSTOM STYLES
 // ============================================================
 
-// Google Maps Info Window Styling
-.gm-fullscreen-control{
+.gm-fullscreen-control {
   display: none;
 }
+
 .google-info-window {
   padding: 6px 4px;
   min-width: 150px;
@@ -37,54 +37,19 @@
   }
 }
 
-// Google Maps Custom Controls
-.gm-style .gm-style-iw-c {
-  border-radius: 12px !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2) !important;
-  padding: 12px 16px !important;
-}
-
-.gm-style .gm-style-iw-d {
-  overflow: auto !important;
-  max-height: 200px !important;
-}
-
-.gm-style .gm-style-iw-tc::after {
-  background: white !important;
-}
-
-// Hide Google Maps default attribution if needed
-.gm-style .gm-style-cc {
+// Hide Google Maps default attribution, info windows, and controls we don't want
+.gm-style .gm-style-iw-c,
+.gm-style .gm-style-iw-d,
+.gm-style .gm-style-cc,
+.gm-style .gm-style-mtc,
+.gm-style-cc {
   display: none !important;
 }
 
-// Custom marker container override
-.gm-style .gm-style-iw-d::-webkit-scrollbar {
-  width: 4px;
-}
-
-.gm-style .gm-style-iw-d::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.gm-style .gm-style-iw-d::-webkit-scrollbar-thumb {
-  background: #FF4D00;
-  border-radius: 4px;
-}
-
-// Disable state for map controls
 .gm-style .gm-control-active.gm-fullscreen-control {
   background-color: white !important;
   border-radius: 4px !important;
   right: 4rem !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
-}
-
-// Map type control styling
-.gm-style .gm-style-mtc {
-  background: white !important;
-  border-radius: 4px !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
 }
 
@@ -93,20 +58,16 @@
   padding: 6px 12px !important;
 }
 
-// Hide Google Maps attribution messages and zoom instructions
-.gm-style-cc,
-.gm-style .gm-style-cc,
-.gm-style .gm-style-mtc,
-.gm-style .gm-style-iw-c {
-  display: none !important;
-}
-// MumbaiMap.scss
+// ============================================================
+// MAP LAYOUT & CONTAINERS
+// ============================================================
 
 .mumbai-map-fullscreen {
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  background: #f5f5f5;
 }
 
 .mumbai-map-container {
@@ -116,420 +77,23 @@
   background: #fff;
   transition: all 0.3s ease;
 
-  // Fullscreen styling
   &:fullscreen {
     height: 100vh !important;
     width: 100vw !important;
   }
-
   &:-webkit-full-screen {
     height: 100vh !important;
     width: 100vw !important;
   }
 
-  &:-moz-full-screen {
-    height: 100vh !important;
-    width: 100vw !important;
-  }
-
-  &:-ms-fullscreen {
-    height: 100vh !important;
-    width: 100vw !important;
-  }
-}
-
-.map-controls-top-right {
-  position: absolute;
-  top: 16px;
-  right: 6rem;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 10;
-
-  .custom-fullscreen-button {
-    display:none;
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    border-radius: 8px !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
-    transition: all 0.2s ease !important;
-    width: 40px !important;
-    height: 40px !important;
-    padding: 8px !important;
-
-    &:hover {
-      background-color: #ffffff !important;
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
-
-    .MuiSvgIcon-root {
-      font-size: 24px;
-      color: #333;
-    }
-  }
-
-  .mumbai-map-reset {
-    background-color: rgba(255, 255, 255, 0.95);
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s ease;
-
-    &:hover {
-      background-color: #ffffff;
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-}
-
-// Loading skeleton styles
-.mumbai-map-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  color: #666;
-
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #FF6B00;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 16px;
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-}
-
-// Error state styles
-.mumbai-map-error {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  text-align: center;
-  padding: 20px;
-
-  p {
-    color: #dc2626;
-    margin-bottom: 16px;
-    font-size: 1.1rem;
-  }
-
-  button {
-    padding: 10px 24px;
-    background-color: #FF6B00;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-      background-color: #e66000;
-    }
-  }
-}
-
-// Project Slide Panel styles
-.panel-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-
-  &.open {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  &.closing {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
-
-.project-slide-panel {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 100%;
-  max-width: 480px;
-  height: 100%;
-  background: white;
-  z-index: 1000;
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-
-  &.open {
-    right: 0;
-  }
-
-  &.closing {
-    right: -100%;
-  }
-
-  .panel-header {
-    display: flex;
-    align-items: center;
-    padding: 16px;
-    border-bottom: 1px solid #e5e7eb;
-    flex-shrink: 0;
-
-    .panel-close-btn {
-      background: none;
-      border: none;
-      padding: 8px;
-      cursor: pointer;
-      color: #666;
-      transition: color 0.2s;
-
-      &:hover {
-        color: #000;
-      }
-    }
-
-    .panel-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-left: 8px;
-    }
-  }
-
-  .panel-content {
-    flex: 1;
-    overflow-y: auto;
-    padding-bottom: 20px;
-
-    .panel-body {
-      padding: 20px;
-
-      .title {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 16px;
-
-        .panel-project-name {
-          font-size: 20px;
-          font-weight: 700;
-          margin: 0;
-          color: #1a1a1a;
-        }
-
-        .panel-status {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin: 0;
-
-          .status-badge {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-          }
-
-          .status-text {
-            font-size: 14px;
-            font-weight: 500;
-            color: #666;
-          }
-        }
-      }
-
-      .panel-category {
-        margin-bottom: 12px;
-        font-size: 14px;
-
-        .category-label {
-          font-weight: 600;
-          color: #666;
-        }
-
-        .category-value {
-          color: #333;
-        }
-      }
-
-      .panel-completion {
-        margin-bottom: 12px;
-        font-size: 14px;
-
-        .completion-label {
-          font-weight: 600;
-          color: #666;
-        }
-
-        .completion-value {
-          color: #333;
-        }
-      }
-
-      .panel-description {
-        margin: 16px 0;
-
-        p {
-          color: #4a4a4a;
-          line-height: 1.6;
-          font-size: 14px;
-        }
-      }
-
-      .panel-links {
-        margin: 16px 0;
-
-        h4 {
-          font-size: 16px;
-          font-weight: 600;
-          margin-bottom: 8px;
-        }
-
-        ul {
-          list-style: none;
-          padding: 0;
-
-          li {
-            margin-bottom: 4px;
-
-            a {
-              color: #FF6B00;
-              text-decoration: none;
-              font-size: 14px;
-
-              &:hover {
-                text-decoration: underline;
-              }
-            }
-          }
-        }
-      }
-
-      .panel-location {
-        font-size: 14px;
-        color: #666;
-        margin: 16px 0 0;
-      }
-    }
-  }
-}
-
-// Responsive styles
-@media (max-width: 768px) {
-  .map-controls-top-right {
-    top: 12px;
-    right: 12px;
-    gap: 8px;
-
-    .custom-fullscreen-button {
-      width: 36px !important;
-      height: 36px !important;
-      padding: 6px !important;
-
-      .MuiSvgIcon-root {
-        font-size: 20px;
-      }
-    }
-
-    .mumbai-map-reset {
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-  }
-
-  .project-slide-panel {
-    max-width: 100%;
-  }
-}
-
-// Reduced motion preference
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-// Ensure the map container doesn't show unwanted UI elements
-.mumbai-map-container {
-  .gm-style {
-    // Hide the Ctrl+scroll message
-    > div:last-child {
-      display: none !important;
-    }
-  }
-}
-
-.fullscreen-close-btn {
-  position: absolute;
-  top: 10px;
-  right: 1.5rem;
-  z-index: 1000;
-  background: #ffffff;
-  color: #666666;
-  border-radius: 0;
-  
-  &:hover {
-    background: #ffffff;
+  // Hide the Ctrl+scroll message
+  .gm-style > div:last-child {
+    display: none !important;
   }
 }
 
 // ============================================================
-// MUMBAI MAP STYLES
-// ============================================================
-
-.mumbai-map-fullscreen {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  background: #f5f5f5;
-}
-
-.mumbai-map-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-// ============================================================
-// SEARCH FILTER - HIGHEST Z-INDEX
+// CONTROLS & SEARCH FILTER
 // ============================================================
 
 .search-filter-wrapper {
@@ -537,7 +101,7 @@
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 99999 !important; // Highest z-index - always on top
+  z-index: 99999 !important;
   width: 90%;
   max-width: 600px;
   pointer-events: none;
@@ -550,16 +114,11 @@
     top: 12px;
     width: 95%;
   }
-  
   @media (max-width: 480px) {
     top: 10px;
     width: 98%;
   }
 }
-
-// ============================================================
-// MAP CONTROLS
-// ============================================================
 
 .map-controls-top-right {
   position: absolute;
@@ -567,6 +126,7 @@
   right: 5rem;
   z-index: 1000;
   display: flex;
+  flex-direction: column;
   gap: 8px;
   pointer-events: none;
 
@@ -609,247 +169,15 @@
       }
     }
   }
-}
 
-// ============================================================
-// PROJECT CARD
-// ============================================================
+  @media (max-width: 768px) {
+    top: 70px;
+    right: 12px;
 
-.project-info-card {
-  position: fixed !important;
-  z-index: 9999 !important;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  width: 320px;
-  max-width: 90vw;
-  max-height: 80vh;
-  overflow-y: auto;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  pointer-events: auto;
-  transform: translate(-50%, -100%) !important;
-  opacity: 0;
-  visibility: hidden;
-
-  &.is-visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, -100%) scale(1) !important;
-  }
-
-  // Arrow pointing down to marker
-  .project-card-arrow-down {
-    position: absolute;
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 12px solid white;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  }
-
-  .project-card-header {
-    position: relative;
-    width: 100%;
-    height: 150px;
-    border-radius: 12px 12px 0 0;
-    overflow: hidden;
-    background: #f5f5f5;
-
-    .project-card-image {
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+    button {
+      padding: 6px 12px;
+      font-size: 12px;
     }
-
-    .project-card-close {
-      position: absolute !important;
-      top: 8px !important;
-      right: 8px !important;
-      z-index: 10 !important;
-      background: rgba(255, 255, 255, 0.9) !important;
-      width: 32px !important;
-      height: 32px !important;
-      padding: 0 !important;
-
-      &:hover {
-        background: rgba(255, 255, 255, 1) !important;
-      }
-
-      .MuiSvgIcon-root {
-        font-size: 20px;
-        color: #333;
-      }
-    }
-  }
-
-  .project-card-content {
-    padding: 16px;
-
-    .project-client-name {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0 0 8px 0;
-      color: #333;
-      line-height: 1.3;
-      word-break: break-word;
-    }
-
-    .project-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-
-      .status-indicator {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        display: inline-block;
-        flex-shrink: 0;
-      }
-
-      .status-text {
-        font-size: 14px;
-        font-weight: 500;
-        color: #666;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-    }
-
-    .project-location-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-
-      .project-location {
-        font-size: 14px;
-        color: #666;
-        line-height: 1.4;
-      }
-
-      .project-category {
-        font-size: 12px;
-        color: #999;
-        background: #f0f0f0;
-        padding: 2px 8px;
-        border-radius: 12px;
-        margin-left: 0;
-      }
-    }
-
-    .project-completion-date {
-      font-size: 13px;
-      color: #888;
-      margin-bottom: 12px;
-    }
-
-    .learnmore {
-      margin-top: 4px;
-
-      .tooltip-wrapper {
-        position: relative;
-        display: inline-block;
-
-        button {
-          padding: 6px 16px;
-          background: #FF6B00;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 600;
-          transition: background 0.2s ease;
-          font-family: inherit;
-
-          &:hover {
-            background: #e55a00;
-          }
-        }
-
-        .custom-tooltip {
-          position: absolute;
-          bottom: calc(100% + 8px);
-          left: 50%;
-          transform: translateX(-50%);
-          background: #1a1a1a;
-          color: white;
-          padding: 6px 12px;
-          border-radius: 6px;
-          font-size: 12px;
-          white-space: nowrap;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-
-          &::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #1a1a1a;
-          }
-        }
-      }
-    }
-  }
-
-  // Scrollbar styling
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 2px;
-
-    &:hover {
-      background: #aaa;
-    }
-  }
-}
-
-// ============================================================
-// GOOGLE INFO WINDOW
-// ============================================================
-
-.google-info-window {
-  padding: 4px 0;
-  max-width: 220px;
-
-  h4 {
-    margin: 0 0 4px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #1a1a1a;
-  }
-
-  p {
-    margin: 0 0 6px 0;
-    font-size: 12px;
-    color: #666;
-  }
-
-  .status-badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    color: white;
   }
 }
 
@@ -906,90 +234,24 @@
 }
 
 // ============================================================
-// ANIMATIONS
-// ============================================================
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-// ============================================================
-// RESPONSIVE
-// ============================================================
-
-@media (max-width: 768px) {
-  .project-info-card {
-    width: 280px;
-    max-width: 85vw;
-    max-height: 70vh;
-
-    .project-card-header {
-      height: 120px;
-    }
-
-    .project-card-content {
-      padding: 14px 16px 16px;
-
-      .project-client-name {
-        font-size: 16px;
-      }
-    }
-  }
-
-  .map-controls-top-right {
-    top: 70px;
-    right: 12px;
-
-    button {
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .project-info-card {
-    width: 260px;
-    max-width: 80vw;
-    max-height: 60vh;
-
-    .project-card-header {
-      height: 100px;
-    }
-
-    .project-card-content {
-      padding: 12px 14px 14px;
-
-      .project-client-name {
-        font-size: 15px;
-      }
-    }
-  }
-}
-
-// ============================================================
-// PROJECT SLIDE PANEL - FIXED Z-INDEX
+// PROJECT MODAL (CENTERED SPLIT LAYOUT)
 // ============================================================
 
 .panel-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 99998;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
-  z-index: 9998; // Lower than search (99999)
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 
   &.open {
     opacity: 1;
     visibility: visible;
   }
-  
+
   &.closing {
     opacity: 0;
     visibility: hidden;
@@ -998,409 +260,245 @@
 
 .project-slide-panel {
   position: fixed;
-  top: 0;
-  right: -30%;
-  width: 30%;
-  height: 100vh;
-  border-bottom-left-radius: 10px;
-  border-top-left-radius: 10px;
+  inset: 0;
+  margin: auto; /* Centers the modal perfectly */
+  width: 90%;
+  max-width: 1000px;
+  height: 65vh;
+  max-height: 600px;
   background: #ffffff;
-  box-shadow: -4px 0 30px rgba(0, 0, 0, 0.2);
-  transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s ease;
-  z-index: 9999; // Lower than search (99999)
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+  z-index: 99999;
+  
+  /* Animation */
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95) translateY(20px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 
   &.open {
-    right: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) translateY(0);
   }
-  
+
   &.closing {
-    right: -30%;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.95) translateY(20px);
   }
 
-  // ----------------------------------------
-  // Header
-  // ----------------------------------------
-
+  // HEADER
   .panel-header {
     display: flex;
     align-items: center;
-    padding: 0.5rem;
+    gap: 12px;
+    padding: 16px 24px;
     border-bottom: 1px solid #e5e7eb;
-    background: #f8f9fa;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    background: #f9fafb;
     flex-shrink: 0;
 
     .panel-close-btn {
       background: none;
       border: none;
       cursor: pointer;
-      padding: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 8px;
       border-radius: 50%;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.08);
-        transform: scale(1.05);
-      }
-
-      &:active {
-        transform: scale(0.95);
-      }
-
-      svg {
-        width: 28px;
-        height: 28px;
-        color: #333;
-      }
+      transition: background 0.2s;
+      &:hover { background: #e5e7eb; }
     }
 
     .panel-title {
-      font-size: 18px;
       font-weight: 600;
-      color: #1a1a1a;
-      margin-left: 12px;
+      color: #374151;
+      font-size: 16px;
     }
   }
 
-  // ----------------------------------------
-  // Content
-  // ----------------------------------------
-
+  // CONTENT
   .panel-content {
     flex: 1;
+    display: flex; 
+    flex-direction: column;
     min-height: 0;
     overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
+  }
 
-    .panel-image {
-      width: 100%;
-      height: 280px;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #f0f0f0;
-      animation: fadeIn 0.6s ease;
-      flex-shrink: 0;
+  // GRID LAYOUT
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    flex: 1;
+    min-height: 100%; 
+  }
 
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-      }
-    }
+  // LEFT: IMAGE
+  .panel-image-col {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 300px; 
+    background: #f3f4f6;
+  }
 
-    .panel-body {
-      padding: 1.5rem;
-      animation: slideUp 0.5s ease;
-      
-      .title {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      
+  .panel-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #6b7280;
+    font-weight: 500;
+    padding: 24px;
+    text-align: center;
+  }
+
+  // RIGHT: CONTENT
+  .panel-text-col {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
       .panel-project-name {
-        margin: 0;
-        padding: 0;
-        font-size: 26px;
+        font-size: 28px;
         font-weight: 700;
-        color: #1a1a1a;
-        line-height: 1.3;
+        color: #111827;
+        margin: 0;
+        line-height: 1.2;
       }
 
       .panel-status {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
+        margin: 0;
 
         .status-badge {
-          width: 12px;
-          height: 12px;
+          width: 10px;
+          height: 10px;
           border-radius: 50%;
-          display: inline-block;
-          animation: pulse 2s infinite;
         }
 
         .status-text {
           font-size: 14px;
           font-weight: 500;
-          color: #666;
+          color: #6b7280;
+          text-transform: capitalize;
         }
       }
+    }
+
+    .panel-category,
+    .panel-completion {
+      display: flex;
+      gap: 8px;
+      font-size: 14px;
+
+      .category-label,
+      .completion-label {
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .category-value,
+      .completion-value {
+        color: #6b7280;
+      }
+    }
+
+    .panel-description p {
+      color: #4b5563;
+      line-height: 1.6;
+      font-size: 15px;
+      margin: 0;
+    }
+
+    .panel-links {
+      h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0 0 8px;
+        color: #374151;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        a {
+          color: #ea580c;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 500;
+          &:hover { text-decoration: underline; }
+        }
+      }
+    }
+
+    .panel-location-wrap {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid #f3f4f6;
 
       .panel-location {
-        font-size: 16px;
-        color: #555;
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
         display: flex;
-        align-items: center;
-        gap: 8px;
+        align-items: flex-start;
+        gap: 6px;
       }
-
-      .panel-category,
-      .panel-completion {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: 1px solid #f0f0f0;
-
-        .category-label,
-        .completion-label {
-          font-size: 14px;
-          color: #888;
-          font-weight: 500;
-        }
-
-        .category-value,
-        .completion-value {
-          font-size: 14px;
-          color: #333;
-          font-weight: 500;
-          text-align: right;
-        }
-      }
-
-      .panel-description {
-        margin: 16px 0;
-        padding: 12px 0;
-
-        p {
-          font-size: 15px;
-          line-height: 1.8;
-          color: #444;
-          margin: 0;
-        }
-      }
-
-      .panel-links {
-        margin: 16px 0;
-        padding: 12px 0;
-        border-top: 1px solid #f0f0f0;
-
-        h4 {
-          font-size: 16px;
-          font-weight: 600;
-          color: #333;
-          margin: 0 0 12px;
-        }
-
-        ul {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-
-          li {
-            margin-bottom: 8px;
-
-            a {
-              color: #0066cc;
-              text-decoration: none;
-              font-size: 14px;
-              transition: all 0.2s ease;
-
-              &:hover {
-                color: #004499;
-                text-decoration: underline;
-                padding-left: 4px;
-              }
-            }
-          }
-        }
-      }
-
-      .panel-contact {
-        margin-top: 20px;
-        padding-top: 16px;
-        border-top: 2px solid #f0f0f0;
-
-        .contact-btn {
-          width: 100%;
-          padding: 16px;
-          background: #1a1a1a;
-          color: #ffffff;
-          border: none;
-          border-radius: 8px;
-          font-size: 16px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-
-          &:hover {
-            background: #333;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-          }
-
-          &:active {
-            transform: translateY(0);
-          }
-        }
-      }
-    }
-  }
-
-  // ----------------------------------------
-  // Scrollbar
-  // ----------------------------------------
-
-  .panel-content::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .panel-content::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  .panel-content::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 3px;
-
-    &:hover {
-      background: #aaa;
     }
   }
 }
 
 // ============================================================
-// RESPONSIVE - PANEL
+// MOBILE RESPONSIVENESS
 // ============================================================
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .project-slide-panel {
-    top: 50%;
-    right: -85%;
-    width: 85%;
-    height: 90vh;
-    max-height: 900px;
-    transform: translateY(-50%);
-    border-radius: 16px 0 0 16px;
-
-    &.open {
-      right: 0;
-      transform: translateY(-50%);
-    }
-    
-    &.closing {
-      right: -85%;
-      transform: translateY(-50%);
-    }
-
-    .panel-content {
-      min-height: 0;
-
-      .panel-image {
-        height: 280px;
-      }
-
-      .panel-body {
-        padding: 1.5rem;
-      }
-    }
-  }
-}
 
 @media (max-width: 768px) {
   .project-slide-panel {
-    top: 50%;
-    right: -100%;
-    width: 100%;
-    height: 90vh;
-    max-height: 90vh;
-    transform: translateY(-50%);
-    border-radius: 16px 16px 0 0;
+    width: 90%;
+    max-width: 400px;
+    height: 80vh;
+    max-height: 85vh;
+    border-radius: 16px;
 
-    &.open {
-      right: 0;
-      transform: translateY(-50%);
-    }
-    
-    &.closing {
-      right: -100%;
-      transform: translateY(-50%);
+    .panel-grid {
+      grid-template-columns: 1fr; 
     }
 
-    .panel-header {
-      padding: 12px 16px;
+    .panel-image-col {
+      min-height: 200px;
+      height: 200px;
     }
 
-    .panel-content {
-      padding: 0;
+    .panel-text-col {
+      padding: 20px;
+      padding-bottom: 30px;
 
-      .panel-image {
-        height: 220px;
-        border-radius: 0;
-      }
-
-      .panel-body {
-        padding: 16px;
-
-        .panel-project-name {
-          font-size: 22px;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .project-slide-panel {
-    top: 50%;
-    width: 100%;
-    height: 92vh;
-    max-height: 92vh;
-    border-radius: 14px 14px 0 0;
-
-    &.open {
-      right: 0;
-      transform: translateY(-50%);
-    }
-    
-    &.closing {
-      right: -100%;
-      transform: translateY(-50%);
-    }
-
-    .panel-header {
-      padding: 10px 14px;
-
-      .panel-title {
-        font-size: 16px;
-      }
-    }
-
-    .panel-content {
-      .panel-image {
-        height: 180px;
-      }
-
-      .panel-body {
-        padding: 14px;
-
-        .panel-project-name {
-          font-size: 20px;
-        }
-
-        .panel-location {
-          font-size: 14px;
-          padding: 10px;
-        }
-
-        .panel-description {
-          p {
-            font-size: 14px;
-          }
-        }
+      .title .panel-project-name {
+        font-size: 22px;
       }
     }
   }
@@ -1410,34 +508,8 @@
 // ANIMATIONS
 // ============================================================
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
+@keyframes spin {
   to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
+    transform: rotate(360deg);
   }
 }

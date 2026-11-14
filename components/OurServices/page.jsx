@@ -3,12 +3,22 @@
 import { useState, useEffect } from "react";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import Image from "next/image";
+import Link from "next/link";
 
 import "@splidejs/react-splide/css";
 import { getImageUrl } from "@/lib/utils/getImagehelper";
 
+// Helper to create a URL-friendly slug from text (e.g., "B.M.C" -> "bmc")
+const createSlug = (text) => {
+  if (!text) return "";
+  return text
+    .toLowerCase()
+    .replace(/\([^)]*\)/g, "") // Remove parentheses like (B.M.C)
+    .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric with hyphen
+    .replace(/(^-|-$)+/g, ""); // Remove leading/trailing hyphens
+};
+
 export default function ServicesSlider() {
-  const [activeCard, setActiveCard] = useState(null);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,12 +26,9 @@ export default function ServicesSlider() {
     const fetchServices = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/homelicensingandliaisoning/`
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/homelicensingandliaisoning/`,
         );
-
         const result = await response.json();
-
-        console.log(result);
 
         if (result.success) {
           setServices(result.data);
@@ -35,12 +42,6 @@ export default function ServicesSlider() {
 
     fetchServices();
   }, []);
-
-  const handleFlip = (id) => {
-    if (window.innerWidth <= 991) {
-      setActiveCard((prev) => (prev === id ? null : id));
-    }
-  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -59,57 +60,56 @@ export default function ServicesSlider() {
         autoplay: true,
         interval: 2000,
         breakpoints: {
-          1199: {
-            perPage: 3,
-          },
-          991: {
-            perPage: 2,
-          },
-          767: {
-            perPage: 1,
-          },
+          1199: { perPage: 3 },
+          991: { perPage: 2 },
+          767: { perPage: 1 },
         },
       }}
     >
-      {services.map((service) => (
-        <SplideSlide key={service.id}>
-          <div
-            className={`flip-service-card ${activeCard === service.id ? "is-flipped" : ""
-              }`}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleFlip(service.id);
-            }}
-          >
-            <div className="flip-service-wrapper">
-              {/* Front */}
-              <div className="flip-service-front">
-                {service.image ? (
-                  <Image
-                    src={getImageUrl(service.image)}
-                    alt={service.name}
-                    width={500}
-                    height={650}
-                    className="flip-service-image"
-                    unoptimized
-                  />
-                ) : null}
+      {services.map((service) => {
+        const subcategorySlug = createSlug(service.name);
+        const targetUrl = `/our-services/liaisoning?sub=${subcategorySlug}`;
 
-                <div className="flip-service-overlay">
-                  <h5>{service.name}</h5>
+        return (
+          <SplideSlide key={service.id}>
+            {/* The card itself is now a relative container */}
+            <div className="flip-service-card" style={{ position: "relative" }}>
+              {/* The Link is now an invisible overlay covering the whole card */}
+              <Link
+                href={targetUrl}
+                style={{ position: "absolute", inset: 0, zIndex: 10 }}
+                aria-label={`View ${service.name}`}
+              />
+
+              <div className="flip-service-wrapper">
+                {/* Front */}
+                <div className="flip-service-front">
+                  {service.image ? (
+                    <Image
+                      src={getImageUrl(service.image)}
+                      alt={service.name}
+                      width={500}
+                      height={50}
+                      className="flip-service-image"
+                      unoptimized
+                    />
+                  ) : null}
+                  <div className="flip-service-overlay">
+                    <h5>{service.name}</h5>
+                  </div>
                 </div>
-              </div>
 
-              {/* Back */}
-              <div className="flip-service-back">
-                <div className="flip-service-content">
-                  <p>{service.description}</p>
+                {/* Back */}
+                <div className="flip-service-back">
+                  <div className="flip-service-content">
+                    <p>{service.description}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </SplideSlide>
-      ))}
+          </SplideSlide>
+        );
+      })}
     </Splide>
   );
 }

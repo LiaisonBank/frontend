@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Chip from "@mui/material/Chip";
-import Select from "react-select";
+import Select, { components } from "react-select";
 import "./ProjectDetails.scss";
 import ApiError from "../ApiError/ApiError";
 
@@ -15,23 +15,66 @@ const PROJECTS_ENDPOINT = `${API_BASE_URL}/api/projects/distinct`;
 
 /* ---------- icons ---------- */
 const IconSearch = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    aria-hidden="true"
+  >
     <circle cx="11" cy="11" r="7" />
     <path d="m20 20-4-4" />
   </svg>
 );
 const IconPin = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    aria-hidden="true"
+  >
     <path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z" />
     <circle cx="12" cy="10" r="2.4" />
   </svg>
 );
 
+/* ---------- custom menu list to allow scrolling ---------- */
+const CustomMenuList = (props) => (
+  <components.MenuList
+    {...props}
+    innerProps={{
+      ...props.innerProps,
+      "data-lenis-prevent": true, // For Lenis
+      "data-scroll-prevent-window": true, // For Locomotive Scroll
+    }}
+  >
+    {props.children}
+  </components.MenuList>
+);
+
 /* ---------- helpers ---------- */
 const NOISE_TOKENS = new Set([
-  "png", "jpg", "jpeg", "gif", "webp", "svg", "pdf", "psd", "ai",
-  "mp4", "mov", "avi", "webm",
-  "null", "n/a", "na", "none", "undefined", "-", "",
+  "png",
+  "jpg",
+  "jpeg",
+  "gif",
+  "webp",
+  "svg",
+  "pdf",
+  "psd",
+  "ai",
+  "mp4",
+  "mov",
+  "avi",
+  "webm",
+  "null",
+  "n/a",
+  "na",
+  "none",
+  "undefined",
+  "-",
+  "",
 ]);
 
 const cleanStr = (v) => {
@@ -59,7 +102,9 @@ const sortAlpha = (a, b) =>
 
 /* Build a react-select option list with an "All" head */
 const buildOptions = (values, allLabel) => {
-  const cleaned = [...new Set(values.map(cleanStr).filter(Boolean))].sort(sortAlpha);
+  const cleaned = [...new Set(values.map(cleanStr).filter(Boolean))].sort(
+    sortAlpha,
+  );
   return [
     { value: "All", label: allLabel },
     ...cleaned.map((v) => ({ value: v, label: v })),
@@ -92,7 +137,10 @@ export default function ProjectDetails({ projectCounts }) {
   /* ---------- debounce search ---------- */
   useEffect(() => {
     if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-    searchTimerRef.current = setTimeout(() => setSearchTerm(searchInput.trim()), 300);
+    searchTimerRef.current = setTimeout(
+      () => setSearchTerm(searchInput.trim()),
+      300,
+    );
     return () => searchTimerRef.current && clearTimeout(searchTimerRef.current);
   }, [searchInput]);
 
@@ -104,10 +152,13 @@ export default function ProjectDetails({ projectCounts }) {
 
   /* ---------- normalization ---------- */
   const normalize = useCallback((p, idx) => {
-    const title = cleanStr(p.title) || cleanStr(p.client_name) || "Untitled Project";
+    const title =
+      cleanStr(p.title) || cleanStr(p.client_name) || "Untitled Project";
     const clientRaw = cleanStr(p.client_name);
     const clientName =
-      clientRaw && clientRaw.toLowerCase() !== title.toLowerCase() ? clientRaw : null;
+      clientRaw && clientRaw.toLowerCase() !== title.toLowerCase()
+        ? clientRaw
+        : null;
 
     const projectTypes = uniq(cleanArr(p.projectsCategory)); // industry
     const services = uniq(cleanArr(p.category)); // services
@@ -160,7 +211,10 @@ export default function ProjectDetails({ projectCounts }) {
       // Loop until backend says no more pages.
       // Safety cap prevents infinite loops on malformed responses.
       while (page <= 200) {
-        const qs = new URLSearchParams({ page: String(page), limit: String(PAGE) });
+        const qs = new URLSearchParams({
+          page: String(page),
+          limit: String(PAGE),
+        });
         const res = await fetch(`${PROJECTS_ENDPOINT}?${qs}`, {
           signal: controller.signal,
           headers: { Accept: "application/json" },
@@ -174,7 +228,9 @@ export default function ProjectDetails({ projectCounts }) {
 
         const data = await res.json();
         const raw = extract(data);
-        collected.push(...raw.map((p, i) => normalize(p, collected.length + i)));
+        collected.push(
+          ...raw.map((p, i) => normalize(p, collected.length + i)),
+        );
 
         const hasNext =
           data?.pagination?.has_next ??
@@ -223,19 +279,30 @@ export default function ProjectDetails({ projectCounts }) {
   }, [allProjects]);
 
   const categoryOptions = useMemo(
-    () => buildOptions(allProjects.flatMap((p) => p.services), "All Services"),
+    () =>
+      buildOptions(
+        allProjects.flatMap((p) => p.services),
+        "All Services",
+      ),
     [allProjects],
   );
 
   const industryOptions = useMemo(
-    () => buildOptions(allProjects.flatMap((p) => p.projectTypes), "All Industries"),
+    () =>
+      buildOptions(
+        allProjects.flatMap((p) => p.projectTypes),
+        "All Industries",
+      ),
     [allProjects],
   );
 
   const locationOptions = useMemo(
-    () => buildOptions(allProjects.map((p) => p.location), "All Locations"),
+    () =>
+      buildOptions(
+        allProjects.map((p) => p.location),
+        "All Locations",
+      ),
     [allProjects],
-    
   );
 
   /* ---------- filtering ---------- */
@@ -248,8 +315,10 @@ export default function ProjectDetails({ projectCounts }) {
 
     return allProjects.filter((p) => {
       if (st !== "all" && p.status.toLowerCase() !== st) return false;
-      if (cat !== "all" && !p.services.some((s) => s.toLowerCase() === cat)) return false;
-      if (ind !== "all" && !p.projectTypes.some((t) => t.toLowerCase() === ind)) return false;
+      if (cat !== "all" && !p.services.some((s) => s.toLowerCase() === cat))
+        return false;
+      if (ind !== "all" && !p.projectTypes.some((t) => t.toLowerCase() === ind))
+        return false;
       if (loc !== "all" && p.location.toLowerCase() !== loc) return false;
       if (term && !p._searchBlob.includes(term)) return false;
       return true;
@@ -310,7 +379,11 @@ export default function ProjectDetails({ projectCounts }) {
   /* ---------- full-table skeleton ---------- */
   if (loading && allProjects.length === 0) {
     return (
-      <section className="archive" aria-busy="true" aria-label="Loading project archive">
+      <section
+        className="archive"
+        aria-busy="true"
+        aria-label="Loading project archive"
+      >
         <div className="archive-inner">
           <div className="sk-toolbar">
             <div className="sk-line sk-search" />
@@ -376,7 +449,9 @@ export default function ProjectDetails({ projectCounts }) {
         <div className="row-top">
           <h3 className="row-title">{project.title}</h3>
           <div className="row-meta">
-            {project.clientName && <span className="meta-client">{project.clientName}</span>}
+            {project.clientName && (
+              <span className="meta-client">{project.clientName}</span>
+            )}
             {project.location && (
               <span className="meta-location">
                 <IconPin /> {project.location}
@@ -389,7 +464,9 @@ export default function ProjectDetails({ projectCounts }) {
           {project.projectTypes.length > 0 && (
             <div className="tag-group">
               <span className="tag-label">Industry</span>
-              <span className="tag-values">{project.projectTypes.join(" · ")}</span>
+              <span className="tag-values">
+                {project.projectTypes.join(" · ")}
+              </span>
             </div>
           )}
           {project.services.length > 0 && (
@@ -427,7 +504,7 @@ export default function ProjectDetails({ projectCounts }) {
               aria-label="Search projects"
               autoComplete="off"
             />
-            {searchInput && (
+            {/* {searchInput && (
               <button
                 className="search-clear"
                 onClick={() => setSearchInput("")}
@@ -435,13 +512,17 @@ export default function ProjectDetails({ projectCounts }) {
               >
                 ×
               </button>
-            )}
+            )} */}
           </div>
 
           <div className="toolbar-selects">
             <Select
+              components={{ MenuList: CustomMenuList }}
               inputId="f-category"
-              value={categoryOptions.find((o) => o.value === category) || categoryOptions[0]}
+              value={
+                categoryOptions.find((o) => o.value === category) ||
+                categoryOptions[0]
+              }
               options={categoryOptions}
               onChange={(o) => setCategory(o?.value ?? "All")}
               className="archive-select"
@@ -450,8 +531,12 @@ export default function ProjectDetails({ projectCounts }) {
               aria-label="Service category"
             />
             <Select
+              components={{ MenuList: CustomMenuList }}
               inputId="f-industry"
-              value={industryOptions.find((o) => o.value === industry) || industryOptions[0]}
+              value={
+                industryOptions.find((o) => o.value === industry) ||
+                industryOptions[0]
+              }
               options={industryOptions}
               onChange={(o) => setIndustry(o?.value ?? "All")}
               className="archive-select"
@@ -460,8 +545,12 @@ export default function ProjectDetails({ projectCounts }) {
               aria-label="Industry"
             />
             <Select
+              components={{ MenuList: CustomMenuList }}
               inputId="f-status"
-              value={statusOptions.find((o) => o.value === status) || statusOptions[0]}
+              value={
+                statusOptions.find((o) => o.value === status) ||
+                statusOptions[0]
+              }
               options={statusOptions}
               onChange={(o) => setStatus(o?.value ?? "All")}
               className="archive-select"
@@ -470,10 +559,13 @@ export default function ProjectDetails({ projectCounts }) {
               aria-label="Project status"
             />
             <Select
+              components={{ MenuList: CustomMenuList }}
               inputId="f-location"
-              value={locationOptions.find((o) => o.value === location) || locationOptions[0]}
+              value={
+                locationOptions.find((o) => o.value === location) ||
+                locationOptions[0]
+              }
               options={locationOptions}
-              
               onChange={(o) => setLocation(o?.value ?? "All")}
               className="archive-select"
               classNamePrefix="archive-select"
@@ -525,7 +617,10 @@ export default function ProjectDetails({ projectCounts }) {
         {!loading && filtered.length === 0 && (
           <div className="archive-empty">
             <h3>No projects found</h3>
-            <p>Try adjusting your search or filters to find what you're looking for.</p>
+            <p>
+              Try adjusting your search or filters to find what you're looking
+              for.
+            </p>
             <button onClick={clearAllFilters}>Clear Filters</button>
           </div>
         )}
@@ -535,7 +630,13 @@ export default function ProjectDetails({ projectCounts }) {
           <div className="archive-list" role="list">
             {visibleProjects.map(renderRow)}
 
-            {hasMore && <div ref={observerRef} className="scroll-sentinel" aria-hidden="true" />}
+            {hasMore && (
+              <div
+                ref={observerRef}
+                className="scroll-sentinel"
+                aria-hidden="true"
+              />
+            )}
 
             {hasMore && (
               <div className="archive-more">
