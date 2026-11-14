@@ -1,7 +1,7 @@
 import HomePage from "./home/page";
 
 export const metadata = {
-  title: "Government Liaison, Licensing & Compliance Services in Mumbai | Liaison Bank",
+  title: "Liaison Bank - Government Liaison, Licensing & Compliance Services in Mumbai",
   // title: "Liaison Bank | Business Licensing & Government Liaison Services Mumbai",
 
   description:

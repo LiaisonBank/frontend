@@ -592,9 +592,9 @@ const FloatingChatbot = () => {
                   <button className="dropdown-item" onClick={handleStartAPI} role="menuitem">
                     Start New Conversation
                   </button>
-                  <button className="dropdown-item" onClick={handleClearHistory} role="menuitem">
+                  {/* <button className="dropdown-item" onClick={handleClearHistory} role="menuitem">
                     Clear Chat History
-                  </button>
+                  </button> */}
                   <button
                     className="dropdown-item exit-item"
                     onClick={handleExitBot}

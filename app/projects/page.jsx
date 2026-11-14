@@ -957,11 +957,11 @@ export default function ProjectsPage() {
                     projectsByStatus.completed.length
                   }
                   className="total-value"
-                  duration={20000}
+                  duration={5000}
                 />
               </span>
               <span className="stat-label">Completed</span>
-              <span className="stat-mini">From the year of 2023</span>
+              {/* <span className="stat-mini">From the year of 2023</span> */}
             </div>
 
             {/* In Progress */}
@@ -991,7 +991,7 @@ export default function ProjectsPage() {
                 />
               </span>
               <span className="stat-label">In Progress</span>
-              <span className="stat-mini">From the month of 2026</span>
+              {/* <span className="stat-mini">From the month of 2026</span> */}
             </div>
 
             {/* Upcoming */}
@@ -1021,7 +1021,7 @@ export default function ProjectsPage() {
                 /> &nbsp;+
               </span>
               <span className="stat-label">Upcoming</span>
-              <span className="stat-mini">From the month of September</span>
+              {/* <span className="stat-mini">From the month of September</span> */}
             </div>
           </div>
 

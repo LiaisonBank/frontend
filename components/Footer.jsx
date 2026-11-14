@@ -6,7 +6,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { importantLinks } from "../lib/data/menus";
-import logoScrolled from "@/assets/images/logo_grey.png";
+// import logoScrolled from "@/assets/images/logo_grey.png";
+import logoScrolled from "@/assets/images/company/Liaison Bank logo_high_resolution.png";
+
 
 import Modal from "@/components/ModalDialog/Modal";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
@@ -56,15 +58,14 @@ export default function Footer() {
             {/* Brand */}
             <div className="footer-brand">
               <Link href="/" onClick={scrollToTop}>
-                <Image
-                  src={logoScrolled}
-                  alt="Liaison Bank"
-                  title="Liaison Bank"
-                  width={200}
-                  height={56}
-                  priority
-                  className="footer-logo"
-                />
+               <Image
+  src={logoScrolled}
+  alt="Liaison Bank"
+  title="Liaison Bank"
+  width={300} // Set a realistic base width
+  height={100} // Let the aspect ratio dictate the height
+  className="footer-logo"
+/>
               </Link>
 
               <p className="footer-text">

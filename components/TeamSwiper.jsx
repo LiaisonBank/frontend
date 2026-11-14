@@ -47,7 +47,8 @@ const TEAM_GROUPS = {
     ],
   },
   adminArchitecture: {
-    title: "Admin & Architect",
+    // title: "Admin & Architect",
+    title: "Admin",
     designations: [
       "Admin",
       "Architecture",
