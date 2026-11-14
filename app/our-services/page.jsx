@@ -11,8 +11,10 @@ import { getImageUrl } from "../../lib/utils/getImagehelper";
 import ApiError from "@/components/ApiError/ApiError";
 import useBodyClass from "@/components/useBodyClass";
 
-const FALLBACK_IMAGE = '/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png';
-const HERO_BANNER = "/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png";
+const FALLBACK_IMAGE =
+  "/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png";
+const HERO_BANNER =
+  "/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png";
 
 const getFeaturesForCategory = (categoryName) => {
   const featuresMap = {
@@ -108,7 +110,7 @@ const getMockData = () => [
     description:
       "NOC coordination, departmental liaisoning, and regulatory filings that keep your project timeline intact — with direct working relationships across departments.",
     image: getImageUrl(
-      "/images/businessman-application-human-digital-business.jpg"
+      "/images/businessman-application-human-digital-business.jpg",
     ),
     features: getFeaturesForCategory("Liaisoning"),
   },
@@ -175,24 +177,44 @@ const APPROACH = [
 
 const FAQS = [
   {
-    q: "What licensing services do you provide for new businesses?",
-    a: "We provide business license registration, trade license applications, GST registration, and statutory permit filings for new and existing businesses. Our licensing team handles the full application process, documentation, and follow-ups with the licensing authority.",
+    q: "What services does Liaison Bank provide?",
+    a: "Liaison Bank provides a range of business support services, including licensing, government liaisoning, regulatory compliance, electrical services, fire safety, piped natural gas (PNG) solutions, and annual maintenance contracts (AMC). We help businesses manage their regulatory and technical requirements through coordinated service support.",
   },
   {
-    q: "How long does a fire NOC approval take?",
-    a: "Fire NOC approvals typically take 15–30 working days, depending on the building category and department workload. We prepare the fire safety audit, submit documentation, and coordinate inspections to avoid delays.",
+    q: "How can Liaison Bank help my business with government approvals and compliance?",
+    a: "We support businesses throughout the approval and compliance process, from understanding requirements and preparing documentation to coordinating applications, communicating with relevant government departments, and following up on approval status. Our aim is to make complex administrative processes more organized and manageable.",
   },
   {
-    q: "What does an electrical safety audit include?",
-    a: "An electrical safety audit covers load analysis, wiring inspection, earthing compliance, panel checks, and CEIG approval support. The audit helps meet statutory electrical safety requirements for commercial and industrial facilities.",
+    q: "Which industries and business sectors do you serve?",
+    a: "We support businesses across multiple sectors, including construction, healthcare, food and beverages, hospitality, commercial establishments, and industrial facilities. Our services are tailored to the regulatory, licensing, and technical requirements of each business and project.",
   },
   {
-    q: "Do you offer AMC services for compliance systems?",
-    a: "Yes. Our AMC services include annual maintenance contracts for electrical, fire safety, and PNG systems — with scheduled inspections, documentation, and compliance support throughout the contract period.",
+    q: "Can Liaison Bank manage multiple services and approvals for a single project?",
+    a: "Yes. We can coordinate multiple service requirements under a single project, including licensing, government liaisoning, fire safety, electrical compliance, and PNG-related services. Our integrated approach helps streamline documentation, departmental coordination, and project-related follow-ups.",
   },
   {
-    q: "Can you handle multiple compliance requirements together?",
-    a: "Yes. Many clients work with us across licensing, liaisoning, fire safety, and electrical compliance simultaneously. A single account manager coordinates the timeline so nothing slips.",
+    q: "Do you provide technical services in addition to licensing and liaisoning?",
+    a: "Yes. Along with licensing and government liaisoning, our service portfolio includes fire safety systems, electrical audits and certification support, piped natural gas (PNG) solutions, and related technical services. These services help businesses address both regulatory and operational requirements.",
+  },
+  {
+    q: "How does Liaison Bank handle the documentation and application process?",
+    a: "We help identify the documentation and procedural requirements relevant to your service or project, assist with preparing and organizing the necessary paperwork, coordinate application submissions, and follow up with the concerned authorities. The exact documentation requirements depend on the type of service and applicable regulations.",
+  },
+  {
+    q: "How long does it take to complete a licensing or approval process?",
+    a: "The timeline depends on the type of license or approval, the applicable regulatory authority, document completeness, inspection requirements, and departmental processing time. Once we understand your requirement, our team can help explain the expected process and relevant stages.",
+  },
+  {
+    q: "Does Liaison Bank provide ongoing maintenance and compliance support?",
+    a: "Yes. Our Annual Maintenance Contract (AMC) services provide scheduled maintenance and support for applicable systems, including electrical, fire safety, and PNG installations. The scope and maintenance schedule are determined according to the facility's requirements and agreed service arrangement.",
+  },
+  {
+    q: "How will I receive updates about my applications and project progress?",
+    a: "Our team coordinates departmental follow-ups and tracks relevant application and approval stages. We keep clients informed about progress, pending documentation, required actions, and the next steps throughout the engagement.",
+  },
+  {
+    q: "How can I get started with Liaison Bank's services?",
+    a: "Getting started is simple. Contact our team through the enquiry form, phone, or email and share your business details and service requirements. Our team will understand your needs, discuss the relevant service options, and guide you through the appropriate next steps.",
   },
 ];
 
@@ -201,13 +223,21 @@ export default function OurServices() {
   const [servicesData, setServicesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [openFaqs, setOpenFaqs] = useState({});
+
+  const toggleFaq = (question) => {
+    setOpenFaqs((previous) => ({
+      ...previous,
+      [question]: !previous[question],
+    }));
+  };
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
         setLoading(true);
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/categories`
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/categories`,
         );
         if (!response.ok) throw new Error("Failed to fetch services");
         const result = await response.json();
@@ -226,7 +256,7 @@ export default function OurServices() {
               } catch (err) {
                 console.error(
                   `Error generating URL for ${category.name}:`,
-                  err
+                  err,
                 );
                 fullImageUrl = FALLBACK_IMAGE;
               }
@@ -453,9 +483,7 @@ export default function OurServices() {
                       </span>
                       <span className="ec-entry-tag">{service.tag}</span>
                     </div>
-                    <h3 className="ec-entry-title">
-                      {service.name} Services
-                    </h3>
+                    <h3 className="ec-entry-title">{service.name} Services</h3>
                     <p className="ec-entry-desc">{service.description}</p>
                     <div className="ec-entry-deliverables">
                       {service.features.slice(0, 4).map((f, idx) => (
@@ -502,9 +530,9 @@ export default function OurServices() {
                 Handled by specialists, not generalists.
               </h2>
               <p className="ec-approach-lede">
-                We don't outsource your file. Every engagement is led by a
-                named specialist who owns the process from first document to
-                final certification.
+                We don't outsource your file. Every engagement is led by a named
+                specialist who owns the process from first document to final
+                certification.
               </p>
             </div>
             <ul className="ec-approach-list">
@@ -540,7 +568,10 @@ export default function OurServices() {
               </p>
             </div>
             <div className="ec-cta-actions">
-              <Link href="/contact-us-liaison-bank" className="ec-btn ec-btn--solid">
+              <Link
+                href="/contact-us-liaison-bank"
+                className="ec-btn ec-btn--solid"
+              >
                 Request a Free Consultation
                 <svg
                   viewBox="0 0 24 24"
@@ -567,23 +598,56 @@ export default function OurServices() {
       <section className="ec-faq">
         <div className="container">
           <div className="ec-faq-grid">
-            <div>
+            <div className="ec-faq-heading">
               <span className="ec-overline">Common questions</span>
-              <h2 className="ec-faq-title">
-                Questions, answered.
-              </h2>
+              <h2 className="ec-faq-title">Questions, answered.</h2>
               <p className="ec-faq-lede">
                 Can't find what you're looking for? Our compliance specialists
                 are happy to answer questions about your specific requirement.
               </p>
             </div>
 
-            <div className="ec-faq-list">
-              {FAQS.map((item, i) => (
-                <details key={i} className="ec-faq-item">
-                  <summary className="ec-faq-q">{item.q}</summary>
-                  <p className="ec-faq-a">{item.a}</p>
-                </details>
+            <div className="ec-faq-columns">
+              {[
+                FAQS.slice(0, Math.ceil(FAQS.length / 2)),
+                FAQS.slice(Math.ceil(FAQS.length / 2)),
+              ].map((faqColumn, columnIndex) => (
+                <div className="ec-faq-list" key={`faq-column-${columnIndex}`}>
+                  {faqColumn.map((item, itemIndex) => {
+                    const isOpen = Boolean(openFaqs[item.q]);
+                    const answerId = `faq-answer-${columnIndex}-${itemIndex}`;
+
+                    return (
+                      <div
+                        key={`${columnIndex}-${itemIndex}`}
+                        className={`ec-faq-item ${isOpen ? "is-open" : ""}`}
+                      >
+                        <button
+                          type="button"
+                          className={`ec-faq-q ${isOpen ? "is-open" : ""}`}
+                          aria-expanded={isOpen}
+                          aria-controls={answerId}
+                          onClick={() => toggleFaq(item.q)}
+                        >
+                          <span>{item.q}</span>
+                          <span className="ec-faq-icon" aria-hidden="true">
+                            {isOpen ? "×" : "+"}
+                          </span>
+                        </button>
+
+                        <div
+                          id={answerId}
+                          className={`ec-faq-answer ${isOpen ? "is-open" : ""}`}
+                          aria-hidden={!isOpen}
+                        >
+                          <div className="ec-faq-answer-inner">
+                            <p className="ec-faq-a">{item.a}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               ))}
             </div>
           </div>

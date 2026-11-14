@@ -157,10 +157,11 @@ function ScrollProgress() {
    ============================================================ */
 function SectionNav({ sections, activeId, onSelect }) {
   return (
-    <nav className="section-nav" aria-label="On this page">
+    <nav className="section-nav" aria-label="On this page" data-lenis-prevent>
       <div className="section-nav-title">On this page</div>
       <ul className="section-nav-list">
         {sections.map((section, i) => {
+          console.log("section", sections);
           const isActive = activeId === section.id;
           return (
             <li key={section.id}>
@@ -322,6 +323,7 @@ function RichContent({ content }) {
    MAIN COMPONENT
    ============================================================ */
 export default function SubServiceDetail({ initialData }) {
+  console.log("initialData", initialData);
   const params = useParams();
   const slug = params?.slug;
   const itemSlug = params?.itemSlug;
@@ -355,10 +357,12 @@ export default function SubServiceDetail({ initialData }) {
 
   useEffect(() => {
     if (!slug || !itemSlug) return;
+    console.log("inbside useeffect");
     const fetchItemDetail = async () => {
       try {
         setLoading(true); setError(null);
         let itemData = initialData;
+        console.log("initititi", initialData);
         if (!itemData) {
           const itemResponse = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/${itemSlug}`);
           if (!itemResponse.ok) {
@@ -383,6 +387,7 @@ export default function SubServiceDetail({ initialData }) {
         else if (typeof rawSections === "string") {
           try { const parsed = JSON.parse(rawSections); sections = Array.isArray(parsed) ? parsed : []; } catch { sections = []; }
         }
+        console.log("sectionsss", sections);
         sections = sections.filter(Boolean).map((s) => ({ title: s?.title || s?.heading || "", content: s?.content || s?.body || s?.description || "" })).filter((s) => s.title || s.content);
 
         setItem({
@@ -390,6 +395,8 @@ export default function SubServiceDetail({ initialData }) {
           fullDescription: itemData.full_description || itemData.description || "", servicesList, contentSections: sections,
           subCategoryId: itemData.subCategoryId, subCategoryName: itemData.subCategoryName,
         });
+
+        console.log("itemss", item);
         try {
           const categoryResponse = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/category/${slug}`);
           if (categoryResponse.ok) { const categoryData = await categoryResponse.json(); setParentCategory({ id: categoryData.id, name: categoryData.name, slug: categoryData.slug }); }
@@ -430,6 +437,7 @@ export default function SubServiceDetail({ initialData }) {
     ...(item.fullDescription ? [{ id: "overview", title: "Overview" }] : []),
     ...item.contentSections.map((section, index) => ({ id: `item-section-${index + 1}`, title: section.title })).filter((section) => section.title),
   ];
+  console.log("page sections", pageSections);
   if (!pageSections.length) pageSections.push({ id: "overview", title: "Overview" });
 
   const allSections = [
@@ -491,36 +499,39 @@ export default function SubServiceDetail({ initialData }) {
             </motion.div>
           </div> */}
 
+          {item.servicesList.length > 0 && (
+            <SpotlightCard className="services-card-full">
+              <div className="card-kicker">
+                <span className="kicker-dot" />
+                <span>Inclusions</span>
+              </div>
+              <h2 className="card-title">What&apos;s included</h2>
+              <ul className="services-list">
+                {item.servicesList.map((service, i) => (
+                  <motion.li
+                    key={i}
+                    className="service-item"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.05, duration: 0.3 }}
+                  >
+                    <span className="service-check">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                    </span>
+                    <span>{service}</span>
+                  </motion.li>
+                ))}
+              </ul>
+            </SpotlightCard>
+          )}
+
+
           <div className="item-content-layout">
             {/* Sidebar */}
             <aside className="item-aside">
               <div className="item-aside-sticky">
-                {item.servicesList.length > 0 && (
-                  <SpotlightCard className="services-card">
-                    <div className="card-kicker">
-                      <span className="kicker-dot" />
-                      <span>Inclusions</span>
-                    </div>
-                    <h2 className="card-title">What&apos;s included</h2>
-                    <ul className="services-list">
-                      {item.servicesList.map((service, i) => (
-                        <motion.li
-                          key={i}
-                          className="service-item"
-                          initial={{ opacity: 0, x: -10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: i * 0.05, duration: 0.3 }}
-                        >
-                          <span className="service-check">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                          </span>
-                          <span>{service}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
-                  </SpotlightCard>
-                )}
+                
 
                 <SectionNav sections={pageSections} activeId={activeSectionId} onSelect={setActiveSectionId} />
               </div>

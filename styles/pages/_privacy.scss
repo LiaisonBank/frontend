@@ -1,73 +1,153 @@
-.privacy{
-    position:relative;
-    .policy {
-        list-style-type: none;
-        counter-reset: item;
-        max-width:100%;
-        padding: 0;
-        font-family: $font-family;
-        display: block;
-        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); 
-        gap: 20px; 
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        li {
-          display:block;
-          // align-items: center;
-          // justify-content: space-between;
-          cursor: pointer;
-          transition: all .6s;
-          padding-left: 100px;
-          padding-top: 15px;
-          padding-bottom: 15px;
-          overflow: hidden;
-          counter-increment: item;
-          position: relative;
-          margin-bottom: 1.2rem;
-          border: 1px solid $secodary-bg-color;
-          border-radius: 2px;
-          text-align: left;
-          animation: fadeIn 0.5s ease forwards;
-          border-radius: 1rem;
-          &::before {
-            content: counter(item, decimal-leading-zero) " ";
-            font-weight: 500;
-            font-size: 43px;
-            color: rgba(0, 0, 0, 0);
-            -webkit-text-stroke: 1px $secodary-bg-color;
-            position: absolute;
-            top: 50%;
-            line-height: 1;
-            left: 25px;
-            width: 55px;
-            text-align: right;
-            transform: translateY(-50%);
-          }
 
-          &:hover {
-            filter: brightness(1.1);
-            cursor: pointer;
-            // background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
-            background: $secodary-bg-color;
-            color: #fff;
-            &::before{
-              color:white;
-              -webkit-text-stroke: 1px white;
-            } 
-            .location-tag {
-              color: #fff;
-            }
-            a{
-              color:white;
-            }
-          }
-          a{
-            color:#3c3c3c;
-            &:hover{
-              color:white;
-            }
-          }
-        }
+.privacy {
+  position: relative;
+  background: #faf7f0;
+
+  .privacy-content-section {
+    padding: 55px 20px 80px;
+    background: white;
+    min-height: 100vh;
+  }
+
+  .policy-content {
+    max-width: 700px;
+    margin: 0 auto;
+    counter-reset: policy-counter;
+    font-family: "Barlow", sans-serif;
+  }
+
+  .policy-section {
+    position: relative;
+    counter-increment: policy-counter;
+    margin-bottom: 42px;
+
+    &:last-child {
+      margin-bottom: 0;
     }
+
+    h2 {
+      position: relative;
+      font-family: "Barlow", sans-serif;
+      font-size: 25px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: #f97316;
+      margin: 0 0 20px;
+      padding-bottom: 5px;
+
+      &::before {
+        content: counter(policy-counter) ". ";
+        color: #f97316;
+      }
+
+      // Subtle Liaison Bank orange underline
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 34px;
+        height: 2px;
+        background: #f97316;
+      }
+    }
+
+    p {
+      font-family: "Barlow", sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.85;
+      color: #414141;
+      margin: 0;
+    }
+    p + p {
+  margin-top: 14px;
+}
+
+// List styling for structured info (e.g. Candidate & Recruitment)
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  li {
+    position: relative;
+    padding-left: 22px;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: #414141;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 10px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f97316;
+    }
+
+    strong {
+      color: #1f1f1f;
+      font-weight: 600;
+    }
+
+    // Small screens
+    @media (max-width: 767px) {
+      padding-left: 18px;
+      font-size: 14px;
+      line-height: 1.7;
+
+      &::before {
+        top: 9px;
+        width: 6px;
+        height: 6px;
+      }
+    }
+  }
+}
+
+// Keep space after the list before the next paragraph
+ul + p {
+  margin-top: 18px;
+}
+
+    a {
+      color: $primary-color;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: darken($primary-color, 10%);
+        text-decoration: underline;
+      }
+    }
+  }
+
+  @media (max-width: 767px) {
+    .privacy-content-section {
+      padding: 35px 20px 55px;
+    }
+
+    .policy-section {
+      margin-bottom: 32px;
+
+      h2 {
+        font-size: 21px;
+        margin-bottom: 17px;
+        padding-bottom: 11px;
+      }
+
+      p {
+        font-size: 14px;
+        line-height: 1.8;
+      }
+    }
+  }
 }

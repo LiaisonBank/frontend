@@ -300,6 +300,43 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   @media (max-width: 900px) { grid-template-columns: 1fr; gap: 32px; }
 }
 
+.services-card-full {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  border: 1px solid $border;
+  margin-bottom: 40px; /* Space between inclusions and the layout below */
+  
+  /* Change the list to horizontal pills */
+  .services-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+    overflow: visible; /* Override any scroll */
+    max-height: none;
+  }
+
+  .service-item {
+    padding: 10px 16px;
+    background: $orange-50;
+    border-radius: 100px;
+    border: 1px solid $orange-200;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    transition: all 0.2s $ease;
+    
+    &:hover {
+      background: $orange-100;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
+    }
+  }
+}
+
 /* ---------- Sidebar ---------- */
 .item-aside {
   position: relative;
@@ -741,15 +778,32 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   align-self: start;
   max-height: calc(100vh - 136px);
   overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  
+  /* REMOVED overscroll-behavior: contain; */
+  
+  scrollbar-gutter: stable;
+  scrollbar-width:thin;
+  scrollbar-color: $orange-400 #fbf9f6;
 }
 
+/* Chrome, Safari, Edge */
 .section-nav::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
+  width: 2px;
+}
+
+.section-nav::-webkit-scrollbar-track {
+  background: #fbf9f6;
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+.section-nav::-webkit-scrollbar-thumb {
+  background: $orange-500;
+  border-radius: 8px;
+}
+
+.section-nav::-webkit-scrollbar-thumb:hover {
+  background: $orange-600;
 }
 
 /* The deck is the only layout item in the content column. */
