@@ -1,0 +1,485 @@
+
+.clientFlow {
+  --brand: #f26522;
+  --brand-light: #ff985c;
+  --ink: #171717;
+  --muted: #777777;
+
+  position: relative;
+  width: 100%;
+  min-height: unset;
+  padding: 0 !important;
+  margin: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: #ffffff;
+  box-sizing: border-box;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  // CONTAINER
+
+  &__container {
+    position: relative;
+    width: 100%;
+    max-width: 1450px;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  // MAIN STAGE
+
+  &__stage {
+    position: relative;
+    width: 100%;
+    height: 390px;
+    margin: 0 auto;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+  }
+
+  // TRACK CONTAINER
+
+  &__tracks {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    padding: 0;
+  }
+
+  // INDIVIDUAL TRACK
+
+  &__track {
+    position: relative;
+    width: 100%;
+    height: 105px;
+
+    display: flex;
+    align-items: center;
+
+    overflow: hidden;
+    flex-shrink: 0;
+
+    // Fade edges
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      z-index: 5;
+      top: 0;
+      width: 6%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    &::before {
+      left: 0;
+      background: linear-gradient(
+        90deg,
+        #fff 0%,
+        rgba(255, 255, 255, 0.8) 35%,
+        transparent 100%
+      );
+    }
+
+    &::after {
+      right: 0;
+      background: linear-gradient(
+        270deg,
+        #fff 0%,
+        rgba(255, 255, 255, 0.8) 35%,
+        transparent 100%
+      );
+    }
+
+    // First row
+
+    &--1 {
+      .clientFlow__movingTrack {
+        animation-duration: 42s;
+        animation-direction: normal;
+      }
+    }
+
+    // Second row
+
+    &--2 {
+      .clientFlow__movingTrack {
+        animation-duration: 36s;
+        animation-direction: reverse;
+      }
+    }
+
+    // Third row
+
+    &--3 {
+      .clientFlow__movingTrack {
+        animation-duration: 48s;
+        animation-direction: normal;
+      }
+    }
+
+    // Pause on hover
+
+    &:hover {
+      .clientFlow__movingTrack {
+        animation-play-state: paused;
+      }
+    }
+  }
+
+  // MOVING TRACK
+
+  &__movingTrack {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+
+    width: max-content;
+    flex-shrink: 0;
+
+    animation: logoFlow 42s linear infinite;
+
+    will-change: transform;
+  }
+
+  // LOGO CARD
+
+  &__logo {
+    position: relative;
+
+    width: 165px;
+    height: 95px;
+
+    padding: 12px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 14px;
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+
+    box-shadow:
+      0 5px 18px rgba(0, 0, 0, 0.035),
+      0 12px 30px rgba(0, 0, 0, 0.025);
+
+    transition:
+      transform 0.4s ease,
+      box-shadow 0.4s ease,
+      border-color 0.4s ease;
+
+    &:hover {
+      transform: translateY(-6px) scale(1.04);
+
+      border-color: rgba(242, 101, 34, 0.5);
+
+      box-shadow:
+        0 15px 35px rgba(242, 101, 34, 0.12),
+        0 0 20px rgba(242, 101, 34, 0.05);
+    }
+  }
+
+  // LOGO INNER
+
+  &__logoInner {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // LOGO IMAGE
+
+  &__image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    object-fit: contain;
+    object-position: center;
+
+    transition: transform 0.4s ease;
+
+    .clientFlow__logo:hover & {
+      transform: scale(1.1);
+    }
+  }
+
+  // FALLBACK
+
+  &__fallback {
+    color: var(--brand);
+    font-size: 30px;
+    font-weight: 800;
+  }
+
+  // LOADING
+
+  &__status {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 13px;
+
+    color: var(--brand);
+    font-size: 14px;
+    font-weight: 700;
+
+    z-index: 10;
+    white-space: nowrap;
+  }
+
+  &__loader {
+    width: 34px;
+    height: 34px;
+
+    border: 3px solid rgba(242, 101, 34, 0.15);
+    border-top-color: var(--brand);
+
+    border-radius: 50%;
+
+    animation: flowSpin 0.8s linear infinite;
+  }
+}
+
+// ==========================================
+// ANIMATIONS
+// ==========================================
+
+@keyframes logoFlow {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes flowSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ==========================================
+// LARGE DESKTOP
+// ==========================================
+
+@media (min-width: 1500px) {
+  .clientFlow {
+    &__stage {
+      height: 420px;
+    }
+
+    &__track {
+      height: 115px;
+    }
+
+    &__logo {
+      width: 180px;
+      height: 100px;
+    }
+
+    &__movingTrack {
+      gap: 30px;
+    }
+  }
+}
+
+// ==========================================
+// LAPTOP
+// ==========================================
+
+@media (max-width: 1200px) {
+  .clientFlow {
+    &__stage {
+      height: 370px;
+    }
+
+    &__logo {
+      width: 150px;
+      height: 90px;
+    }
+
+    &__movingTrack {
+      gap: 20px;
+    }
+  }
+}
+
+// ==========================================
+// TABLET
+// ==========================================
+
+@media (max-width: 1024px) {
+  .clientFlow {
+    &__stage {
+      height: 340px;
+    }
+
+    &__track {
+      height: 95px;
+    }
+
+    &__logo {
+      width: 135px;
+      height: 82px;
+      padding: 10px;
+    }
+
+    &__movingTrack {
+      gap: 18px;
+    }
+  }
+}
+
+// ==========================================
+// MOBILE
+// ==========================================
+
+@media (max-width: 768px) {
+  .clientFlow {
+    &__stage {
+      height: 290px;
+    }
+
+    &__track {
+      height: 80px;
+
+      &::before,
+      &::after {
+        width: 4%;
+      }
+    }
+
+    &__movingTrack {
+      gap: 14px;
+    }
+
+    &__logo {
+      width: 115px;
+      height: 70px;
+      padding: 8px;
+      border-radius: 11px;
+    }
+
+    &__fallback {
+      font-size: 24px;
+    }
+  }
+}
+
+// ==========================================
+// SMALL MOBILE
+// ==========================================
+
+@media (max-width: 480px) {
+  .clientFlow {
+    &__stage {
+      height: 255px;
+    }
+
+    &__track {
+      height: 72px;
+    }
+
+    &__movingTrack {
+      gap: 11px;
+    }
+
+    &__logo {
+      width: 100px;
+      height: 64px;
+      padding: 7px;
+      border-radius: 10px;
+    }
+
+    &__fallback {
+      font-size: 21px;
+    }
+
+    &__status {
+      font-size: 12px;
+    }
+  }
+}
+
+// ==========================================
+// EXTRA SMALL MOBILE
+// ==========================================
+
+@media (max-width: 360px) {
+  .clientFlow {
+    &__stage {
+      height: 225px;
+    }
+
+    &__track {
+      height: 65px;
+    }
+
+    &__movingTrack {
+      gap: 9px;
+    }
+
+    &__logo {
+      width: 88px;
+      height: 58px;
+      padding: 6px;
+    }
+  }
+}
+
+// ==========================================
+// REDUCED MOTION
+// ==========================================
+
+@media (prefers-reduced-motion: reduce) {
+  .clientFlow {
+    &__movingTrack,
+    &__loader {
+      animation: none !important;
+    }
+
+    &__logo,
+    &__image {
+      transition: none !important;
+    }
+  }
+}

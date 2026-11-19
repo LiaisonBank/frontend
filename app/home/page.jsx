@@ -5,9 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import useBodyClass from '@/components/useBodyClass';
 import devaImg from "@/assets/images/ceoImg1.webp"
-import ClientScroller from "@/components/ClientScroller"
+import ClientScroller from "@/components/ClientScroller/ClientScroller"
 import useFancybox from '@/components/useFancybox';
-import TestimonialSlider from '@/components/TestimonialSlider';
+import TestimonialSlider from '@/components/Testimonals/TestimonialSlider';
 import CertificateGallery from "@/components/awards/page";
 import FAQAccordion from "@/components/Faqs/FAQAccordion";
 import OurServices from "@/components/OurServices/page";

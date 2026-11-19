@@ -389,6 +389,8 @@ function Panel({ node, direction, onForward, onNavigate }) {
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
 
   const { setServiceModalOpen } = useModal();
 
@@ -406,6 +408,39 @@ export default function Header() {
      -------------------------------------------------------------------------- */
 
   const megaCloseTimerRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Always show navbar at the top
+      if (currentScrollY <= 50) {
+        setIsVisible(true);
+        setIsSticky(false);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      setIsSticky(true);
+
+      // Scrolling up → Show navbar
+      if (currentScrollY < lastScrollY.current) {
+        setIsVisible(true);
+      }
+      // Scrolling down → Hide navbar
+      else if (currentScrollY > lastScrollY.current) {
+        setIsVisible(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   /* --------------------------------------------------------------------------
      Mega Menu Timer Cleanup
@@ -568,9 +603,9 @@ export default function Header() {
           ====================================================================== */}
 
       <header
-        className={`fixed w-full z-50 py-2 transition-all ${
-          isSticky ? "is-sticky" : ""
-        }`}
+        className={`fixed top-0 left-0 w-full z-50 py-2 transition-transform duration-300 ease-in-out ${
+          isVisible ? "translate-y-0" : "-translate-y-full"
+        } ${isSticky ? "is-sticky" : ""}`}
       >
         <div className="container-fluid mx-auto">
           <nav
