@@ -151,7 +151,7 @@ body.ourservices {
 .ec-hero-inner {
   position: relative;
   z-index: 2;
-  padding-top: 160px;
+  padding-top: calc(var(--header-h) + 60px);
   padding-bottom: 56px;
   width: 100%;
 }
@@ -364,6 +364,7 @@ body.ourservices {
   letter-spacing: 0.005em;
 }
 
+/* Find the existing .ec-entry-link block and replace/augment it with this: */
 .ec-entry-link {
   display: inline-flex;
   align-items: center;
@@ -373,21 +374,50 @@ body.ourservices {
   font-weight: 500;
   color: var(--ec-ink);
   text-decoration: none;
-  padding-bottom: 4px;
+  padding: 0 0 4px 0; /* Reset padding for button */
+  border: 0; /* Reset default button border */
   border-bottom: 1px solid var(--ec-ink);
+  background: transparent; /* Reset default button background */
+  cursor: pointer;
   transition: color 0.2s ease, border-color 0.2s ease;
 }
+
 .ec-entry-link:hover {
   color: var(--ec-brand-orange);
   border-color: var(--ec-brand-orange);
 }
+
+.ec-entry-link:hover svg {
+  transform: translateX(4px);
+}
+
+/* Add disabled state styling for when the loader is active */
+.ec-entry-link:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  pointer-events: none;
+}
+
 .ec-entry-link svg {
   width: 14px;
   height: 14px;
   transition: transform 0.2s ease;
+  color: #f97316;
 }
-.ec-entry-link:hover svg {
-  transform: translateX(4px);
+.ec-entry-link span{
+  color: #f97316;
+}
+
+
+/* Add this new animation for the loader */
+@keyframes ecSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ec-loader-spinner {
+  animation: ecSpin 1s linear infinite;
 }
 
 /* ============ APPROACH ============ */

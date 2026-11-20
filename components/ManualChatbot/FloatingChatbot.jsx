@@ -571,13 +571,13 @@ const FloatingChatbot = () => {
           <span className="close-icon">✕</span>
         ) : (
           <>
-            {/* <Image
-              src="/chat-girl.png"
+            <Image
+              src="/chatbot_withbg.png"
               alt="Liaison Bank logo"
               width={192}
               height={192}
               priority
-            />{" "} */}
+            />{" "}
             {unreadCount > 0 && (
               <span className="unread-badge">{unreadCount}</span>
             )}

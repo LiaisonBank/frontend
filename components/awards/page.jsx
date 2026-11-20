@@ -154,18 +154,18 @@ function BarrelCard({
             </div>
 
             <div className="card-frame__footer">
-              <span></span>
-              <small>CERTIFICATE OF RECOGNITION</small>
-              <span></span>
+              {/* <span></span> */}
+              <small>{cert.caption}</small>
+              {/* <span></span> */}
             </div>
 
             <div className="card-glass" />
           </div>
         </a>
 
-        <div className="card-plaque">
+        {/* <div className="card-plaque">
           <span className="plaque-text">{cert.caption}</span>
-        </div>
+        </div> */}
       </motion.div>
     </motion.div>
   );
@@ -373,7 +373,7 @@ export default function AwardP() {
 
     const id = setInterval(() => {
       rotateToStep(currentStep() + 1);
-    }, 5000);
+    }, 2000);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [n, isHovered, isDragging, isExpanded, angleStep]);
@@ -417,8 +417,8 @@ export default function AwardP() {
       {/* 3D Barrel — drag left/right to spin */}
       <div
         className="barrel-stage"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        // onMouseEnter={() => setIsHovered(true)}
+        // onMouseLeave={() => setIsHovered(false)}
       >
         <motion.div
           className="barrel"

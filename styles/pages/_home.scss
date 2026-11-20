@@ -363,16 +363,12 @@
 
 // CEO Message Full Section - Clean Quote Style
 section.ceo-message-full {
-  width: 100%;
-  min-height: 400px;
-  background: #fff;
-  contain: layout;
-  
+ position: relative;
+  z-index: 1;
+  overflow: hidden;      // lagta hua content bahar na nikle
+
   .ceo-full-container {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
+    will-change: transform;
   }
 
   .ceo-full-grid {
@@ -1104,16 +1100,15 @@ section.ceo-message-full {
   }
 
   section.ourservices {
-    margin: 0;
-    padding: 0;
-    // background-color: var(--themeht-secondary-color);
-    width: 100%;
-    // background-image: url("/images/expertisebg.webp");
-    // background-repeat: no-repeat;
-    background-size: cover;
-    position: relative;
-    background-attachment: fixed;
-    background-position: right center;
+   margin: 0;
+  padding: 0;
+  width: 100%;
+  position: relative;
+  z-index: 2;                       // CEO ke upar
+  background: #fff;                 // poora CEO cover kare (Santa wali jagah bhi)
+  background-attachment: scroll;    // fixed hata diya
+  border-radius: 36px 36px 0 0;
+  box-shadow: 0 -24px 60px rgba(0, 0, 0, 0.12);
     // z-index: 1;
     &::before {
       content: "";
@@ -1125,6 +1120,63 @@ section.ceo-message-full {
       z-index: -1;
       // filter: invert(100%);
     }
+    @media (max-width: 575px) { border-radius: 24px 24px 0 0; }
+    .licensing-card-wrapper {
+  position: relative;
+  max-width: 1200px;
+  margin: 280px auto 0; /* auto margins = card centered + room for Santa above */
+  padding: 0 15px;
+
+  @media (max-width: 991px) { margin-top: 220px; }
+  @media (max-width: 575px)  { margin-top: 160px; }
+
+  /* ---- Santa: horizontal center of the card ---- */
+  .santa-wrap {
+    position: absolute;
+    left: 50%;                       /* ✅ centers on the card */
+    transform: translateX(-50%);     /* ✅ offset his own width → true center */
+    bottom: calc(100% - 40px);       /* hands rest on card's top edge */
+    width: 480px;
+    max-width: 90%;
+    z-index: 1;                      /* BEHIND the card */
+    pointer-events: none;
+
+    @media (max-width: 991px) { width: 350px; bottom: calc(100% - 30px); }
+    @media (max-width: 575px) { width: 280px; bottom: calc(100% - 20px); }
+  }
+
+  // .santa-inner {
+  //   opacity: 0;                      /* JS scroll effect reveals him */
+  //   transform: translate3d(0, 320px, 0);
+  //   will-change: transform, opacity;
+  // }
+
+  .santa-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+  }
+
+  /* ---- Card: IN FRONT of Santa ---- */
+  .licensing-card {
+    position: relative;
+    // z-index: 2;
+    background: #fff;
+    border-radius: 28px;
+    padding: 70px 48px 48px; /* top padding = space for Santa's hands overlap */
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
+    will-change: transform;
+
+    @media (max-width: 991px) { padding: 50px 28px 32px; }
+    @media (max-width: 575px) { padding: 40px 18px 24px; border-radius: 20px; }
+
+    .licensing-card-body {
+      position: relative;
+      z-index: 1;
+    }
+  }
+}
     .splide__slide {  
         width: 325px;
           display: flex;
@@ -1744,6 +1796,83 @@ section.ceo-message-full {
          height: 291px;
        }
      }
+
+     .santa-title-anchor {
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+    will-change: transform; // parallax drift
+
+    // .santa-wrap {
+    //   --santa-size: clamp(340px, 40vw, 620px); // BIG, as you wanted
+
+    //   position: absolute;
+    //   left: 50%;
+    //   bottom: calc(100% - var(--santa-size) * 0.18); // hands land on text top edge
+    //   transform: translateX(-50%);
+    //   width: var(--santa-size);
+    //   z-index: 0;              // Santa BEHIND all text
+    //   pointer-events: none;
+    //   filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.25));
+
+      // .santa-inner {
+      //   margin: auto;
+      //   opacity: 0;            // hidden until scroll reveals him
+      //   transform: translate3d(0, 320px, 0);
+      //   will-change: transform, opacity; // JS drives entrance + climb
+      // }
+
+    //   .santa-img {
+    //     width: 100%;
+    //     height: auto;
+    //     display: block;
+    //   }
+    // }
+
+    /* 👈 text IN FRONT of Santa */
+    h3 {
+      position: relative;
+      z-index: 3;
+    }
+  }
+
+  /* 👈 subtitle also in front — this was the "text hiding" bug */
+  .section-title {
+    position: relative;
+
+    h5 {
+      position: relative;
+      z-index: 3;
+    }
+  }
+
+  /* readability: white glow so orange text pops over the red suit */
+  .santa-title-anchor h3,
+  .section-title h5 {
+    text-shadow:
+      0 0 12px rgba(255, 255, 255, 0.95),
+      0 0 26px rgba(255, 255, 255, 0.75);
+  }
+
+  @media (max-width: 991px) {
+    .santa-title-anchor .santa-wrap {
+      --santa-size: clamp(220px, 50vw, 340px);
+    }
+  }
+
+  @media (max-width: 575px) {
+    .santa-title-anchor .santa-wrap {
+      --santa-size: 200px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .santa-title-anchor .santa-wrap .santa-inner {
+      opacity: 1;
+      transform: none;
+    }
+  
+  }
 
 
     
