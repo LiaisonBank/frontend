@@ -360,11 +360,11 @@ export default function AboutUsLiaisonPage() {
                 </p>
               </div>
 
-              <div className="vm-indicator">
+              {/* <div className="vm-indicator">
                 <span className="vm-dash"></span>
                 <span className="vm-dot"></span>
                 <span className="vm-dot"></span>
-              </div>
+              </div> */}
             </motion.div>
 
             {/* Right Column: Vision */}
@@ -434,11 +434,11 @@ export default function AboutUsLiaisonPage() {
                 </p>
               </div>
 
-              <div className="vm-indicator">
+              {/* <div className="vm-indicator">
                 <span className="vm-dash"></span>
                 <span className="vm-dot"></span>
                 <span className="vm-dot"></span>
-              </div>
+              </div> */}
             </motion.div>
           </div>
         </section>
