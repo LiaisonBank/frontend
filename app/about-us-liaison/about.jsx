@@ -11,25 +11,23 @@ import {
   Hotel,
   Store,
   Factory,
-  ChevronRight,
-  Briefcase,
-  FileCheck,
-  Flame,
-  Shield,
-  Plug,
-  Clock,
   ArrowRight,
-  Award,
-  Star,
-  ThumbsUp,
   Landmark,
+  FileCheck,
   Fuel,
   ShieldCheck,
   Zap,
   Wrench,
 } from "lucide-react";
 import "./aboutUs.scss";
-import PropertyAcquisition from "./PropertyAcquisition";
+import { motion } from "framer-motion";
+// Add these imports at the top of your file
+import targetImg from "@/assets/images/target_icon.png";
+import arrowImg from "@/assets/images/arrow-1.png";
+import bulbImg from "@/assets/images/bulb.png";
+// Note: Make sure you have saved the stickman image in this folder!
+import stickmanLeaningImg from "@/assets/images/stickman.png";
+import stickmanStandingImg from "@/assets/images/stickMan_standing-1.jpg";
 
 export default function AboutUsLiaisonPage() {
   useBodyClass("about-us");
@@ -107,7 +105,7 @@ export default function AboutUsLiaisonPage() {
     {
       id: 5,
       title: "Electrical Services",
-      tag: "Engeneering",
+      tag: "Engineering",
       icon: Zap,
       description:
         "Professional electrical audit and certification services ensuring your electrical systems are safe, compliant, and efficient.",
@@ -122,7 +120,7 @@ export default function AboutUsLiaisonPage() {
     {
       id: 6,
       title: "AMC Services",
-      tag: "Maintanence",
+      tag: "Maintenance",
       icon: Wrench,
       description:
         "Comprehensive annual maintenance contracts ensuring your business remains compliant throughout the year with dedicated support.",
@@ -165,9 +163,72 @@ export default function AboutUsLiaisonPage() {
     { name: "Industrial", icon: Factory },
   ];
 
+  // --- Image Animation Variants ---
+
+  const arrowVariants = {
+    rest: {
+      x: 160, // Start far to the right
+      y: -10, // Start slightly high
+      z: 10, // Start closer to the camera (3D pop out)
+      rotateY: -60, // Angled in 3D space
+      rotateZ: -20,
+      opacity: 0,
+      scale: 1.4,
+    },
+    hover: {
+      x: -20, // Land on the target
+      y: 10,
+      z: 0, // Land flat against the card
+      rotateY: 2,
+      rotateZ: 0,
+      opacity: 1,
+      scale: 1,
+      transition: { type: "spring", stiffness: 100, damping: 15, mass: 1 },
+    },
+  };
+
+  const targetVariants = {
+    rest: { rotate: 0, scale: 1, z: 0 },
+    hover: {
+      rotate: [0, -10, 10, -5, 5, 0], // Shake on impact
+      scale: 1.05,
+      z: -30, // Push back in 3D space when hit
+      transition: { duration: 0.5, delay: 0.15 },
+    },
+  };
+
+  const standingVariants = {
+    rest: { opacity: 1, scale: 1, z: 0 },
+    hover: { opacity: 0, scale: 0.8, z: -50, transition: { duration: 0.3 } },
+  };
+
+  const leaningVariants = {
+    rest: { opacity: 0, scale: 0.8, z: 50 },
+    hover: {
+      opacity: 1,
+      scale: 1,
+      z: 20,
+      transition: { duration: 0.3, delay: 0.1 },
+    },
+  };
+
+  const bulbVariants = {
+    rest: {
+      scale: 1,
+      filter: "drop-shadow(0px 0px 0px rgba(249,115,22,0))",
+      z: 0,
+    },
+    hover: {
+      scale: 1.1,
+      filter: "drop-shadow(0px 0px 20px rgba(249,115,22,0.8))",
+      z: -20, // Bulb pushes slightly back
+      transition: { type: "spring", stiffness: 300, damping: 10 },
+    },
+  };
+
   return (
     <>
-      {/* Full Screen Hero with Moving Image */}
+      {/* Full Screen Hero */}
       <div className="hero-fullscreen">
         <div className="hero-image-container" ref={imageRef}>
           <Image
@@ -199,13 +260,15 @@ export default function AboutUsLiaisonPage() {
       </div>
 
       <div className="about-page-wrapper">
-        {/* Introduction / Welcome Message */}
+        {/* Introduction */}
         <section className="welcome-section">
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-lg-10">
                 <div className="welcome-box">
-                  <span className="welcome-label">About Us</span>
+                  <div className="section-header">
+                    <h3 className="section-title">About Us</h3>
+                  </div>
                   <p className="welcome-text">
                     <span className="welcome-brand">Liaison Bank </span>{" "}
                     provides end-to-end liaisoning, licensing, and regulatory
@@ -234,14 +297,129 @@ export default function AboutUsLiaisonPage() {
           </div>
         </section>
 
-        {/* Vision & Mission Section */}
+        {/* --- VISION & MISSION SECTION --- */}
         <section className="vision-mission-section">
-          <div className="container">
-            <div className="vm-container">
-              {/* Left Column: Vision */}
-              <div className="vm-column">
-                <h3 className="vm-heading">OUR VISION</h3>
-                <p className="vm-text">
+          <div className="section-header">
+            <h3 className="section-title">Our Mission & Vision</h3>
+          </div>
+          <div className="vm-custom-wrapper">
+            {/* Left Column: Mission */}
+            <motion.div
+              className="vm-custom-card vm-mission"
+              // initial="rest"
+              whileHover="hover"
+              animate="rest"
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              initial={{ opacity: 0, y: 40 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              style={{ perspective: "1000px" }} // Enable 3D
+            >
+              <div className="vm-title-wrapper">
+                <span className="vm-title-line"></span>
+                <h3 className="vm-custom-title">MISSION</h3>
+                <span className="vm-title-line"></span>
+              </div>
+
+              <div className="vm-pin vm-pin-top-right"></div>
+
+              {/* 3D Animation Stage */}
+              <div
+                className="vm-animation-stage"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                <motion.img
+                  src={targetImg.src}
+                  alt="Target"
+                  className="img-target"
+                  variants={targetVariants}
+                  style={{ transformOrigin: "center center" }}
+                />
+                <motion.img
+                  src={arrowImg.src}
+                  alt="Arrow"
+                  className="img-arrow"
+                  variants={arrowVariants}
+                  style={{ transformOrigin: "bottom left" }}
+                />
+              </div>
+
+              <div className="vm-custom-content">
+                <p>
+                  Our mission is to transform complex business challenges into
+                  seamless experiences. From documentation and government
+                  approvals to licensing, permissions, certifications, and
+                  essential business requirements, we simplify every step
+                  through expert guidance, strategic coordination, and
+                  end-to-end support. At Liaison Bank, we believe every business
+                  deserves a smoother path to success. We are committed to
+                  breaking procedural barriers, bridging the gap between
+                  requirements and approvals, and empowering business owners to
+                  focus on what matters most — building, growing, and leading
+                  their businesses.
+                </p>
+              </div>
+
+              <div className="vm-indicator">
+                <span className="vm-dash"></span>
+                <span className="vm-dot"></span>
+                <span className="vm-dot"></span>
+              </div>
+            </motion.div>
+
+            {/* Right Column: Vision */}
+            <motion.div
+              className="vm-custom-card vm-vision"
+              // initial="rest"
+              whileHover="hover"
+              animate="rest"
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              initial={{ opacity: 0, y: 40 }}
+              transition={{
+                duration: 0.7,
+                ease: [0.22, 1, 0.36, 1],
+                delay: 0.2,
+              }}
+              style={{ perspective: "1000px" }}
+            >
+              <div className="vm-title-wrapper">
+                <span className="vm-title-line"></span>
+                <h3 className="vm-custom-title">VISION</h3>
+                <span className="vm-title-line"></span>
+              </div>
+
+              <div className="vm-pin vm-pin-bottom-right"></div>
+
+              {/* 3D Animation Stage */}
+              <div
+                className="vm-animation-stage"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                <motion.img
+                  src={bulbImg.src}
+                  alt="Bulb"
+                  className="img-bulb"
+                  variants={bulbVariants}
+                />
+
+                <motion.img
+                  src={stickmanStandingImg.src}
+                  alt="Standing Stickman"
+                  className="img-stickman"
+                  variants={standingVariants}
+                />
+
+                <motion.img
+                  src={stickmanLeaningImg.src}
+                  alt="Leaning Stickman"
+                  className="img-stickman"
+                  variants={leaningVariants}
+                />
+              </div>
+
+              <div className="vm-custom-content">
+                <p>
                   To become a trusted global leader in comprehensive business
                   support solutions, with an ambitious vision of establishing a
                   presence across every PIN code in India and expanding our
@@ -256,33 +434,12 @@ export default function AboutUsLiaisonPage() {
                 </p>
               </div>
 
-              {/* Center Divider */}
-              <div className="vm-divider"></div>
-
-              {/* Right Column: Mission */}
-              <div className="vm-column">
-                <h3 className="vm-heading">OUR MISSION</h3>
-                <p className="vm-text">
-                  Our mission is to transform complex business challenges into
-                  seamless experiences. From documentation and government
-                  approvals to licensing, permissions, certifications, and
-                  essential business requirements, we simplify every step
-                  through expert guidance, strategic coordination, and
-                  end-to-end support.
-                </p>
-                <p className="vm-text">
-                  At Liaison Bank, we believe every business deserves a smoother
-                  path to success. We are committed to breaking procedural
-                  barriers, bridging the gap between requirements and approvals,
-                  and empowering business owners to focus on what matters most —
-                  building, growing, and leading their businesses.
-                </p>
-                {/* <p className="vm-tagline">
-                  Simplifying Processes. Breaking Barriers. Empowering
-                  Businesses.
-                </p> */}
+              <div className="vm-indicator">
+                <span className="vm-dash"></span>
+                <span className="vm-dot"></span>
+                <span className="vm-dot"></span>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -301,7 +458,6 @@ export default function AboutUsLiaisonPage() {
                 const Icon = service.icon;
                 const isPropertyAcquisition = service.id === 7;
 
-                // Render the 7th card (No Link, just a div)
                 if (isPropertyAcquisition) {
                   return (
                     <div
@@ -338,7 +494,6 @@ export default function AboutUsLiaisonPage() {
                   );
                 }
 
-                // Render the first 6 cards (With Link)
                 return (
                   <div
                     key={service.id}
@@ -371,11 +526,6 @@ export default function AboutUsLiaisonPage() {
             </div>
           </div>
         </section>
-
-        {/* ---property acquisition */}
-        {/* <section className="property-acquisition-section">
-          <PropertyAcquisition />
-        </section> */}
 
         {/* Sectors */}
         <section className="sectors-section">

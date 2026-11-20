@@ -31,18 +31,15 @@ import {
   Users,
 } from "lucide-react";
 
-const HTMLFlipBook = dynamic(
-  () => import("react-pageflip"),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="pdf-loading">
-        <div className="loading-spinner" />
-        <p>Preparing flipbook...</p>
-      </div>
-    ),
-  }
-);
+const HTMLFlipBook = dynamic(() => import("react-pageflip"), {
+  ssr: false,
+  loading: () => (
+    <div className="pdf-loading">
+      <div className="loading-spinner" />
+      <p>Preparing flipbook...</p>
+    </div>
+  ),
+});
 
 export default function Downloads() {
   useBodyClass("downloads");
@@ -75,7 +72,8 @@ export default function Downloads() {
         name: "Company Profile",
         file: "liaisoncompanyprofile",
         category: "profile",
-        description: "Comprehensive overview of our company, services, and achievements",
+        description:
+          "Comprehensive overview of our company, services, and achievements",
         size: "3.5 MB",
         color: "#f97316",
         maxPages: 30,
@@ -84,7 +82,8 @@ export default function Downloads() {
         name: "Liaisoning Services",
         file: "liaisoning-new",
         category: "liaisoning",
-        description: "Complete guide to liaisoning services and government approvals",
+        description:
+          "Complete guide to liaisoning services and government approvals",
         size: "2.4 MB",
         color: "#f97316",
         maxPages: 20,
@@ -111,7 +110,8 @@ export default function Downloads() {
         name: "Fire Services",
         file: "fss",
         category: "fire-safety",
-        description: "Fire safety audits, risk assessments, and certification services",
+        description:
+          "Fire safety audits, risk assessments, and certification services",
         size: "3.1 MB",
         color: "#f97316",
         maxPages: 14,
@@ -129,13 +129,14 @@ export default function Downloads() {
         name: "AMC Services",
         file: "amc",
         category: "amc",
-        description: "Comprehensive annual maintenance contracts for compliance",
+        description:
+          "Comprehensive annual maintenance contracts for compliance",
         size: "1.5 MB",
         color: "#f97316",
         maxPages: 16,
       },
     ],
-    []
+    [],
   );
 
   // Categories
@@ -150,7 +151,7 @@ export default function Downloads() {
       { id: "electrical", label: "Electrical" },
       { id: "amc", label: "AMC" },
     ],
-    []
+    [],
   );
 
   // Filter
@@ -161,7 +162,8 @@ export default function Downloads() {
         !search ||
         item.name.toLowerCase().includes(search) ||
         item.description.toLowerCase().includes(search);
-      const matchesCategory = activeFilter === "all" || item.category === activeFilter;
+      const matchesCategory =
+        activeFilter === "all" || item.category === activeFilter;
       return matchesSearch && matchesCategory;
     });
   }, [downloads, searchTerm, activeFilter]);
@@ -202,7 +204,7 @@ export default function Downloads() {
 
         const exists = await new Promise((resolve) => {
           const img = new Image();
-          img.crossOrigin = 'anonymous';
+          img.crossOrigin = "anonymous";
 
           const timeoutId = setTimeout(() => {
             resolve(false);
@@ -226,12 +228,19 @@ export default function Downloads() {
           setLoadingProgress(Math.round((pageNum / maxPages) * 100));
         } else {
           consecutiveFailures++;
-          if (foundPages > 0 && consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-            console.log(`Stopped at page ${pageNum} after ${consecutiveFailures} consecutive failures`);
+          if (
+            foundPages > 0 &&
+            consecutiveFailures >= MAX_CONSECUTIVE_FAILURES
+          ) {
+            console.log(
+              `Stopped at page ${pageNum} after ${consecutiveFailures} consecutive failures`,
+            );
             break;
           }
           if (foundPages === 0 && pageNum >= 10) {
-            console.log(`No pages found for ${documentData.file} after checking 10 pages`);
+            console.log(
+              `No pages found for ${documentData.file} after checking 10 pages`,
+            );
             break;
           }
         }
@@ -242,9 +251,11 @@ export default function Downloads() {
       }
 
       // Ensure even number of pages
-      const blankImage = '/placeholder-page.jpg';
+      const blankImage = "/placeholder-page.jpg";
       if (foundPages % 2 !== 0) {
-        console.log(`Adding blank page to make even number (${foundPages} -> ${foundPages + 1})`);
+        console.log(
+          `Adding blank page to make even number (${foundPages} -> ${foundPages + 1})`,
+        );
         images.push(null); // ← null = render a blank page, no <img>
         foundPages++;
       }
@@ -256,7 +267,6 @@ export default function Downloads() {
       setCurrentPage(1);
 
       console.log(`✅ Loaded ${foundPages} pages for ${documentData.file}`);
-
     } catch (err) {
       console.error("Flipbook loading failed:", err);
       setError(`Unable to load "${documentData.name}". Please try again.`);
@@ -272,17 +282,20 @@ export default function Downloads() {
   }, [isClient, currentDoc, loadFlipbook]);
 
   // Change document
-  const changeDocument = useCallback((index) => {
-    if (index < 0 || index >= filteredDownloads.length) return;
-    setFlipbookReady(false);
-    setPageImages([]);
-    setTotalPages(0);
-    setCurrentPage(1);
-    setLoadingProgress(0);
-    setError("");
-    setIsLoading(true);
-    setCurrentIndex(index);
-  }, [filteredDownloads.length]);
+  const changeDocument = useCallback(
+    (index) => {
+      if (index < 0 || index >= filteredDownloads.length) return;
+      setFlipbookReady(false);
+      setPageImages([]);
+      setTotalPages(0);
+      setCurrentPage(1);
+      setLoadingProgress(0);
+      setError("");
+      setIsLoading(true);
+      setCurrentIndex(index);
+    },
+    [filteredDownloads.length],
+  );
 
   // Navigation
   const goToPrevious = useCallback(() => {
@@ -348,13 +361,24 @@ export default function Downloads() {
 
   // ✅ FIX: Only auto-open fullscreen when "All" is clicked and NOT already triggered
   useEffect(() => {
-    if (activeFilter === "all" && flipbookReady && !isFullscreen && !autoFullscreenTriggered) {
+    if (
+      activeFilter === "all" &&
+      flipbookReady &&
+      !isFullscreen &&
+      !autoFullscreenTriggered
+    ) {
       setAutoFullscreenTriggered(true);
       setTimeout(() => {
         toggleFullscreen();
       }, 500);
     }
-  }, [activeFilter, flipbookReady, isFullscreen, autoFullscreenTriggered, toggleFullscreen]);
+  }, [
+    activeFilter,
+    flipbookReady,
+    isFullscreen,
+    autoFullscreenTriggered,
+    toggleFullscreen,
+  ]);
 
   // ✅ Reset auto-fullscreen flag when leaving "All" filter
   useEffect(() => {
@@ -368,8 +392,9 @@ export default function Downloads() {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
     };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
   // Loading state
@@ -403,20 +428,23 @@ export default function Downloads() {
               </div>
 
               <h1 className="hero-title">
-                Company Profile{" "}
-                <span className="hero-highlight">Download</span>
+                Company Profile <span className="hero-highlight">Download</span>
               </h1>
 
               <p className="hero-description">
-                Browse through our comprehensive collection
-                of service guides and compliance documents.
+                Browse through our comprehensive collection of service guides
+                and compliance documents.
               </p>
             </div>
           </div>
         </div>
 
         <div className="hero-shape">
-          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            viewBox="0 0 1440 120"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
               d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
               fill="white"
@@ -465,7 +493,9 @@ export default function Downloads() {
                   <div className="pdf-info">
                     <div className="pdf-details">
                       <h3 className="pdf-title">{currentDoc.name}</h3>
-                      <p className="pdf-description">{currentDoc.description}</p>
+                      <p className="pdf-description">
+                        {currentDoc.description}
+                      </p>
                       <div className="pdf-meta">
                         <span className="meta-item">
                           <File size={14} />
@@ -513,7 +543,11 @@ export default function Downloads() {
                       <FileText size={60} />
                       <h3>Unable to load document</h3>
                       <p>{error}</p>
-                      <button type="button" className="btn-retry" onClick={retryPDF}>
+                      <button
+                        type="button"
+                        className="btn-retry"
+                        onClick={retryPDF}
+                      >
                         Try Again
                       </button>
                     </div>
@@ -552,7 +586,10 @@ export default function Downloads() {
                                 loading="lazy"
                               />
                             ) : (
-                              <div className="flipbook-blank-page" aria-hidden="true" />
+                              <div
+                                className="flipbook-blank-page"
+                                aria-hidden="true"
+                              />
                             )}
                           </div>
                         ))}
@@ -589,8 +626,13 @@ export default function Downloads() {
                           <ArrowLeft size={16} />
                         </button>
                         <span className="page-info">
-                          <span className="current-page-num">{currentPage}</span>
-                          <span className="total-page-num"> / {totalPages}</span>
+                          <span className="current-page-num">
+                            {currentPage}
+                          </span>
+                          <span className="total-page-num">
+                            {" "}
+                            / {totalPages}
+                          </span>
                         </span>
                         <button
                           type="button"
@@ -612,7 +654,9 @@ export default function Downloads() {
                           style={{ width: `${loadingProgress}%` }}
                         />
                       </div>
-                      <span className="loading-percentage">{loadingProgress}%</span>
+                      <span className="loading-percentage">
+                        {loadingProgress}%
+                      </span>
                     </div>
                   )}
                 </div>
@@ -676,7 +720,12 @@ export default function Downloads() {
         /* HERO */
         .downloads-hero {
           position: relative;
-          background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 50%, #0d1b2a 100%);
+          background: linear-gradient(
+            135deg,
+            #0a1628 0%,
+            #1a2a4a 50%,
+            #0d1b2a 100%
+          );
           padding: 100px 0 100px;
           overflow: hidden;
         }
@@ -733,9 +782,16 @@ export default function Downloads() {
         }
 
         @keyframes float {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(20px, -30px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
+          0%,
+          100% {
+            transform: translate(0, 0) scale(1);
+          }
+          33% {
+            transform: translate(20px, -30px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
         }
 
         .hero-badge {
@@ -771,7 +827,7 @@ export default function Downloads() {
           position: relative;
         }
         .hero-highlight::after {
-          content: '';
+          content: "";
           position: absolute;
           bottom: 4px;
           left: 0;
@@ -851,7 +907,7 @@ export default function Downloads() {
         }
 
         .filter-btn::after {
-          content: '';
+          content: "";
           position: absolute;
           bottom: -2px;
           left: 50%;
@@ -991,7 +1047,6 @@ export default function Downloads() {
           color: #6b7280;
           cursor: pointer;
           transition: all 0.3s ease;
-         
         }
         .btn-fullscreen:hover {
           border-color: #ef7f1a;
@@ -1015,17 +1070,22 @@ export default function Downloads() {
           white-space: nowrap;
           border: none;
           position: relative;
-            &::before{
+          &::before {
             content: "";
             position: absolute;
             transform: translateX(-100%);
             pointer-events: none;
             inset: 0px;
-            background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
-            animation: 4.5s ease-in-out 1.5s infinite normal none running ctaShimmer;
+            background: linear-gradient(
+              120deg,
+              transparent 30%,
+              rgba(255, 255, 255, 0.3) 50%,
+              transparent 70%
+            );
+            animation: 4.5s ease-in-out 1.5s infinite normal none running
+              ctaShimmer;
           }
         }
-        
 
         /* VIEWER */
         .pdf-viewer-container {
@@ -1095,8 +1155,12 @@ export default function Downloads() {
           transition: all 0.3s ease;
           box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
         }
-        .page-btn-left { left: 20px; }
-        .page-btn-right { right: 20px; }
+        .page-btn-left {
+          left: 20px;
+        }
+        .page-btn-right {
+          right: 20px;
+        }
 
         .page-btn:hover:not(:disabled) {
           background: rgba(0, 0, 0, 0.75);
@@ -1234,7 +1298,7 @@ export default function Downloads() {
           box-shadow: 0 0 16px rgba(239, 127, 26, 0.3);
         }
         .doc-dot.active::after {
-          content: '';
+          content: "";
           position: absolute;
           inset: -3px;
           border-radius: 8px;
@@ -1284,7 +1348,9 @@ export default function Downloads() {
         }
 
         @keyframes spin {
-          to { transform: rotate(360deg); }
+          to {
+            transform: rotate(360deg);
+          }
         }
 
         /* ERROR */
@@ -1367,236 +1433,380 @@ export default function Downloads() {
 
         /* RESPONSIVE */
         @media (max-width: 992px) {
-          .hero-title { font-size: 2.8rem; }
-          .pdf-title { font-size: 1.2rem; }
-          .filter-btn { padding: 10px 14px; min-height: 60px; }
-          .filter-label { font-size: 0.65rem; }
+          .hero-title {
+            font-size: 2.8rem;
+          }
+          .pdf-title {
+            font-size: 1.2rem;
+          }
+          .filter-btn {
+            padding: 10px 14px;
+            min-height: 60px;
+          }
+          .filter-label {
+            font-size: 0.65rem;
+          }
         }
 
         @media (max-width: 768px) {
-          .downloads-hero { padding: 100px 0 50px; }
-          .hero-title { font-size: 2.2rem; }
-          .hero-description { font-size: 0.95rem; padding: 0 15px; }
-          .downloads-section { padding: 20px 0 40px; }
-          .filter-wrapper { gap: 4px; padding: 2px 4px; }
-          .filter-btn { padding: 8px 10px; min-height: 50px; gap: 4px; }
-          .filter-label { font-size: 0.6rem; }
-          .pdf-card-header { flex-direction: column; align-items: stretch; padding: 16px 20px; }
-          .pdf-info { align-items: flex-start; }
-          .pdf-actions { width: 100%; justify-content: flex-end; }
-          .btn-download-pdf { flex: 1; justify-content: center; }
-          .pdf-viewer-container { min-height: 180px; }
-          .page-btn { width: 38px; height: 38px; }
-          .page-btn-left { left: 10px; }
-          .page-btn-right { right: 10px; }
-          .page-btn svg { width: 18px; height: 18px; }
-          .pdf-controls { bottom: 14px; padding: 4px 12px; }
-          .page-info { min-width: 60px; font-size: 0.8rem; }
-          .doc-navigation { padding: 12px 16px; flex-direction: column; gap: 10px; }
-          .doc-dots { gap: 6px; }
-          .doc-nav-btn { padding: 6px 14px; font-size: 0.8rem; }
-          .flipbook-wrapper { padding: 12px 0; }
+          .downloads-hero {
+            padding: 100px 0 50px;
+          }
+          .hero-title {
+            font-size: 2.2rem;
+          }
+          .hero-description {
+            font-size: 0.95rem;
+            padding: 0 15px;
+          }
+          .downloads-section {
+            padding: 20px 0 40px;
+          }
+          .filter-wrapper {
+            gap: 4px;
+            padding: 2px 4px;
+          }
+          .filter-btn {
+            padding: 8px 10px;
+            min-height: 50px;
+            gap: 4px;
+          }
+          .filter-label {
+            font-size: 0.6rem;
+          }
+          .pdf-card-header {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 16px 20px;
+          }
+          .pdf-info {
+            align-items: flex-start;
+          }
+          .pdf-actions {
+            width: 100%;
+            justify-content: flex-end;
+          }
+          .btn-download-pdf {
+            flex: 1;
+            justify-content: center;
+          }
+          .pdf-viewer-container {
+            min-height: 180px;
+          }
+          .page-btn {
+            width: 38px;
+            height: 38px;
+          }
+          .page-btn-left {
+            left: 10px;
+          }
+          .page-btn-right {
+            right: 10px;
+          }
+          .page-btn svg {
+            width: 18px;
+            height: 18px;
+          }
+          .pdf-controls {
+            bottom: 14px;
+            padding: 4px 12px;
+          }
+          .page-info {
+            min-width: 60px;
+            font-size: 0.8rem;
+          }
+          .doc-navigation {
+            padding: 12px 16px;
+            flex-direction: column;
+            gap: 10px;
+          }
+          .doc-dots {
+            gap: 6px;
+          }
+          .doc-nav-btn {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+          }
+          .flipbook-wrapper {
+            padding: 12px 0;
+          }
         }
 
         @media (max-width: 480px) {
-          .hero-title { font-size: 1.8rem; }
-          .hero-badge { font-size: 0.8rem; padding: 6px 16px; }
-          .filter-wrapper { gap: 2px; }
-          .filter-btn { padding: 6px 8px; min-height: 42px; gap: 3px; }
-          .filter-label { font-size: 0.5rem; }
-          .pdf-info { flex-direction: column; align-items: flex-start; gap: 10px; }
-          .pdf-title { font-size: 1rem; }
-          .pdf-description { font-size: 0.8rem; }
-          .pdf-viewer-container { min-height: 150px; }
-          .pdf-loading { min-height: 150px; }
-          .page-btn { width: 32px; height: 32px; }
-          .page-btn-left { left: 6px; }
-          .page-btn-right { right: 6px; }
-          .page-btn svg { width: 16px; height: 16px; }
-          .pdf-controls { bottom: 8px; padding: 3px 10px; gap: 6px; }
-          .page-info { min-width: 50px; font-size: 0.7rem; }
-          .page-nav-btn { width: 26px; height: 26px; }
-          .page-nav-btn svg { width: 14px; height: 14px; }
-          .loading-progress { width: 160px; }
-          .doc-dot { width: 10px; height: 10px; }
-          .doc-dot.active { width: 24px; }
-          .btn-download-pdf { padding: 8px 16px; font-size: 0.8rem; }
-          .btn-fullscreen { width: 38px; height: 38px; }
+          .hero-title {
+            font-size: 1.8rem;
+          }
+          .hero-badge {
+            font-size: 0.8rem;
+            padding: 6px 16px;
+          }
+          .filter-wrapper {
+            gap: 2px;
+          }
+          .filter-btn {
+            padding: 6px 8px;
+            min-height: 42px;
+            gap: 3px;
+          }
+          .filter-label {
+            font-size: 0.5rem;
+          }
+          .pdf-info {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+          }
+          .pdf-title {
+            font-size: 1rem;
+          }
+          .pdf-description {
+            font-size: 0.8rem;
+          }
+          .pdf-viewer-container {
+            min-height: 150px;
+          }
+          .pdf-loading {
+            min-height: 150px;
+          }
+          .page-btn {
+            width: 32px;
+            height: 32px;
+          }
+          .page-btn-left {
+            left: 6px;
+          }
+          .page-btn-right {
+            right: 6px;
+          }
+          .page-btn svg {
+            width: 16px;
+            height: 16px;
+          }
+          .pdf-controls {
+            bottom: 8px;
+            padding: 3px 10px;
+            gap: 6px;
+          }
+          .page-info {
+            min-width: 50px;
+            font-size: 0.7rem;
+          }
+          .page-nav-btn {
+            width: 26px;
+            height: 26px;
+          }
+          .page-nav-btn svg {
+            width: 14px;
+            height: 14px;
+          }
+          .loading-progress {
+            width: 160px;
+          }
+          .doc-dot {
+            width: 10px;
+            height: 10px;
+          }
+          .doc-dot.active {
+            width: 24px;
+          }
+          .btn-download-pdf {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+          }
+          .btn-fullscreen {
+            width: 38px;
+            height: 38px;
+          }
         }
 
         @media (max-width: 360px) {
-          .filter-wrapper { gap: 2px; }
-          .filter-btn { padding: 4px 6px; min-height: 36px; }
-          .filter-label { font-size: 0.45rem; }
+          .filter-wrapper {
+            gap: 2px;
+          }
+          .filter-btn {
+            padding: 4px 6px;
+            min-height: 36px;
+          }
+          .filter-label {
+            font-size: 0.45rem;
+          }
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
-        
-/* =========================================
+        ::-webkit-scrollbar {
+          width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #d1d5db;
+          border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #9ca3af;
+        }
+
+        /* =========================================
    MOBILE RESPONSIVENESS — DOWNLOADS PAGE
    ========================================= */
 
-@media (max-width: 768px) {
-  /* Leave sufficient space below the fixed navbar */
-  .downloads-hero {
-    padding: 125px 0 55px;
-  }
+        @media (max-width: 768px) {
+          /* Leave sufficient space below the fixed navbar */
+          .downloads-hero {
+            padding: 125px 0 55px;
+          }
 
-  /* Keep category filters in one horizontally scrollable row */
-  .filter-wrapper {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    gap: 8px;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 8px 12px 12px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
+          /* Keep category filters in one horizontally scrollable row */
+          .filter-wrapper {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            gap: 8px;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 8px 12px 12px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+          }
 
-  .filter-wrapper::-webkit-scrollbar {
-    display: none;
-  }
+          .filter-wrapper::-webkit-scrollbar {
+            display: none;
+          }
 
-  .filter-btn {
-    flex: 0 0 auto;
-    width: auto;
-    min-height: 44px;
-    padding: 9px 13px;
-    white-space: nowrap;
-  }
+          .filter-btn {
+            flex: 0 0 auto;
+            width: auto;
+            min-height: 44px;
+            padding: 9px 13px;
+            white-space: nowrap;
+          }
 
-  .filter-label {
-    font-size: 13px;
-    line-height: 1.2;
-    white-space: nowrap;
-  }
+          .filter-label {
+            font-size: 13px;
+            line-height: 1.2;
+            white-space: nowrap;
+          }
 
-  /* Reduce horizontal padding around the document */
-  .downloads-section {
-    padding: 20px 12px 40px;
-  }
+          /* Reduce horizontal padding around the document */
+          .downloads-section {
+            padding: 20px 12px 40px;
+          }
 
-  .pdf-flipbook-card {
-    width: 100%;
-    min-width: 0;
-    border-radius: 12px;
-  }
+          .pdf-flipbook-card {
+            width: 100%;
+            min-width: 0;
+            border-radius: 12px;
+          }
 
-  .pdf-card-header {
-    gap: 14px;
-    padding: 16px;
-  }
+          .pdf-card-header {
+            gap: 14px;
+            padding: 16px;
+          }
 
-  .pdf-title {
-    font-size: 1.1rem;
-    line-height: 1.35;
-  }
+          .pdf-title {
+            font-size: 1.1rem;
+            line-height: 1.35;
+          }
 
-  .pdf-description {
-    font-size: 0.85rem;
-    line-height: 1.55;
-  }
+          .pdf-description {
+            font-size: 0.85rem;
+            line-height: 1.55;
+          }
 
-  .pdf-actions {
-    display: flex;
-    width: 100%;
-    gap: 8px;
-  }
+          .pdf-actions {
+            display: flex;
+            width: 100%;
+            gap: 8px;
+          }
 
-  .btn-download-pdf {
-    min-width: 0;
-    padding: 10px 12px;
-    font-size: 0.8rem;
-  }
+          .btn-download-pdf {
+            min-width: 0;
+            padding: 10px 12px;
+            font-size: 0.8rem;
+          }
 
-  .flipbook-wrapper {
-    width: 100%;
-    min-width: 0;
-    overflow: hidden;
-  }
+          .flipbook-wrapper {
+            width: 100%;
+            min-width: 0;
+            overflow: hidden;
+          }
 
-  .flipbook-container {
-    max-width: 100% !important;
-  }
-}
+          .flipbook-container {
+            max-width: 100% !important;
+          }
+        }
 
-@media (max-width: 480px) {
-  .downloads-hero {
-    padding: 120px 0 45px;
-  }
+        @media (max-width: 480px) {
+          .downloads-hero {
+            padding: 120px 0 45px;
+          }
 
-  .hero-title {
-    font-size: 1.8rem;
-    line-height: 1.2;
-  }
+          .hero-title {
+            font-size: 1.8rem;
+            line-height: 1.2;
+          }
 
-  .hero-description {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    padding: 0 12px;
-  }
+          .hero-description {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            padding: 0 12px;
+          }
 
-  /* Readable filter labels without wrapping */
-  .filter-wrapper {
-    gap: 7px;
-    padding-right: 8px;
-    padding-left: 8px;
-  }
+          /* Readable filter labels without wrapping */
+          .filter-wrapper {
+            gap: 7px;
+            padding-right: 8px;
+            padding-left: 8px;
+          }
 
-  .filter-btn {
-    min-height: 42px;
-    padding: 9px 12px;
-  }
+          .filter-btn {
+            min-height: 42px;
+            padding: 9px 12px;
+          }
 
-  .filter-label {
-    font-size: 12px;
-  }
+          .filter-label {
+            font-size: 12px;
+          }
 
-  .downloads-section {
-    padding-right: 10px;
-    padding-left: 10px;
-  }
+          .downloads-section {
+            padding-right: 10px;
+            padding-left: 10px;
+          }
 
-  .pdf-card-header {
-    padding: 14px 12px;
-  }
+          .pdf-card-header {
+            padding: 14px 12px;
+          }
 
-  .pdf-actions {
-    align-items: stretch;
-  }
+          .pdf-actions {
+            align-items: stretch;
+          }
 
-  .btn-fullscreen {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-  }
+          .btn-fullscreen {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+          }
 
-  .btn-download-pdf {
-    flex: 1;
-    justify-content: center;
-    white-space: nowrap;
-  }
+          .btn-download-pdf {
+            flex: 1;
+            justify-content: center;
+            white-space: nowrap;
+          }
 
-  .pdf-viewer-container {
-    min-height: 150px;
-  }
+          .pdf-viewer-container {
+            min-height: 150px;
+          }
 
-  .page-btn-left {
-    left: 5px;
-  }
+          .page-btn-left {
+            left: 5px;
+          }
 
-  .page-btn-right {
-    right: 5px;
-  }
-}
-
+          .page-btn-right {
+            right: 5px;
+          }
+        }
       `}</style>
     </>
   );

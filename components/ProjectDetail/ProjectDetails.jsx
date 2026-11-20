@@ -100,6 +100,15 @@ function buildImageUrl(path) {
 const sortAlpha = (a, b) =>
   a.localeCompare(b, undefined, { sensitivity: "base" });
 
+const STATUS_PRIORITY = {
+  upcoming: 0,
+  "in progress": 1,
+  ongoing: 1, // treat "ongoing" like "in progress"
+  completed: 2,
+};
+const statusPriority = (s) =>
+  STATUS_PRIORITY[String(s || "").toLowerCase()] ?? 3;
+
 /* Build a react-select option list with an "All" head */
 const buildOptions = (values, allLabel) => {
   const cleaned = [...new Set(values.map(cleanStr).filter(Boolean))].sort(
@@ -313,7 +322,7 @@ export default function ProjectDetails({ projectCounts }) {
     const loc = location.toLowerCase();
     const st = status.toLowerCase();
 
-    return allProjects.filter((p) => {
+    const results = allProjects.filter((p) => {
       if (st !== "all" && p.status.toLowerCase() !== st) return false;
       if (cat !== "all" && !p.services.some((s) => s.toLowerCase() === cat))
         return false;
@@ -322,6 +331,15 @@ export default function ProjectDetails({ projectCounts }) {
       if (loc !== "all" && p.location.toLowerCase() !== loc) return false;
       if (term && !p._searchBlob.includes(term)) return false;
       return true;
+    });
+
+    // Default ordering: Upcoming → In Progress → Completed → rest,
+    // then alphabetically by title inside each bucket.
+    return results.sort((a, b) => {
+      const pa = statusPriority(a.status);
+      const pb = statusPriority(b.status);
+      if (pa !== pb) return pa - pb;
+      return sortAlpha(a.title, b.title);
     });
   }, [allProjects, searchTerm, status, category, industry, location]);
 

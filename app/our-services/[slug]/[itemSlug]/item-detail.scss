@@ -1159,6 +1159,219 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   font-weight: 750;
 }
 
+.ec-faq {
+  padding: 104px 0;
+  background: transparent;
+  border-top: 1px solid $border;
+}
+
+.ec-faq-grid {
+  display: block;
+}
+
+/* --- NEW CENTERED HEADER STYLES --- */
+.faq-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.faq-title {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 600;
+  color: $orange-500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0 0 16px 0;
+}
+
+.faq-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 120px;
+  height: 2px;
+  margin: 0 auto;
+  background: $orange-300;
+  
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 1px;
+    background: $orange-300;
+  }
+  
+  &::before {
+    left: -100%;
+  }
+  
+  &::after {
+    right: -100%;
+  }
+}
+
+.faq-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $orange-500;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px $orange-500;
+  z-index: 1;
+}
+/* ---------------------------------- */
+
+.ec-faq-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+  align-items: start;
+}
+
+.ec-faq-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  align-items: stretch;
+}
+
+.ec-faq-item {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  align-self: start;
+  border: 0;
+  border-bottom: 1px solid #d5d5d5;
+  background: transparent;
+}
+
+.ec-faq-q {
+  appearance: none;
+  -webkit-appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  min-height: 60px;
+  padding: 17px 16px;
+  margin-top: 5px;
+  border: 0;
+  border-radius: 15px;
+  background: transparent;
+  color: $ink-900;
+  cursor: pointer;
+  text-align: left;
+  list-style: none;
+  font-family: $font-sans;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0;
+  transition:
+    color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.ec-faq-q:focus-visible {
+  outline: 2px solid $orange-500;
+  outline-offset: 3px;
+}
+
+.ec-faq-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  margin-left: auto;
+  color: currentColor;
+  font-family: Arial, sans-serif;
+  font-size: 23px;
+  font-weight: 400;
+  line-height: 1;
+  transition: transform 0.28s ease, color 0.25s ease;
+}
+
+.ec-faq-q.is-open {
+  color: #fff;
+  background: linear-gradient(0deg, #be2a2a -86.4%, #ef7f1a 94.15%);
+  box-shadow: 0 5px 14px rgba(232, 91, 27, 0.16);
+}
+
+.ec-faq-q.is-open .ec-faq-icon {
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.ec-faq-answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.24s ease;
+}
+
+.ec-faq-answer.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.ec-faq-answer-inner {
+  min-height: 0;
+  overflow: hidden;
+  transform: translateY(-6px);
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ec-faq-answer.is-open .ec-faq-answer-inner {
+  transform: translateY(0);
+}
+
+.ec-faq-a {
+  max-width: none;
+  margin: 0;
+  padding: 12px 24px 20px;
+  color: $muted;
+  font-family: $font-sans;
+  font-size: 15px;
+  line-height: 1.7;
+
+  /* Ensure rich content inside the answer looks good */
+  .rich-content {
+    margin-top: 0;
+  }
+  .rich-detail-paragraph {
+    padding: 0;
+    background: transparent;
+    font-size: inherit;
+    color: inherit;
+    &::before { display: none; }
+  }
+}
+
+@media (max-width: 768px) {
+  .ec-faq-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ec-faq-q,
+  .ec-faq-icon,
+  .ec-faq-answer,
+  .ec-faq-answer-inner {
+    transition: none;
+  }
+}
+
 @media (max-width: 760px) {
   .content-card .card-inner {
     min-height: 390px;

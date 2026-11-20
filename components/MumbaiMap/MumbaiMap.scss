@@ -261,21 +261,21 @@
 .project-slide-panel {
   position: fixed;
   inset: 0;
-  margin: auto; /* Centers the modal perfectly */
+  margin: auto;
   width: 90%;
-  max-width: 1000px;
-  height: 65vh;
-  max-height: 600px;
+  max-width: 420px;        /* smaller card */
+  height: fit-content;            /* size to content */
+  max-height: 85vh;        /* only scroll if truly needed */
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
   z-index: 99999;
-  
-  /* Animation */
+
   opacity: 0;
   visibility: hidden;
   transform: scale(0.95) translateY(20px);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -292,12 +292,12 @@
     transform: scale(0.95) translateY(20px);
   }
 
-  // HEADER
+  /* HEADER (unchanged) */
   .panel-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 16px 24px;
+    padding: 12px 18px;
     border-bottom: 1px solid #e5e7eb;
     background: #f9fafb;
     flex-shrink: 0;
@@ -309,7 +309,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 8px;
+      padding: 6px;
       border-radius: 50%;
       transition: background 0.2s;
       &:hover { background: #e5e7eb; }
@@ -318,33 +318,33 @@
     .panel-title {
       font-weight: 600;
       color: #374151;
-      font-size: 16px;
+      font-size: 15px;
     }
   }
 
-  // CONTENT
+  /* CONTENT */
   .panel-content {
     flex: 1;
-    display: flex; 
+    display: flex;
     flex-direction: column;
     min-height: 0;
-    overflow-y: auto;
+    overflow-y: auto;      /* scroll only if needed */
   }
 
-  // GRID LAYOUT
+  /* VERTICAL STACK: image on top, content below */
   .panel-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr; 
+    display: flex;
+    flex-direction: column;
     flex: 1;
-    min-height: 100%; 
   }
 
-  // LEFT: IMAGE
+  /* TOP: IMAGE — fixed height so the card stays compact */
   .panel-image-col {
     position: relative;
     width: 100%;
-    height: 100%;
-    min-height: 300px; 
+    height: 200px;
+    min-height: 200px;
+    flex-shrink: 0;
     background: #f3f4f6;
   }
 
@@ -355,32 +355,33 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 8px;
     color: #6b7280;
     font-weight: 500;
-    padding: 24px;
+    padding: 16px;
     text-align: center;
+    font-size: 13px;
   }
 
-  // RIGHT: CONTENT
+  /* BOTTOM: TEXT CONTENT */
   .panel-text-col {
-    padding: 32px;
+    padding: 18px 20px 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    overflow-y: auto;
+    gap: 10px;
+    /* no own scroll — parent handles it */
 
     .title {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
 
       .panel-project-name {
-        font-size: 28px;
+        font-size: 20px;
         font-weight: 700;
         color: #111827;
         margin: 0;
-        line-height: 1.2;
+        line-height: 1.25;
       }
 
       .panel-status {
@@ -390,13 +391,13 @@
         margin: 0;
 
         .status-badge {
-          width: 10px;
-          height: 10px;
+          width: 8px;
+          height: 8px;
           border-radius: 50%;
         }
 
         .status-text {
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 500;
           color: #6b7280;
           text-transform: capitalize;
@@ -407,33 +408,29 @@
     .panel-category,
     .panel-completion {
       display: flex;
-      gap: 8px;
-      font-size: 14px;
+      gap: 6px;
+      font-size: 13px;
+      flex-wrap: wrap;
 
       .category-label,
-      .completion-label {
-        font-weight: 600;
-        color: #374151;
-      }
+      .completion-label { font-weight: 600; color: #374151; }
 
       .category-value,
-      .completion-value {
-        color: #6b7280;
-      }
+      .completion-value { color: #6b7280; }
     }
 
     .panel-description p {
       color: #4b5563;
-      line-height: 1.6;
-      font-size: 15px;
+      line-height: 1.55;
+      font-size: 14px;
       margin: 0;
     }
 
     .panel-links {
       h4 {
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 600;
-        margin: 0 0 8px;
+        margin: 0 0 6px;
         color: #374151;
       }
 
@@ -443,12 +440,12 @@
         margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 4px;
 
         a {
           color: #ea580c;
           text-decoration: none;
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 500;
           &:hover { text-decoration: underline; }
         }
@@ -456,12 +453,12 @@
     }
 
     .panel-location-wrap {
-      margin-top: auto;
-      padding-top: 16px;
+      margin-top: 0;
+      padding-top: 10px;
       border-top: 1px solid #f3f4f6;
 
       .panel-location {
-        font-size: 14px;
+        font-size: 13px;
         color: #6b7280;
         margin: 0;
         display: flex;
@@ -471,34 +468,26 @@
     }
   }
 }
-
 // ============================================================
 // MOBILE RESPONSIVENESS
 // ============================================================
 
 @media (max-width: 768px) {
   .project-slide-panel {
-    width: 90%;
-    max-width: 400px;
-    height: 80vh;
-    max-height: 85vh;
-    border-radius: 16px;
-
-    .panel-grid {
-      grid-template-columns: 1fr; 
-    }
+    width: 92%;
+    max-width: 380px;
+    max-height: 82vh;
 
     .panel-image-col {
-      min-height: 200px;
-      height: 200px;
+      height: 170px;
+      min-height: 170px;
     }
 
     .panel-text-col {
-      padding: 20px;
-      padding-bottom: 30px;
+      padding: 16px 16px 18px;
 
       .title .panel-project-name {
-        font-size: 22px;
+        font-size: 18px;
       }
     }
   }
