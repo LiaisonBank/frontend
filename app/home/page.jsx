@@ -12,7 +12,6 @@ import CertificateGallery from "@/components/awards/page";
 import FAQAccordion from "@/components/Faqs/FAQAccordion";
 import OurServices from "@/components/OurServices/page";
 import HeroSlogan from "@/components/HeroSlogan/HeroSlogan";
-import santaImg from "@/assets/images/santa1.png";
 // import HeroMarquee from "@/components/HeroMarquee/HeroMarquee";
 
 const quotes = [
@@ -44,7 +43,6 @@ const Home = () => {
 
   const sectionRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
-  const ceoInnerRef = useRef(null);
 
   useBodyClass("home");
   const fancyboxRef = useFancybox({
@@ -93,44 +91,6 @@ const Home = () => {
     };
   }, []);
 
-  // ⬇️ Parallax — moves the heading + Santa TOGETHER,
-  // so his hands NEVER slip off the text
-  useEffect(() => {
-    const reduce = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reduce) return;
-
-    let raf = null;
-    const SPEED = 0.35;
-
-    const update = () => {
-      raf = null;
-      const section = sectionRef.current;
-      const inner = ceoInnerRef.current;
-      if (!section || !inner) return;
-
-      const rect = section.getBoundingClientRect();
-      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-
-      const scrolled = Math.max(-rect.top, 0);
-      inner.style.transform = `translate3d(0, ${(scrolled * SPEED).toFixed(1)}px, 0)`;
-    };
-
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
-
   return (
     <>
       <div className="hero-section page-header">
@@ -144,7 +104,7 @@ const Home = () => {
         ref={sectionRef}
         className={`ceo-message-full ${isVisible ? "in-view" : ""}`}
       >
-        <div className="ceo-full-container" ref={ceoInnerRef}>
+        <div className="ceo-full-container">
           <div className="ceo-full-grid">
             {/* Left Column - Image */}
             <div className="ceo-full-left">
@@ -234,38 +194,17 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ================= LIAISONING & LICENSING (CARD + SANTA) ================= */}
       <section className="ourservices">
         <div className="mx-auto py-5 service-list">
-          <div className="licensing-card-wrapper">
-            <div className="santa-wrap" aria-hidden="true">
-              <div className="santa-inner">
-                <Image
-                  src={santaImg}
-                  width={620}
-                  height={620}
-                  alt=""
-                  className="santa-img"
-                />
-              </div>
-            </div>
-
-            <div className="licensing-card">
-              <div className="licensing-card-body">
-                <div className="section-title">
-                  <div className="santa-title-anchor">
-                    <h3>Liaisoning and Licensing</h3>
-                  </div>
-                  <h5>
-                    We bring our services to multiple sectors and create
-                    customised solutions for diverse set of business needs.
-                  </h5>
-                </div>
-                <div className="mx-auto">
-                  <OurServices />
-                </div>
-              </div>
-            </div>
+          <div className="section-title">
+            <h3>Liaisoning and Licensing</h3>
+            <h5>
+              We bring our services to multiple sectors and create customised
+              solutions for diverse set of business needs.
+            </h5>
+          </div>
+          <div className="mx-auto">
+            <OurServices />
           </div>
         </div>
       </section>
