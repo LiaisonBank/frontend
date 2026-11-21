@@ -204,7 +204,7 @@ export default function AwardP() {
       try {
         setLoading(true);
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards`,
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards/limited`,
         );
         if (!response.ok) throw new Error("Failed to fetch awards");
         const result = await response.json();
