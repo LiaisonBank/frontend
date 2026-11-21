@@ -30,7 +30,7 @@ export default function AwardPage() {
       setError(null);
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards/limited`,
+        `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards`,
       );
 
       if (!response.ok) {
