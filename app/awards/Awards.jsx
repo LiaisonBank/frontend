@@ -30,7 +30,7 @@ export default function AwardPage() {
       setError(null);
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards`
+        `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/awards/limited`,
       );
 
       if (!response.ok) {
@@ -122,7 +122,7 @@ export default function AwardPage() {
         setAnimateCards(true);
         observer.disconnect();
       },
-      { threshold: 0.25 }
+      { threshold: 0.25 },
     );
 
     observer.observe(galleryRef.current);
@@ -207,8 +207,8 @@ export default function AwardPage() {
             error.code === "EMPTY"
               ? "EMPTY"
               : error.status
-              ? `ERR · ${error.status}`
-              : "ERR"
+                ? `ERR · ${error.status}`
+                : "ERR"
           }
           statusTone={error.code === "EMPTY" ? "info" : "danger"}
           onRetry={fetchAwards}
