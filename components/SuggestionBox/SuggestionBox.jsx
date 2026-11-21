@@ -123,7 +123,7 @@ export default function SuggestionBox() {
     <div className="suggestion-box-container">
       {/* Floating Toggle Button */}
       {/* Floating Toggle Button */}
-      <div className="sb-floating-wrapper">
+      <div className="sb-widget-wrapper">
         <button
           className="sb-toggle-btn"
           onClick={() => setIsOpen(!isOpen)}
