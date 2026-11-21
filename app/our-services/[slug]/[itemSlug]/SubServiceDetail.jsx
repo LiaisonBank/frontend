@@ -3,7 +3,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { motion, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useMotionValue,
+  useMotionTemplate,
+  AnimatePresence,
+} from "framer-motion";
 import "./item-detail.scss";
 import ApiError from "@/components/ApiError/ApiError";
 
@@ -24,7 +32,10 @@ function SpotlightCard({ children, className = "", delay = 0, index = 0 }) {
     <motion.div
       className={`spotlight-card ${className}`}
       onMouseMove={handleMouseMove}
-      onMouseLeave={() => { mouseX.set(0); mouseY.set(0); }}
+      onMouseLeave={() => {
+        mouseX.set(0);
+        mouseY.set(0);
+      }}
       initial={{ opacity: 0, y: 40, scale: 0.96 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-80px" }}
@@ -72,8 +83,14 @@ function TiltCard({ children, className = "", delay = 0 }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(y, [-100, 100], [8, -8]), { stiffness: 150, damping: 20 });
-  const rotateY = useSpring(useTransform(x, [-100, 100], [-8, 8]), { stiffness: 150, damping: 20 });
+  const rotateX = useSpring(useTransform(y, [-100, 100], [8, -8]), {
+    stiffness: 150,
+    damping: 20,
+  });
+  const rotateY = useSpring(useTransform(x, [-100, 100], [-8, 8]), {
+    stiffness: 150,
+    damping: 20,
+  });
 
   function handleMouseMove(e) {
     if (!ref.current) return;
@@ -132,13 +149,18 @@ function AnimatedCounter({ end, duration = 1.5, suffix = "" }) {
           requestAnimationFrame(animate);
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, [end, duration, hasAnimated]);
 
-  return <span ref={ref}>{count}{suffix}</span>;
+  return (
+    <span ref={ref}>
+      {count}
+      {suffix}
+    </span>
+  );
 }
 
 /* ============================================================
@@ -146,10 +168,12 @@ function AnimatedCounter({ end, duration = 1.5, suffix = "" }) {
    ============================================================ */
 function ScrollProgress() {
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-  return (
-    <motion.div className="scroll-progress" style={{ scaleX }} />
-  );
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+  return <motion.div className="scroll-progress" style={{ scaleX }} />;
 }
 
 /* ============================================================
@@ -161,7 +185,6 @@ function SectionNav({ sections, activeId, onSelect }) {
       <div className="section-nav-title">On this page</div>
       <ul className="section-nav-list">
         {sections.map((section, i) => {
-          console.log("section", sections);
           const isActive = activeId === section.id;
           return (
             <li key={section.id}>
@@ -174,7 +197,9 @@ function SectionNav({ sections, activeId, onSelect }) {
                   onSelect(section.id);
                 }}
               >
-                <span className="nav-number">{String(i + 1).padStart(2, "0")}</span>
+                <span className="nav-number">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
                 <span className="nav-label">{section.title}</span>
                 {isActive && (
                   <motion.span
@@ -196,16 +221,32 @@ function SectionNav({ sections, activeId, onSelect }) {
    CMS PARSING (kept from your original)
    ============================================================ */
 function decodeContentEntities(value) {
-  const named = { "&nbsp;": "  ", "&amp;": " & ", "&lt;": " < ", "&gt;": " > ", "&quot;": ' "', "&#39;": "' ", "&apos;": "' " };
-  return String(value).replace(/&(?:nbsp|amp|lt|gt|quot|#39|apos);|&#(\d+);|&#x([\da-f]+);/gi,
+  const named = {
+    "&nbsp;": "  ",
+    "&amp;": " & ",
+    "&lt;": " < ",
+    "&gt;": " > ",
+    "&quot;": ' "',
+    "&#39;": "' ",
+    "&apos;": "' ",
+  };
+  return String(value).replace(
+    /&(?:nbsp|amp|lt|gt|quot|#39|apos);|&#(\d+);|&#x([\da-f]+);/gi,
     (entity, decimal, hex) => {
       if (decimal) return String.fromCodePoint(Number(decimal));
       if (hex) return String.fromCodePoint(parseInt(hex, 16));
       return named[entity.toLowerCase()] ?? entity;
-    });
+    },
+  );
 }
 function stripContentMarkup(value) {
-  return decodeContentEntities(String(value).replace(/<br\s*\/?>/gi, " ").replace(/<[^>]*>/g, " ")).replace(/\s+/g, " ").trim();
+  return decodeContentEntities(
+    String(value)
+      .replace(/<br\s*\/?>/gi, " ")
+      .replace(/<[^>]*>/g, " "),
+  )
+    .replace(/\s+/g, " ")
+    .trim();
 }
 function parseContentBlocks(rawContent) {
   if (rawContent == null || rawContent === "") return [];
@@ -213,28 +254,62 @@ function parseContentBlocks(rawContent) {
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
     .replace(/<!--[\s\S]*?-->/g, " ");
-  source = source.replace(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/gi, (_, heading) => `\n@@HEADING@@${stripContentMarkup(heading)}@@END_HEADING@@\n`);
-  source = source.replace(/<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi, (_, type, inner) => {
-    const items = [...inner.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)].map((m) => stripContentMarkup(m[1])).filter(Boolean);
-    if (!items.length) return `\n${inner}\n`;
-    const ordered = type.toLowerCase() === "ol";
-    return `\n${items.map((item, index) => `${ordered ? `${index + 1}.` : "•"} ${item}`).join("\n")}\n`;
-  });
+  source = source.replace(
+    /<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/gi,
+    (_, heading) =>
+      `\n@@HEADING@@${stripContentMarkup(heading)}@@END_HEADING@@\n`,
+  );
+  source = source.replace(
+    /<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/gi,
+    (_, type, inner) => {
+      const items = [...inner.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)]
+        .map((m) => stripContentMarkup(m[1]))
+        .filter(Boolean);
+      if (!items.length) return `\n${inner}\n`;
+      const ordered = type.toLowerCase() === "ol";
+      return `\n${items.map((item, index) => `${ordered ? `${index + 1}.` : "•"} ${item}`).join("\n")}\n`;
+    },
+  );
   source = source
-    .replace(/<li\b[^>]*>/gi, "\n• ").replace(/<\/li>/gi, "\n ").replace(/<br\s*\/?>/gi, "\n ")
-    .replace(/<\/(?:p|div|section|article|blockquote|tr)>/gi, "\n\n ").replace(/<(?:p|div|section|article|blockquote|tr)\b[^>]*>/gi, "\n ")
-    .replace(/<t[dh]\b[^>]*>/gi, "  ").replace(/<\/t[dh]>/gi, "  |   ")
-    .replace(/<(?:strong|b)\b[^>]*>/gi, "**").replace(/<\/(?:strong|b)>/gi, "**").replace(/<[^>]*>/g, " ");
+    .replace(/<li\b[^>]*>/gi, "\n• ")
+    .replace(/<\/li>/gi, "\n ")
+    .replace(/<br\s*\/?>/gi, "\n ")
+    .replace(/<\/(?:p|div|section|article|blockquote|tr)>/gi, "\n\n ")
+    .replace(/<(?:p|div|section|article|blockquote|tr)\b[^>]*>/gi, "\n ")
+    .replace(/<t[dh]\b[^>]*>/gi, "  ")
+    .replace(/<\/t[dh]>/gi, "  |   ")
+    .replace(/<(?:strong|b)\b[^>]*>/gi, "**")
+    .replace(/<\/(?:strong|b)>/gi, "**")
+    .replace(/<[^>]*>/g, " ");
   source = decodeContentEntities(source).replace(/\r\n?/g, "\n");
-  const blocks = []; let paragraphLines = []; let listItems = []; let listType = "unordered";
-  const flushParagraph = () => { const text = paragraphLines.join(" ").replace(/\s+/g, " ").trim(); if (text) blocks.push({ type: "paragraph", text }); paragraphLines = []; };
-  const flushList = () => { if (listItems.length) { blocks.push({ type: listType, items: listItems }); listItems = []; } };
+  const blocks = [];
+  let paragraphLines = [];
+  let listItems = [];
+  let listType = "unordered";
+  const flushParagraph = () => {
+    const text = paragraphLines.join(" ").replace(/\s+/g, " ").trim();
+    if (text) blocks.push({ type: "paragraph", text });
+    paragraphLines = [];
+  };
+  const flushList = () => {
+    if (listItems.length) {
+      blocks.push({ type: listType, items: listItems });
+      listItems = [];
+    }
+  };
   for (const rawLine of source.split("\n")) {
     const line = rawLine.trim();
-    if (!line) { flushParagraph(); flushList(); continue; }
+    if (!line) {
+      flushParagraph();
+      flushList();
+      continue;
+    }
     if (line.startsWith("@@HEADING@@") && line.endsWith("@@END_HEADING@@")) {
-      flushParagraph(); flushList();
-      const heading = line.slice("@@HEADING@@".length, -"@@END_HEADING@@".length).trim();
+      flushParagraph();
+      flushList();
+      const heading = line
+        .slice("@@HEADING@@".length, -"@@END_HEADING@@".length)
+        .trim();
       if (heading) blocks.push({ type: "heading", text: heading });
       continue;
     }
@@ -244,40 +319,42 @@ function parseContentBlocks(rawContent) {
       flushParagraph();
       const nextType = ordered ? "ordered" : "unordered";
       if (listItems.length && listType !== nextType) flushList();
-      listType = nextType; listItems.push((ordered ? ordered[2] : unordered[1]).trim());
+      listType = nextType;
+      listItems.push((ordered ? ordered[2] : unordered[1]).trim());
       continue;
     }
-    flushList(); paragraphLines.push(line);
+    flushList();
+    paragraphLines.push(line);
   }
-  flushParagraph(); flushList();
+  flushParagraph();
+  flushList();
   return blocks;
 }
 function renderInlineContent(text) {
-  return String(text).split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
-    if (part.startsWith("**") && part.endsWith("**")) return <strong key={index}>{part.slice(2, -2)}</strong>;
-    return part;
-  });
+  return String(text)
+    .split(/(\*\*[^*]+\*\*)/g)
+    .map((part, index) => {
+      if (part.startsWith("**") && part.endsWith("**"))
+        return <strong key={index}>{part.slice(2, -2)}</strong>;
+      return part;
+    });
 }
 function RichContent({ content }) {
   const blocks = parseContentBlocks(content);
   if (!blocks.length) return null;
 
-  // Use the first CMS paragraph as the lead only when it is first in the source.
-  // All text, headings and list items remain unchanged; only their presentation changes.
   const hasLead = blocks[0]?.type === "paragraph";
   const lead = hasLead ? blocks[0] : null;
   const detailBlocks = hasLead ? blocks.slice(1) : blocks;
 
   return (
     <div className={`rich-content${lead ? " has-lead" : ""}`}>
-      {lead && (
-        <p className="rich-intro">
-          {renderInlineContent(lead.text)}
-        </p>
-      )}
+      {lead && <p className="rich-intro">{renderInlineContent(lead.text)}</p>}
 
       {detailBlocks.length > 0 && (
-        <div className={`rich-content-grid${detailBlocks.length === 1 ? " is-single" : ""}`}>
+        <div
+          className={`rich-content-grid${detailBlocks.length === 1 ? " is-single" : ""}`}
+        >
           {detailBlocks.map((block, index) => {
             if (block.type === "heading") {
               return (
@@ -320,10 +397,105 @@ function RichContent({ content }) {
 }
 
 /* ============================================================
+   FAQ COMPONENT
+   ============================================================ */
+function FAQAccordion({ content }) {
+  // Parse the FAQ string into Q&A pairs
+  const faqs = [];
+  if (content) {
+    const parts = content.split(/(?=\d+\.\s)/);
+    parts.forEach((part) => {
+      const trimmed = part.trim();
+      if (!trimmed) return;
+      const match = trimmed.match(/^\d+\.\s+(.+?)(?:\n\n|$)/);
+      if (match) {
+        const question = match[1].trim();
+        const answer = trimmed.substring(match[0].length).trim();
+        if (question) {
+          faqs.push({ q: question, a: answer });
+        }
+      }
+    });
+  }
+
+  if (faqs.length === 0) return null;
+
+  const [openFaqs, setOpenFaqs] = useState({});
+
+  const toggleFaq = (q) => {
+    setOpenFaqs((prev) => ({
+      ...prev,
+      [q]: !prev[q],
+    }));
+  };
+
+  return (
+    <section className="ec-faq">
+      <div className="container">
+        <div className="ec-faq-grid">
+          {/* Updated Header to match image */}
+          <div className="faq-header">
+            <h2 className="faq-title">FREQUENTLY ASK QUESTIONS</h2>
+            <div className="faq-divider">
+              <span className="faq-dot"></span>
+            </div>
+          </div>
+
+          <div className="ec-faq-columns">
+            {[
+              faqs.slice(0, Math.ceil(faqs.length / 2)),
+              faqs.slice(Math.ceil(faqs.length / 2)),
+            ].map((faqColumn, columnIndex) => (
+              <div className="ec-faq-list" key={`faq-column-${columnIndex}`}>
+                {faqColumn.map((item, itemIndex) => {
+                  const isOpen = Boolean(openFaqs[item.q]);
+                  const answerId = `faq-answer-${columnIndex}-${itemIndex}`;
+
+                  return (
+                    <div
+                      key={`${columnIndex}-${itemIndex}`}
+                      className={`ec-faq-item ${isOpen ? "is-open" : ""}`}
+                    >
+                      <button
+                        type="button"
+                        className={`ec-faq-q ${isOpen ? "is-open" : ""}`}
+                        aria-expanded={isOpen}
+                        aria-controls={answerId}
+                        onClick={() => toggleFaq(item.q)}
+                      >
+                        <span>{item.q}</span>
+                        <span className="ec-faq-icon" aria-hidden="true">
+                          {isOpen ? "×" : "+"}
+                        </span>
+                      </button>
+
+                      <div
+                        id={answerId}
+                        className={`ec-faq-answer ${isOpen ? "is-open" : ""}`}
+                        aria-hidden={!isOpen}
+                      >
+                        <div className="ec-faq-answer-inner">
+                          <div className="ec-faq-a">
+                            <RichContent content={item.a} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
    MAIN COMPONENT
    ============================================================ */
 export default function SubServiceDetail({ initialData }) {
-  console.log("initialData", initialData);
   const params = useParams();
   const slug = params?.slug;
   const itemSlug = params?.itemSlug;
@@ -357,51 +529,100 @@ export default function SubServiceDetail({ initialData }) {
 
   useEffect(() => {
     if (!slug || !itemSlug) return;
-    console.log("inbside useeffect");
     const fetchItemDetail = async () => {
       try {
-        setLoading(true); setError(null);
+        setLoading(true);
+        setError(null);
         let itemData = initialData;
-        console.log("initititi", initialData);
         if (!itemData) {
-          const itemResponse = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/${itemSlug}`);
+          const itemResponse = await fetch(
+            `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/${itemSlug}`,
+          );
           if (!itemResponse.ok) {
-            if (itemResponse.status === 404) throw Object.assign(new Error("Item not found"), { status: 404 });
+            if (itemResponse.status === 404)
+              throw Object.assign(new Error("Item not found"), { status: 404 });
             throw new Error(`Failed: ${itemResponse.status}`);
           }
           itemData = await itemResponse.json();
         }
-        if (!itemData || !itemData.id) throw new Error("Invalid response format from API");
+        if (!itemData || !itemData.id)
+          throw new Error("Invalid response format from API");
 
         let servicesList = [];
         if (itemData.itemServices) {
-          if (Array.isArray(itemData.itemServices)) servicesList = itemData.itemServices;
+          if (Array.isArray(itemData.itemServices))
+            servicesList = itemData.itemServices;
           else if (typeof itemData.itemServices === "string") {
-            try { const parsed = JSON.parse(itemData.itemServices); servicesList = Array.isArray(parsed) ? parsed : [itemData.itemServices]; }
-            catch { servicesList = itemData.itemServices.split(",").map((s) => s.trim()).filter(Boolean); }
+            try {
+              const parsed = JSON.parse(itemData.itemServices);
+              servicesList = Array.isArray(parsed)
+                ? parsed
+                : [itemData.itemServices];
+            } catch {
+              servicesList = itemData.itemServices
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean);
+            }
           }
         }
-        const rawSections = itemData.contentSection ?? itemData.contentSections ?? itemData.content_section ?? null;
+        const rawSections =
+          itemData.contentSection ??
+          itemData.contentSections ??
+          itemData.content_section ??
+          null;
         let sections = [];
         if (Array.isArray(rawSections)) sections = rawSections;
         else if (typeof rawSections === "string") {
-          try { const parsed = JSON.parse(rawSections); sections = Array.isArray(parsed) ? parsed : []; } catch { sections = []; }
+          try {
+            const parsed = JSON.parse(rawSections);
+            sections = Array.isArray(parsed) ? parsed : [];
+          } catch {
+            sections = [];
+          }
         }
-        console.log("sectionsss", sections);
-        sections = sections.filter(Boolean).map((s) => ({ title: s?.title || s?.heading || "", content: s?.content || s?.body || s?.description || "" })).filter((s) => s.title || s.content);
+        sections = sections
+          .filter(Boolean)
+          .map((s) => ({
+            title: s?.title || s?.heading || "",
+            content: s?.content || s?.body || s?.description || "",
+          }))
+          .filter((s) => s.title || s.content);
 
         setItem({
-          id: itemData.id, name: itemData.name, slug: itemData.slug, description: itemData.description || "",
-          fullDescription: itemData.full_description || itemData.description || "", servicesList, contentSections: sections,
-          subCategoryId: itemData.subCategoryId, subCategoryName: itemData.subCategoryName,
+          id: itemData.id,
+          name: itemData.name,
+          slug: itemData.slug,
+          description: itemData.description || "",
+          fullDescription:
+            itemData.full_description || itemData.description || "",
+          servicesList,
+          contentSections: sections,
+          subCategoryId: itemData.subCategoryId,
+          subCategoryName: itemData.subCategoryName,
         });
 
-        console.log("itemss", item);
         try {
-          const categoryResponse = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/category/${slug}`);
-          if (categoryResponse.ok) { const categoryData = await categoryResponse.json(); setParentCategory({ id: categoryData.id, name: categoryData.name, slug: categoryData.slug }); }
-        } catch (relatedErr) { console.error("Error fetching related items:", relatedErr); }
-      } catch (err) { console.error("Error fetching item detail:", err); setError(err); } finally { setLoading(false); }
+          const categoryResponse = await fetch(
+            `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/items/category/${slug}`,
+          );
+          if (categoryResponse.ok) {
+            const categoryData = await categoryResponse.json();
+            setParentCategory({
+              id: categoryData.id,
+              name: categoryData.name,
+              slug: categoryData.slug,
+            });
+          }
+        } catch (relatedErr) {
+          console.error("Error fetching related items:", relatedErr);
+        }
+      } catch (err) {
+        console.error("Error fetching item detail:", err);
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchItemDetail();
   }, [slug, itemSlug, initialData]);
@@ -412,7 +633,9 @@ export default function SubServiceDetail({ initialData }) {
         <div className="container">
           <div className="skeleton-hero" />
           <div className="skeleton-grid">
-            {[...Array(6)].map((_, i) => <div key={i} className="skeleton-card" />)}
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="skeleton-card" />
+            ))}
           </div>
         </div>
       </div>
@@ -422,29 +645,76 @@ export default function SubServiceDetail({ initialData }) {
     const isNotFound = error.status === 404;
     return (
       <ApiError
-        title={isNotFound ? "Service Not Found" : "Service Temporarily Unavailable"}
-        message={isNotFound ? "The service you're looking for doesn't exist or has been removed." : "Our service information is temporarily unavailable. Please try again shortly."}
+        title={
+          isNotFound ? "Service Not Found" : "Service Temporarily Unavailable"
+        }
+        message={
+          isNotFound
+            ? "The service you're looking for doesn't exist or has been removed."
+            : "Our service information is temporarily unavailable. Please try again shortly."
+        }
         onRetry={() => window.location.reload()}
-        statusCode={isNotFound ? "ERR · NOT FOUND" : error.status ? `ERR · ${error.status}` : "ERR · TIMEOUT"}
-        statusTone={isNotFound ? "info" : error.status >= 500 ? "danger" : "warning"}
+        statusCode={
+          isNotFound
+            ? "ERR · NOT FOUND"
+            : error.status
+              ? `ERR · ${error.status}`
+              : "ERR · TIMEOUT"
+        }
+        statusTone={
+          isNotFound ? "info" : error.status >= 500 ? "danger" : "warning"
+        }
         backToHome={() => window.open("/", "_self")}
       />
     );
   }
   if (!item) return null;
 
+  // Separate the FAQ section from regular content sections
+  const faqSection = item.contentSections.find(
+    (s) =>
+      s.title.toLowerCase().includes("frequently ask") ||
+      s.title.toLowerCase().includes("faq"),
+  );
+  const otherSections = item.contentSections.filter((s) => s !== faqSection);
+
+  // Build sections for navigation and deck
   const pageSections = [
     ...(item.fullDescription ? [{ id: "overview", title: "Overview" }] : []),
-    ...item.contentSections.map((section, index) => ({ id: `item-section-${index + 1}`, title: section.title })).filter((section) => section.title),
+    ...otherSections
+      .map((section, index) => ({
+        id: `item-section-${index + 1}`,
+        title: section.title,
+      }))
+      .filter((section) => section.title),
   ];
-  console.log("page sections", pageSections);
-  if (!pageSections.length) pageSections.push({ id: "overview", title: "Overview" });
+  if (!pageSections.length && !faqSection)
+    pageSections.push({ id: "overview", title: "Overview" });
 
   const allSections = [
-    ...(item.fullDescription ? [{ id: "overview", title: "Overview", content: item.fullDescription, overview: true }] : []),
-    ...item.contentSections.map((section, i) => ({ id: `item-section-${i + 1}`, title: section.title, content: section.content })),
+    ...(item.fullDescription
+      ? [
+          {
+            id: "overview",
+            title: "Overview",
+            content: item.fullDescription,
+            overview: true,
+          },
+        ]
+      : []),
+    ...otherSections.map((section, i) => ({
+      id: `item-section-${i + 1}`,
+      title: section.title,
+      content: section.content,
+    })),
   ];
-  if (!allSections.length) allSections.push({ id: "overview", title: "Overview", overview: true, fallback: true });
+  if (!allSections.length && !faqSection)
+    allSections.push({
+      id: "overview",
+      title: "Overview",
+      overview: true,
+      fallback: true,
+    });
 
   return (
     <div className="item-page">
@@ -456,22 +726,38 @@ export default function SubServiceDetail({ initialData }) {
           <nav className="breadcrumbs" aria-label="Breadcrumb">
             <Link href="/our-services">Services</Link>
             <span className="sep">/</span>
-            {parentCategory && (<><Link href={`/our-services/${parentCategory.slug}`}>{parentCategory.name}</Link><span className="sep">/</span></>)}
-            {item.subCategoryName && (<><span className="crumb-muted">{item.subCategoryName}</span><span className="sep">/</span></>)}
+            {parentCategory && (
+              <>
+                <Link href={`/our-services/${parentCategory.slug}`}>
+                  {parentCategory.name}
+                </Link>
+                <span className="sep">/</span>
+              </>
+            )}
+            {item.subCategoryName && (
+              <>
+                <span className="crumb-muted">{item.subCategoryName}</span>
+                <span className="sep">/</span>
+              </>
+            )}
             <span className="crumb-current">{item.name}</span>
           </nav>
         </div>
       </div>
 
-      {/* Hero — UNTOUCHED */}
+      {/* Hero */}
       <div className="item-hero">
         <span className="item-hero-orb item-hero-orb--a" aria-hidden="true" />
         <span className="item-hero-orb item-hero-orb--b" aria-hidden="true" />
         <div className="container">
           <div className="item-hero-main">
-            {item.subCategoryName && (<span className="item-hero-tag">{item.subCategoryName}</span>)}
+            {item.subCategoryName && (
+              <span className="item-hero-tag">{item.subCategoryName}</span>
+            )}
             <h1 className="item-hero-title">{item.name}</h1>
-            {item.description && (<p className="item-hero-desc">{item.description}</p>)}
+            {item.description && (
+              <p className="item-hero-desc">{item.description}</p>
+            )}
           </div>
         </div>
       </div>
@@ -479,26 +765,6 @@ export default function SubServiceDetail({ initialData }) {
       {/* Body */}
       <div className="item-body" id="details">
         <div className="container">
-
-          {/* Stats Row */}
-          {/* <div className="stats-row">
-            <motion.div className="stat-card" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1, duration: 0.5 }}>
-              <div className="stat-icon">📋</div>
-              <div className="stat-value"><AnimatedCounter end={allSections.length} /></div>
-              <div className="stat-label">Content Sections</div>
-            </motion.div>
-            <motion.div className="stat-card" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.5 }}>
-              <div className="stat-icon">✨</div>
-              <div className="stat-value"><AnimatedCounter end={item.servicesList.length} /></div>
-              <div className="stat-label">Services Included</div>
-            </motion.div>
-            <motion.div className="stat-card" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3, duration: 0.5 }}>
-              <div className="stat-icon">⚡</div>
-              <div className="stat-value">Pro</div>
-              <div className="stat-label">Quality Level</div>
-            </motion.div>
-          </div> */}
-
           {item.servicesList.length > 0 && (
             <SpotlightCard className="services-card-full">
               <div className="card-kicker">
@@ -517,7 +783,18 @@ export default function SubServiceDetail({ initialData }) {
                     transition={{ delay: i * 0.05, duration: 0.3 }}
                   >
                     <span className="service-check">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
                     </span>
                     <span>{service}</span>
                   </motion.li>
@@ -526,149 +803,196 @@ export default function SubServiceDetail({ initialData }) {
             </SpotlightCard>
           )}
 
+          {/* Render the deck layout ONLY if there are regular sections */}
+          {allSections.length > 0 && (
+            <div className="item-content-layout">
+              {/* Sidebar */}
+              <aside className="item-aside">
+                <div className="item-aside-sticky">
+                  <SectionNav
+                    sections={pageSections}
+                    activeId={activeSectionId}
+                    onSelect={setActiveSectionId}
+                  />
+                </div>
+              </aside>
 
-          <div className="item-content-layout">
-            {/* Sidebar */}
-            <aside className="item-aside">
-              <div className="item-aside-sticky">
-                
-
-                <SectionNav sections={pageSections} activeId={activeSectionId} onSelect={setActiveSectionId} />
-              </div>
-            </aside>
-
-            {/* Main Content — every section shares one stacked deck footprint. */}
-            <main className="item-main">
-              <div className="mobile-card-controls">
-                <button
-                  type="button"
-                  className="card-arrow card-arrow--left"
-                  aria-label="Previous card"
-                  onClick={() => {
-                    const currentIndex = allSections.findIndex(
-                      (section) => section.id === activeSectionId
-                    );
-
-                    const previousIndex =
-                      (currentIndex - 1 + allSections.length) % allSections.length;
-
-                    setActiveSectionId(allSections[previousIndex].id);
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M15 18L9 12L15 6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-
-                <button
-                  type="button"
-                  className="card-arrow card-arrow--right"
-                  aria-label="Next card"
-                  onClick={() => {
-                    const currentIndex = allSections.findIndex(
-                      (section) => section.id === activeSectionId
-                    );
-
-                    const nextIndex = (currentIndex + 1) % allSections.length;
-
-                    setActiveSectionId(allSections[nextIndex].id);
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M9 18L15 12L9 6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <motion.div
-                className="stack-deck"
-                layout
-                transition={{ layout: { type: "spring", stiffness: 180, damping: 26 } }}
-              >
-                {allSections.map((section, i) => {
-                  const num = String(i + 1).padStart(2, "0");
-                  const activeIndex = Math.max(0, allSections.findIndex((entry) => entry.id === activeSectionId));
-                  const depth = (i - activeIndex + allSections.length) % allSections.length;
-                  const isActive = depth === 0;
-                  const visibleDepth = Math.min(depth, 3);
-
-                  // Render inactive sections as slim deck edges only. Their full
-                  // blank card surfaces are intentionally not mounted/visible.
-                  if (!isActive) {
-                    if (depth > 3) return null;
-                    return (
-                      <motion.div
-                        key={`backplate-${section.id}`}
-                        className={`stack-card-backplate stack-card-backplate--${visibleDepth}`}
-                        aria-hidden="true"
-                        animate={{ y: visibleDepth * 7, x: visibleDepth * 3, scale: 1 - visibleDepth * 0.006 }}
-                        transition={{ type: "spring", stiffness: 190, damping: 25, mass: 0.9 }}
-                        style={{ zIndex: allSections.length - depth }}
+              {/* Main Content — every section shares one stacked deck footprint. */}
+              <main className="item-main">
+                <div className="mobile-card-controls">
+                  <button
+                    type="button"
+                    className="card-arrow card-arrow--left"
+                    aria-label="Previous card"
+                    onClick={() => {
+                      const currentIndex = allSections.findIndex(
+                        (section) => section.id === activeSectionId,
+                      );
+                      const previousIndex =
+                        (currentIndex - 1 + allSections.length) %
+                        allSections.length;
+                      setActiveSectionId(allSections[previousIndex].id);
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M15 18L9 12L15 6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    className="card-arrow card-arrow--right"
+                    aria-label="Next card"
+                    onClick={() => {
+                      const currentIndex = allSections.findIndex(
+                        (section) => section.id === activeSectionId,
+                      );
+                      const nextIndex = (currentIndex + 1) % allSections.length;
+                      setActiveSectionId(allSections[nextIndex].id);
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M9 18L15 12L9 6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <motion.div
+                  className="stack-deck"
+                  layout
+                  transition={{
+                    layout: { type: "spring", stiffness: 180, damping: 26 },
+                  }}
+                >
+                  {allSections.map((section, i) => {
+                    const num = String(i + 1).padStart(2, "0");
+                    const activeIndex = Math.max(
+                      0,
+                      allSections.findIndex(
+                        (entry) => entry.id === activeSectionId,
+                      ),
                     );
-                  }
+                    const depth =
+                      (i - activeIndex + allSections.length) %
+                      allSections.length;
+                    const isActive = depth === 0;
+                    const visibleDepth = Math.min(depth, 3);
 
-                  return (
-                    <motion.section
-                      key={section.id}
-                      id={section.id}
-                      className="content-card is-active"
-                      initial={false}
-                      animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
-                      transition={{ type: "spring", stiffness: 190, damping: 25, mass: 0.9 }}
-                      style={{ zIndex: allSections.length + 2 }}
-                      aria-hidden={false}
-                      drag={isMobileDeck && allSections.length > 1 ? "x" : false}
-                      dragDirectionLock
-                      dragConstraints={{ left: -120, right: 120 }}
-                      dragElastic={0.16}
-                      dragMomentum={false}
-                      whileDrag={{ scale: 0.985, rotate: -0.4 }}
-                      onDragEnd={(_, info) => {
-                        if (!isMobileDeck || allSections.length < 2) return;
-                        const threshold = Math.max(55, window.innerWidth * 0.14);
-                        const swipedNext = info.offset.x < -threshold || info.velocity.x < -500;
-                        const swipedPrevious = info.offset.x > threshold || info.velocity.x > 500;
-                        if (swipedNext) {
-                          setActiveSectionId(allSections[(i + 1) % allSections.length].id);
-                        } else if (swipedPrevious) {
-                          setActiveSectionId(allSections[(i - 1 + allSections.length) % allSections.length].id);
+                    if (!isActive) {
+                      if (depth > 3) return null;
+                      return (
+                        <motion.div
+                          key={`backplate-${section.id}`}
+                          className={`stack-card-backplate stack-card-backplate--${visibleDepth}`}
+                          aria-hidden="true"
+                          animate={{
+                            y: visibleDepth * 7,
+                            x: visibleDepth * 3,
+                            scale: 1 - visibleDepth * 0.006,
+                          }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 190,
+                            damping: 25,
+                            mass: 0.9,
+                          }}
+                          style={{ zIndex: allSections.length - depth }}
+                        />
+                      );
+                    }
+
+                    return (
+                      <motion.section
+                        key={section.id}
+                        id={section.id}
+                        className="content-card is-active"
+                        initial={false}
+                        animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 190,
+                          damping: 25,
+                          mass: 0.9,
+                        }}
+                        style={{ zIndex: allSections.length + 2 }}
+                        aria-hidden={false}
+                        drag={
+                          isMobileDeck && allSections.length > 1 ? "x" : false
                         }
-                      }}
-                    >
-                      <div className="card-inner">
-                        <div className="card-header">
-                          <div className="card-number">{num}</div>
-                          <div className="card-header-content">
-                            {/* <div className="card-tag">{section.overview ? "Overview" : "Detail"}</div> */}
-                            <h2 className="card-title-main">{section.title}</h2>
+                        dragDirectionLock
+                        dragConstraints={{ left: -120, right: 120 }}
+                        dragElastic={0.16}
+                        dragMomentum={false}
+                        whileDrag={{ scale: 0.985, rotate: -0.4 }}
+                        onDragEnd={(_, info) => {
+                          if (!isMobileDeck || allSections.length < 2) return;
+                          const threshold = Math.max(
+                            55,
+                            window.innerWidth * 0.14,
+                          );
+                          const swipedNext =
+                            info.offset.x < -threshold ||
+                            info.velocity.x < -500;
+                          const swipedPrevious =
+                            info.offset.x > threshold || info.velocity.x > 500;
+                          if (swipedNext) {
+                            setActiveSectionId(
+                              allSections[(i + 1) % allSections.length].id,
+                            );
+                          } else if (swipedPrevious) {
+                            setActiveSectionId(
+                              allSections[
+                                (i - 1 + allSections.length) %
+                                  allSections.length
+                              ].id,
+                            );
+                          }
+                        }}
+                      >
+                        <div className="card-inner">
+                          <div className="card-header">
+                            <div className="card-number">{num}</div>
+                            <div className="card-header-content">
+                              <h2 className="card-title-main">
+                                {section.title}
+                              </h2>
+                            </div>
+                          </div>
+                          <div className="card-body">
+                            {section.fallback ? (
+                              <p className="card-text">
+                                No additional details available for this
+                                service.
+                              </p>
+                            ) : (
+                              <RichContent content={section.content} />
+                            )}
                           </div>
                         </div>
-                        <div className="card-body">
-                          {section.fallback ? (
-                            <p className="card-text">No additional details available for this service.</p>
-                          ) : (
-                            <RichContent content={section.content} />
-                          )}
-                        </div>
-                      </div>
-                    </motion.section>
-                  );
-                })}
-              </motion.div>
-            </main>
-          </div>
+                      </motion.section>
+                    );
+                  })}
+                </motion.div>
+              </main>
+            </div>
+          )}
+
+          {/* Render the FAQ section separately if it exists */}
+          {faqSection && (
+            <div style={{ marginTop: allSections.length > 0 ? "80px" : "0" }}>
+              <FAQAccordion content={faqSection.content} />
+            </div>
+          )}
 
           {/* CTA */}
           <motion.section
@@ -683,12 +1007,24 @@ export default function SubServiceDetail({ initialData }) {
             <div className="item-bottom-cta-content">
               <span className="item-bottom-cta-eyebrow">Need assistance?</span>
               <h2 id="item-bottom-cta-title">Need help with {item.name}?</h2>
-              <p>Connect with our team to discuss your requirements and the next steps.</p>
+              <p>
+                Connect with our team to discuss your requirements and the next
+                steps.
+              </p>
             </div>
-            <Link href="/contact-us-liaison-bank" className="item-bottom-cta-button">
+            <Link
+              href="/contact-us-liaison-bank"
+              className="item-bottom-cta-button"
+            >
               <span>Get in touch</span>
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path d="M4 10h11M10 5l5 5-5 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M4 10h11M10 5l5 5-5 5"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </Link>
           </motion.section>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import "./ourservices.scss";
 import { getImageUrl } from "../../lib/utils/getImagehelper";
 import ApiError from "@/components/ApiError/ApiError";
@@ -220,16 +221,25 @@ const FAQS = [
 
 export default function OurServices() {
   useBodyClass("ourservices");
+  const router = useRouter();
   const [servicesData, setServicesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openFaqs, setOpenFaqs] = useState({});
+  const [loadingService, setLoadingService] = useState(null);
 
   const toggleFaq = (question) => {
     setOpenFaqs((previous) => ({
       ...previous,
       [question]: !previous[question],
     }));
+  };
+  const handleExploreMore = (slug) => {
+    setLoadingService(slug);
+    // Small delay ensures the UI updates and the loader is visible before navigation
+    setTimeout(() => {
+      router.push(`/our-services/${slug}`);
+    }, 400);
   };
 
   useEffect(() => {
@@ -492,26 +502,54 @@ export default function OurServices() {
                         </span>
                       ))}
                     </div>
-                    <Link
-                      href={`/our-services/${service.slug}`}
+                    <button
+                      onClick={() => handleExploreMore(service.slug)}
                       className="ec-entry-link"
                       title={`${service.name} services — learn more`}
+                      disabled={loadingService === service.slug}
                     >
-                      Explore More
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M5 12h14M12 5l7 7-7 7"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </Link>
+                      {loadingService === service.slug ? (
+                        <>
+                          <svg
+                            className="ec-loader-spinner"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            style={{ width: "25px", height: "25px" }} // <-- CHANGED FROM 14px TO 18px
+                          >
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              strokeOpacity="0.25"
+                            />
+                            <path
+                              d="M12 2a10 10 0 0 1 10 10"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          <span>Loading...</span>
+                        </>
+                      ) : (
+                        <>
+                          Explore More
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M5 12h14M12 5l7 7-7 7"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               </motion.article>

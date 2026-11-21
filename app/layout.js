@@ -1,8 +1,5 @@
 import { Barlow } from "next/font/google";
-import {
-  GoogleTagManager,
-  GoogleAnalytics,
-} from "@next/third-parties/google";
+import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
 
 import OrientationBlocker from "@/components/OrientationBlocker";
@@ -14,6 +11,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "@flaticon/flaticon-uicons/css/all/all.css";
 import "@fontsource/josefin-sans";
 import "@/styles/globals.scss";
+import SuggestionBox from "@/components/SuggestionBox/SuggestionBox";
 
 // ======================================================
 // FONT CONFIGURATION
@@ -28,8 +26,7 @@ const barlow = Barlow({
   preload: true,
 });
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://liaisonbank.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://liaisonbank.com";
 
 // ======================================================
 // SEO METADATA
@@ -268,6 +265,7 @@ export default function RootLayout({ children }) {
             CLIENT-ONLY WIDGETS — outside the SSR tree
         ============================================ */}
         <ClientChatbotWrapper />
+        <SuggestionBox />
       </body>
     </html>
   );

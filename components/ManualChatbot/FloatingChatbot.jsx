@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Image from 'next/image';
-import chatWindowBg from '@/assets/images/chat-windowbg.webp';
-import './FloatingChatbot.scss';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
+import chatWindowBg from "@/assets/images/chat-windowbg.webp";
+import "./FloatingChatbot.scss";
 
 // ============================================================
 // CONSTANTS
@@ -15,7 +15,7 @@ const WELCOME_DELAY = 100;
 
 const WELCOME_MESSAGE = `👋 Welcome to Liaison Bank!\nHow may we help you today? 😊`;
 const ERROR_MESSAGE = "Sorry, I'm having trouble connecting. Please try again.";
-const FALLBACK_MESSAGE = 'I received your message. How can I help you further?';
+const FALLBACK_MESSAGE = "I received your message. How can I help you further?";
 const END_MESSAGE = '✨ Conversation ended. Click "New Chat" to start again.';
 
 // ============================================================
@@ -37,7 +37,7 @@ const FloatingChatbot = () => {
   const [flowHistory, setFlowHistory] = useState([]);
   const [expandedMessages, setExpandedMessages] = useState({});
   const [showGlobalActions, setShowGlobalActions] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [hasStarted, setHasStarted] = useState(false);
 
   const messagesEndRef = useRef(null);
@@ -54,7 +54,8 @@ const FloatingChatbot = () => {
     if (chatMessagesRef.current) {
       setTimeout(() => {
         if (chatMessagesRef.current) {
-          chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+          chatMessagesRef.current.scrollTop =
+            chatMessagesRef.current.scrollHeight;
         }
       }, SCROLL_DELAY);
     }
@@ -66,7 +67,7 @@ const FloatingChatbot = () => {
   const showWelcomeMessage = useCallback(() => {
     const welcomeMessage = {
       id: generateUniqueId(),
-      type: 'bot',
+      type: "bot",
       text: WELCOME_MESSAGE,
       options: [],
       showOptions: false,
@@ -82,26 +83,26 @@ const FloatingChatbot = () => {
   useEffect(() => {
     if (isOpen) {
       const scrollY = window.scrollY;
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
       document.body.style.top = `-${scrollY}px`;
     } else {
       const scrollY = document.body.style.top;
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.top = '';
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.top = "";
       if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
+        window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
       }
     }
 
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.top = '';
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.top = "";
     };
   }, [isOpen]);
 
@@ -112,13 +113,16 @@ const FloatingChatbot = () => {
     if (!showGlobalActions) return;
 
     const handleClickOutside = (event) => {
-      if (globalActionsRef.current && !globalActionsRef.current.contains(event.target)) {
+      if (
+        globalActionsRef.current &&
+        !globalActionsRef.current.contains(event.target)
+      ) {
         setShowGlobalActions(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showGlobalActions]);
 
   // ============================================================
@@ -128,14 +132,17 @@ const FloatingChatbot = () => {
     if (!isOpen) return;
 
     const handleClickOutside = (event) => {
-      if (chatContainerRef.current && !chatContainerRef.current.contains(event.target)) {
+      if (
+        chatContainerRef.current &&
+        !chatContainerRef.current.contains(event.target)
+      ) {
         setIsOpen(false);
         setUnreadCount(0);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
   // ============================================================
@@ -145,7 +152,7 @@ const FloatingChatbot = () => {
     if (!isOpen) return;
 
     const handleEscapeKey = (event) => {
-      if (event.key !== 'Escape') return;
+      if (event.key !== "Escape") return;
 
       // If the global actions dropdown is open, close it first
       if (showGlobalActions) {
@@ -160,8 +167,8 @@ const FloatingChatbot = () => {
       toggleButtonRef.current?.focus();
     };
 
-    document.addEventListener('keydown', handleEscapeKey);
-    return () => document.removeEventListener('keydown', handleEscapeKey);
+    document.addEventListener("keydown", handleEscapeKey);
+    return () => document.removeEventListener("keydown", handleEscapeKey);
   }, [isOpen, showGlobalActions]);
 
   // ============================================================
@@ -194,81 +201,85 @@ const FloatingChatbot = () => {
   // ============================================================
   // SEND USER MESSAGE TO BACKEND
   // ============================================================
-  const sendUserMessage = useCallback(async (userMessage) => {
-    try {
-      setLoading(true);
-      setShowGlobalActions(false);
+  const sendUserMessage = useCallback(
+    async (userMessage) => {
+      try {
+        setLoading(true);
+        setShowGlobalActions(false);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/chatbot/user-message`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: userMessage }),
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/chatbot/user-message`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userMessage }),
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
+        const data = await response.json();
 
-      const data = await response.json();
+        if (data) {
+          const isEnd = data.is_end || false;
+          const hasOptions =
+            Array.isArray(data.options) && data.options.length > 0;
 
-      if (data) {
-        const isEnd = data.is_end || false;
-        const hasOptions = Array.isArray(data.options) && data.options.length > 0;
+          const botMessage = {
+            id: generateUniqueId(),
+            type: "bot",
+            text: data.message || FALLBACK_MESSAGE,
+            options: data.options || [],
+            showOptions: hasOptions,
+          };
 
-        const botMessage = {
-          id: generateUniqueId(),
-          type: 'bot',
-          text: data.message || FALLBACK_MESSAGE,
-          options: data.options || [],
-          showOptions: hasOptions,
-        };
+          setMessages((prev) => [...prev, botMessage]);
 
-        setMessages((prev) => [...prev, botMessage]);
+          if (data.id) setCurrentMessageId(data.id);
 
-        if (data.id) setCurrentMessageId(data.id);
+          if (hasOptions) {
+            setFlowHistory((prev) => [
+              ...prev,
+              { options: data.options, label: userMessage || "Options" },
+            ]);
+          }
 
-        if (hasOptions) {
-          setFlowHistory((prev) => [
+          setConversationEnded(isEnd);
+        } else {
+          setMessages((prev) => [
             ...prev,
-            { options: data.options, label: userMessage || 'Options' },
+            {
+              id: generateUniqueId(),
+              type: "bot",
+              text: FALLBACK_MESSAGE,
+              options: [],
+              showOptions: false,
+            },
           ]);
         }
 
-        setConversationEnded(isEnd);
-      } else {
+        setUnreadCount((prev) => prev + 1);
+      } catch (error) {
+        console.error("Error sending message:", error);
         setMessages((prev) => [
           ...prev,
           {
             id: generateUniqueId(),
-            type: 'bot',
-            text: FALLBACK_MESSAGE,
+            type: "bot",
+            text: ERROR_MESSAGE,
             options: [],
             showOptions: false,
           },
         ]);
+      } finally {
+        setLoading(false);
+        setTimeout(scrollToBottom, 150);
       }
-
-      setUnreadCount((prev) => prev + 1);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: generateUniqueId(),
-          type: 'bot',
-          text: ERROR_MESSAGE,
-          options: [],
-          showOptions: false,
-        },
-      ]);
-    } finally {
-      setLoading(false);
-      setTimeout(scrollToBottom, 150);
-    }
-  }, [scrollToBottom]);
+    },
+    [scrollToBottom],
+  );
 
   // ============================================================
   // HANDLE SEND MESSAGE
@@ -279,14 +290,14 @@ const FloatingChatbot = () => {
 
     const userMessageObj = {
       id: generateUniqueId(),
-      type: 'user',
+      type: "user",
       text: trimmedMessage,
       options: [],
       showOptions: false,
     };
 
     setMessages((prev) => [...prev, userMessageObj]);
-    setInputValue('');
+    setInputValue("");
     setTimeout(scrollToBottom, SCROLL_DELAY);
 
     await sendUserMessage(trimmedMessage);
@@ -295,92 +306,96 @@ const FloatingChatbot = () => {
   // ============================================================
   // HANDLE OPTION CLICK
   // ============================================================
-  const handleOptionClick = useCallback(async (optionId, optionText) => {
-    const userMessageObj = {
-      id: generateUniqueId(),
-      type: 'user',
-      text: optionText,
-      options: [],
-      showOptions: false,
-    };
+  const handleOptionClick = useCallback(
+    async (optionId, optionText) => {
+      const userMessageObj = {
+        id: generateUniqueId(),
+        type: "user",
+        text: optionText,
+        options: [],
+        showOptions: false,
+      };
 
-    setMessages((prev) => [...prev, userMessageObj]);
-    setTimeout(scrollToBottom, SCROLL_DELAY);
-    setLoading(true);
+      setMessages((prev) => [...prev, userMessageObj]);
+      setTimeout(scrollToBottom, SCROLL_DELAY);
+      setLoading(true);
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/chatbot/message/${optionId}`
-      );
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/chatbot/message/${optionId}`,
+        );
 
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (data?.message) {
-        const isEnd = data.is_end || false;
-        const newMessage = {
-          id: generateUniqueId(),
-          type: 'bot',
-          text: data.message,
-          options: isEnd ? [] : data.options || [],
-          showOptions: !isEnd && Array.isArray(data.options) && data.options.length > 0,
-        };
+        if (data?.message) {
+          const isEnd = data.is_end || false;
+          const newMessage = {
+            id: generateUniqueId(),
+            type: "bot",
+            text: data.message,
+            options: isEnd ? [] : data.options || [],
+            showOptions:
+              !isEnd && Array.isArray(data.options) && data.options.length > 0,
+          };
 
-        setMessages((prev) => [...prev, newMessage]);
-        setCurrentMessageId(data.id);
+          setMessages((prev) => [...prev, newMessage]);
+          setCurrentMessageId(data.id);
 
-        if (isEnd) {
-          setConversationEnded(true);
-          setTimeout(() => {
-            setMessages((prev) => [
+          if (isEnd) {
+            setConversationEnded(true);
+            setTimeout(() => {
+              setMessages((prev) => [
+                ...prev,
+                {
+                  id: generateUniqueId(),
+                  type: "bot",
+                  text: END_MESSAGE,
+                  options: [],
+                  showOptions: false,
+                },
+              ]);
+            }, 500);
+          } else if (Array.isArray(data.options) && data.options.length > 0) {
+            setFlowHistory((prev) => [
               ...prev,
-              {
-                id: generateUniqueId(),
-                type: 'bot',
-                text: END_MESSAGE,
-                options: [],
-                showOptions: false,
-              },
+              { options: data.options, label: optionText || "Options" },
             ]);
-          }, 500);
-        } else if (Array.isArray(data.options) && data.options.length > 0) {
-          setFlowHistory((prev) => [
+          }
+        } else {
+          setMessages((prev) => [
             ...prev,
-            { options: data.options, label: optionText || 'Options' },
+            {
+              id: generateUniqueId(),
+              type: "bot",
+              text: FALLBACK_MESSAGE,
+              options: [],
+              showOptions: false,
+            },
           ]);
         }
-      } else {
+      } catch (error) {
+        console.error("Error loading node:", error);
         setMessages((prev) => [
           ...prev,
           {
             id: generateUniqueId(),
-            type: 'bot',
-            text: FALLBACK_MESSAGE,
+            type: "bot",
+            text: "Sorry, I encountered an error. Please try again.",
             options: [],
             showOptions: false,
           },
         ]);
+      } finally {
+        setLoading(false);
+        setTimeout(scrollToBottom, 150);
       }
-    } catch (error) {
-      console.error('Error loading node:', error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: generateUniqueId(),
-          type: 'bot',
-          text: 'Sorry, I encountered an error. Please try again.',
-          options: [],
-          showOptions: false,
-        },
-      ]);
-    } finally {
-      setLoading(false);
-      setTimeout(scrollToBottom, 150);
-    }
-  }, [scrollToBottom]);
+    },
+    [scrollToBottom],
+  );
 
   // ============================================================
   // RESET HELPER
@@ -393,7 +408,7 @@ const FloatingChatbot = () => {
     setExpandedMessages({});
     setShowGlobalActions(false);
     setHasStarted(false);
-    setInputValue('');
+    setInputValue("");
     setTimeout(showWelcomeMessage, WELCOME_DELAY);
   }, [showWelcomeMessage]);
 
@@ -401,7 +416,10 @@ const FloatingChatbot = () => {
   // ACTION HANDLERS
   // ============================================================
   const handleStartAPI = useCallback(() => resetChatState(), [resetChatState]);
-  const handleClearHistory = useCallback(() => resetChatState(), [resetChatState]);
+  const handleClearHistory = useCallback(
+    () => resetChatState(),
+    [resetChatState],
+  );
   const handleRestart = useCallback(() => resetChatState(), [resetChatState]);
 
   const handleExitBot = useCallback(() => {
@@ -438,22 +456,27 @@ const FloatingChatbot = () => {
       const needsExpansion = message.text.length > CHAR_LIMIT;
       const displayText = isExpanded
         ? message.text
-        : message.text.slice(0, CHAR_LIMIT) + (needsExpansion ? '...' : '');
-      const isBot = message.type === 'bot';
+        : message.text.slice(0, CHAR_LIMIT) + (needsExpansion ? "..." : "");
+      const isBot = message.type === "bot";
       const hasOptions =
-        Array.isArray(message.options) && message.options.length > 0 && message.showOptions;
+        Array.isArray(message.options) &&
+        message.options.length > 0 &&
+        message.showOptions;
 
       return (
-        <div key={message.id} className={`message ${isBot ? 'bot-message' : 'user-message'}`}>
+        <div
+          key={message.id}
+          className={`message ${isBot ? "bot-message" : "user-message"}`}
+        >
           {isBot && (
             <div className="message-avatar bot-avatar">
-               <Image
-                  src="/chat-girl.png"
-                  alt="Liaison Bank logo"
-                  width={192}
-                  height={192}
-                  priority
-                />  
+              <Image
+                src="/chat-girl.png"
+                alt="Liaison Bank logo"
+                width={192}
+                height={192}
+                priority
+              />
             </div>
           )}
           <div className="message-wrapper">
@@ -473,7 +496,7 @@ const FloatingChatbot = () => {
                           handleOptionClick(
                             option.next_message_id || option.id,
                             optLabel,
-                            index
+                            index,
                           )
                         }
                       >
@@ -490,11 +513,13 @@ const FloatingChatbot = () => {
                   <button
                     className="action-chip"
                     onClick={() => toggleMessageExpand(message.id)}
-                    title={isExpanded ? 'Show less' : 'Show more'}
+                    title={isExpanded ? "Show less" : "Show more"}
                     aria-expanded={isExpanded}
                   >
-                    <span className="action-icon">{isExpanded ? '−' : '+'}</span>
-                    {isExpanded ? 'Show Less' : 'Show More'}
+                    <span className="action-icon">
+                      {isExpanded ? "−" : "+"}
+                    </span>
+                    {isExpanded ? "Show Less" : "Show More"}
                   </button>
                 </div>
               )}
@@ -503,7 +528,7 @@ const FloatingChatbot = () => {
         </div>
       );
     },
-    [expandedMessages, handleOptionClick, toggleMessageExpand]
+    [expandedMessages, handleOptionClick, toggleMessageExpand],
   );
 
   // ============================================================
@@ -511,12 +536,12 @@ const FloatingChatbot = () => {
   // ============================================================
   const handleKeyDown = useCallback(
     (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
+      if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         handleSendMessage();
       }
     },
-    [handleSendMessage]
+    [handleSendMessage],
   );
 
   // ============================================================
@@ -539,26 +564,33 @@ const FloatingChatbot = () => {
         ref={toggleButtonRef}
         className="chatbot-toggle"
         onClick={toggleChat}
-        aria-label={isOpen ? 'Close chat' : 'Open chat'}
+        aria-label={isOpen ? "Close chat" : "Open chat"}
         aria-expanded={isOpen}
       >
         {isOpen ? (
           <span className="close-icon">✕</span>
         ) : (
           <>
-   <Image
-                    src="/chat-girl.png"
-                    alt="Liaison Bank logo"
-                    width={192}
-                    height={192}
-                    priority
-                  />             {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
+            <Image
+              src="/chatbot_withbg.png"
+              alt="Liaison Bank logo"
+              width={192}
+              height={192}
+              priority
+            />{" "}
+            {unreadCount > 0 && (
+              <span className="unread-badge">{unreadCount}</span>
+            )}
           </>
         )}
       </button>
 
       {isOpen && (
-        <div className="chat-window" role="dialog" aria-label="Liaison Bank chat">
+        <div
+          className="chat-window"
+          role="dialog"
+          aria-label="Liaison Bank chat"
+        >
           <div className="chat-header">
             <div className="header-content">
               <div className="brand-icon">
@@ -588,8 +620,16 @@ const FloatingChatbot = () => {
               </button>
 
               {showGlobalActions && (
-                <div className="global-actions-dropdown" ref={globalActionsRef} role="menu">
-                  <button className="dropdown-item" onClick={handleStartAPI} role="menuitem">
+                <div
+                  className="global-actions-dropdown"
+                  ref={globalActionsRef}
+                  role="menu"
+                >
+                  <button
+                    className="dropdown-item"
+                    onClick={handleStartAPI}
+                    role="menuitem"
+                  >
                     Start New Conversation
                   </button>
                   {/* <button className="dropdown-item" onClick={handleClearHistory} role="menuitem">
@@ -615,14 +655,21 @@ const FloatingChatbot = () => {
             </div>
           </div>
 
-          <div className="chat-messages" ref={chatMessagesRef} onWheel={handleWheel}   style={{
-            '--chat-wallpaper': `url(${chatWindowBg.src || chatWindowBg})`
-          }}>
+          <div
+            className="chat-messages"
+            ref={chatMessagesRef}
+            onWheel={handleWheel}
+            style={{
+              "--chat-wallpaper": `url(${chatWindowBg.src || chatWindowBg})`,
+            }}
+          >
             {messages.length === 0 && !loading ? (
               <div className="empty-state">
                 <div className="empty-icon">🏦</div>
                 <p>Welcome to Liaison Bank</p>
-                <span className="empty-subtext">Type a message to start the conversation</span>
+                <span className="empty-subtext">
+                  Type a message to start the conversation
+                </span>
               </div>
             ) : (
               messages.map(renderMessage)
@@ -631,13 +678,13 @@ const FloatingChatbot = () => {
             {loading && (
               <div className="message bot-message">
                 <div className="message-avatar bot-avatar">
-                   <Image
+                  <Image
                     src="/chat-girl.png"
                     alt="Liaison Bank logo"
                     width={192}
                     height={192}
                     priority
-                  />                  
+                  />
                   {/* <span>🤖</span> */}
                 </div>
                 <div className="message-wrapper">

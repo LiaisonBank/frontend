@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from 'next/link';
-import Image from 'next/image';
-import useBodyClass from '@/components/useBodyClass';
-import devaImg from "@/assets/images/ceoImg1.webp"
-import ClientScroller from "@/components/ClientScroller"
-import useFancybox from '@/components/useFancybox';
-import TestimonialSlider from '@/components/TestimonialSlider';
+import Link from "next/link";
+import Image from "next/image";
+import useBodyClass from "@/components/useBodyClass";
+import devaImg from "@/assets/images/ceoImg1.webp";
+import ClientScroller from "@/components/ClientScroller/ClientScroller";
+import useFancybox from "@/components/useFancybox";
+import TestimonialSlider from "@/components/Testimonals/TestimonialSlider";
 import CertificateGallery from "@/components/awards/page";
 import FAQAccordion from "@/components/Faqs/FAQAccordion";
 import OurServices from "@/components/OurServices/page";
@@ -18,24 +18,24 @@ const quotes = [
   {
     text: "We believe every business deserves the freedom to grow without being held back by complexity. Our role is to bring the right expertise, guidance, and solutions to every challenge, so businesses can focus on their vision, strengthen their foundations, and move forward with confidence.",
     author: "Mahadev Biradar",
-    title: "Founder & CEO, Liaison Bank"
+    title: "Founder & CEO, Liaison Bank",
   },
   {
     text: "Our clients are at the heart of everything we do. We don't just provide services; we build lasting relationships based on trust, transparency, and a genuine commitment to their success. When our clients succeed, we succeed.",
     author: "Mahadev Biradar",
-    title: "Founder & CEO, Liaison Bank"
+    title: "Founder & CEO, Liaison Bank",
   },
   {
     text: "Leadership is not about having all the answers. It's about creating an environment where people feel empowered to find solutions, take ownership, and grow together. A true leader builds trust, inspires confidence, and leads by example.",
     author: "Mahadev Biradar",
-    title: "Founder & CEO, Liaison Bank"
-  }
+    title: "Founder & CEO, Liaison Bank",
+  },
 ];
 
 const Home = () => {
   // Use a ref to track if we're on the client
   const isClientRef = useRef(false);
-  
+
   // Initialize with first quote (0) for SSR, will update on client
   const [currentQuote, setCurrentQuote] = useState(0);
   // Track if we should show the random quote
@@ -44,7 +44,7 @@ const Home = () => {
   const sectionRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  useBodyClass('home');
+  useBodyClass("home");
   const fancyboxRef = useFancybox({
     Thumbs: false,
   });
@@ -65,7 +65,7 @@ const Home = () => {
   // Scroll detection - triggers only once when section first comes into view
   useEffect(() => {
     let hasTriggered = false;
-    
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasTriggered) {
@@ -76,7 +76,7 @@ const Home = () => {
       },
       {
         threshold: 0.1,
-      }
+      },
     );
 
     const currentSection = sectionRef.current;
@@ -100,13 +100,12 @@ const Home = () => {
       </div>
 
       {/* CEO Message Section */}
-      <section 
+      <section
         ref={sectionRef}
-        className={`ceo-message-full ${isVisible ? 'in-view' : ''}`}
+        className={`ceo-message-full ${isVisible ? "in-view" : ""}`}
       >
         <div className="ceo-full-container">
           <div className="ceo-full-grid">
-
             {/* Left Column - Image */}
             <div className="ceo-full-left">
               <div className="ceo-full-image-wrapper">
@@ -124,7 +123,6 @@ const Home = () => {
             {/* Right Column - Quote */}
             <div className="ceo-full-right">
               <div className="ceo-full-content">
-                
                 {/* Name & Title */}
                 <div className="ceo-full-name-wrapper">
                   <h2 className="ceo-full-name">Mahadev Biradar</h2>
@@ -135,14 +133,15 @@ const Home = () => {
                 <div className="ceo-full-quote-container">
                   {quotes.map((quote, index) => {
                     // Use showRandomQuote flag to determine which quote to show
-                    const isActive = showRandomQuote ? index === currentQuote : index === 0;
+                    const isActive = showRandomQuote
+                      ? index === currentQuote
+                      : index === 0;
                     return (
                       <div
                         key={index}
-                        className={`ceo-full-quote-item ${isActive ? 'active' : ''}`}
+                        className={`ceo-full-quote-item ${isActive ? "active" : ""}`}
                       >
                         <div className="ceo-full-quote-text">
-
                           {/* Top-left decoration */}
                           <div className="quote-decoration-top">
                             <span className="quote-symbol">“</span>
@@ -161,12 +160,14 @@ const Home = () => {
                             <span className="quote-line quote-line-vertical"></span>
                             <span className="quote-symbol">”</span>
                           </div>
-
                         </div>
 
                         {/* View Profile Link */}
                         <div className="ceo-full-view-profile">
-                          <Link href="/ceo-profile" className="ceo-full-profile-link">
+                          <Link
+                            href="/ceo-profile"
+                            className="ceo-full-profile-link"
+                          >
                             <span>View Profile</span>
                             <svg
                               className="ceo-full-profile-icon"
@@ -174,16 +175,19 @@ const Home = () => {
                               stroke="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3"
+                              />
                             </svg>
                           </Link>
                         </div>
-
                       </div>
                     );
                   })}
                 </div>
-
               </div>
             </div>
           </div>
@@ -194,9 +198,12 @@ const Home = () => {
         <div className="mx-auto py-5 service-list">
           <div className="section-title">
             <h3>Liaisoning and Licensing</h3>
-            <h5>We bring our services to multiple sectors and create customised solutions for diverse set of business needs.</h5>
+            <h5>
+              We bring our services to multiple sectors and create customised
+              solutions for diverse set of business needs.
+            </h5>
           </div>
-          <div className='mx-auto'>
+          <div className="mx-auto">
             <OurServices />
           </div>
         </div>
@@ -207,7 +214,10 @@ const Home = () => {
           <div className="section-title">
             <h3>Awards & Certifications</h3>
           </div>
-          <div ref={fancyboxRef} className="d-flex align-items-center px-0 mx-0">
+          <div
+            ref={fancyboxRef}
+            className="d-flex align-items-center px-0 mx-0"
+          >
             <CertificateGallery />
           </div>
         </div>
