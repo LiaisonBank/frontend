@@ -169,10 +169,11 @@ export default function Footer() {
         </a>
 
         <a
-          className="hiring open-form text-right"
+          className="hiring open-form d-flex align-items-center"
           onClick={() => setHiringOpen(true)}
         >
-          We are Hiring &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          <span>We are Hiring</span>
+
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 16 16"
@@ -187,10 +188,12 @@ export default function Footer() {
               d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5"
             ></path>
           </svg>
-          &nbsp;&nbsp;
         </a>
 
-        <a className="enquire open-form" onClick={() => setOpen(true)}>
+        <a
+          className="enquire open-form d-flex align-items-center"
+          onClick={() => setOpen(true)}
+        >
           Enquire Now <i className="fi fi-sr-attribution-pencil"></i>
         </a>
       </div>
