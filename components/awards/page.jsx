@@ -1,14 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   motion,
   AnimatePresence,
   useMotionValue,
   useSpring,
   useTransform,
-  useMotionTemplate,
   animate,
 } from "framer-motion";
 import { Fancybox } from "@fancyapps/ui";
@@ -29,11 +27,14 @@ function BarrelCard({
   cardWidth,
   cardHeight,
   radius,
+  viewportWidth,
   isActive,
   isVisible,
   didDrag,
   onClick,
 }) {
+  const [imageFailed, setImageFailed] = useState(false);
+
   const angle = useTransform(rotation, (r) => {
     let a = r + index * angleStep;
     return (((a % 360) + 540) % 360) - 180;
@@ -54,12 +55,25 @@ function BarrelCard({
     // Smooth transition.
     const smooth = proximity * proximity * (3 - 2 * proximity);
 
-    // Horizontal distance to close between the cards.
-    const horizontalInset = cardWidth * 0.7;
+    // Keep mobile and tablet positioning unchanged.
+    // On desktop, almost remove the inward tuck so side cards spread
+    // into the unused left and right space of the stage.
+    const insetFactor =
+      viewportWidth < 576
+        ? 0.01
+        : viewportWidth < 768
+          ? 0.02
+          : viewportWidth < 1200
+            ? 0.16
+            : 0.02;
+    const horizontalInset = cardWidth * insetFactor;
 
     const sinAngle = Math.max(Math.abs(Math.sin((a * Math.PI) / 180)), 0.35);
 
-    const radialInset = Math.min(radius * 0.7, horizontalInset / sinAngle);
+    const radialInset = Math.min(
+      radius * insetFactor,
+      horizontalInset / sinAngle,
+    );
 
     return radius - radialInset * smooth;
   });
@@ -71,7 +85,10 @@ function BarrelCard({
 
   // Keep the cards positioned on the circular barrel,
   // but turn their faces slightly towards the viewer.
-  const faceRotation = useTransform(angle, (a) => -a * 0.42);
+  const faceRotation = useTransform(
+    angle,
+    (a) => -a * (viewportWidth < 768 ? 0.3 : 0.42),
+  );
 
   const visualAngle = useTransform(angle, (a) => a * 0.58);
 
@@ -142,15 +159,30 @@ function BarrelCard({
         >
           <div className="card-frame">
             <div className="card-mat">
-              <Image
-                src={cert.src}
-                alt={cert.caption}
-                width={280}
-                height={380}
-                className="card-img"
-                unoptimized
-                loading="lazy"
-              />
+              {imageFailed ? (
+                <div
+                  className="card-image-fallback"
+                  role="img"
+                  aria-label={`${cert.caption} preview unavailable`}
+                >
+                  <span className="fallback-document" aria-hidden="true">
+                    ▤
+                  </span>
+                  <span>Preview unavailable</span>
+                </div>
+              ) : (
+                <img
+                  src={cert.src}
+                  alt={cert.caption}
+                  className="card-img"
+                  loading="lazy"
+                  decoding="async"
+                  onError={() => {
+                    console.error("Award image failed to load:", cert.src);
+                    setImageFailed(true);
+                  }}
+                />
+              )}
             </div>
 
             <div className="card-frame__footer">
@@ -173,6 +205,7 @@ function BarrelCard({
 
 export default function AwardP() {
   const galleryRef = useRef(null);
+  const stageRef = useRef(null);
   const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -183,20 +216,59 @@ export default function AwardP() {
   const [cardWidth, setCardWidth] = useState(280);
   const [viewportWidth, setViewportWidth] = useState(1440);
 
-  /* ===== Responsive card size ===== */
+  /* ===== Responsive card size: measured from the actual stage ===== */
   useEffect(() => {
+    if (loading) return;
+
+    const stage = stageRef.current;
+    if (!stage) return;
+
     const update = () => {
-      const w = window.innerWidth;
-      if (w < 576) setCardWidth(180);
-      else if (w < 768) setCardWidth(210);
-      else if (w < 1200) setCardWidth(245);
-      else setCardWidth(280);
-      setViewportWidth(w);
+      const measuredWidth =
+        stage.getBoundingClientRect().width ||
+        stage.clientWidth ||
+        window.innerWidth;
+
+      const w = Math.round(measuredWidth);
+      let width;
+
+      // Maintain a large, readable front certificate while reserving
+      // enough viewport width for the two neighbouring 3D cards.
+      if (w < 360) {
+        width = Math.max(150, w * 0.5);
+      } else if (w < 480) {
+        width = Math.min(210, Math.max(160, w * 0.45 + 20));
+      } else if (w < 768) {
+        width = Math.min(230, w * 0.36 + 40);
+      } else if (w < 992) {
+        width = Math.min(245, w * 0.3);
+      } else if (w < 1200) {
+        width = 245;
+      } else {
+        width = 280;
+      }
+
+      const nextWidth = Math.round(width);
+
+      setCardWidth((current) => (current === nextWidth ? current : nextWidth));
+      setViewportWidth((current) => (current === w ? current : w));
     };
+
     update();
+
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
+
+    resizeObserver?.observe(stage);
     window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
+    window.addEventListener("orientationchange", update);
+
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, [loading]);
 
   /* ===== Fetch awards ===== */
   useEffect(() => {
@@ -231,6 +303,40 @@ export default function AwardP() {
     fetchAwards();
   }, []);
 
+  /*
+   * Desktop-only ring density:
+   * 13 slots around a full circle create 7 cards across the forward-facing arc
+   * (the active card plus 3 neighbours on either side).
+   *
+   * Reuse records already returned by the existing API. No extra API request
+   * is made. Mobile and tablet continue to use the original API list.
+   */
+  const useDenseDesktopRing = viewportWidth >= 1200 && certificates.length >= 3;
+
+  const desktopSlotCount = Math.max(13, certificates.length);
+
+  const carouselCertificates = useDenseDesktopRing
+    ? Array.from({ length: desktopSlotCount }, (_, slotIndex) => {
+        let sourceIndex = slotIndex % certificates.length;
+
+        // Avoid duplicating the first record at both ends of the circular seam.
+        if (
+          slotIndex === desktopSlotCount - 1 &&
+          sourceIndex === 0 &&
+          certificates.length > 1
+        ) {
+          sourceIndex = 1;
+        }
+
+        const source = certificates[sourceIndex];
+
+        return {
+          ...source,
+          id: `${source.id}-desktop-slot-${slotIndex}`,
+        };
+      })
+    : certificates;
+
   /* ===== Fancybox ===== */
   useEffect(() => {
     const container = galleryRef.current;
@@ -244,39 +350,82 @@ export default function AwardP() {
       Fancybox.unbind(container);
       Fancybox.close();
     };
-  }, [certificates]);
+  }, [certificates, viewportWidth]);
 
-  const n = certificates.length;
+  const n = carouselCertificates.length;
   const angleStep = n > 0 ? 360 / n : 0;
   const cardHeight = Math.round(cardWidth * 1.6);
 
-  // Five on desktop when there are enough certificates.
+  // Desktop: active card + three neighbours on each side.
+  // Tablet/mobile: preserve the original one-neighbour-per-side layout.
   const visibleSideCards =
-    viewportWidth >= 768 ? (n >= 8 ? 2 : n >= 4 ? 1 : 0) : n >= 4 ? 1 : 0;
+    n >= 3
+      ? viewportWidth >= 1200
+        ? Math.min(3, Math.floor((n - 1) / 2))
+        : 1
+      : 0;
 
-  // Maximum angle of the outer visible certificate.
-  const outerAngle = Math.min(visibleSideCards * angleStep, 89);
-
+  const outerAngle = visibleSideCards * angleStep;
   const theta = (outerAngle * Math.PI) / 180;
 
-  const perspective = 3600;
+  // Match these values with the perspective breakpoints in AwardP.scss.
+  const isMobile = viewportWidth < 768;
+  const perspective =
+    viewportWidth < 768 ? 900 : viewportWidth < 1200 ? 1400 : 3600;
 
-  const targetHalfWidth = Math.max(
-    80,
-    viewportWidth / 2 - cardWidth * 0.55 - 28,
-  );
+  /*
+   * Responsive spacing:
+   * - cardGap controls the larger distance between neighbouring card centres.
+   * - circleSpace increases the barrel radius to open up the centre of the ring.
+   */
+  // Mobile: increase both the space between neighbouring cards and
+  // the radius/open area in the middle of the barrel.
+  // Desktop: keep the centre radius unchanged and reduce only card spacing.
+  const cardGap =
+    viewportWidth < 576
+      ? Math.max(26, Math.min(34, viewportWidth * 0.078))
+      : viewportWidth < 768
+        ? Math.max(34, Math.min(44, viewportWidth * 0.06))
+        : viewportWidth < 1200
+          ? 22
+          : 12;
 
-  // Calculate radius while accounting for perspective.
-  const radius =
-    n <= 1
+  const circleSpace =
+    viewportWidth < 576
+      ? Math.max(42, Math.min(56, viewportWidth * 0.13))
+      : viewportWidth < 768
+        ? 60
+        : viewportWidth < 1200
+          ? 44
+          : 54;
+
+  // Chord geometry: adjacent card centres are at least cardWidth + cardGap apart.
+  const halfStepSine = n > 2 ? Math.sin(Math.PI / n) : 0;
+  const spacingRadius =
+    n > 2 && halfStepSine > 0 ? (cardWidth + cardGap) / (2 * halfStepSine) : 0;
+
+  // Keep the previous viewport-based spread as a minimum on larger screens.
+  const targetHalfWidth =
+    viewportWidth < 768
+      ? Math.min(cardWidth * 0.72, viewportWidth / 2 - 8)
+      : Math.max(80, viewportWidth / 2 - cardWidth * 0.55 - 28);
+
+  const projectionDenominator =
+    perspective * Math.sin(theta) + targetHalfWidth * Math.cos(theta);
+
+  const viewportRadius =
+    n <= 2 || visibleSideCards === 0
       ? 0
-      : n < 4
-        ? cardWidth * 2
-        : Math.round(
-            (targetHalfWidth * perspective) /
-              (perspective * Math.sin(theta) +
-                targetHalfWidth * Math.cos(theta)),
-          );
+      : Math.max(
+          0,
+          (targetHalfWidth * perspective) / Math.max(projectionDenominator, 1),
+        );
+
+  // Larger radius creates a wider centre opening and more separation around the rim.
+  const radius =
+    n <= 2 || visibleSideCards === 0
+      ? 0
+      : Math.round(Math.max(spacingRadius, viewportRadius) + circleSpace);
 
   /* ===== Rotation: ONE motion value drives everything ===== */
   const rotation = useMotionValue(0);
@@ -285,6 +434,18 @@ export default function AwardP() {
     damping: 24,
     mass: 1.1,
   });
+
+  // Reset the rotation only when switching between the mobile and desktop
+  // ring sizes. Normal dragging and automatic rotation are unaffected.
+  const previousCarouselCount = useRef(n);
+
+  useEffect(() => {
+    if (previousCarouselCount.current === n || n === 0) return;
+
+    setActiveIndex(0);
+    rotation.set(0);
+    previousCarouselCount.current = n;
+  }, [n, rotation]);
 
   // keep activeIndex in sync with the live rotation
   useEffect(() => {
@@ -399,7 +560,7 @@ export default function AwardP() {
     );
   }
 
-  const active = certificates[activeIndex];
+  const active = carouselCertificates[activeIndex];
 
   return (
     // ✅ ref moved here so Fancybox binds to the cards inside the 3D barrel
@@ -416,6 +577,7 @@ export default function AwardP() {
 
       {/* 3D Barrel — drag left/right to spin */}
       <div
+        ref={stageRef}
         className="barrel-stage"
         // onMouseEnter={() => setIsHovered(true)}
         // onMouseLeave={() => setIsHovered(false)}
@@ -427,7 +589,7 @@ export default function AwardP() {
           onPan={onPan}
           onPanEnd={onPanEnd}
         >
-          {certificates.map((cert, i) => {
+          {carouselCertificates.map((cert, i) => {
             let off = (((i - activeIndex) % n) + n) % n;
 
             if (off > n / 2) off -= n;
@@ -447,6 +609,7 @@ export default function AwardP() {
                 cardWidth={cardWidth}
                 cardHeight={cardHeight}
                 radius={radius}
+                viewportWidth={viewportWidth}
                 isActive={isActive}
                 isVisible={isVisible}
                 didDrag={didDrag}
