@@ -286,7 +286,7 @@ export default function SuggestionBox() {
                 </span>
               </div>
 
-              <div className="sb-group">
+              {/* <div className="sb-group">
                 <label htmlFor="screenshot" className="sb-file-label">
                   <svg
                     viewBox="0 0 24 24"
@@ -325,7 +325,7 @@ export default function SuggestionBox() {
                   onChange={handleFileChange}
                   className="sb-file-input"
                 />
-              </div>
+              </div> */}
 
               <button
                 type="submit"

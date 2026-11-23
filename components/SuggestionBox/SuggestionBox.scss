@@ -252,7 +252,7 @@ $transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 .sb-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  // gap: 2px;
 
   label {
     font-size: 12px;
@@ -575,9 +575,9 @@ $transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
   .sb-group input,
   .sb-group select,
-  .sb-group textarea { font-size: 16px; padding: 12px 14px; } // 16px = no iOS zoom
+  .sb-group textarea { font-size: 16px; padding: 5px 14px; } // 16px = no iOS zoom
 
-  .sb-submit-btn { margin-top: 4px; padding: 14px; font-size: 15px; }
+  .sb-form .sb-submit-btn { margin-top: 4px; padding: 14px; font-size: 15px; }
 
   .sb-success { padding: 48px 20px; }
 }
