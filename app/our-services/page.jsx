@@ -112,7 +112,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/images/liaison-bank-government-licensing-mumbai.png",
+        url: "/images/liaisoning_img.jpg",
         width: 1200,
         height: 630,
         alt: "Liaison Bank professional services",
@@ -129,7 +129,7 @@ export const metadata = {
     description:
       "Explore Liaison Bank's professional liaisoning, licensing, fire safety, electrical, PNG and AMC services.",
     images: [
-      "/images/liaison-bank-government-licensing-mumbai.png",
+      "/images/liaisoning_img.jpg",
     ],
   },
 };
