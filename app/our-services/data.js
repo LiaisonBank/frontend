@@ -6,21 +6,22 @@ export const FALLBACK_IMAGE =
 export const HERO_BANNER =
   "/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png";
 
+// Keywords injected into Industry descriptions
 export const INDUSTRIES = [
   {
     num: "01",
     title: "Residential Sector",
-    text: "Supporting residential buildings, housing societies, apartments and residential properties with essential licensing, safety, infrastructure and maintenance services.",
+    text: "Supporting residential buildings, housing societies, and apartments with essential licensing services, residential AMC services, water tank cleaning services, and electrical audit certificates.",
   },
   {
     num: "02",
     title: "Commercial Sector",
-    text: "Helping offices, retail outlets, restaurants, hotels, hospitals, shopping centres and other commercial establishments manage approvals, licences, safety and maintenance requirements.",
+    text: "Helping offices, retail outlets, restaurants, and hotels manage commercial licensing services, trade licence assistance, commercial PNG services, fire safety audits, and commercial AMC services.",
   },
   {
     num: "03",
     title: "Industrial Sector",
-    text: "Providing industrial facilities, factories, warehouses, manufacturing units and processing plants with liaisoning, licensing, fire safety, electrical, PNG and ongoing maintenance solutions.",
+    text: "Providing industrial facilities and factories with industrial licensing services, CEIG approval assistance, industrial PNG services, factory safety services, and industrial maintenance contracts.",
   },
 ];
 
