@@ -1,20 +1,147 @@
 // app/our-services/page.jsx
-// Server Component — pre-fetches data and injects JSON-LD for SEO
+// Server Component — fetches all active service categories and provides
+// fixed SEO metadata for the Our Services listing page.
 
 import OurServicesClient from "./ServicesClient";
-import { FAQS } from "./data";
 import { getImageUrl } from "@/lib/utils/getImagehelper";
+import { FAQS } from "./data";
 
 const API_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
+
 const FALLBACK_IMAGE =
   "/images/Firefly_Gemini_Flash_generate_liaisoning_img_521517.png";
 
-// ---------- helpers (server-safe) ----------
+
+export const metadata = {
+  metadataBase: new URL("https://www.liaisonbank.com"),
+
+  title:
+    "Our Services | Liaisoning, Licensing, Fire Safety & AMC",
+
+  description:
+    "Explore Liaison Bank's government liaisoning, business licensing, fire safety, electrical audit, PNG and AMC services for residential, commercial and industrial properties across Mumbai.",
+
+  keywords: [
+    "Liaison Bank services",
+    "liaisoning services",
+    "licensing services",
+    "government liaisoning services",
+    "government approval services",
+    "municipal approval services",
+    "BMC liaisoning services",
+    "building approval services",
+    "property permission services",
+    "government NOC assistance",
+    "business licensing services",
+    "business licence renewal",
+    "trade licence assistance",
+    "commercial licensing services",
+    "industrial licensing services",
+    "shop licence services",
+    "licence documentation services",
+    "fire safety services",
+    "fire safety consultant Mumbai",
+    "fire safety audit services",
+    "fire NOC assistance",
+    "fire extinguisher refilling",
+    "fire safety inspection",
+    "fire safety maintenance",
+    "electrical audit services",
+    "electrical safety audit Mumbai",
+    "electrical inspection services",
+    "electrical audit certificate",
+    "electrical maintenance services",
+    "CEIG approval assistance",
+    "PNG services",
+    "piped natural gas services",
+    "PNG pipeline inspection",
+    "PNG infrastructure services",
+    "commercial PNG services",
+    "industrial PNG services",
+    "annual maintenance contract services",
+    "AMC services",
+    "AMC services Mumbai",
+    "commercial AMC services",
+    "industrial AMC services",
+    "residential AMC services",
+    "preventive maintenance services",
+    "water tank cleaning services",
+    "pest control AMC services",
+    "fire audit certificate AMC",
+    "electrical audit certificate AMC",
+    "licence renewal AMC",
+    "residential property services",
+    "commercial property services",
+    "industrial facility services",
+    "housing society services",
+    "restaurant licensing services",
+    "hotel fire safety services",
+    "factory safety services",
+    "warehouse maintenance services",
+    "liaisoning services in Mumbai",
+    "licensing services in Mumbai",
+    "fire safety services in Mumbai",
+    "business services in Maharashtra",
+  ],
+
+  alternates: {
+    canonical: "/our-services",
+  },
+
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+
+  openGraph: {
+    title:
+      "Our Services | Liaisoning, Licensing, Fire Safety & AMC | Liaison Bank",
+    description:
+      "Discover Liaison Bank's liaisoning, licensing, fire safety, electrical, PNG and AMC solutions for residential, commercial and industrial sectors.",
+    url: "/our-services",
+    siteName: "Liaison Bank",
+    locale: "en_IN",
+    type: "website",
+    images: [
+      {
+        url: "/images/liaison-bank-government-licensing-mumbai.png",
+        width: 1200,
+        height: 630,
+        alt: "Liaison Bank professional services",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    site: "@liaisonbank",
+    creator: "@liaisonbank",
+    title:
+      "Our Services | Liaisoning, Licensing, Fire Safety & AMC | Liaison Bank",
+    description:
+      "Explore Liaison Bank's professional liaisoning, licensing, fire safety, electrical, PNG and AMC services.",
+    images: [
+      "/images/liaison-bank-government-licensing-mumbai.png",
+    ],
+  },
+};
+
 function resolveImage(path) {
-  if (!path || typeof path !== "string" || path.trim() === "") return FALLBACK_IMAGE;
+  if (!path || typeof path !== "string" || !path.trim()) {
+    return FALLBACK_IMAGE;
+  }
+
   try {
     const url = getImageUrl(path);
-    return typeof url === "string" && url.trim() !== "" ? url : FALLBACK_IMAGE;
+    return typeof url === "string" && url.trim() ? url : FALLBACK_IMAGE;
   } catch {
     return FALLBACK_IMAGE;
   }
@@ -31,39 +158,40 @@ function transformCategory(category) {
     imageAlt: category.image_alt || `${category.name} services`,
     banner: resolveImage(category.banner),
     bannerAlt: category.banner_alt || `${category.name} banner`,
-    optionalImage: category.optional_img ? resolveImage(category.optional_img) : null,
+    optionalImage: category.optional_img
+      ? resolveImage(category.optional_img)
+      : null,
     optionalImageAlt: category.optional_img_alt || "",
     metaTitle: category.meta_title || "",
     metaDescription: category.meta_description || "",
     metaKeywords: category.meta_keywords || "",
-    faq: Array.isArray(category.faq)
-      ? category.faq.filter((i) => i?.question && i?.answer)
-      : [],
     priority: category.priority ?? 999,
   };
 }
 
 async function getServices() {
   try {
-    if (!API_URL) return { services: [], error: { status: "CONFIG" } };
+    if (!API_URL) {
+      return { services: [], error: { status: "CONFIG" } };
+    }
 
     const res = await fetch(`${API_URL}/api/categories`, {
       headers: { Accept: "application/json" },
-      // FIX: Replaced `cache: "no-store"` with ISR revalidation.
-      // Categories change infrequently; caching dramatically improves TTFB
-      // and Core Web Vitals without hurting freshness.
       next: { revalidate: 3600 },
     });
 
-    if (!res.ok) return { services: [], error: { status: res.status } };
+    if (!res.ok) {
+      return { services: [], error: { status: res.status } };
+    }
 
     const result = await res.json();
+
     if (!result.success || !Array.isArray(result.data)) {
       return { services: [], error: { status: 500 } };
     }
 
     const services = result.data
-      .filter((c) => c.status === true)
+      .filter((category) => category.status === true)
       .map(transformCategory)
       .sort((a, b) => a.priority - b.priority);
 
@@ -73,63 +201,34 @@ async function getServices() {
   }
 }
 
-// ---------- JSON-LD builders ----------
+function buildServiceSchema(services) {
+  if (!services.length) return null;
 
-// FIX: FAQ schema now mirrors exactly what is rendered on the page.
-// - If any service has API FAQs, those are the visible FAQs → schema uses them.
-// - Otherwise the static FAQS are rendered → schema uses those.
-// This guarantees "FAQ content must be visible on the page" is satisfied
-// and eliminates duplicate/bloated FAQPage schema on the listing page.
-function buildFaqSchema(services) {
-  const apiFaqs = services.flatMap((s) =>
-    (s.faq || []).map((f) => ({ q: f.question, a: f.answer }))
-  );
-
-  const visibleFaqs =
-    apiFaqs.length > 0
-      ? apiFaqs
-      : FAQS.map((f) => ({ q: f.q, a: f.a }));
-
-  if (!visibleFaqs.length) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Liaison Bank Service Categories",
+    numberOfItems: services.length,
+    itemListElement: services.map((service, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: service.name,
+      url: `https://www.liaisonbank.com/our-services/${service.slug}`,
+    })),
+  };
+}
+function buildFaqSchema() {
+  if (!Array.isArray(FAQS) || FAQS.length === 0) return null;
 
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: visibleFaqs.map((f) => ({
+    mainEntity: FAQS.map((faq) => ({
       "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
-}
-
-function buildServiceSchema(services) {
-  if (!services.length) return null;
-  return {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    name: "Liaison Bank Services",
-    itemListElement: services.map((s, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      item: {
-        "@type": "Service",
-        name: `${s.name} Services`,
-        // FIX: prefer richer full description when available.
-        description: s.fullDescription || s.description,
-        url: `https://www.liaisonbank.com/our-services/${s.slug}`,
-        provider: {
-          "@type": "Organization",
-          name: "Liaison Bank",
-          url: "https://www.liaisonbank.com",
-        },
-        areaServed: {
-          "@type": "City",
-          name: "Mumbai",
-        },
-        image: s.image.startsWith("http")
-          ? s.image
-          : `https://www.liaisonbank.com${s.image}`,
+      name: faq.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.a,
       },
     })),
   };
@@ -156,23 +255,24 @@ function buildBreadcrumbSchema() {
   };
 }
 
-// ---------- Page ----------
 export default async function Page() {
   const { services, error } = await getServices();
 
   const schemas = [
     buildBreadcrumbSchema(),
     buildServiceSchema(services),
-    buildFaqSchema(services),
+    buildFaqSchema(),
   ].filter(Boolean);
 
   return (
     <>
-      {schemas.map((schema, i) => (
+      {schemas.map((schema, index) => (
         <script
-          key={i}
+          key={index}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
+          }}
         />
       ))}
 
