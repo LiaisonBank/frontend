@@ -12,6 +12,8 @@ import CertificateGallery from "@/components/awards/page";
 import FAQAccordion from "@/components/Faqs/FAQAccordion";
 import OurServices from "@/components/OurServices/page";
 import HeroSlogan from "@/components/HeroSlogan/HeroSlogan";
+import santaImg from "@/assets/images/santa-5.png";
+import SectionDivider from "@/components/SectionDivider/SectionDivider";
 // import HeroMarquee from "@/components/HeroMarquee/HeroMarquee";
 
 const quotes = [
@@ -41,8 +43,10 @@ const Home = () => {
   // Track if we should show the random quote
   const [showRandomQuote, setShowRandomQuote] = useState(false);
 
+  const stageRef = useRef(null);
   const sectionRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const ceoInnerRef = useRef(null);
 
   useBodyClass("home");
   const fancyboxRef = useFancybox({
@@ -91,6 +95,82 @@ const Home = () => {
     };
   }, []);
 
+  // Keep the CEO panel attached to the viewport on desktop while the
+  // transparent Our Services section scrolls upward over it.
+  // The CEO remains in normal document flow, so the services section does
+  // not jump upward when the pinning starts.
+  useEffect(() => {
+    const stage = stageRef.current;
+    const section = sectionRef.current;
+    if (!stage || !section) return;
+
+    let raf = null;
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+
+    // Height of the fixed bottom bar (Call / Enquire / Hiring) on mobile/tablet.
+    const MOBILE_BOTTOM_BAR = 70;
+
+    const update = () => {
+      raf = null;
+
+      const isDesktop = desktopQuery.matches;
+      const sectionH = section.offsetHeight;
+      const stageTop = stage.getBoundingClientRect().top + window.scrollY;
+      const visibleH = window.innerHeight - (isDesktop ? 0 : MOBILE_BOTTOM_BAR);
+
+      // How far the CEO panel may travel while Services scrolls over it
+      const availableTravel = Math.max(stage.offsetHeight - sectionH, 0);
+      const releaseEarlyBy = Math.min(
+        Math.max(Math.round(window.innerHeight * 0.02), 20),
+        availableTravel * 0.18,
+      );
+      const maxTravel = Math.max(availableTravel - releaseEarlyBy, 0);
+
+      // Desktop: pin when the CEO top reaches the viewport top (unchanged).
+      // Mobile/tablet: pin when the CEO BOTTOM reaches the visible bottom,
+      // so the whole photo + quote + View Profile has been scrolled through.
+      const pinStart = isDesktop
+        ? stageTop
+        : stageTop + Math.max(sectionH - visibleH, 0);
+
+      const travel = Math.min(
+        Math.max(window.scrollY - pinStart, 0),
+        maxTravel,
+      );
+      section.style.transform = `translate3d(0, ${travel.toFixed(1)}px, 0)`;
+
+      // Hard gate: Services (and Santa) stay hidden until the CEO section's
+      // bottom edge is inside the visible area, i.e. it has been fully seen.
+      const ceoFullySeen = window.scrollY + visibleH >= stageTop + sectionH - 1;
+      stage.classList.toggle("ceo-complete", ceoFullySeen);
+    };
+
+    const requestUpdate = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    window.addEventListener("load", requestUpdate);
+
+    // Recalculate whenever the real layout changes (image loads, fonts,
+    // quote text changing height, orientation change...)
+    const ro = new ResizeObserver(requestUpdate);
+    ro.observe(section);
+    ro.observe(stage);
+
+    return () => {
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      window.removeEventListener("load", requestUpdate);
+      ro.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+      section.style.transform = "";
+      stage.classList.remove("ceo-complete");
+    };
+  }, []);
+
   return (
     <>
       <div className="hero-section page-header">
@@ -99,115 +179,141 @@ const Home = () => {
         </div>
       </div>
 
-      {/* CEO Message Section */}
-      <section
-        ref={sectionRef}
-        className={`ceo-message-full ${isVisible ? "in-view" : ""}`}
-      >
-        <div className="ceo-full-container">
-          <div className="ceo-full-grid">
-            {/* Left Column - Image */}
-            <div className="ceo-full-left">
-              <div className="ceo-full-image-wrapper">
-                <Image
-                  src={devaImg}
-                  width={700}
-                  height={700}
-                  alt="Mahadev Biradar - Founder & CEO"
-                  className="ceo-full-image"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Right Column - Quote */}
-            <div className="ceo-full-right">
-              <div className="ceo-full-content">
-                {/* Name & Title */}
-                <div className="ceo-full-name-wrapper">
-                  <h2 className="ceo-full-name">Mahadev Biradar</h2>
-                  <p className="ceo-full-title">Founder &amp; CEO</p>
+      {/* CEO + Services share one scroll stage so Services can cover the pinned CEO panel. */}
+      <div className="ceo-services-stage" ref={stageRef}>
+        {/* CEO Message Section */}
+        <section
+          ref={sectionRef}
+          className={`ceo-message-full ${isVisible ? "in-view" : ""}`}
+        >
+          <div className="ceo-full-container" ref={ceoInnerRef}>
+            <div className="ceo-full-grid">
+              {/* Left Column - Image */}
+              <div className="ceo-full-left">
+                <div className="ceo-full-image-wrapper">
+                  <Image
+                    src={devaImg}
+                    width={700}
+                    height={700}
+                    alt="Mahadev Biradar - Founder & CEO"
+                    className="ceo-full-image"
+                    priority
+                  />
                 </div>
+              </div>
 
-                {/* Quote Container */}
-                <div className="ceo-full-quote-container">
-                  {quotes.map((quote, index) => {
-                    // Use showRandomQuote flag to determine which quote to show
-                    const isActive = showRandomQuote
-                      ? index === currentQuote
-                      : index === 0;
-                    return (
-                      <div
-                        key={index}
-                        className={`ceo-full-quote-item ${isActive ? "active" : ""}`}
-                      >
-                        <div className="ceo-full-quote-text">
-                          {/* Top-left decoration */}
-                          <div className="quote-decoration-top">
-                            <span className="quote-symbol">“</span>
-                            <span className="quote-line quote-line-horizontal"></span>
-                            <span className="quote-line quote-line-vertical"></span>
+              {/* Right Column - Quote */}
+              <div className="ceo-full-right">
+                <div className="ceo-full-content">
+                  {/* Name & Title */}
+                  <div className="ceo-full-name-wrapper">
+                    <h2 className="ceo-full-name">Mahadev Biradar</h2>
+                    <p className="ceo-full-title">Founder &amp; CEO</p>
+                  </div>
+
+                  {/* Quote Container */}
+                  <div className="ceo-full-quote-container">
+                    {quotes.map((quote, index) => {
+                      // Use showRandomQuote flag to determine which quote to show
+                      const isActive = showRandomQuote
+                        ? index === currentQuote
+                        : index === 0;
+                      return (
+                        <div
+                          key={index}
+                          className={`ceo-full-quote-item ${isActive ? "active" : ""}`}
+                        >
+                          <div className="ceo-full-quote-text">
+                            {/* Top-left decoration */}
+                            <div className="quote-decoration-top">
+                              <span className="quote-symbol">“</span>
+                              <span className="quote-line quote-line-horizontal"></span>
+                              <span className="quote-line quote-line-vertical"></span>
+                            </div>
+
+                            {/* Quote content */}
+                            <p className="ceo-full-quote-paragraph">
+                              {quote.text}
+                            </p>
+
+                            {/* Bottom-right decoration */}
+                            <div className="quote-decoration-bottom">
+                              <span className="quote-line quote-line-horizontal"></span>
+                              <span className="quote-line quote-line-vertical"></span>
+                              <span className="quote-symbol">”</span>
+                            </div>
                           </div>
 
-                          {/* Quote content */}
-                          <p className="ceo-full-quote-paragraph">
-                            {quote.text}
-                          </p>
-
-                          {/* Bottom-right decoration */}
-                          <div className="quote-decoration-bottom">
-                            <span className="quote-line quote-line-horizontal"></span>
-                            <span className="quote-line quote-line-vertical"></span>
-                            <span className="quote-symbol">”</span>
-                          </div>
-                        </div>
-
-                        {/* View Profile Link */}
-                        <div className="ceo-full-view-profile">
-                          <Link
-                            href="/ceo-profile"
-                            className="ceo-full-profile-link"
-                          >
-                            <span>View Profile</span>
-                            <svg
-                              className="ceo-full-profile-icon"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                          {/* View Profile Link */}
+                          <div className="ceo-full-view-profile">
+                            <Link
+                              href="/ceo-profile"
+                              className="ceo-full-profile-link"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3"
-                              />
-                            </svg>
-                          </Link>
+                              <span>View Profile</span>
+                              <svg
+                                className="ceo-full-profile-icon"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                />
+                              </svg>
+                            </Link>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="ourservices">
-        <div className="mx-auto py-5 service-list">
-          <div className="section-title">
-            <h3>Liaisoning and Licensing</h3>
-            <h5>
-              We bring our services to multiple sectors and create customised
-              solutions for diverse set of business needs.
-            </h5>
+        {/* ================= LIAISONING & LICENSING (CARD + SANTA) ================= */}
+        <section className="ourservices">
+          <div className="mx-auto py-5 service-list">
+            <div className="licensing-card-wrapper">
+              <div className="santa-wrap" aria-hidden="true">
+                <div className="santa-inner">
+                  <Image
+                    src={santaImg}
+                    width={620}
+                    height={620}
+                    alt=""
+                    className="santa-img"
+                  />
+                </div>
+              </div>
+
+              <div className="licensing-card">
+                <div className="licensing-card-body">
+                  <div className="section-title">
+                    <div className="santa-title-anchor">
+                      <h3>Liaisoning and Licensing</h3>
+                    </div>
+                    <h5>
+                      We bring our services to multiple sectors and create
+                      customised solutions for diverse set of business needs.
+                    </h5>
+                  </div>
+                  <div className="mx-auto">
+                    <OurServices />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="mx-auto">
-            <OurServices />
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
+      {/* End CEO + Services scroll stage */}
+      <SectionDivider />
 
       <section className="awardscertification px-0">
         <div className="container-fluid mx-auto py-5 px-0">
@@ -223,6 +329,8 @@ const Home = () => {
         </div>
       </section>
 
+      <SectionDivider />
+
       <section className="ourclients">
         <div className="container-fluid mx-auto px-0 pt-5 pb-4 bg-white">
           <div className="section-title pb-3">
@@ -234,6 +342,8 @@ const Home = () => {
         </div>
       </section>
 
+      <SectionDivider />
+
       <section className="clientfeedback pb-5">
         <div className="container-fluid mx-auto px-0 bg-white">
           <div className="section-title pt-3">
@@ -242,6 +352,8 @@ const Home = () => {
           <TestimonialSlider />
         </div>
       </section>
+
+      <SectionDivider />
 
       <section className="faqs">
         <div className="container-fluid mx-auto py-4 bg-white">

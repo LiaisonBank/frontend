@@ -12,6 +12,7 @@ import "@flaticon/flaticon-uicons/css/all/all.css";
 import "@fontsource/josefin-sans";
 import "@/styles/globals.scss";
 import SuggestionBox from "@/components/SuggestionBox/SuggestionBox";
+import Snowfall from "@/components/Snowfall/Snowfall";
 
 // ======================================================
 // FONT CONFIGURATION
@@ -302,6 +303,7 @@ export default function RootLayout({ children }) {
           <AppProviders>{children}</AppProviders>
         </OrientationBlocker>
 
+        <Snowfall />
         {/* ============================================
             CLIENT-ONLY WIDGETS
         ============================================ */}

@@ -1,0 +1,114 @@
+$sd-orange: #ff7a00;
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  width: 100%;
+  max-width: 1200px;
+  margin: 10px auto;
+  padding: 12px 24px; // adjust vertical breathing room per page
+
+  /* ── The two line halves ── */
+  .sd-line {
+    flex: 1;
+    height: 3px;
+    border-radius: 4px;
+    background: $sd-orange;
+
+    &.sd-line-left {
+      background: linear-gradient(90deg, transparent, $sd-orange 55%);
+    }
+
+    &.sd-line-right {
+      background: linear-gradient(90deg, $sd-orange 45%, transparent);
+    }
+  }
+
+  /* ── Bells sitting on the line ── */
+  .sd-icon {
+    position: relative;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    transform-origin: 50% 12%; // swing from the ribbon knot at the top
+    animation: sd-swing 3s ease-in-out infinite alternate;
+
+    .sd-img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+    }
+  }
+
+  /* ── Variant: line passes BEHIND the bells ── */
+  &.section-divider--overlap {
+    .sd-line-left {
+      margin-right: -26px;
+    }
+    .sd-line-right {
+      margin-left: -26px;
+    }
+
+    .sd-icon::before {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      background: #ffffff; // matches your white sections
+      border-radius: 50%;
+    }
+
+    .sd-img {
+      position: relative;
+      z-index: 1;
+    }
+  }
+}
+
+@keyframes sd-swing {
+  from {
+    transform: rotate(-9deg);
+  }
+  to {
+    transform: rotate(9deg);
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .section-divider {
+    gap: 10px;
+    padding: 10px 16px;
+
+    .sd-icon {
+      width: 52px;
+      height: 52px;
+      .sd-img {
+        width: 46px;
+        height: 46px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .section-divider .sd-icon {
+    width: 44px;
+    height: 44px;
+    .sd-img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+/* ── Accessibility ── */
+@media (prefers-reduced-motion: reduce) {
+  .section-divider .sd-icon {
+    animation: none;
+  }
+}

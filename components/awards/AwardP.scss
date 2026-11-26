@@ -440,6 +440,39 @@
   filter: blur(6px);
   pointer-events: none;
 }
+/* ===== Center Christmas Tree ===== */
+.barrel-centerpiece {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(300px, 45vw); /* Responsive size */
+  height: auto;
+  z-index: 5; /* Sits between back cards (z~10) and front cards (z~100) */
+  pointer-events: none; /* Allows dragging through the tree */
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+  
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+    /* Subtle breathing animation */
+    animation: tree-breathe 4s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes tree-breathe {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+/* Adjust tree size for mobile */
+@media (max-width: 767px) {
+  .barrel-centerpiece {
+    width: min(180px, 55vw);
+    z-index: 4;
+  }
+}
 
 /* ===== Drag hint ===== */
 .drag-hint {
@@ -621,7 +654,7 @@
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  overflow-x: clip;
+  overflow-x: visible !important;
   overflow-y: visible;
 }
 
@@ -775,8 +808,8 @@
   }
 
   .barrel-stage {
-    height: 440px;
-    perspective: 900px;
+    height: 500px;
+    perspective: 800px;
     perspective-origin: 50% 46%;
   }
 
@@ -785,7 +818,7 @@
   }
 
   .card-frame {
-    padding: 8px;
+    padding: 8px !important;
     gap: 6px;
     border-radius: 8px;
   }
@@ -837,6 +870,8 @@
 
   .awards-cta {
     margin-top: 20px;
+    position: relative;
+    z-index: 10;
   }
 
   .awards-cta .themeht-btn {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PhoneIcon from "components/phoneicon";
 import EmailIcon from "components/EmailIcon";
+import santaHat from "../../assets/images/santa-cap.png";
 
 import "./TeamMemberCard.scss";
 
@@ -60,6 +61,12 @@ const TeamMemberCard = ({ member = {} }) => {
         }}
       >
         <div className={`flip ${isFlipped ? "flipped" : ""}`}>
+          <img
+            src={santaHat.src}
+            alt=""
+            className="santa-hat-overlay"
+            aria-hidden="true"
+          />
           {/* Front */}
           <div className="face front" aria-hidden={isFlipped}>
             <div

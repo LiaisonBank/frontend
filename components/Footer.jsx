@@ -23,6 +23,9 @@ import {
 } from "react-bootstrap-icons";
 
 import "@/styles/_footer.scss";
+import treesImg from "../assets/images/footer_image-4.png";
+import ribbonImg from "../assets/images/ribbon.png";
+import ornamentsImg from "../assets/images/footer_image-5.png";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -44,14 +47,35 @@ export default function Footer() {
     <>
       <footer className="footer">
         {/* Footer Top */}
+        {/* Footer Top */}
         <div className="footer-sort">
+          <Image
+            src={ribbonImg}
+            alt=""
+            width={1200}
+            height={250}
+            sizes="100vw"
+            className="footer-ribbon-img"
+            priority
+          />
+
           <div className="footer-connect-box">
             <h1>Connect, Comply &amp; Grow!</h1>
           </div>
         </div>
 
+        {/* <div className="footer-trees" aria-hidden="true">
+          <Image
+            src={treesImg}
+            alt=""
+            width={1600}
+            height={600}
+            className="footer-trees-img"
+          />
+        </div> */}
+
         {/* Footer Content */}
-        <div className="footer-container-fluid px-5">
+        <div className="footer-container-fluid px-5 bg-[#F8F8F8]">
           <div className="footer-grid">
             {/* Brand */}
             <div className="footer-brand">
@@ -156,6 +180,16 @@ export default function Footer() {
               <Link href="/legal/terms-and-conditions">Terms</Link>
             </div>
           </div>
+        </div>
+        <div className="footer-ornaments" aria-hidden="true">
+          <Image
+            src={ornamentsImg}
+            alt=""
+            width={2000}
+            height={620}
+            sizes="100vw"
+            className="footer-ornaments-img"
+          />
         </div>
       </footer>
 
