@@ -132,7 +132,8 @@ const matchesDesignation = (memberDesignation, designations) => {
  */
 const applyPriorityOrdering = (members, priorityNames) => {
   if (!Array.isArray(members) || members.length === 0) return members;
-  if (!Array.isArray(priorityNames) || priorityNames.length === 0) return members;
+  if (!Array.isArray(priorityNames) || priorityNames.length === 0)
+    return members;
 
   return [...members].sort((a, b) => {
     const aName = normalize(a?.name);
@@ -168,7 +169,7 @@ export default function TeamSection() {
 
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_LOCAL_API_URL}/api/employee`,
-          { signal: controller.signal }
+          { signal: controller.signal },
         );
 
         if (!res.ok) {
@@ -249,7 +250,7 @@ export default function TeamSection() {
     return TEAM_GROUPS[groupKey]?.title || groupKey;
   }, []);
 
-    /* ---------- Error ---------- */
+  /* ---------- Error ---------- */
   if (error) {
     return (
       <ApiError
@@ -310,7 +311,7 @@ export default function TeamSection() {
               <Swiper
                 modules={[Autoplay, A11y]}
                 slidesPerView={1}
-                spaceBetween={16}
+                spaceBetween={80}
                 grabCursor
                 touchRatio={1}
                 touchAngle={45}
@@ -341,6 +342,3 @@ export default function TeamSection() {
     </section>
   );
 }
-
-
-

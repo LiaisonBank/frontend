@@ -28,6 +28,8 @@ import bulbImg from "@/assets/images/bulb.png";
 // Note: Make sure you have saved the stickman image in this folder!
 import stickmanLeaningImg from "@/assets/images/stickman.png";
 import stickmanStandingImg from "@/assets/images/stickMan_standing-1.jpg";
+import WhatWeOffer from "./whatWeOffer";
+import SectionDivider from "@/components/SectionDivider/SectionDivider";
 
 export default function AboutUsLiaisonPage() {
   useBodyClass("about-us");
@@ -296,6 +298,7 @@ export default function AboutUsLiaisonPage() {
             </div>
           </div>
         </section>
+        <SectionDivider />
 
         {/* --- VISION & MISSION SECTION --- */}
         <section className="vision-mission-section">
@@ -442,19 +445,20 @@ export default function AboutUsLiaisonPage() {
             </motion.div>
           </div>
         </section>
+        <SectionDivider />
 
         {/* Services */}
         <section className="services-section">
           <div className="container">
             <div className="row justify-content-center">
-              <div className="col-lg-10 pb-5">
+              <div className="col-lg-10 pb-2">
                 <div className="section-header">
                   <h3 className="section-title">What We Offer</h3>
                 </div>
               </div>
             </div>
             <div className="row">
-              {services.map((service) => {
+              {/* {services.map((service) => {
                 const Icon = service.icon;
                 const isPropertyAcquisition = service.id === 7;
 
@@ -522,10 +526,12 @@ export default function AboutUsLiaisonPage() {
                     </Link>
                   </div>
                 );
-              })}
+              })} */}
+              <WhatWeOffer services={services} />
             </div>
           </div>
         </section>
+        <SectionDivider />
 
         {/* Sectors */}
         <section className="sectors-section">
@@ -550,6 +556,7 @@ export default function AboutUsLiaisonPage() {
             </div>
           </div>
         </section>
+        <SectionDivider />
 
         {/* Team */}
         <section className="team-section">

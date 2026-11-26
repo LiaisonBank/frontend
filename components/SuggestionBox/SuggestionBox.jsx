@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./SuggestionBox.scss";
 
 export default function SuggestionBox() {
@@ -23,6 +23,32 @@ export default function SuggestionBox() {
     subject: "",
     description: "",
   });
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen || isSuccess) return;
+
+    const panel = panelRef.current;
+    const form = panel?.querySelector(".sb-form");
+
+    if (!panel || !form) return;
+
+    const handleWheel = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      form.scrollTop += e.deltaY;
+    };
+
+    panel.addEventListener("wheel", handleWheel, {
+      passive: false,
+      capture: true,
+    });
+
+    return () => {
+      panel.removeEventListener("wheel", handleWheel, true);
+    };
+  }, [isOpen, isSuccess]);
 
   function getBrowserName() {
     const ua = navigator.userAgent;
@@ -158,7 +184,12 @@ export default function SuggestionBox() {
 
       {/* Suggestion Panel */}
       {isOpen && (
-        <div className="sb-panel" role="dialog" aria-label="Suggestion Box">
+        <div
+          ref={panelRef}
+          className="sb-panel"
+          role="dialog"
+          aria-label="Suggestion Box"
+        >
           <div className="sb-header">
             <div className="header-content">
               <div className="brand-icon">

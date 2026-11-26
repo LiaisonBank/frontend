@@ -249,6 +249,9 @@ $text-designation: #ea580c;
     width: 350px;
     height: 300px;
   }
+  .santa-hat-overlay {
+      top: -50px; /* Adjust for the 350px wide card */
+    }
 
   .back-left .circle-image {
     max-width: 90px;
@@ -289,6 +292,9 @@ $text-designation: #ea580c;
     height: 240px;
   }
 
+  .santa-hat-overlay {
+      top: -40px; /* Adjust for the smaller 285px wide card */
+    }
   .back-left .circle-image {
     max-width: 70px;
   }
@@ -319,5 +325,95 @@ $text-designation: #ea580c;
     padding: 0.15rem 1rem;
     bottom: 0.8rem;
     left: 1rem;
+  }
+}
+
+// ===== scene + flip =====
+// ===== SCENE + FLIP =====
+.scene {
+  // width: $card-width;
+  // perspective: 1200px;
+  // cursor: pointer;
+  // outline: none;
+  // flex-shrink: 0;
+  // position: relative;
+  // overflow: visible;
+
+  // Main flipping card
+  .flip {
+    position: relative;
+    transform-style: preserve-3d;
+    overflow: visible;
+  }
+
+  // Santa hat attached to the card
+  .santa-hat-overlay {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+
+  // Desktop position
+  top: -51px;
+  right: calc(100% - 70px);
+
+  width: 130px;
+  height: auto;
+
+  transform: translateZ(3px) rotate(-35deg);
+  transform-origin: center center;
+
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.15));
+
+  // Synchronize with card flip
+  transition:
+    right 0.7s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+
+  will-change: right, transform;
+}
+
+// Move hat to the right and bring it to the back face
+&:hover .santa-hat-overlay,
+  &:focus-within .santa-hat-overlay {
+    transform: translateZ(-4px) rotate(-35deg);
+    right: 250px;
+  }
+
+  /* Hover and focus states to trigger flip */
+  &:hover .flip,
+  &:focus-within .flip {
+    transform: rotateY(180deg);
+  }
+}
+// ===== RESPONSIVE SANTA HAT =====
+
+@media (max-width: 640px) {
+  .scene .flip .santa-hat-overlay {
+    width: 105px;
+    top: -42px;
+    right: calc(100% - 70px);
+  }
+
+  .scene:hover .santa-hat-overlay,
+  .scene:focus-within .santa-hat-overlay,
+  .scene .flip.flipped .santa-hat-overlay {
+    right: -32px;
+  }
+}
+
+// Smaller mobile screens
+@media (max-width: 400px) {
+  .scene .flip .santa-hat-overlay {
+    width: 84px;
+    top: -35px;
+    right: calc(100% - 38px);
+  }
+
+  .scene:hover .santa-hat-overlay,
+  .scene:focus-within .santa-hat-overlay,
+  .scene .flip.flipped .santa-hat-overlay {
+     transform: translateZ(-4px) rotate(-35deg);
+    transition: right 0.5s ease;
+    right: 250px;
   }
 }

@@ -13,6 +13,7 @@ import { Fancybox } from "@fancyapps/ui";
 import { getImageUrl } from "@/lib/utils/getImagehelper";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 import "./AwardP.scss";
+import christmasTree from "../../assets/images/tree.png";
 
 const SENSITIVITY = 0.35; // degrees of rotation per pixel dragged
 const INERTIA = 0.12; // how much velocity carries after release
@@ -239,7 +240,7 @@ export default function AwardP() {
       } else if (w < 480) {
         width = Math.min(210, Math.max(160, w * 0.45 + 20));
       } else if (w < 768) {
-        width = Math.min(230, w * 0.36 + 40);
+        width = Math.min(200, w * 0.42);
       } else if (w < 992) {
         width = Math.min(245, w * 0.3);
       } else if (w < 1200) {
@@ -618,6 +619,10 @@ export default function AwardP() {
             );
           })}
         </motion.div>
+
+        <div className="barrel-centerpiece">
+          <img src={christmasTree.src} alt="Christmas Tree" />
+        </div>
 
         <div className="barrel-shadow" aria-hidden="true"></div>
 
