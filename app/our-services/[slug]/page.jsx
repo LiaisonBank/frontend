@@ -598,7 +598,7 @@ export default function ServiceDetail() {
             {slug === "amc" && (
               <div className="hero-modern-right">
                 <Link
-                  href="https://amc-99kh.onrender.com/"
+                  href="https://amc.liaisonbank.com\"
                   className="hero-amc-btn"
                 >
                   Get AMC Quote
