@@ -181,112 +181,99 @@ export default function Downloads() {
   }, [activeFilter, searchTerm]);
 
   // Load flipbook images
+  const loadFlipbook = useCallback(async (documentData) => {
+    if (!documentData) return;
 
-const loadFlipbook = useCallback(async (documentData) => {
-  if (!documentData) return;
-
-  setIsLoading(true);
-  setError("");
-  setPageImages([]);
-  setFlipbookReady(false);
-  setTotalPages(0);
-  setLoadingProgress(0);
-
-  try {
-    const basePath = `/flipbook/${documentData.file}`;
-    const maxPages = documentData.maxPages || 30;
-
-    const checkImage = (pageNum) =>
-      new Promise((resolve) => {
-        const img = new Image();
-
-        const timeoutId = setTimeout(() => {
-          img.src = "";
-          resolve(null);
-        }, 5000);
-
-        img.onload = () => {
-          clearTimeout(timeoutId);
-          resolve({
-            pageNum,
-            path: `${basePath}/${pageNum}.jpg`,
-          });
-        };
-
-        img.onerror = () => {
-          clearTimeout(timeoutId);
-          resolve(null);
-        };
-
-        img.src = `${basePath}/${pageNum}.jpg`;
-      });
-
-    // Check pages in parallel batches of 6
-    const BATCH_SIZE = 6;
-    const loadedPages = [];
-
-    for (let i = 1; i <= maxPages; i += BATCH_SIZE) {
-      const batch = Array.from(
-        { length: Math.min(BATCH_SIZE, maxPages - i + 1) },
-        (_, index) => i + index
-      );
-
-      const results = await Promise.all(
-        batch.map(checkImage)
-      );
-
-      loadedPages.push(...results.filter(Boolean));
-
-      setLoadingProgress(
-        Math.round(
-          (Math.min(i + BATCH_SIZE - 1, maxPages) / maxPages) * 100
-        )
-      );
-
-      // Stop after 3 consecutive missing pages
-      const lastThree = loadedPages.slice(-3);
-
-      if (
-        loadedPages.length > 0 &&
-        lastThree.length === 3 &&
-        lastThree[2].pageNum - lastThree[0].pageNum === 2 &&
-        lastThree[0].pageNum === i + BATCH_SIZE - 3
-      ) {
-        break;
-      }
-
-      // No pages found
-      if (loadedPages.length === 0 && i + BATCH_SIZE - 1 >= 10) {
-        break;
-      }
-    }
-
-    if (loadedPages.length === 0) {
-      throw new Error(`No pages found for "${documentData.name}"`);
-    }
-
-    // Keep pages in correct order
-    const images = loadedPages.map((page) => page.path);
-
-    // Ensure even page count
-    if (images.length % 2 !== 0) {
-      images.push(null);
-    }
-
-    setTotalPages(images.length);
-    setPageImages(images);
-    setCurrentPage(1);
-    setFlipbookReady(true);
-
-  } catch (err) {
-    console.error("Flipbook loading failed:", err);
-    setError(`Unable to load "${documentData.name}". Please try again.`);
+    setIsLoading(true);
+    setError("");
+    setPageImages([]);
     setFlipbookReady(false);
-  } finally {
-    setIsLoading(false);
-  }
-}, []);
+    setTotalPages(0);
+    setLoadingProgress(0);
 
+    try {
+      const images = [];
+      const basePath = `/flipbook/${documentData.file}`;
+      const maxPages = documentData.maxPages || 30;
+      let foundPages = 0;
+      let consecutiveFailures = 0;
+      const MAX_CONSECUTIVE_FAILURES = 3;
+
+      for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+        const imgPath = `${basePath}/${pageNum}.jpg`;
+
+        const exists = await new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+
+          const timeoutId = setTimeout(() => {
+            resolve(false);
+          }, 3000);
+
+          img.onload = () => {
+            clearTimeout(timeoutId);
+            resolve(true);
+          };
+          img.onerror = () => {
+            clearTimeout(timeoutId);
+            resolve(false);
+          };
+          img.src = imgPath;
+        });
+
+        if (exists) {
+          images.push(imgPath);
+          foundPages++;
+          consecutiveFailures = 0;
+          setLoadingProgress(Math.round((pageNum / maxPages) * 100));
+        } else {
+          consecutiveFailures++;
+          if (
+            foundPages > 0 &&
+            consecutiveFailures >= MAX_CONSECUTIVE_FAILURES
+          ) {
+            console.log(
+              `Stopped at page ${pageNum} after ${consecutiveFailures} consecutive failures`,
+            );
+            break;
+          }
+          if (foundPages === 0 && pageNum >= 10) {
+            console.log(
+              `No pages found for ${documentData.file} after checking 10 pages`,
+            );
+            break;
+          }
+        }
+      }
+
+      if (foundPages === 0) {
+        throw new Error(`No pages found for "${documentData.name}"`);
+      }
+
+      // Ensure even number of pages
+      const blankImage = "/placeholder-page.jpg";
+      if (foundPages % 2 !== 0) {
+        console.log(
+          `Adding blank page to make even number (${foundPages} -> ${foundPages + 1})`,
+        );
+        images.push(null); // ← null = render a blank page, no <img>
+        foundPages++;
+      }
+
+      setTotalPages(foundPages);
+      setPageImages(images);
+      setFlipbookReady(true);
+      setIsLoading(false);
+      setCurrentPage(1);
+
+      console.log(`✅ Loaded ${foundPages} pages for ${documentData.file}`);
+    } catch (err) {
+      console.error("Flipbook loading failed:", err);
+      setError(`Unable to load "${documentData.name}". Please try again.`);
+      setIsLoading(false);
+      setFlipbookReady(false);
+    }
+  }, []);
 
   // Load current document
   useEffect(() => {
