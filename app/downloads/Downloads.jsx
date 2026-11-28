@@ -58,7 +58,7 @@ export default function Downloads() {
   const [error, setError] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // ✅ New: Track if "All" was clicked and fullscreen was auto-opened
+  // Track if "All" was clicked and fullscreen was auto-opened
   const [autoFullscreenTriggered, setAutoFullscreenTriggered] = useState(false);
 
   // Refs
@@ -180,7 +180,12 @@ export default function Downloads() {
     setCurrentIndex(0);
   }, [activeFilter, searchTerm]);
 
-  // Load flipbook images
+  // ---------------------------------------------------------------
+  // LOAD FLIPBOOK — FIXED
+  // Loads images in batches and stops at the FIRST missing page.
+  // This guarantees ALL contiguous pages are loaded instead of
+  // breaking after the first batch of 6.
+  // ---------------------------------------------------------------
   const loadFlipbook = useCallback(async (documentData) => {
     if (!documentData) return;
 
@@ -192,86 +197,89 @@ export default function Downloads() {
     setLoadingProgress(0);
 
     try {
-      const images = [];
       const basePath = `/flipbook/${documentData.file}`;
       const maxPages = documentData.maxPages || 30;
-      let foundPages = 0;
-      let consecutiveFailures = 0;
-      const MAX_CONSECUTIVE_FAILURES = 3;
 
-      for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
-        const imgPath = `${basePath}/${pageNum}.jpg`;
-
-        const exists = await new Promise((resolve) => {
+      const checkImage = (pageNum) =>
+        new Promise((resolve) => {
           const img = new Image();
-          img.crossOrigin = "anonymous";
 
           const timeoutId = setTimeout(() => {
-            resolve(false);
-          }, 3000);
+            img.src = "";
+            resolve(null);
+          }, 5000);
 
           img.onload = () => {
             clearTimeout(timeoutId);
-            resolve(true);
+            resolve({
+              pageNum,
+              path: `${basePath}/${pageNum}.jpg`,
+            });
           };
+
           img.onerror = () => {
             clearTimeout(timeoutId);
-            resolve(false);
+            resolve(null);
           };
-          img.src = imgPath;
+
+          img.src = `${basePath}/${pageNum}.jpg`;
         });
 
-        if (exists) {
-          images.push(imgPath);
-          foundPages++;
-          consecutiveFailures = 0;
-          setLoadingProgress(Math.round((pageNum / maxPages) * 100));
-        } else {
-          consecutiveFailures++;
-          if (
-            foundPages > 0 &&
-            consecutiveFailures >= MAX_CONSECUTIVE_FAILURES
-          ) {
-            console.log(
-              `Stopped at page ${pageNum} after ${consecutiveFailures} consecutive failures`,
-            );
+      const BATCH_SIZE = 6;
+      const loadedPages = [];
+
+      for (let start = 1; start <= maxPages; start += BATCH_SIZE) {
+        const batch = Array.from(
+          { length: Math.min(BATCH_SIZE, maxPages - start + 1) },
+          (_, k) => start + k,
+        );
+
+        const results = await Promise.all(batch.map(checkImage));
+
+        let hitGap = false;
+        for (const r of results) {
+          if (!r) {
+            // First missing page = end of document (pages are numbered)
+            hitGap = true;
             break;
           }
-          if (foundPages === 0 && pageNum >= 10) {
-            console.log(
-              `No pages found for ${documentData.file} after checking 10 pages`,
-            );
-            break;
-          }
+          loadedPages.push(r);
         }
+
+        setLoadingProgress(
+          Math.round(
+            (Math.min(start + BATCH_SIZE - 1, maxPages) / maxPages) * 100,
+          ),
+        );
+
+        if (hitGap) break;
+
+        // Safety: if nothing at all loaded after 10 pages, stop
+        if (loadedPages.length === 0 && start + BATCH_SIZE - 1 >= 10) break;
       }
 
-      if (foundPages === 0) {
+      if (loadedPages.length === 0) {
         throw new Error(`No pages found for "${documentData.name}"`);
       }
 
-      // Ensure even number of pages
-      const blankImage = "/placeholder-page.jpg";
-      if (foundPages % 2 !== 0) {
-        console.log(
-          `Adding blank page to make even number (${foundPages} -> ${foundPages + 1})`,
-        );
-        images.push(null); // ← null = render a blank page, no <img>
-        foundPages++;
+      // Keep pages in correct order
+      const images = loadedPages.map((page) => page.path);
+
+      // Ensure even page count (react-pageflip needs pairs)
+      if (images.length % 2 !== 0) {
+        images.push(null);
       }
 
-      setTotalPages(foundPages);
+      setTotalPages(images.length);
       setPageImages(images);
-      setFlipbookReady(true);
-      setIsLoading(false);
       setCurrentPage(1);
-
-      console.log(`✅ Loaded ${foundPages} pages for ${documentData.file}`);
+      setFlipbookReady(true);
     } catch (err) {
       console.error("Flipbook loading failed:", err);
       setError(`Unable to load "${documentData.name}". Please try again.`);
-      setIsLoading(false);
       setFlipbookReady(false);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -349,17 +357,17 @@ export default function Downloads() {
     }
   }, []);
 
-  // Handle "All" click - only auto-open fullscreen once
+  // Handle "All" click
   const handleAllClick = useCallback(() => {
     setActiveFilter("all");
-    setAutoFullscreenTriggered(false); // Reset flag so it can auto-open again
+    setAutoFullscreenTriggered(false);
     const firstDoc = filteredDownloads[0];
     if (firstDoc) {
       setCurrentIndex(0);
     }
   }, [filteredDownloads]);
 
-  // ✅ FIX: Only auto-open fullscreen when "All" is clicked and NOT already triggered
+  // Auto-open fullscreen once when "All" is clicked
   useEffect(() => {
     if (
       activeFilter === "all" &&
@@ -380,7 +388,7 @@ export default function Downloads() {
     toggleFullscreen,
   ]);
 
-  // ✅ Reset auto-fullscreen flag when leaving "All" filter
+  // Reset auto-fullscreen flag when leaving "All" filter
   useEffect(() => {
     if (activeFilter !== "all") {
       setAutoFullscreenTriggered(false);
@@ -1651,12 +1659,10 @@ export default function Downloads() {
    ========================================= */
 
         @media (max-width: 768px) {
-          /* Leave sufficient space below the fixed navbar */
           .downloads-hero {
             padding: 125px 0 55px;
           }
 
-          /* Keep category filters in one horizontally scrollable row */
           .filter-wrapper {
             display: flex;
             flex-wrap: nowrap;
@@ -1689,7 +1695,6 @@ export default function Downloads() {
             white-space: nowrap;
           }
 
-          /* Reduce horizontal padding around the document */
           .downloads-section {
             padding: 20px 12px 40px;
           }
@@ -1754,7 +1759,6 @@ export default function Downloads() {
             padding: 0 12px;
           }
 
-          /* Readable filter labels without wrapping */
           .filter-wrapper {
             gap: 7px;
             padding-right: 8px;
